@@ -1,3 +1,4 @@
+[![CircleCI](https://circleci.com/gh/RiseMentors/Rise/tree/master.svg?style=svg)](https://circleci.com/gh/RiseMentors/Rise/tree/master)
 # Rise
 
 ## How to Install
