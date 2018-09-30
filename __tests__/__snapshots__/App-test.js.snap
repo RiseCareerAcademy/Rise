@@ -137,74 +137,7 @@ exports[`App snapshot renders the root without loading screen 1`] = `
                         "flex": 1,
                       }
                     }
-                  >
-                    <View
-                      style={
-                        Object {
-                          "alignItems": "center",
-                          "backgroundColor": "#fbfbfb",
-                          "bottom": 0,
-                          "left": 0,
-                          "paddingVertical": 20,
-                          "position": "absolute",
-                          "right": 0,
-                          "shadowColor": "black",
-                          "shadowOffset": Object {
-                            "height": -3,
-                          },
-                          "shadowOpacity": 0.1,
-                          "shadowRadius": 3,
-                        }
-                      }
-                    >
-                      <Text
-                        accessible={true}
-                        allowFontScaling={true}
-                        ellipsizeMode="tail"
-                        style={
-                          Object {
-                            "color": "rgba(96,100,109, 1)",
-                            "fontSize": 17,
-                            "textAlign": "center",
-                          }
-                        }
-                      >
-                        This is a tab bar. You can edit it in:
-                      </Text>
-                      <View
-                        style={
-                          Array [
-                            Object {
-                              "backgroundColor": "rgba(0,0,0,0.05)",
-                              "borderRadius": 3,
-                              "paddingHorizontal": 4,
-                            },
-                            Object {
-                              "marginTop": 5,
-                            },
-                          ]
-                        }
-                      >
-                        <Text
-                          accessible={true}
-                          allowFontScaling={true}
-                          ellipsizeMode="tail"
-                          style={
-                            Array [
-                              Object {
-                                "color": "rgba(96,100,109, 0.8)",
-                              },
-                              Object {
-                                "fontFamily": "space-mono",
-                              },
-                            ]
-                          }
-                        >
-                          navigation/MainTabNavigator.js
-                        </Text>
-                      </View>
-                    </View>
-                  </View>
+                  />
                 </View>
               </View>
               <View
