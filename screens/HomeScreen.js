@@ -66,6 +66,7 @@ export default class HomeScreen extends React.Component {
             </Button>
           </View>
           <Text>
+          Daniel
           ____________________________ Or ____________________________
           </Text>
           <View>
