@@ -5,6 +5,10 @@
 version: 2
 jobs:
   build:
+    branches:
+      only:
+        - master
+        - /rc-.*/
     docker:
       # specify the version you desire here
       - image: circleci/node:7.10
@@ -15,10 +19,6 @@ jobs:
       # - image: circleci/mongo:3.4.4
 
     working_directory: ~/repo
-    branches:
-      only:
-        - master
-        - /rc-.*/
 
     steps:
       - checkout
