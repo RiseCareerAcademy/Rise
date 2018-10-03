@@ -42,12 +42,14 @@ cd Rise
 npm install
 ```
 4. Start app
+
+**Mac OSX**
 ```
 npm start
 ```
-or
+**Windows**
 ```
-npm install -g expo-cli
+npm install -g expo-cli # Only need to install this once.
 expo start
 ```
 5. Download Expo App on Phone
