@@ -14,7 +14,9 @@
 3. Open VSCode's terminal
     - `Cmd`/`Ctrl`+ `Shift` + `P` then type >Terminal
 ## Node.js
-1. Mac OSX
+1. Install Node Version Manager (nvm) 
+
+**Mac OSX**
 ```bash
 curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
 ```
@@ -22,8 +24,10 @@ curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | 
 export NVM_DIR="${XDG_CONFIG_HOME/:-$HOME/.}nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
 ```
-2. Windows: Run the .exe file in [nvm-setup.zip](https://github.com/coreybutler/nvm-windows/releases/download/1.1.7/nvm-setup.zip).
-3. Install latest Node.js version:
+**Windows**
+Run the .exe file in [nvm-setup.zip](https://github.com/coreybutler/nvm-windows/releases/download/1.1.7/nvm-setup.zip).
+
+2. Install latest Node.js version:
 ```bash
 nvm install 10.11.0 
 ```
