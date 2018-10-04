@@ -1,5 +1,13 @@
 [![CircleCI](https://circleci.com/gh/RiseMentors/Rise/tree/master.svg?style=svg)](https://circleci.com/gh/RiseMentors/Rise/tree/master)
 # Rise
+- [Rise](#rise)
+- [How to Install](#how-to-install)
+  * [Git (If Not Already Installed)](#git--if-not-already-installed-)
+  * [VSCode](#vscode)
+  * [Node.js](#nodejs)
+  * [Setup the Rise Repo](#setup-the-rise-repo)
+
+<small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
 
 # How to Install
 
