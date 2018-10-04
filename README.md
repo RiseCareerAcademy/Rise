@@ -17,6 +17,7 @@
 1. Install Node Version Manager (nvm) 
 
 **Mac OSX**
+
 ```bash
 curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
 ```
@@ -25,6 +26,7 @@ export NVM_DIR="${XDG_CONFIG_HOME/:-$HOME/.}nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
 ```
 **Windows**
+
 Run the .exe file in [nvm-setup.zip](https://github.com/coreybutler/nvm-windows/releases/download/1.1.7/nvm-setup.zip).
 
 2. Install latest Node.js version:
