@@ -15,6 +15,7 @@ export default class HomeScreen extends React.Component {
   }
 
   handleMentorPress = async () => {
+    // Setup params for Linkedin API
     // For more details: https://developer.linkedin.com/docs/oauth2
     const response_type = 'code';
     const client_id = '7872jtsnbo9n7s';
@@ -26,14 +27,16 @@ export default class HomeScreen extends React.Component {
     `&redirect_uri=${encodeURIComponent(redirectUrl)}` +
     `&state=${encodeURIComponent(state)}`;
 
-    const result = await AuthSession.startAsync({
-      authUrl,
-    });
+    // Use Expo's AuthSession to connect with the Linkedin API
+    // For more details: https://docs.expo.io/versions/latest/sdk/auth-session 
+    const result = await AuthSession.startAsync({ authUrl });
     const { params: { state: responseState, code } } = result;
     let validState = true;
     if (responseState !== state) {
       validState = false;
     }
+
+    // This only displays the results to the screen
     this.setState({ result, authUrl, validState, responseState, state });
   };
 
