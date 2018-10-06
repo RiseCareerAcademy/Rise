@@ -18,6 +18,8 @@ const app = express(); //creates an instance of express
 const server = http.createServer(app); //creates an HTTP server instance
 
 // TODO: Switch to SQLite
+// Tutorial: http://www.sqlitetutorial.net/sqlite-nodejs/connect/ 
+// Preferably use the Promises wrapper (callbacks can get nasty):
 // https://www.npmjs.com/package/sqlite
 // Connect To Database
 mongoose.Promise = global.Promise;
