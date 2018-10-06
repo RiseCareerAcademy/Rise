@@ -17,7 +17,8 @@ const config = require('./config/database');
 const app = express(); //creates an instance of express
 const server = http.createServer(app); //creates an HTTP server instance
 
-
+// TODO: Switch to SQLite
+// https://www.npmjs.com/package/sqlite
 // Connect To Database
 mongoose.Promise = global.Promise;
 mongoose.connect(config.database);

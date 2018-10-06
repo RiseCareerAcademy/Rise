@@ -85,9 +85,9 @@ Rise
 ├── routes            # api routes with controllers and models
 ├── screens           # mobile screens composed of components
 |
-├── server.js         # handles the middleware and routes to the routes folder*
-├── App.js            # container for all the screens*
+├── server.js         # handles the middleware and routes to the routes folder
+├── App.js            # container for all the screens
 └── package.json      # lists all the dependencies and npm scripts
 
-* Do not touch these files!
+* Do not touch this file!
 ```
