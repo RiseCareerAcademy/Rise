@@ -5,7 +5,7 @@ import { createStackNavigator, createBottomTabNavigator } from 'react-navigation
 import TabBarIcon from '../components/TabBarIcon';
 import HomeScreen from '../screens/HomeScreen';
 import LinksScreen from '../screens/LinksScreen';
-import SettingsScreen from '../screens/SettingsScreen';
+import SettingsScreen from '../screens/Settings';
 import { Icon } from 'expo';
 import Colors from '../constants/Colors';
 import ProfileScreen from '../screens/Profile1';
@@ -44,7 +44,7 @@ SuggestedMatchStack.navigationOptions = {
 };
 
 const MessageStack = createStackNavigator({
-  Settings: SettingsScreen,
+  Settings: LinksScreen,
 });
 
 MessageStack.navigationOptions = {
@@ -61,7 +61,7 @@ MessageStack.navigationOptions = {
 
 
 const SettingStack = createStackNavigator({
-  Links: LinksScreen,
+  Settings: SettingsScreen,
 });
 
 SettingStack.navigationOptions = {
