@@ -8,6 +8,7 @@ import LinksScreen from '../screens/LinksScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import { Icon } from 'expo';
 import Colors from '../constants/Colors';
+import ProfileScreen from '../screens/Profile1';
 
 const HomeStack = createStackNavigator({
   Home: HomeScreen,
@@ -25,11 +26,28 @@ HomeStack.navigationOptions = {
   ),
 };
 
-const LinksStack = createStackNavigator({
+const ProfileStack = createStackNavigator({
+  Profile: ProfileScreen,
+});
+
+ProfileStack.navigationOptions = {
+  tabBarLabel: 'Profile',
+  tabBarIcon: ({ focused }) => (
+    <Icon.MaterialCommunityIcons
+      name="face-profile"
+      size={26}
+      style={{ marginBottom: -3 }}
+      color={focused ? Colors.tabIconSelected : Colors.tabIconDefault}
+    />
+  ),
+};
+
+
+const SuggestedMatchStack = createStackNavigator({
   Links: LinksScreen,
 });
 
-LinksStack.navigationOptions = {
+SuggestedMatchStack.navigationOptions = {
   tabBarLabel: 'Suggested Matches',
   tabBarIcon: ({ focused }) => (
     <Icon.Feather
@@ -41,11 +59,11 @@ LinksStack.navigationOptions = {
   ),
 };
 
-const SettingsStack = createStackNavigator({
+const MessageStack = createStackNavigator({
   Settings: SettingsScreen,
 });
 
-SettingsStack.navigationOptions = {
+MessageStack.navigationOptions = {
   tabBarLabel: 'Messages',
   tabBarIcon: ({ focused }) => (
     <Icon.Feather
@@ -58,9 +76,25 @@ SettingsStack.navigationOptions = {
 };
 
 
+const SettingStack = createStackNavigator({
+  Links: LinksScreen,
+});
+
+SettingStack.navigationOptions = {
+  tabBarLabel: 'Settings',
+  tabBarIcon: ({ focused }) => (
+    <Icon.Feather
+      name="settings"
+      size={26}
+      style={{ marginBottom: -3 }}
+      color={focused ? Colors.tabIconSelected : Colors.tabIconDefault}
+    />
+  ),
+};
 
 export default createBottomTabNavigator({
-  HomeStack,
-  LinksStack,
-  SettingsStack,
+  ProfileStack,
+  SuggestedMatchStack,
+  MessageStack,
+  SettingStack,
 });
