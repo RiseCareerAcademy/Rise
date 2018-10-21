@@ -48,19 +48,19 @@ export default class HomeScreen extends React.Component {
           style={styles.container}
           contentContainerStyle={styles.contentContainer}
         >
-          <View style={styles.center}>
+          <View style={styles.center}> 
             <Image
               source={require("../assets/images/Rise.png")}
               style={{ height: 200, width: 200 }}
             />
           </View>
-            <Button full dark onPress={() =>
-              navigate('Mentor')
-            }>
+            <Button full dark onPress={this.handleMentorPress}>
               <Text>Mentor</Text>
             </Button>
           <View>
-            <Button full light>
+            <Button full light onPress={() =>
+              navigate('Student')
+            }>
               <Text style={styles.greyText}>Student</Text>
             </Button>
           </View>
@@ -70,7 +70,9 @@ export default class HomeScreen extends React.Component {
             </Text>
           </View>
           <View>
-          <Button full dark>
+          <Button full dark onPress={() =>
+            navigate('SignIn')
+          }>
             <Text>SIGN IN</Text>
           </Button>
           {this.state.validState !== undefined ? (
