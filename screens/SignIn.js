@@ -1,11 +1,11 @@
 import React from "react";
-import { Button, Text } from "native-base";
+import { Button, Text, Container, Header, Content, Form, Item, Label, Input } from "native-base";
 import { Platform, ScrollView, StyleSheet, Image, View } from "react-native";
 import { AuthSession } from "expo";
 import { Ionicons } from '@expo/vector-icons';
 import { MonoText } from "../components/StyledText";
 
-export default class MentorRegistration extends React.Component {
+export default class SignIn extends React.Component {
   constructor(props) {
     super(props);
     
@@ -17,14 +17,27 @@ export default class MentorRegistration extends React.Component {
   render() {
     const { navigate } = this.props.navigation;
     return (
+        <Container>
+        <Content>
+          <Form>
+            <Item stackedLabel>
+              <Label>Email</Label>
+              <Input/>
+            </Item>
+            <Item stackedLabel last>
+              <Label>Password</Label>
+              <Input/>
+            </Item>
+          </Form>
+        </Content>
         <View>
-        <Text>You've been authorized by Linkedin</Text>
         <Button full light onPress={() =>
           navigate('Main')
         }>
-          <Text style={styles.greyText}>Student</Text>
+          <Text style={styles.greyText}>Next</Text>
         </Button>
       </View>
+        </Container>
     );
   }
 }
