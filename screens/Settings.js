@@ -1,10 +1,52 @@
 import React, { Component } from 'react'
 import { View, Text, TouchableOpacity, TextInput, StyleSheet } from 'react-native'
 
-class Inputs extends Component {
+
+function validate(email, password, confirmedPassword) {
+    // we are going to store errors for all fields
+    // in a signle array
+    const errors = [];
+  
+   
+    if(email.length == 0 && password.length == 0){
+        errors.push("New email or password must be entered");
+    }
+    else if (password.length == 0 && email.length > 0){
+        if (email.length < 5) {
+            errors.push("Email should be at least 5 charcters long");
+        }
+        if (email.split('').filter(x => x === '@').length !== 1) {
+            errors.push("Email should contain a @");
+        }
+        if (email.indexOf('.') === -1) {
+            errors.push("Email should contain at least one dot");
+          }
+    }
+    else {
+        if (password.length < 6) {
+            errors.push("Password should be at least 6 characters long");
+          }
+          if (password != confirmedPassword) {
+              errors.push("Password doesn't match");
+          }
+    }
+   
+    
+    if (errors.length == 0){
+        alert("New changes are saved")
+    }
+    else{
+        alert(errors);
+    }
+    
+  }
+  
+  class Inputs extends Component {
    state = {
       email: '',
-      password: ''
+      password: '',
+      confirmedPassword: '',
+      errors: [],
    }
    handleEmail = (text) => {
       this.setState({ email: text })
@@ -12,9 +54,10 @@ class Inputs extends Component {
    handlePassword = (text) => {
       this.setState({ password: text })
    }
-   login = (email, pass) => {
-      alert('email: ' + email + ' password: ' + pass)
-   }
+   handleConfirmedPassword = (text) => {
+    this.setState({ confirmedPassword: text })
+ }
+   
    render() {
       return (
          <View style = {styles.container}>
@@ -42,7 +85,7 @@ class Inputs extends Component {
             <TouchableOpacity
                style = {styles.submitButton}
                onPress = {
-                  () => this.login(this.state.email, this.state.password)
+                  () => validate(this.state.email, this.state.password, this.state.confirmedPassword)
                }>
                <Text style = {styles.submitButtonText}> Save </Text>
             </TouchableOpacity>
