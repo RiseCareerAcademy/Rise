@@ -2,9 +2,10 @@ import React from "react";
 import { Button, Text } from "native-base";
 import { Platform, ScrollView, StyleSheet, Image, View } from "react-native";
 import { AuthSession } from "expo";
+
 import { MonoText } from "../components/StyledText";
 
-export default class HomeScreen extends React.Component {
+export default class MentorRegistration extends React.Component {
   constructor(props) {
     super(props);
     
@@ -13,7 +14,6 @@ export default class HomeScreen extends React.Component {
     };
   }
 
-  
   handleMentorPress = async () => {
     // Setup params for Linkedin API
     // For more details: https://developer.linkedin.com/docs/oauth2
@@ -41,50 +41,10 @@ export default class HomeScreen extends React.Component {
   };
 
   render() {
-    const { navigate } = this.props.navigation;
     return (
-      <View style={styles.container}>
-        <ScrollView
-          style={styles.container}
-          contentContainerStyle={styles.contentContainer}
-        >
-          <View style={styles.center}>
-            <Image
-              source={require("../assets/images/Rise.png")}
-              style={{ height: 200, width: 200 }}
-            />
-          </View>
-            <Button full dark onPress={() =>
-              navigate('Mentor')
-            }>
-              <Text>Mentor</Text>
-            </Button>
-          <View>
-            <Button full light>
-              <Text style={styles.greyText}>Student</Text>
-            </Button>
-          </View>
-          <View style={styles.center}>
-            <Text>
-            --- Or ---
-            </Text>
-          </View>
-          <View>
-          <Button full dark>
-            <Text>SIGN IN</Text>
-          </Button>
-          {this.state.validState !== undefined ? (
-          <Text>{JSON.stringify(this.state.validState) + '\nRequestState: ' + this.state.state + '\nResponseState: ' + this.state.responseState}</Text>
-          ) : null}
-          {this.state.authUrl ? (
-          <Text>{JSON.stringify(this.state.authUrl)}</Text>
-          ) : null}
-          {this.state.result ? (
-          <Text>{JSON.stringify(this.state.result)}</Text>
-          ) : null}
-        </View>
-        </ScrollView>
-      </View>
+        <Button full dark onPress={this.handleMentorPress}>
+          <Text>Linkedin Connect</Text>
+        </Button>
     );
   }
 }
