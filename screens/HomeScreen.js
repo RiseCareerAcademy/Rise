@@ -65,9 +65,11 @@ export default class HomeScreen extends React.Component {
               <Text style={styles.greyText}>Student</Text>
             </Button>
           </View>
-          <Text>
-          ____________________________ Or ____________________________
-          </Text>
+          <View style={styles.center}>
+            <Text>
+            --- Or ---
+            </Text>
+          </View>
           <View>
           <Button full dark>
             <Text>SIGN IN</Text>
