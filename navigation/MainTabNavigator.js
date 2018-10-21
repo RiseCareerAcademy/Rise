@@ -10,15 +10,15 @@ import { Icon } from 'expo';
 import Colors from '../constants/Colors';
 import ProfileScreen from '../screens/Profile1';
 
-const HomeStack = createStackNavigator({
+const RegistrationStack = createStackNavigator({
   Home: HomeScreen,
 });
 
-HomeStack.navigationOptions = {
-  tabBarLabel: 'Profile',
+RegistrationStack.navigationOptions = {
+  tabBarLabel: 'Registration',
   tabBarIcon: ({ focused }) => (
-    <Icon.MaterialCommunityIcons
-      name="face-profile"
+    <Icon.Feather
+      name="home"
       size={26}
       style={{ marginBottom: -3 }}
       color={focused ? Colors.tabIconSelected : Colors.tabIconDefault}
@@ -93,6 +93,7 @@ SettingStack.navigationOptions = {
 };
 
 export default createBottomTabNavigator({
+  RegistrationStack,
   ProfileStack,
   SuggestedMatchStack,
   MessageStack,
