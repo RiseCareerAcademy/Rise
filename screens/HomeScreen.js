@@ -1,7 +1,7 @@
 import React from "react";
 import { Button, Text } from "native-base";
 import { Platform, ScrollView, StyleSheet, Image, View } from "react-native";
-import { AuthSession } from "expo";
+import { AuthSession, ImagePicker } from "expo";
 import { MonoText } from "../components/StyledText";
 
 export default class HomeScreen extends React.Component {
