@@ -2,32 +2,19 @@
 import React from "react";
 import { Button, Text } from "native-base";
 import { Platform, ScrollView, StyleSheet, Image, View } from "react-native";
-<<<<<<< HEAD
 import { AuthSession, ImagePicker } from "expo";
-=======
-import { AuthSession } from "expo";
->>>>>>> bb57c33e215cdd52a7e73b1a48b730bfa11a2def
 import { MonoText } from "../components/StyledText";
 
 export default class HomeScreen extends React.Component {
   constructor(props) {
     super(props);
-<<<<<<< HEAD
 
-=======
-    
->>>>>>> bb57c33e215cdd52a7e73b1a48b730bfa11a2def
     this.state = {
       result: null,
     };
   }
-<<<<<<< HEAD
 
 
-=======
-
-  
->>>>>>> bb57c33e215cdd52a7e73b1a48b730bfa11a2def
   handleMentorPress = async () => {
     // Setup params for Linkedin API
     // For more details: https://developer.linkedin.com/docs/oauth2
@@ -35,22 +22,14 @@ export default class HomeScreen extends React.Component {
     const client_id = '7872jtsnbo9n7s';
     const redirectUrl = AuthSession.getRedirectUrl();
     const state =  Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-<<<<<<< HEAD
     const authUrl =
-=======
-    const authUrl = 
->>>>>>> bb57c33e215cdd52a7e73b1a48b730bfa11a2def
     `https://www.linkedin.com/oauth/v2/authorization?response_type=${response_type}` +
     `&client_id=${encodeURIComponent(client_id)}` +
     `&redirect_uri=${encodeURIComponent(redirectUrl)}` +
     `&state=${encodeURIComponent(state)}`;
 
     // Use Expo's AuthSession to connect with the Linkedin API
-<<<<<<< HEAD
     // For more details: https://docs.expo.io/versions/latest/sdk/auth-session
-=======
-    // For more details: https://docs.expo.io/versions/latest/sdk/auth-session 
->>>>>>> bb57c33e215cdd52a7e73b1a48b730bfa11a2def
     const result = await AuthSession.startAsync({ authUrl });
     const { params: { state: responseState, code } } = result;
     let validState = true;
@@ -60,7 +39,6 @@ export default class HomeScreen extends React.Component {
 
     // This only displays the results to the screen
     this.setState({ result, authUrl, validState, responseState, state });
-<<<<<<< HEAD
   }
 
   handleImagePickerPress = async () => {
@@ -76,11 +54,6 @@ export default class HomeScreen extends React.Component {
 
   render() {
     let { image } = this.state;
-=======
-  };
-
-  render() {
->>>>>>> bb57c33e215cdd52a7e73b1a48b730bfa11a2def
     const { navigate } = this.props.navigation;
     return (
       <View style={styles.container}>
@@ -88,7 +61,7 @@ export default class HomeScreen extends React.Component {
           style={styles.container}
           contentContainerStyle={styles.contentContainer}
         >
-          <View style={styles.center}> 
+          <View style={styles.center}>
             <Image
               source={require("../assets/images/Rise.png")}
               style={{ height: 200, width: 200 }}
@@ -104,7 +77,7 @@ export default class HomeScreen extends React.Component {
             >
               <Text>Pick an image from camera roll</Text>
             </Button>
-            
+
             <View>
          {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
             </View>
