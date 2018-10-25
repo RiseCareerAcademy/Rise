@@ -69,3 +69,25 @@ expo start
 5. Download Expo App on Phone
 6. Open Expo App
 7. Scan the QR code
+
+# Development
+
+## Folder Structure
+
+```
+Rise
+├── assets            # fonts and images
+├── components        # components
+├── config            # database configurations
+├── constants         # constants for styling and types
+├── navigation        # screen and tabs react-naviagtion
+├── public            # for getting SSL certificate by rendering an HTML template
+├── routes            # api routes with controllers and models
+├── screens           # mobile screens composed of components
+|
+├── server.js         # handles the middleware and routes to the routes folder
+├── App.js            # container for all the screens
+└── package.json      # lists all the dependencies and npm scripts
+
+* Do not touch this file!
+```
