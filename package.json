@@ -11,7 +11,9 @@
   },
   "jest": {
     "preset": "jest-expo",
-    "transformIgnorePatterns": [ "/node_modules/(?!native-base)/" ]
+    "transformIgnorePatterns": [
+      "/node_modules/(?!native-base)/"
+    ]
   },
   "dependencies": {
     "@expo/samples": "2.1.1",
