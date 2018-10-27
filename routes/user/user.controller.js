@@ -58,14 +58,13 @@ module.exports.postMentors = (req, res) => {
   const fields = ['user_id', 'first_name', 'last_name', 'email_address' ,'biography','zipcode',
   'date_of_birth','occupation','skills','blocked_users','rating','profile_pic_URL','match_key','hobbies'];
   const user = {};
-  console.log(req.body);
+  console.log(req.body)
   fields.forEach(field => {
     if (req.body[field] === undefined) {
      res
         .status(500)
         .json({ error: "Missing credentials", success: false });
     }
-    console.log(req.body[field] === undefined)
     user[field] = req.body[field];
   });
   sql = user_sql_constants.post_mentor_sql(user);
@@ -160,8 +159,8 @@ module.exports.getAllMentors = (req, res) => {
 //get user by ID
 module.exports.getUserById = (req, res) => {
   
-  userId = req.params.id
-  sql = user_sql_constants.get_user_id(userId);
+  userID = req.params.id
+  sql = user_sql_constants.get_user_id(userID);
   
   db.all(sql, [], (err, rows) => {
     if (err) {
@@ -173,3 +172,104 @@ module.exports.getUserById = (req, res) => {
 }
 
 
+module.exports.getEmailById = (req, res) => {
+  
+  userID = req.params.id
+  sql = user_sql_constants.get_email_by_id(userID);
+  
+  db.all(sql, [], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+    res.json({ success: true, rows: rows });
+  });
+  
+}
+
+module.exports.updateEmailById = (req, res) => {
+  
+  userID = req.params.id
+  newEmail = req.body["email_address"]
+  sql = user_sql_constants.update_email_by_id(userID,newEmail);
+  
+  db.all(sql, [], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+    res.json({ success: true, rows: rows });
+  });
+  
+}
+
+module.exports.getHobbiesById = (req, res) => {
+  
+  userID = req.params.id
+  sql = user_sql_constants.get_hobbies_by_id(userID);
+  
+  db.all(sql, [], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+    res.json({ success: true, rows: rows });
+  });
+  
+}
+
+module.exports.updateHobbiesById = (req, res) => {
+  
+  userID = req.params.id
+  hobbies = req.body["hobbies"]
+  sql = user_sql_constants.update_hobbies_by_id(userID,hobbies);
+  
+  db.all(sql, [], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+    res.json({ success: true, rows: rows });
+  });
+  
+}
+
+module.exports.deleteHobbiesById = (req, res) => {
+  
+  userID = req.params.id
+  sql = user_sql_constants.update_hobbies_by_id(userID,'');
+  
+  db.all(sql, [], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+    res.json({ success: true, rows: rows });
+  });
+  
+}
+
+module.exports.getBlockedUsersById = (req, res) => {
+  
+  userID = req.params.id
+  sql = user_sql_constants.get_blocked_users_by_id(userID);
+  
+  db.all(sql, [], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+    res.json({ success: true, rows: rows });
+  });
+  
+}
+
+module.exports.addBlockedUsersById = (req, res) => {
+  
+  userID = req.params.id
+  new_block = req.body['new']
+  console.log(req.body)
+  sql = user_sql_constants.add_blocked_users_by_id(userID,new_block);
+  
+  db.all(sql, [], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+    res.json({ success: true, rows: rows });
+  });
+  
+}
