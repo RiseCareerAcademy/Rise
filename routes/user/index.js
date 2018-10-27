@@ -38,4 +38,4 @@ router.delete("/:id/hobbies", controller.deleteHobbiesById);
 //get blocked users by id
 router.get("/:id/blocked_users", controller.getBlockedUsersById);
 //add blocked users by id
-router.post("/:id/blocked_users", controller.addBlockedUsersById);
+router.post("/:id/:block_id", controller.addBlockedUsersById);

@@ -58,7 +58,7 @@ module.exports.postMentors = (req, res) => {
   const fields = ['user_id', 'first_name', 'last_name', 'email_address' ,'biography','zipcode',
   'date_of_birth','occupation','skills','blocked_users','rating','profile_pic_URL','match_key','hobbies'];
   const user = {};
-  console.log(req.body)
+  console.log(req)
   fields.forEach(field => {
     if (req.body[field] === undefined) {
      res
@@ -261,8 +261,7 @@ module.exports.getBlockedUsersById = (req, res) => {
 module.exports.addBlockedUsersById = (req, res) => {
   
   userID = req.params.id
-  new_block = req.body['new']
-  console.log(req.body)
+  new_block = req.params.block_id
   sql = user_sql_constants.add_blocked_users_by_id(userID,new_block);
   
   db.all(sql, [], (err, rows) => {

@@ -163,10 +163,11 @@ module.exports.get_blocked_users_by_id = function(id){
 //add blocked users by Id 
 module.exports.add_blocked_users_by_id = function(id,new_block){
     console.log(new_block)
-    if(isMentor)
-        sql = `UPDATE Mentors SET blocked_users=blocked_users+',${new_block}' WHERE Mentors.user_id = ${id}`;    //starts with 1
+    if(isMentor){
+        sql = `UPDATE Mentors SET blocked_users=printf('%s,%s', blocked_users, ${new_block}) WHERE Mentors.user_id = ${id}`;    //starts with 1
+    }
     else
-        sql = `UPDATE Mentors SET blocked_users=blocked_users+',${new_block}' WHERE Mentees.user_id = ${id}`;    //starts with 2 
+        sql = `UPDATE Mentors SET blocked_users=printf('%s,%s', blocked_users, ${new_block}) WHERE Mentees.user_id = ${id}`;    //starts with 2 
 
     return sql; 
 }
