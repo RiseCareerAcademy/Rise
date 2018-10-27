@@ -96,7 +96,7 @@ module.exports.get_all_matches = function(){
 
 //get user Id 
 module.exports.get_user_id = function(id){
-    if(isMentor)
+    if(isMentor(id))
         sql = `SELECT * FROM Mentors where Mentors.user_id = ${id}`;    //starts with 1
     else
         sql = `SELECT * FROM Mentees where Mentees.user_id = ${id}`;    //starts with 2 
@@ -107,7 +107,7 @@ module.exports.get_user_id = function(id){
 
 //get email by Id 
 module.exports.get_email_by_id = function(id){
-    if(isMentor)
+    if(isMentor(id))
         sql = `SELECT email_adress FROM Mentors WHERE Mentors.user_id = ${id}`;    //starts with 1
     else
         sql = `SELECT email_adress FROM Mentees WHERE Mentees.user_id = ${id}`;    //starts with 2 
@@ -117,7 +117,7 @@ module.exports.get_email_by_id = function(id){
 
 //update email by Id 
 module.exports.update_email_by_id = function(id,email_address){
-    if(isMentor)
+    if(isMentor(id))
         sql = `UPDATE Mentors SET email_adress='${email_address}' WHERE Mentors.user_id = ${id}`;    //starts with 1
     else
         sql = `UPDATE Mentors SET email_adress='${email_address}' WHERE Mentees.user_id = ${id}`;    //starts with 2 
@@ -127,9 +127,12 @@ module.exports.update_email_by_id = function(id,email_address){
 
 //get hobbies by Id 
 module.exports.get_hobbies_by_id = function(id){
-    if(isMentor)
+    console.log(id)
+    if(isMentor(id))
+    
         sql = `SELECT hobbies FROM Mentors WHERE Mentors.user_id = ${id}`;    //starts with 1
     else
+        
         sql = `SELECT hobbies FROM Mentees WHERE Mentees.user_id = ${id}`;    //starts with 2 
 
     return sql; 
@@ -152,7 +155,7 @@ module.exports.update_hobbies_by_id = function(id,hobbies){
 
 //get blocked users by Id 
 module.exports.get_blocked_users_by_id = function(id){
-    if(isMentor)
+    if(isMentor(id))
         sql = `SELECT blocked_users FROM Mentors WHERE Mentors.user_id = ${id}`;    //starts with 1
     else
         sql = `SELECT blocked_userss FROM Mentees WHERE Mentees.user_id = ${id}`;    //starts with 2 
@@ -163,7 +166,7 @@ module.exports.get_blocked_users_by_id = function(id){
 //add blocked users by Id 
 module.exports.add_blocked_users_by_id = function(id,new_block){
     console.log(new_block)
-    if(isMentor){
+    if(isMentor(id)){
         sql = `UPDATE Mentors SET blocked_users=printf('%s,%s', blocked_users, ${new_block}) WHERE Mentors.user_id = ${id}`;    //starts with 1
     }
     else
