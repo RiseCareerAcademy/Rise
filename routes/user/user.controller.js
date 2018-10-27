@@ -1,14 +1,14 @@
-const User = require("./user.model.js");
+const User = require("./user.model.js"); /*DO WE NEED THIS?*/
 const jwt = require("jsonwebtoken");
 const config = require("../../config/database.js");
 const db = require('../../db');
 
+var user_sql_constants = require("../../config/user_sql_constants.js");
 
+//create new mentor
 module.exports.postMentors = (req, res) => {
-  
   const fields = ['user_id', 'first_name', 'last_name', 'email_address' ,'biography','zipcode',
-  'date_of_birth','occupation','skills','blocked_users','rating','profile_pic_URL','messages','hobbies'];
-
+  'date_of_birth','occupation','skills','blocked_users','rating','profile_pic_URL','match_key','hobbies'];
   const user = {};
   fields.forEach(field => {
     if (req.body[field] === undefined) {
@@ -18,10 +18,7 @@ module.exports.postMentors = (req, res) => {
     }
     user[field] = req.body[field];
   });
-  sql = `INSERT INTO Mentors VALUES ('${user.user_id}', '${user.first_name}', '${user.last_name}', '${user.email_address}', 
-    '${user.biography}', '${user.zipcode}', '${user.date_of_birth}', '${user.occupation}', '${user.skills}', 
-    '${user.blocked_users}', '${user.rating}', '${user.profile_pic_URL}', '${user.messages}', '${user.hobbies}') `
-  
+  sql = user_sql_constants.post_mentor_sql(user);
   console.log(sql);
   db.all(sql, [], (err, rows) => {
   if (err) {
@@ -30,11 +27,10 @@ module.exports.postMentors = (req, res) => {
   res.json({ success: true, rows: rows });
 });
 }
+//create new mentee
 module.exports.postMentees = (req, res) => {
-  
   const fields = ['user_id', 'first_name', 'last_name', 'email_address' ,'biography','zipcode',
-  'date_of_birth','area_of_study','skills','blocked_users','profile_pic_URL','messages','hobbies'];
-
+  'date_of_birth','area_of_study','skills','blocked_users','profile_pic_URL','match_key','hobbies'];
   const user = {};
   fields.forEach(field => {
     if (req.body[field] === undefined) {
@@ -44,10 +40,7 @@ module.exports.postMentees = (req, res) => {
     }
     user[field] = req.body[field];
   });
-  sql = `INSERT INTO Mentors VALUES ('${user.user_id}', '${user.first_name}', '${user.last_name}', '${user.email_address}', 
-    '${user.biography}', '${user.zipcode}', '${user.date_of_birth}', '${user.area_of_study}', '${user.skills}', 
-    '${user.blocked_users}', '${user.profile_pic_URL}', '${user.messages}', '${user.hobbies}') `
-  
+  sql = post_mentee_sql(user)
   console.log(sql);
   db.all(sql, [], (err, rows) => {
   if (err) {
@@ -56,9 +49,10 @@ module.exports.postMentees = (req, res) => {
   res.json({ success: true, rows: rows });
 });
 }
+//create new match 
 module.exports.postMatches = (req, res) => {
   
-  const fields = ['match_id', 'mentor_id', 'mentee_id'];
+  const fields = ['match_id', 'mentor_id', 'messages', 'mentee_id'];
 
   const user = {};
   fields.forEach(field => {
@@ -69,8 +63,8 @@ module.exports.postMatches = (req, res) => {
     }
     user[field] = req.body[field];
   });
-  sql = `INSERT INTO Mentors VALUES ('${user.match_id}', '${user.mentor_id}', '${user.mentee_id}')`
-  
+  sql = post_matches_sql(user);
+
   console.log(sql);
   db.all(sql, [], (err, rows) => {
   if (err) {
@@ -80,8 +74,9 @@ module.exports.postMatches = (req, res) => {
 });
 }
 
-module.exports.getMentors = (req, res) => {
-    sql = `SELECT * FROM Mentors;`;
+//get all mentors
+module.exports.getAllMentors = (req, res) => {
+    sql = get_all_mentors();
   
   db.all(sql, [], (err, rows) => {
     if (err) {
@@ -90,8 +85,9 @@ module.exports.getMentors = (req, res) => {
     res.json({ success: true, rows: rows });
   });
 }
-  module.exports.getMentees = (req, res) => {
-    sql = `SELECT * FROM Mentees;`;
+//get all mentees
+  module.exports.getAllMentees = (req, res) => {
+    sql = get_all_mentees();
   
   db.all(sql, [], (err, rows) => {
     if (err) {
@@ -100,8 +96,9 @@ module.exports.getMentors = (req, res) => {
     res.json({ success: true, rows: rows });
   });
 }
-  module.exports.getMatches = (req, res) => {
-    sql = `SELECT * FROM Matches;`;
+//get all matches 
+  module.exports.getAllMatches = (req, res) => {
+    sql = get_all_matches();
   
   db.all(sql, [], (err, rows) => {
     if (err) {

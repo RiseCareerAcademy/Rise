@@ -41,6 +41,10 @@ const UserSchema = new mongoose.Schema(
       type: String,
       unique: false
     },
+    match_key: {
+      type: String,
+      unique: false
+    },
     isStudent: {
       type: Boolean,
       unique: false
