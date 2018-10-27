@@ -52,8 +52,6 @@ module.exports.create_matches_table_sql = function()  {
     return sql; 
 }
 
-
-
 //create new mentor
 module.exports.post_mentor_sql = function(user)  {
     sql = `INSERT INTO Mentors VALUES ('${user.user_id}', '${user.first_name}', '${user.last_name}', '${user.email_address}', 
@@ -93,11 +91,5 @@ module.exports.get_all_mentees = function(){
 //get all matches 
 module.exports.get_all_matches = function(){
     sql = `SELECT * FROM Matches;`;    
-    return sql; 
-}
-
-//get user by id (join mentor or mentee)
-module.exports.get_all_matches = function(){
-    sql = `SELECT * FROM Mentors`;    
     return sql; 
 }
