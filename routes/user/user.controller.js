@@ -272,3 +272,17 @@ module.exports.addBlockedUsersById = (req, res) => {
   });
   
 }
+
+module.exports.getSkillbyId = (req, res) => {
+  
+  userID = req.params.id
+  sql = user_sql_constants.get_skill_by_id(userID);
+  
+  db.all(sql, [], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+    res.json({ success: true, rows: rows });
+  });
+  
+}

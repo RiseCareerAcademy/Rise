@@ -152,7 +152,7 @@ module.exports.update_hobbies_by_id = function(id,hobbies){
 
 //get blocked users by Id 
 module.exports.get_blocked_users_by_id = function(id){
-    if(isMentor)
+    if(isMentor(id))
         sql = `SELECT blocked_users FROM Mentors WHERE Mentors.user_id = ${id}`;    //starts with 1
     else
         sql = `SELECT blocked_userss FROM Mentees WHERE Mentees.user_id = ${id}`;    //starts with 2 
@@ -163,7 +163,7 @@ module.exports.get_blocked_users_by_id = function(id){
 //add blocked users by Id 
 module.exports.add_blocked_users_by_id = function(id,new_block){
     console.log(new_block)
-    if(isMentor){
+    if(isMentor(id)){
         sql = `UPDATE Mentors SET blocked_users=printf('%s,%s', blocked_users, ${new_block}) WHERE Mentors.user_id = ${id}`;    //starts with 1
     }
     else
@@ -176,4 +176,14 @@ function isMentor(id){
     while(id>10)
         id/=10
     return (Math.floor(id)==1)
+}
+
+
+module.exports.get_skill_by_id = function(id){
+    if(isMentor(id))
+        sql = `SELECT skills FROM Mentors WHERE Mentors.user_id = ${id}`;    //starts with 1
+    else
+        sql = `SELECT skills FROM Mentees WHERE Mentees.user_id = ${id}`;    //starts with 2 
+
+    return sql; 
 }
