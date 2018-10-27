@@ -51,8 +51,8 @@ export default class HomeScreen extends React.Component {
         this.setState({ image: result.uri });
       }
   }
-
   render() {
+
     let { image } = this.state;
     const { navigate } = this.props.navigation;
     return (
