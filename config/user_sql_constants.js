@@ -93,3 +93,17 @@ module.exports.get_all_matches = function(){
     sql = `SELECT * FROM Matches;`;    
     return sql; 
 }
+
+//get user Id 
+module.exports.get_user_id = function(id){
+    i=id;
+    while(i>10)
+        i/=10
+    console.log(i)
+    if(Math.floor(i)==1)
+        sql = `SELECT * FROM Mentors where Mentors.user_id = ${id}`;    //starts with 1
+    else
+        sql = `SELECT * FROM Mentees where Mentees.user_id = ${id}`;    //starts with 2 
+
+    return sql; 
+}

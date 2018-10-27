@@ -20,3 +20,7 @@ router.post('/matches', controller.postMatches);
 router.get('/mentor',controller.getAllMentors);
 router.get('/mentee',controller.getAllMentees);  
 router.get('/matches',controller.getAllMatches);
+
+
+//get user by id
+router.get("/:id", controller.getUserById);

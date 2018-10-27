@@ -53,7 +53,6 @@ module.exports.deletetable = (req, res) => {
   });
 }
 
-
 //create new mentor
 module.exports.postMentors = (req, res) => {
   const fields = ['user_id', 'first_name', 'last_name', 'email_address' ,'biography','zipcode',
@@ -124,7 +123,6 @@ module.exports.postMatches = (req, res) => {
   res.json({ success: true, rows: rows });
 });
 }
-
 //get all mentors
 module.exports.getAllMentors = (req, res) => {
     sql = user_sql_constants.get_all_mentors();
@@ -157,6 +155,21 @@ module.exports.getAllMentors = (req, res) => {
     }
     res.json({ success: true, rows: rows });
   });
+}
+
+//get user by ID
+module.exports.getUserById = (req, res) => {
+  
+  userId = req.params.id
+  sql = user_sql_constants.get_user_id(userId);
+  
+  db.all(sql, [], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+    res.json({ success: true, rows: rows });
+  });
+  
 }
 
 
