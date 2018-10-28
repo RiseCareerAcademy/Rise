@@ -197,9 +197,9 @@ module.exports.get_skill_by_id = function(id){
 
 module.exports.add_skill = function(id,new_skill){
     if(isMentor(id))
-        sql = `UPDATE Mentors SET skills = printf('%s,%s', skills, ${new_skill}) WHERE user_id = ${id}`;    //starts with 1
+        sql = `UPDATE Mentors SET skills = printf('%s,%s', skills, '${new_skill}') WHERE user_id = ${id}`;    //starts with 1
     else
-        sql = `UPDATE Mentees SET skills = printf('%s,%s', skills, ${new_skill}) WHERE user_id = ${id}`;    //starts with 2 
+        sql = `UPDATE Mentees SET skills = printf('%s,%s', skills, '${new_skill}') WHERE user_id = ${id}`;    //starts with 2 
     return sql; 
     }
 

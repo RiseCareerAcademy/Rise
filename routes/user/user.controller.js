@@ -269,10 +269,10 @@ module.exports.getSkillbyId = (req, res) => {
 }
 
 module.exports.addSkill = (req, res) => {
-  
   userID = req.params.id
   new_skill = req.params.skill
   sql = user_sql_constants.add_skill(userID,new_skill);
+  
   
   db.all(sql, [], (err, rows) => {
     if (err) {
