@@ -2,7 +2,7 @@
 import React from "react";
 import { Button, Text } from "native-base";
 import { Platform, ScrollView, StyleSheet, Image, View } from "react-native";
-import { AuthSession, ImagePicker } from "expo";
+import { AuthSession, ImagePicker, Permissions } from "expo";
 import { MonoText } from "../components/StyledText";
 
 export default class HomeScreen extends React.Component {
@@ -42,14 +42,19 @@ export default class HomeScreen extends React.Component {
   }
 
   handleImagePickerPress = async () => {
-     let result = await ImagePicker.launchImageLibraryAsync({
-       allowsEditing: true,//Android editing only
-       aspect: [4, 3], //Aspect ratio to maintain if user allowed to edit image
-     });
-     console.log(result); //check output
-      if (!result.cancelled) {
-        this.setState({ image: result.uri });
-      }
+    const { status: cameraPerm } = await Permissions.askAsync(Permissions.CAMERA);
+    const { status: cameraRollPerm } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+
+    if (cameraPerm === 'granted' && cameraRollPerm === 'granted') {
+      let result = await ImagePicker.launchImageLibraryAsync({
+        allowsEditing: true,//Android editing only
+        aspect: [4, 3], //Aspect ratio to maintain if user allowed to edit image
+      });
+      console.log(result); //check output
+       if (!result.cancelled) {
+         this.setState({ image: result.uri });
+       }
+    }
   }
   render() {
 
