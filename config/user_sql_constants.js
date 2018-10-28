@@ -283,7 +283,8 @@ module.exports.update_zip = function(id,new_zip){
     return sql; 
 }
 
-module.exports.get_match_by_id = function(){
+//get match by id
+module.exports.get_match_by_id = function(id){
     sql = `SELECT * FROM Matches WHERE match_id = ${id};`;    
     return sql; 
 }
