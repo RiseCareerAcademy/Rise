@@ -98,30 +98,7 @@ module.exports.postMentees = (req, res) => {
   res.json({ success: true, rows: rows });
 });
 }
-//create new match 
-module.exports.postMatches = (req, res) => {
-  
-  const fields = ['match_id', 'mentor_id', 'messages', 'mentee_id'];
 
-  const user = {};
-  fields.forEach(field => {
-    if (req.body[field] === undefined) {
-     res
-        .status(500)
-        .json({ error: "Missing credentials", success: false });
-    }
-    user[field] = req.body[field];
-  });
-  sql = user_sql_constants.post_matches_sql(user);
-
-  console.log(sql);
-  db.all(sql, [], (err, rows) => {
-  if (err) {
-    throw err;
-  }
-  res.json({ success: true, rows: rows });
-});
-}
 //get all mentors
 module.exports.getAllMentors = (req, res) => {
     sql = user_sql_constants.get_all_mentors();
@@ -144,17 +121,7 @@ module.exports.getAllMentors = (req, res) => {
     res.json({ success: true, rows: rows });
   });
 }
-//get all matches 
-  module.exports.getAllMatches = (req, res) => {
-    sql = user_sql_constants.get_all_matches();
-  
-  db.all(sql, [], (err, rows) => {
-    if (err) {
-      throw err;
-    }
-    res.json({ success: true, rows: rows });
-  });
-}
+
 
 //get user by ID
 module.exports.getUserById = (req, res) => {
@@ -171,6 +138,21 @@ module.exports.getUserById = (req, res) => {
   
 }
 
+//todo: get email by id, and check if its the same as one passed in param 
+module.exports.checkEmail = (req, res) => {
+  userID = req.params.id;
+  email = req.params.email;
+
+  sql = user_sql_constants.confirm_email(userID,email);
+  
+  db.all(sql, [], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+    res.json({ success: true, rows: rows });
+  });
+  
+}
 
 module.exports.getEmailById = (req, res) => {
   
@@ -189,7 +171,7 @@ module.exports.getEmailById = (req, res) => {
 module.exports.updateEmailById = (req, res) => {
   
   userID = req.params.id
-  newEmail = req.body["email_address"]
+  newEmail = req.params.email
   sql = user_sql_constants.update_email_by_id(userID,newEmail);
   
   db.all(sql, [], (err, rows) => {
@@ -216,9 +198,8 @@ module.exports.getHobbiesById = (req, res) => {
 }
 
 module.exports.updateHobbiesById = (req, res) => {
-  
   userID = req.params.id
-  hobbies = req.body["hobbies"]
+  hobbies = req.params.hobby
   sql = user_sql_constants.update_hobbies_by_id(userID,hobbies);
   
   db.all(sql, [], (err, rows) => {
@@ -261,7 +242,7 @@ module.exports.getBlockedUsersById = (req, res) => {
 module.exports.addBlockedUsersById = (req, res) => {
   
   userID = req.params.id
-  new_block = req.params.block_id
+  new_block = req.params.blockid
   sql = user_sql_constants.add_blocked_users_by_id(userID,new_block);
   
   db.all(sql, [], (err, rows) => {
@@ -277,6 +258,132 @@ module.exports.getSkillbyId = (req, res) => {
   
   userID = req.params.id
   sql = user_sql_constants.get_skill_by_id(userID);
+  
+  db.all(sql, [], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+    res.json({ success: true, rows: rows });
+  });
+  
+}
+
+module.exports.addSkill = (req, res) => {
+  
+  userID = req.params.id
+  new_skill = req.params.skill
+  sql = user_sql_constants.add_skill(userID,new_skill);
+  
+  db.all(sql, [], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+    res.json({ success: true, rows: rows });
+  });
+  
+}
+
+
+
+module.exports.getProfilePic = (req, res) => {
+  userID = req.params.id;
+  sql = user_sql_constants.get_profile_pic(userID);
+  
+  db.all(sql, [], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+    res.json({ success: true, rows: rows });
+  });
+  
+}
+
+module.exports.updateProfilePic = (req, res) => {
+  userID = req.params.id;
+  profile_pic = req.params.profilepic;
+  sql = user_sql_constants.update_profile_pic(userID,profile_pic);
+  
+  db.all(sql, [], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+    res.json({ success: true, rows: rows });
+  });
+  
+}
+
+module.exports.getProfession = (req, res) => {
+  userID = req.params.id;
+  sql = user_sql_constants.get_profession(userID);
+  
+  db.all(sql, [], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+    res.json({ success: true, rows: rows });
+  });
+  
+}
+
+module.exports.updateProfession = (req, res) => {
+  userID = req.params.id;
+  prof = req.params.profession;
+  sql = user_sql_constants.update_profession(userID,prof);
+  
+  db.all(sql, [], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+    res.json({ success: true, rows: rows });
+  });
+  
+}
+
+module.exports.getBio = (req, res) => {
+  userID = req.params.id;
+  sql = user_sql_constants.get_bio(userID);
+  
+  db.all(sql, [], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+    res.json({ success: true, rows: rows });
+  });
+  
+}
+
+module.exports.updateBio = (req, res) => {
+  userID = req.params.id;
+  bio = req.params.bio;
+  sql = user_sql_constants.update_bio(userID,bio);
+  
+  db.all(sql, [], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+    res.json({ success: true, rows: rows });
+  });
+  
+}
+
+module.exports.deleteBio = (req, res) => {
+  
+  userID = req.params.id
+  sql = user_sql_constants.delete_bio(userID);
+  
+  db.all(sql, [], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+    res.json({ success: true, rows: rows });
+  });
+  
+}
+
+module.exports.updateZipcode = (req, res) => {
+  userID = req.params.id;
+  zip = req.params.zipcode;
+  sql = user_sql_constants.update_zip(userID,zip);
   
   db.all(sql, [], (err, rows) => {
     if (err) {
