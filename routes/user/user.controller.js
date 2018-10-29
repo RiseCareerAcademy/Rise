@@ -374,3 +374,18 @@ module.exports.updateZipcode = (req, res) => {
   });
   
 }
+
+module.exports.login = (req, res) => {
+  email = req.body.email_address;
+  password = req.body.password;
+  console.log(req.params)
+  sql = user_sql_constants.login(email,password);
+  
+  db.all(sql, [], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+    res.json({ success: true, rows: rows });
+  });
+  
+}

@@ -7,7 +7,7 @@ module.exports.create_mentee_table_sql = function()  {
             user_id int NOT NULL UNIQUE,
             first_name varchar(255) NOT NULL,
             last_name varchar(255) NOT NULL,
-            email_adress varchar(255) NOT NULL UNIQUE,
+            email_address varchar(255) NOT NULL UNIQUE,
             biography varchar(255),
             zipcode varchar(5) NOT NULL,
             date_of_birth DATE NOT NULL,
@@ -27,7 +27,7 @@ module.exports.create_mentor_table_sql = function()  {
         user_id int NOT NULL UNIQUE,
         first_name varchar(255) NOT NULL,
         last_name varchar(255) NOT NULL,
-        email_adress varchar(255) NOT NULL UNIQUE,
+        email_address varchar(255) NOT NULL UNIQUE,
         biography varchar(255),
         zipcode varchar(5) NOT NULL,
         date_of_birth DATE NOT NULL,
@@ -133,9 +133,9 @@ module.exports.confirm_email = function(id,email){
 //get email by Id 
 module.exports.get_email_by_id = function(id){
     if(isMentor(id))
-        sql = `SELECT email_adress FROM Mentors WHERE user_id = ${id}`;    //starts with 1
+        sql = `SELECT email_address FROM Mentors WHERE user_id = ${id}`;    //starts with 1
     else
-        sql = `SELECT email_adress FROM Mentees WHERE user_id = ${id}`;    //starts with 2 
+        sql = `SELECT email_address FROM Mentees WHERE user_id = ${id}`;    //starts with 2 
 
     return sql; 
 }
@@ -143,9 +143,9 @@ module.exports.get_email_by_id = function(id){
 //update email by Id 
 module.exports.update_email_by_id = function(id,email_address){
     if(isMentor(id))
-        sql = `UPDATE Mentors SET email_adress='${email_address}' WHERE user_id = ${id}`;    //starts with 1
+        sql = `UPDATE Mentors SET email_address='${email_address}' WHERE user_id = ${id}`;    //starts with 1
     else
-        sql = `UPDATE Mentees SET email_adress='${email_address}' WHERE user_id = ${id}`;    //starts with 2 
+        sql = `UPDATE Mentees SET email_address='${email_address}' WHERE user_id = ${id}`;    //starts with 2 
 
     return sql; 
 }
@@ -302,5 +302,13 @@ module.exports.update_zip = function(id,new_zip){
 //get match by id
 module.exports.get_match_by_id = function(id){
     sql = `SELECT * FROM Matches WHERE match_id = ${id};`;    
+    return sql; 
+}
+
+//get match by id
+module.exports.login = function(email,password){
+    console.log(email)
+    sql = `SELECT COUNT(*) FROM (SELECT * FROM Mentors WHERE email_address='${email}' AND password='${password}');`;    
+
     return sql; 
 }
