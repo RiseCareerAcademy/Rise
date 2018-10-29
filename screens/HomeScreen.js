@@ -29,7 +29,7 @@ export default class HomeScreen extends React.Component {
     `&state=${encodeURIComponent(state)}`;
 
     // Use Expo's AuthSession to connect with the Linkedin API
-    // For more details: https://docs.expo.io/versions/latest/sdk/auth-session
+    // For more details: https://i.expo.io/versions/latest/sdk/auth-session
     const result = await AuthSession.startAsync({ authUrl });
     const { params: { state: responseState, code } } = result;
     let validState = true;
@@ -41,24 +41,7 @@ export default class HomeScreen extends React.Component {
     this.setState({ result, authUrl, validState, responseState, state });
   }
 
-  handleImagePickerPress = async () => {
-    const { status: cameraPerm } = await Permissions.askAsync(Permissions.CAMERA);
-    const { status: cameraRollPerm } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
-
-    if (cameraPerm === 'granted' && cameraRollPerm === 'granted') {
-      let result = await ImagePicker.launchImageLibraryAsync({
-        allowsEditing: true,//Android editing only
-        aspect: [4, 3], //Aspect ratio to maintain if user allowed to edit image
-      });
-      console.log(result); //check output
-       if (!result.cancelled) {
-         this.setState({ image: result.uri });
-       }
-    }
-  }
   render() {
-
-    let { image } = this.state;
     const { navigate } = this.props.navigation;
     return (
       <View style={styles.container}>
@@ -75,17 +58,6 @@ export default class HomeScreen extends React.Component {
             <Button full dark onPress={this.handleMentorPress}>
               <Text>Mentor</Text>
             </Button>
-
-            <Button
-              full dark
-             onPress={this.handleImagePickerPress}
-            >
-              <Text>Pick an image from camera roll</Text>
-            </Button>
-
-            <View>
-         {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
-            </View>
 
           <View>
             <Button full light onPress={() =>
@@ -105,7 +77,7 @@ export default class HomeScreen extends React.Component {
           }>
             <Text>SIGN IN</Text>
           </Button>
-          {this.state.validState !== undefined ? (
+          {this.state.validi !== undefined ? (
           <Text>{JSON.stringify(this.state.validState) + '\nRequestState: ' + this.state.state + '\nResponseState: ' + this.state.responseState}</Text>
           ) : null}
           {this.state.authUrl ? (

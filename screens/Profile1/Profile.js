@@ -1,6 +1,9 @@
 import React, { Component } from 'react'
+import { Text } from "native-base";
 import { Card, Icon, SearchBar } from 'react-native-elements'
-import {
+import { ImagePicker, Permissions } from 'expo'
+import{
+  Button,
   Image,
   ImageBackground,
   Linking,
@@ -8,9 +11,8 @@ import {
   Platform,
   ScrollView,
   StyleSheet,
-  Text,
-  View,
-} from 'react-native'
+  View
+} from 'react-native';
 
 import mainColor from './constants'
 
@@ -118,6 +120,25 @@ class Contact extends Component {
     }).cloneWithRows(this.props.emails),
   }
 
+
+  handleImagePickerPress = async () => {
+    const { status: cameraPerm } = await Permissions.askAsync(Permissions.CAMERA);
+    const { status: cameraRollPerm } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+
+    if (cameraPerm === 'granted' && cameraRollPerm === 'granted') {
+      let result = await ImagePicker.launchImageLibraryAsync({
+        allowsEditing: true,//Android editing only
+        aspect: [4, 3], //Aspect ratio to maintain if user allowed to edit image
+      });
+      console.log(result); //check output
+       if (!result.cancelled) {
+         this.setState({ image: result.uri });
+       }
+    }
+  }
+
+
+
   onPressPlace = () => {
     console.log('place')
   }
@@ -138,6 +159,7 @@ class Contact extends Component {
 
   renderHeader = () => {
     const {
+      image,
       avatar,
       avatarBackground,
       name,
@@ -159,6 +181,7 @@ class Contact extends Component {
             uri: avatarBackground,
           }}
         >
+
           <View style={styles.headerColumn}>
             <Image
               style={styles.userImage}
@@ -166,6 +189,19 @@ class Contact extends Component {
                 uri: avatar,
               }}
             />
+
+            <Button
+              full dark
+              title= "Select image from Camera Roll"
+             onPress={this.handleImagePickerPress}
+            >
+              <Text>Pick an image from camera roll</Text>
+            </Button>
+
+            <View>
+         {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
+            </View>
+
             <Text style={styles.userNameText}>{name}</Text>
             <View style={styles.userAddressRow}>
               <View>
@@ -239,6 +275,7 @@ class Contact extends Component {
   )
 
   render() {
+    let { image } = this.state;
     return (
       <ScrollView style={styles.scroll}>
         <View style={styles.container}>
