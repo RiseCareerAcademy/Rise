@@ -13,7 +13,6 @@ module.exports.create_mentee_table_sql = function()  {
             date_of_birth DATE NOT NULL,
             area_of_study varchar(255) NOT NULL,
             skills varchar(255) NOT NULL,
-            blocked_users varchar(255) NOT NULL,
             profile_pic_URL varchar(255) NOT NULL,
             match_key varchar(255),
             hobbies varchar(255) 
@@ -33,7 +32,6 @@ module.exports.create_mentor_table_sql = function()  {
         date_of_birth DATE NOT NULL,
         occupation varchar(255) NOT NULL,
         skills varchar(255) NOT NULL,
-        blocked_users varchar(255) NOT NULL,
         rating int NOT NULL,
         profile_pic_URL varchar(255) NOT NULL,
         match_key varchar(255),

@@ -39,11 +39,6 @@ router.put("/:id/hobbies/:hobby", controller.updateHobbiesById);
 //delete hobbies by id
 router.delete("/:id/hobbies", controller.deleteHobbiesById);
 
-//get blocked users by id
-router.get("/:id/blockedusers", controller.getBlockedUsersById);
-//add blocked users by id
-router.put("/:id/blockedusers/:blockid", controller.addBlockedUsersById);
-
 
 //get skill by id 
 router.get("/:id/skills", controller.getSkillbyId);

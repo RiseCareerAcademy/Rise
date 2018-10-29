@@ -63,7 +63,7 @@ module.exports.deletetable = (req, res) => {
 //create new mentor
 module.exports.postMentors = (req, res) => {
   const fields = ['user_id', 'first_name', 'last_name', 'email_address' ,'biography','zipcode',
-  'date_of_birth','occupation','skills','blocked_users','rating','profile_pic_URL','match_key','hobbies'];
+  'date_of_birth','occupation','skills','rating','profile_pic_URL','match_key','hobbies'];
   const user = {};
   fields.forEach(field => {
     
@@ -87,7 +87,7 @@ module.exports.postMentors = (req, res) => {
 //create new mentee
 module.exports.postMentees = (req, res) => {
   const fields = ['user_id', 'first_name', 'last_name', 'email_address' ,'biography','zipcode',
-  'date_of_birth','area_of_study','skills','blocked_users','profile_pic_URL','match_key','hobbies'];
+  'date_of_birth','area_of_study','skills','profile_pic_URL','match_key','hobbies'];
   const user = {};
   fields.forEach(field => {
     if (req.body[field] === undefined) {
@@ -233,34 +233,6 @@ module.exports.deleteHobbiesById = (req, res) => {
   
 }
 
-module.exports.getBlockedUsersById = (req, res) => {
-  
-  userID = req.params.id
-  sql = user_sql_constants.get_blocked_users_by_id(userID);
-  
-  db.all(sql, [], (err, rows) => {
-    if (err) {
-      throw err;
-    }
-    res.json({ success: true, rows: rows });
-  });
-  
-}
-
-module.exports.addBlockedUsersById = (req, res) => {
-  
-  userID = req.params.id
-  new_block = req.params.blockid
-  sql = user_sql_constants.add_blocked_users_by_id(userID,new_block);
-  
-  db.all(sql, [], (err, rows) => {
-    if (err) {
-      throw err;
-    }
-    res.json({ success: true, rows: rows });
-  });
-  
-}
 
 module.exports.getSkillbyId = (req, res) => {
   

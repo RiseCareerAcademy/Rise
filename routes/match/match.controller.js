@@ -7,7 +7,7 @@ var user_sql_constants = require("../../config/user_sql_constants.js");
 //create new match 
 module.exports.postMatches = (req, res) => {
   
-    const fields = ['match_id', 'mentor_id', 'messages', 'mentee_id'];
+    const fields = ['match_id', 'mentor_id', 'mentee_id'];
   
     const user = {};
     fields.forEach(field => {

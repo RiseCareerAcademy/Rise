@@ -6,3 +6,6 @@ module.exports.router = router;
 
 //create a new message 
 router.post('/message', controller.postMessage);
+
+//get all messages 
+router.get('/messages', controller.getMessages);
