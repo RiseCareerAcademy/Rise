@@ -63,11 +63,11 @@ module.exports.deletetable = (req, res) => {
 //create new mentor
 module.exports.postMentors = (req, res) => {
   const fields = ['user_id', 'first_name', 'last_name', 'email_address' ,'biography','zipcode',
-  'date_of_birth','occupation','skills','profile_pic_URL','match_key','hobbies'];
+  'date_of_birth','occupation','skills','profile_pic_URL','match_key','hobbies','password'];
   const user = {};
-  console.log(req.body)
+  
   fields.forEach(field => {
-    
+  console.log(field,req.body)
   console.log(field,req.body[field])
     if (req.body[field] === undefined) {
      res
@@ -88,7 +88,7 @@ module.exports.postMentors = (req, res) => {
 //create new mentee
 module.exports.postMentees = (req, res) => {
   const fields = ['user_id', 'first_name', 'last_name', 'email_address' ,'biography','zipcode',
-  'date_of_birth','area_of_study','skills','profile_pic_URL','match_key','hobbies'];
+  'date_of_birth','area_of_study','skills','profile_pic_URL','match_key','hobbies','password'];
   const user = {};
   fields.forEach(field => {
     if (req.body[field] === undefined) {

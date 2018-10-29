@@ -11,7 +11,8 @@
     "skills": "JAVA",
     "profile_pic_URL": "katwal",
     "match_key": "4334",
-    "hobbies": "hi"
+    "hobbies": "hi",
+    "password" : "npasdqnonwd"
 }
 
 
@@ -28,7 +29,8 @@
     "skills": "JAVA",
     "profile_pic_URL": "bill.com",
     "match_key": "4334",
-    "hobbies": "testiing hobbies"
+    "hobbies": "testiing hobbies",
+    "password": "qwerty"
 }
 
 

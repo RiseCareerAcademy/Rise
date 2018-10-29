@@ -70,3 +70,7 @@ router.delete("/:id/bio", controller.deleteBio);
 
 //update zipcode
 router.put("/:id/zipcode/:zipcode",controller.updateZipcode);
+
+//update zipcode
+//router.put("/login",controller.login);
+

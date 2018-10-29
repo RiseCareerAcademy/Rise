@@ -15,7 +15,8 @@ module.exports.create_mentee_table_sql = function()  {
             skills varchar(255) NOT NULL,
             profile_pic_URL varchar(255) NOT NULL,
             match_key varchar(255),
-            hobbies varchar(255) 
+            hobbies varchar(255),
+            password varchar(255) 
         );`
     return sql; 
 }
@@ -34,7 +35,8 @@ module.exports.create_mentor_table_sql = function()  {
         skills varchar(255) NOT NULL,
         profile_pic_URL varchar(255) NOT NULL,
         match_key varchar(255),
-        hobbies varchar(255)
+        hobbies varchar(255),
+        password varchar(255) 
     );`
     return sql; 
 }
@@ -64,7 +66,7 @@ module.exports.create_messages_table_sql = function()  {
 module.exports.post_mentor_sql = function(user)  {
     sql = `INSERT INTO Mentors VALUES ('${user.user_id}', '${user.first_name}', '${user.last_name}', '${user.email_address}', 
     '${user.biography}', '${user.zipcode}', '${user.date_of_birth}', '${user.occupation}', '${user.skills}', 
-      '${user.profile_pic_URL}', '${user.match_key}', '${user.hobbies}') `
+      '${user.profile_pic_URL}', '${user.match_key}', '${user.hobbies}' ,'${user.password}') `
 
     return sql; 
 }
@@ -73,7 +75,7 @@ module.exports.post_mentor_sql = function(user)  {
 module.exports.post_mentee_sql = function(user)  {
     sql = `INSERT INTO Mentees VALUES ('${user.user_id}', '${user.first_name}', '${user.last_name}', '${user.email_address}', 
     '${user.biography}', '${user.zipcode}', '${user.date_of_birth}', '${user.area_of_study}', '${user.skills}', 
-     '${user.profile_pic_URL}', '${user.match_key}', '${user.hobbies}') `
+     '${user.profile_pic_URL}', '${user.match_key}', '${user.hobbies}','${user.password}') `
 
     return sql; 
 }
