@@ -306,9 +306,10 @@ module.exports.get_match_by_id = function(id){
 }
 
 //get match by id
-module.exports.login = function(email,password){
-    console.log(email)
-    sql = `SELECT COUNT(*) FROM (SELECT * FROM Mentors WHERE email_address='${email}' AND password='${password}');`;    
-
+module.exports.login = function(email,password,userType){
+    if(userType==1)
+        sql = `SELECT COUNT(*) FROM (SELECT * FROM Mentors WHERE email_address='${email}' AND password='${password}');`;    
+    else
+        sql = `SELECT COUNT(*) FROM (SELECT * FROM Mentees WHERE email_address='${email}' AND password='${password}');`; 
     return sql; 
 }

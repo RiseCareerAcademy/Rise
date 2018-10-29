@@ -378,8 +378,9 @@ module.exports.updateZipcode = (req, res) => {
 module.exports.login = (req, res) => {
   email = req.body.email_address;
   password = req.body.password;
+  userType = req.body.userType;
   console.log(req.params)
-  sql = user_sql_constants.login(email,password);
+  sql = user_sql_constants.login(email,password,userType);
   
   db.all(sql, [], (err, rows) => {
     if (err) {
