@@ -1,6 +1,23 @@
 import React from "react";
-import { Button, Text, Container, Header, Content, Form, Item, Label, Input } from "native-base";
-import { Platform, ScrollView, StyleSheet, Image, TextInput, View } from "react-native";
+import {
+  Button,
+  Text,
+  Container,
+  Header,
+  Content,
+  Form,
+  Item,
+  Label,
+  Input
+} from "native-base";
+import {
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Image,
+  TextInput,
+  View
+} from "react-native";
 import { AuthSession } from "expo";
 
 import { MonoText } from "../components/StyledText";
@@ -8,18 +25,28 @@ import { MonoText } from "../components/StyledText";
 export default class MentorRegistration extends React.Component {
   constructor(props) {
     super(props);
-    
+
     this.state = {
-      result: null,
+      result: null
     };
   }
+
+ 
 
   render() {
     const { navigate } = this.props.navigation;
     return (
-      <Container>
+      <Container style={styles.container}>
         <Content>
           <Form>
+            <Item stackedLabel>
+              <Label>Username</Label>
+              <Input placeholder="Enter your email" />
+            </Item>
+            <Item stackedLabel last>
+              <Label>Password</Label>
+              <Input placeholder="Enter your password" />
+            </Item>
             <Item stackedLabel>
               <Label>Skills</Label>
               <Input placeholder="Enter skills you want to learn" />
@@ -31,12 +58,10 @@ export default class MentorRegistration extends React.Component {
           </Form>
         </Content>
         <View>
-        <Button full light onPress={() =>
-          navigate('Main')
-        }>
-          <Text style={styles.greyText}>Next</Text>
-        </Button>
-      </View>
+          <Button full light onPress={() => navigate("Main")}>
+            <Text style={styles.greyText}>Next</Text>
+          </Button>
+        </View>
       </Container>
     );
   }
@@ -49,9 +74,9 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center"
   },
   center: {
     flex: 1,
@@ -66,5 +91,8 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     paddingTop: 30
+  },
+  container: {
+    margin: 5,
   },
 });
