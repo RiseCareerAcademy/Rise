@@ -201,6 +201,7 @@ class Contact extends Component {
       </View>
     )
   }
+
   renderTel = () => (
     <ListView
       contentContainerStyle={styles.telContainer}

@@ -9,6 +9,7 @@ import SettingsScreen from '../screens/SettingsScreen';
 import { Icon } from 'expo';
 import Colors from '../constants/Colors';
 import ProfileScreen from '../screens/Profile1';
+import Messages from '../screens/Messages';
 
 const ProfileStack = createStackNavigator({
   Profile: ProfileScreen,
@@ -44,7 +45,7 @@ SuggestedMatchStack.navigationOptions = {
 };
 
 const MessageStack = createStackNavigator({
-  Settings: SettingsScreen,
+  Main: Messages,
 });
 
 MessageStack.navigationOptions = {
