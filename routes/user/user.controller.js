@@ -65,8 +65,9 @@ module.exports.postMentors = (req, res) => {
   const fields = ['user_id', 'first_name', 'last_name', 'email_address' ,'biography','zipcode',
   'date_of_birth','occupation','skills','blocked_users','rating','profile_pic_URL','match_key','hobbies'];
   const user = {};
-  console.log(req)
   fields.forEach(field => {
+    
+  console.log(field,req.body[field])
     if (req.body[field] === undefined) {
      res
         .status(500)
@@ -391,6 +392,20 @@ module.exports.updateZipcode = (req, res) => {
   userID = req.params.id;
   zip = req.params.zipcode;
   sql = user_sql_constants.update_zip(userID,zip);
+  
+  db.all(sql, [], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+    res.json({ success: true, rows: rows });
+  });
+  
+}
+
+module.exports.updateRating = (req, res) => {
+  userID = req.params.id;
+  rating = req.params.zipcode;
+  sql = user_sql_constants.update_rating(userID,rating);
   
   db.all(sql, [], (err, rows) => {
     if (err) {

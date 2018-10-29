@@ -75,3 +75,6 @@ router.delete("/:id/bio", controller.deleteBio);
 
 //update zipcode
 router.put("/:id/zipcode/:zipcode",controller.updateZipcode);
+
+//update rating
+router.put("/:id/rating",controller.updateRating);
