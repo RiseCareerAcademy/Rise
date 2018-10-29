@@ -32,7 +32,6 @@ module.exports.create_mentor_table_sql = function()  {
         date_of_birth DATE NOT NULL,
         occupation varchar(255) NOT NULL,
         skills varchar(255) NOT NULL,
-        rating int NOT NULL,
         profile_pic_URL varchar(255) NOT NULL,
         match_key varchar(255),
         hobbies varchar(255)
@@ -65,7 +64,7 @@ module.exports.create_messages_table_sql = function()  {
 module.exports.post_mentor_sql = function(user)  {
     sql = `INSERT INTO Mentors VALUES ('${user.user_id}', '${user.first_name}', '${user.last_name}', '${user.email_address}', 
     '${user.biography}', '${user.zipcode}', '${user.date_of_birth}', '${user.occupation}', '${user.skills}', 
-    '${user.blocked_users}', '${user.rating}', '${user.profile_pic_URL}', '${user.match_key}', '${user.hobbies}') `
+      '${user.profile_pic_URL}', '${user.match_key}', '${user.hobbies}') `
 
     return sql; 
 }
@@ -74,7 +73,7 @@ module.exports.post_mentor_sql = function(user)  {
 module.exports.post_mentee_sql = function(user)  {
     sql = `INSERT INTO Mentees VALUES ('${user.user_id}', '${user.first_name}', '${user.last_name}', '${user.email_address}', 
     '${user.biography}', '${user.zipcode}', '${user.date_of_birth}', '${user.area_of_study}', '${user.skills}', 
-    '${user.blocked_users}', '${user.profile_pic_URL}', '${user.match_key}', '${user.hobbies}') `
+     '${user.profile_pic_URL}', '${user.match_key}', '${user.hobbies}') `
 
     return sql; 
 }
@@ -301,11 +300,5 @@ module.exports.update_zip = function(id,new_zip){
 //get match by id
 module.exports.get_match_by_id = function(id){
     sql = `SELECT * FROM Matches WHERE match_id = ${id};`;    
-    return sql; 
-}
-
-//update rating
-module.exports.update_rating = function(id,rating){
-    sql = `UPDATE Mentors SET rating =(rating+'${rating}')/2 WHERE user_id = ${id}`;    
     return sql; 
 }

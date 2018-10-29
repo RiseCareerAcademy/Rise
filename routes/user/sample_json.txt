@@ -1,5 +1,4 @@
 //MENTOR
-
 {
     "user_id": 10101,
     "first_name": "mayank", 
@@ -10,8 +9,6 @@
     "date_of_birth": "12/24/1996",
     "occupation": "Software Engineering", 
     "skills": "JAVA",
-    "blocked_users": "22332", 
-    "rating": 4,
     "profile_pic_URL": "katwal",
     "match_key": "4334",
     "hobbies": "hi"
@@ -29,7 +26,6 @@
     "date_of_birth": "2/24/1996",
     "area_of_study": "Computer Science", 
     "skills": "JAVA",
-    "blocked_users": "22332", 
     "profile_pic_URL": "bill.com",
     "match_key": "4334",
     "hobbies": "testiing hobbies"
