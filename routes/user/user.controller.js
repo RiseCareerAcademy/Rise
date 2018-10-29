@@ -10,6 +10,8 @@ module.exports.createTables = (req, res) => {
   sql1 = user_sql_constants.create_mentor_table_sql();
   sql2 = user_sql_constants.create_mentee_table_sql();
   sql3 = user_sql_constants.create_matches_table_sql();
+  sql4 = user_sql_constants.create_messages_table_sql();
+
 
   db.all(sql1, [], (err, rows) => {
     if (err) {
@@ -22,6 +24,11 @@ module.exports.createTables = (req, res) => {
     }
   });
   db.all(sql3, [], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+  });
+  db.all(sql4, [], (err, rows) => {
     if (err) {
       throw err;
     }

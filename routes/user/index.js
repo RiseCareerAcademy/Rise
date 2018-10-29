@@ -4,7 +4,7 @@ const controller = require("./user.controller.js");
 const router = express.Router();
 module.exports.router = router;
 
-//CREATE NEW TABLE 
+//CREATE all four tables
 router.post('/tables',controller.createTables);
 
 //delete table

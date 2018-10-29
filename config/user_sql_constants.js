@@ -52,6 +52,17 @@ module.exports.create_matches_table_sql = function()  {
     return sql; 
 }
 
+module.exports.create_messages_table_sql = function()  {
+    sql = `CREATE TABLE IF NOT EXISTS Messages (
+        message_id int NOT NULL UNIQUE,
+        to_id int NOT NULL,
+        from_id int NOT NULL,
+        message_body varchar(255),
+        timestamp datetime NOT NULL
+    );`
+    return sql; 
+}
+
 //create new mentor
 module.exports.post_mentor_sql = function(user)  {
     sql = `INSERT INTO Mentors VALUES ('${user.user_id}', '${user.first_name}', '${user.last_name}', '${user.email_address}', 
@@ -73,6 +84,12 @@ module.exports.post_mentee_sql = function(user)  {
 //create new match 
 module.exports.post_matches_sql = function(user){
     sql = `INSERT INTO Matches VALUES ('${user.match_id}', '${user.mentor_id}', '${user.messages}','${user.mentee_id}')`
+    return sql; 
+}
+
+//create new message 
+module.exports.post_message_sql = function(user){
+    sql = `INSERT INTO Messages VALUES ('${user.message_id}', '${user.to_id}', '${user.from_id}','${user.message}','${user.timestamp}')`
     return sql; 
 }
 
