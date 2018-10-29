@@ -404,7 +404,7 @@ module.exports.updateZipcode = (req, res) => {
 
 module.exports.updateRating = (req, res) => {
   userID = req.params.id;
-  rating = req.params.zipcode;
+  rating = req.body.rating;
   sql = user_sql_constants.update_rating(userID,rating);
   
   db.all(sql, [], (err, rows) => {

@@ -307,7 +307,7 @@ module.exports.get_match_by_id = function(id){
 }
 
 //update rating
-module.exports.update_zip = function(id,rating){
+module.exports.update_rating = function(id,rating){
     sql = `UPDATE Mentors SET rating =(rating+'${rating}')/2 WHERE user_id = ${id}`;    
     return sql; 
 }
