@@ -111,6 +111,7 @@ const styles = StyleSheet.create({
 
 class Contact extends Component {
 
+
   state = {
     telDS: new ListView.DataSource({
       rowHasChanged: (r1, r2) => r1 !== r2,
