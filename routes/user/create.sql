@@ -11,7 +11,7 @@ CREATE TABLE Mentors (
     blocked_users int NOT NULL,
     rating int NOT NULL,
     profile_pic_URL varchar(255) NOT NULL,
-    messages varchar(255),
+    match_key int[],
     hobbies varchar(255) NOT NULL
 );
 CREATE TABLE Mentees (
@@ -26,11 +26,12 @@ CREATE TABLE Mentees (
     skills varchar(255) NOT NULL,
     blocked_users int[] NOT NULL,
     profile_pic_URL varchar(255) NOT NULL,
-    messages varchar(255),
+    match_key int[],
     hobbies varchar(255) NOT NULL
 );
 CREATE TABLE Matches (
     match_id int NOT NULL UNIQUE,
     mentor_id int NOT NULL,
+    messages varchar(255),
     mentee_id int NOT NULL
 );
