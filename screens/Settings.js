@@ -27,7 +27,7 @@ function validate(email, password, confirmedPassword) {
             errors.push("Password should be at least 6 characters long");
           }
           if (password != confirmedPassword) {
-              errors.push("Password doesn't match");
+              errors.push("Password doesn't match" + password + " " +  confirmedPassword);
           }
     }
    
@@ -80,7 +80,7 @@ function validate(email, password, confirmedPassword) {
                placeholder = "Confirm Password Change"
                placeholderTextColor = "#000000"
                autoCapitalize = "none"
-               onChangeText = {this.handlePassword}/>
+               onChangeText = {this.handleConfirmedPassword}/>
             
             <TouchableOpacity
                style = {styles.submitButton}
