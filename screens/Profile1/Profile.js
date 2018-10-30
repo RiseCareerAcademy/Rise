@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
+import { Text } from "native-base";
 import { Card, Icon, SearchBar } from 'react-native-elements'
-import {
+import { ImagePicker, Permissions } from 'expo'
+import{
   Image,
   ImageBackground,
   Linking,
@@ -8,9 +10,9 @@ import {
   Platform,
   ScrollView,
   StyleSheet,
-  Text,
-  View,
-} from 'react-native'
+  View
+} from 'react-native';
+import { Button } from 'native-base';
 
 import mainColor from './constants'
 
@@ -105,18 +107,47 @@ const styles = StyleSheet.create({
     paddingBottom: 8,
     textAlign: 'center',
   },
+  uploadBtnContainer: {
+    margin: 'auto',
+  },
+  uploadBtn: {
+    margin: 'auto',
+  },
 })
 
 class Contact extends Component {
+  constructor(props) {
+    super(props);
 
-  state = {
-    telDS: new ListView.DataSource({
-      rowHasChanged: (r1, r2) => r1 !== r2,
-    }).cloneWithRows(this.props.tels),
-    emailDS: new ListView.DataSource({
-      rowHasChanged: (r1, r2) => r1 !== r2,
-    }).cloneWithRows(this.props.emails),
+    this.state = {
+      telDS: new ListView.DataSource({
+        rowHasChanged: (r1, r2) => r1 !== r2,
+      }).cloneWithRows(this.props.tels),
+      emailDS: new ListView.DataSource({
+        rowHasChanged: (r1, r2) => r1 !== r2,
+      }).cloneWithRows(this.props.emails),
+      image: null,
+    };
   }
+
+
+  handleImagePickerPress = async () => {
+    const { status: cameraPerm } = await Permissions.askAsync(Permissions.CAMERA);
+    const { status: cameraRollPerm } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+
+    if (cameraPerm === 'granted' && cameraRollPerm === 'granted') {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        allowsEditing: true,//Android editing only
+        aspect: [4, 3], //Aspect ratio to maintain if user allowed to edit image
+      });
+      console.log(result); //check output
+       if (!result.cancelled) {
+         this.setState({ image: result.uri });
+       }
+    }
+  }
+
+
 
   onPressPlace = () => {
     console.log('place')
@@ -144,6 +175,8 @@ class Contact extends Component {
       address: { city, country },
     } = this.props
 
+    let { image } = this.state;
+
     return (
       <View style={styles.headerContainer}>
         <SearchBar
@@ -159,13 +192,23 @@ class Contact extends Component {
             uri: avatarBackground,
           }}
         >
+
           <View style={styles.headerColumn}>
             <Image
               style={styles.userImage}
               source={{
-                uri: avatar,
+                uri: image ? image : avatar,
               }}
             />
+
+              <View style={styles.uploadBtnContainer}>
+                <Button
+                onPress={this.handleImagePickerPress}
+                style={styles.uploadBtn}
+                >
+                <Text>Select image from Camera Roll</Text>
+                </Button>
+              </View>
             <Text style={styles.userNameText}>{name}</Text>
             <View style={styles.userAddressRow}>
               <View>
