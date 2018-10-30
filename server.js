@@ -12,6 +12,8 @@ const jwt = require('jsonwebtoken');
 
 const { router: api } = require("./routes/api/api.js"); //gets api logic from path
 const { router: user } = require("./routes/user/index.js"); //gets user logic from path
+const { router: match } = require("./routes/match/matchapi.js"); //gets match logic from path 
+const { router: message } = require("./routes/message/messageapi.js"); //gets message logic from path 
 const config = require('./config/database');
 
 const app = express(); //creates an instance of express
@@ -61,6 +63,8 @@ app.use('/api', (req, res, next) => {
   });
 }, api);
 app.use('/user', user);
+app.use('/match', match);
+app.use('/message', message);
 
 // so when people try to access it via browser
 app.get("/", function(req, res) {
