@@ -25,7 +25,7 @@ import { MonoText } from "../components/StyledText";
 export default class MentorRegistration extends React.Component {
   constructor(props) {
     super(props);
-
+    
     this.state = {
       result: null
     };
@@ -94,9 +94,9 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center"
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   center: {
     flex: 1,

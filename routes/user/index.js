@@ -5,5 +5,5 @@ const router = express.Router();
 module.exports.router = router;
 
 // POST request API for /user
-router.post('/login', controller.login);
-router.post('/register', controller.register);
+router.post('/regMentor', controller.postMentors);
+router.get('/getMentor',controller.getMentors)

@@ -5,18 +5,51 @@ const config = require("../../config/database.js");
 // Create a schema to prevent bad input data types
 const UserSchema = new mongoose.Schema(
   {
-    username: {
-		type: String,
-		unique: true
-	},
-    password: {
-		type: String,
-		unique: true
-	},
+    userID:{
+        type: String,
+        unique: true
+    },
     name: {
-		type: String,
-		unique: false
-	}
+      type: String,
+      unique: false
+    },
+    username: {
+      type: String,
+      unique: true
+    },
+    dateOfBirth: {
+      type: Date,
+      unique: false
+    },
+    email: {
+      type: String,
+      unique: true
+    },
+    password: {
+      type: String,
+      unique: false
+    },
+    areaOfStudy: {
+      type: String,
+      unique: false
+    },
+    profileImageURL: {
+      type: String,
+      unique: false
+    },
+    location: {
+      type: String,
+      unique: false
+    },
+    isStudent: {
+      type: Boolean,
+      unique: false
+    },
+    isMentor: {
+      type: Boolean,
+      unique: false
+    }
+    
   },
   { collection: "user" }
 );

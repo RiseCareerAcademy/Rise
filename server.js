@@ -17,17 +17,21 @@ const config = require('./config/database');
 const app = express(); //creates an instance of express
 const server = http.createServer(app); //creates an HTTP server instance
 
+// const db = require('./db');
+
 // TODO: Switch to SQLite
+// Tutorial: http://www.sqlitetutorial.net/sqlite-nodejs/connect/ 
+// Preferably use the Promises wrapper (callbacks can get nasty):
 // https://www.npmjs.com/package/sqlite
 // Connect To Database
-mongoose.Promise = global.Promise;
-mongoose.connect(config.database);
-mongoose.connection.on("error", err => {
-  console.log(err.message);
-});
-mongoose.connection.once("open", () => {
-  console.log("mongodb connection open");
-});
+// mongoose.Promise = global.Promise;
+// mongoose.connect(config.database);
+// mongoose.connection.on("error", err => {
+//   console.log(err.message);
+// });
+// mongoose.connection.once("open", () => {
+//   console.log("mongodb connection open");
+// });
 
 
 
