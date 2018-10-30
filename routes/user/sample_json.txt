@@ -10,7 +10,6 @@
     "occupation": "Software Engineering", 
     "skills": "JAVA",
     "profile_pic_URL": "katwal",
-    "match_key": "4334",
     "hobbies": "hi",
     "password" : "npasdqnonwd"
 }
@@ -28,11 +27,23 @@
     "area_of_study": "Computer Science", 
     "skills": "JAVA",
     "profile_pic_URL": "bill.com",
-    "match_key": "4334",
     "hobbies": "testiing hobbies",
     "password": "qwerty"
 }
 
 
 //MATCHES
+{
+    "match_id": 67844,
+    "mentor_id": 10101, 
+    "mentee_id": 20101
+}
 
+//MESSAGES
+{
+    "message_id": 67844,
+    "to_id": 10101, 
+    "from_id": 20101,
+    "message": "this is a message",
+    "timestamp": "2013-10-07 08:23:19.120"
+}

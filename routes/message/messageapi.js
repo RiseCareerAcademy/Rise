@@ -5,7 +5,8 @@ const router = express.Router();
 module.exports.router = router;
 
 //create a new message 
-router.post('/message', controller.postMessage);
+router.post('/', controller.postMessage);
+
 
 //get all messages 
-router.get('/messages', controller.getMessages);
+router.get('/', controller.getMessages);

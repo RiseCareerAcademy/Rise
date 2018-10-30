@@ -5,11 +5,13 @@ const router = express.Router();
 module.exports.router = router;
 
 //create a new match entry
-router.post('/pair', controller.postMatches);
+router.post('/', controller.postMatches);
 
 //get everything from match tables
-router.get('/all',controller.getAllMatches);
+router.get('/',controller.getAllMatches);
 
 //get match by match id 
-router.get('/:id',controller.getMatchbyId);
+router.get('/matchid/:id',controller.getMatchbyId);
 
+//get match by user id 
+router.get('/userid/:id',controller.getMatchbyUserId);

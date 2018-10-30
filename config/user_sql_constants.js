@@ -14,7 +14,6 @@ module.exports.create_mentee_table_sql = function()  {
             area_of_study varchar(255) NOT NULL,
             skills varchar(255) NOT NULL,
             profile_pic_URL varchar(255) NOT NULL,
-            match_key varchar(255),
             hobbies varchar(255),
             password varchar(255) 
         );`
@@ -34,7 +33,6 @@ module.exports.create_mentor_table_sql = function()  {
         occupation varchar(255) NOT NULL,
         skills varchar(255) NOT NULL,
         profile_pic_URL varchar(255) NOT NULL,
-        match_key varchar(255),
         hobbies varchar(255),
         password varchar(255) 
     );`
@@ -45,7 +43,6 @@ module.exports.create_matches_table_sql = function()  {
     sql = `CREATE TABLE IF NOT EXISTS Matches (
         match_id int NOT NULL UNIQUE,
         mentor_id int NOT NULL,
-        messages varchar(255),
         mentee_id int NOT NULL
     );`
     return sql; 
@@ -54,6 +51,7 @@ module.exports.create_matches_table_sql = function()  {
 module.exports.create_messages_table_sql = function()  {
     sql = `CREATE TABLE IF NOT EXISTS Messages (
         message_id int NOT NULL UNIQUE,
+        match_id int NOT NULL,
         to_id int NOT NULL,
         from_id int NOT NULL,
         message_body varchar(255),
@@ -66,7 +64,7 @@ module.exports.create_messages_table_sql = function()  {
 module.exports.post_mentor_sql = function(user)  {
     sql = `INSERT INTO Mentors VALUES ('${user.user_id}', '${user.first_name}', '${user.last_name}', '${user.email_address}', 
     '${user.biography}', '${user.zipcode}', '${user.date_of_birth}', '${user.occupation}', '${user.skills}', 
-      '${user.profile_pic_URL}', '${user.match_key}', '${user.hobbies}' ,'${user.password}') `
+      '${user.profile_pic_URL}', '${user.hobbies}' ,'${user.password}') `
 
     return sql; 
 }
@@ -75,20 +73,21 @@ module.exports.post_mentor_sql = function(user)  {
 module.exports.post_mentee_sql = function(user)  {
     sql = `INSERT INTO Mentees VALUES ('${user.user_id}', '${user.first_name}', '${user.last_name}', '${user.email_address}', 
     '${user.biography}', '${user.zipcode}', '${user.date_of_birth}', '${user.area_of_study}', '${user.skills}', 
-     '${user.profile_pic_URL}', '${user.match_key}', '${user.hobbies}','${user.password}') `
+     '${user.profile_pic_URL}', '${user.hobbies}','${user.password}') `
 
     return sql; 
 }
 
 //create new match 
 module.exports.post_matches_sql = function(user){
-    sql = `INSERT INTO Matches VALUES ('${user.match_id}', '${user.mentor_id}', '${user.messages}','${user.mentee_id}')`
+    sql = `INSERT INTO Matches VALUES ('${user.match_id}', '${user.mentor_id}','${user.mentee_id}')`
     return sql; 
 }
 
 //create new message 
 module.exports.post_message_sql = function(user){
-    sql = `INSERT INTO Messages VALUES ('${user.message_id}', '${user.to_id}', '${user.from_id}','${user.message}','${user.timestamp}')`
+    console.log(user)
+    sql = `INSERT INTO Messages VALUES ('${user.message_id}','${user.match_id}', '${user.to_id}', '${user.from_id}','${user.message}','${user.timestamp}')`
     return sql; 
 }
 
@@ -299,13 +298,14 @@ module.exports.update_zip = function(id,new_zip){
     return sql; 
 }
 
-//get match by id
+//get match by match match id 
 module.exports.get_match_by_id = function(id){
     sql = `SELECT * FROM Matches WHERE match_id = ${id};`;    
     return sql; 
 }
 
-//get match by id
+
+//login 
 module.exports.login = function(email,password,userType){
     if(userType==1)
         sql = `SELECT COUNT(*) FROM (SELECT * FROM Mentors WHERE email_address='${email}' AND password='${password}');`;    
@@ -313,3 +313,13 @@ module.exports.login = function(email,password,userType){
         sql = `SELECT COUNT(*) FROM (SELECT * FROM Mentees WHERE email_address='${email}' AND password='${password}');`; 
     return sql; 
 }
+
+//get match by user ID 
+module.exports.get_match_by_UserId = function(id){
+    if(isMentor(id))
+    sql = `SELECT * FROM Matches WHERE mentor_id = ${id};`;    
+    else
+    sql = `SELECT * FROM Matches WHERE mentee_id = ${id};`;    
+    return sql; 
+}
+

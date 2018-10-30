@@ -41,6 +41,7 @@ module.exports.deletetable = (req, res) => {
   sql1 = `DROP TABLE IF EXISTS Mentors;`;
   sql2 = `DROP TABLE IF EXISTS Mentees;`;
   sql3 = `DROP TABLE IF EXISTS Matches;`;
+  sql4 = `DROP TABLE IF EXISTS Messages;`;
 
   db.all(sql1, [], (err, rows) => {
     if (err) {
@@ -56,6 +57,11 @@ module.exports.deletetable = (req, res) => {
     if (err) {
       throw err;
     }
+  });
+  db.all(sql4, [], (err, rows) => {
+    if (err) {
+      throw err;
+    }
     res.json({ success: true, rows: rows });
   });
 }
@@ -63,12 +69,10 @@ module.exports.deletetable = (req, res) => {
 //create new mentor
 module.exports.postMentors = (req, res) => {
   const fields = ['user_id', 'first_name', 'last_name', 'email_address' ,'biography','zipcode',
-  'date_of_birth','occupation','skills','profile_pic_URL','match_key','hobbies','password'];
+  'date_of_birth','occupation','skills','profile_pic_URL','hobbies','password'];
   const user = {};
   
   fields.forEach(field => {
-  console.log(field,req.body)
-  console.log(field,req.body[field])
     if (req.body[field] === undefined) {
      res
         .status(500)
@@ -88,7 +92,7 @@ module.exports.postMentors = (req, res) => {
 //create new mentee
 module.exports.postMentees = (req, res) => {
   const fields = ['user_id', 'first_name', 'last_name', 'email_address' ,'biography','zipcode',
-  'date_of_birth','area_of_study','skills','profile_pic_URL','match_key','hobbies','password'];
+  'date_of_birth','area_of_study','skills','profile_pic_URL','hobbies','password'];
   const user = {};
   fields.forEach(field => {
     if (req.body[field] === undefined) {
@@ -379,7 +383,6 @@ module.exports.login = (req, res) => {
   email = req.body.email_address;
   password = req.body.password;
   userType = req.body.userType;
-  console.log(req.params)
   sql = user_sql_constants.login(email,password,userType);
   
   db.all(sql, [], (err, rows) => {
