@@ -4,7 +4,7 @@ const controller = require("./user.controller.js");
 const router = express.Router();
 module.exports.router = router;
 
-//CREATE all four tables
+//CREATE all five tables
 router.post('/tables',controller.createTables);
 
 //delete table
@@ -13,11 +13,14 @@ router.delete('/tables',controller.deletetable);
 // POST request API for /user
 router.post('/mentor', controller.postMentors);
 router.post('/mentee', controller.postMentees);
+router.post('/password', controller.postPasswords);
 
 
 // GET request API for /user 
 router.get('/mentor',controller.getAllMentors);
 router.get('/mentee',controller.getAllMentees);  
+router.get('/password',controller.getAllPasswords);  
+
 
 
 //get user by id
@@ -71,6 +74,8 @@ router.delete("/:id/bio", controller.deleteBio);
 //update zipcode
 router.put("/:id/zipcode/:zipcode",controller.updateZipcode);
 
+
 //login using email/password
 router.post("/login",controller.login);
+
 
