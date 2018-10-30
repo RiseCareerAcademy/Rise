@@ -110,15 +110,18 @@ const styles = StyleSheet.create({
 })
 
 class Contact extends Component {
+  constructor(props) {
+    super(props);
 
-
-  state = {
-    telDS: new ListView.DataSource({
-      rowHasChanged: (r1, r2) => r1 !== r2,
-    }).cloneWithRows(this.props.tels),
-    emailDS: new ListView.DataSource({
-      rowHasChanged: (r1, r2) => r1 !== r2,
-    }).cloneWithRows(this.props.emails),
+    this.state = {
+      telDS: new ListView.DataSource({
+        rowHasChanged: (r1, r2) => r1 !== r2,
+      }).cloneWithRows(this.props.tels),
+      emailDS: new ListView.DataSource({
+        rowHasChanged: (r1, r2) => r1 !== r2,
+      }).cloneWithRows(this.props.emails),
+      image: null,
+    };
   }
 
 
@@ -127,7 +130,7 @@ class Contact extends Component {
     const { status: cameraRollPerm } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
 
     if (cameraPerm === 'granted' && cameraRollPerm === 'granted') {
-      let result = await ImagePicker.launchImageLibraryAsync({
+      const result = await ImagePicker.launchImageLibraryAsync({
         allowsEditing: true,//Android editing only
         aspect: [4, 3], //Aspect ratio to maintain if user allowed to edit image
       });
@@ -160,12 +163,13 @@ class Contact extends Component {
 
   renderHeader = () => {
     const {
-      image,
       avatar,
       avatarBackground,
       name,
       address: { city, country },
     } = this.props
+
+    let { image } = this.state;
 
     return (
       <View style={styles.headerContainer}>
@@ -276,7 +280,6 @@ class Contact extends Component {
   )
 
   render() {
-    let { image } = this.state;
     return (
       <ScrollView style={styles.scroll}>
         <View style={styles.container}>
