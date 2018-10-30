@@ -59,6 +59,22 @@ export default class MentorRegistration extends React.Component {
               <Label>Profession</Label>
               <Input placeholder="Enter profession you want to learn" />
             </Item>
+            <Item stackedLabel last>
+              <Label>Name</Label>
+              <Input placeholder="Enter your name" />
+            </Item>
+            <Item stackedLabel last>
+              <Label>Zip Code</Label>
+              <Input placeholder="Enter your zip code" />
+            </Item>
+            <Item stackedLabel last>
+              <Label>city</Label>
+              <Input placeholder="Enter your city" />
+            </Item>
+            <Item stackedLabel last>
+              <Label>state</Label>
+              <Input placeholder="Enter your state" />
+            </Item>
           </Form>
         </Content>
         <View>
