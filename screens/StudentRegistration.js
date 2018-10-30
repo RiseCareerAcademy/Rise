@@ -47,6 +47,10 @@ export default class MentorRegistration extends React.Component {
               <Label>Password</Label>
               <Input placeholder="Enter your password" />
             </Item>
+            <Item stackedLabel last>
+              <Label>Confirm Password</Label>
+              <Input placeholder="Re-enter your password" />
+            </Item>
             <Item stackedLabel>
               <Label>Skills</Label>
               <Input placeholder="Enter skills you want to learn" />
