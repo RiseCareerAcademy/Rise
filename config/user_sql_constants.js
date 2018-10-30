@@ -7,26 +7,15 @@ module.exports.create_mentee_table_sql = function()  {
             user_id int NOT NULL UNIQUE,
             first_name varchar(255) NOT NULL,
             last_name varchar(255) NOT NULL,
-<<<<<<< HEAD
-            email_adress varchar(255) NOT NULL UNIQUE,
-=======
             email_address varchar(255) NOT NULL UNIQUE,
->>>>>>> master
             biography varchar(255),
             zipcode varchar(5) NOT NULL,
             date_of_birth DATE NOT NULL,
             area_of_study varchar(255) NOT NULL,
             skills varchar(255) NOT NULL,
-<<<<<<< HEAD
-            blocked_users varchar(255) NOT NULL,
-            profile_pic_URL varchar(255) NOT NULL,
-            match_key varchar(255),
-            hobbies varchar(255) 
-=======
             profile_pic_URL varchar(255) NOT NULL,
             hobbies varchar(255),
             password varchar(255) 
->>>>>>> master
         );`
     return sql; 
 }
@@ -37,27 +26,15 @@ module.exports.create_mentor_table_sql = function()  {
         user_id int NOT NULL UNIQUE,
         first_name varchar(255) NOT NULL,
         last_name varchar(255) NOT NULL,
-<<<<<<< HEAD
-        email_adress varchar(255) NOT NULL UNIQUE,
-=======
         email_address varchar(255) NOT NULL UNIQUE,
->>>>>>> master
         biography varchar(255),
         zipcode varchar(5) NOT NULL,
         date_of_birth DATE NOT NULL,
         occupation varchar(255) NOT NULL,
         skills varchar(255) NOT NULL,
-<<<<<<< HEAD
-        blocked_users varchar(255) NOT NULL,
-        rating int NOT NULL,
-        profile_pic_URL varchar(255) NOT NULL,
-        match_key varchar(255),
-        hobbies varchar(255)
-=======
         profile_pic_URL varchar(255) NOT NULL,
         hobbies varchar(255),
         password varchar(255) 
->>>>>>> master
     );`
     return sql; 
 }
@@ -66,10 +43,6 @@ module.exports.create_matches_table_sql = function()  {
     sql = `CREATE TABLE IF NOT EXISTS Matches (
         match_id int NOT NULL UNIQUE,
         mentor_id int NOT NULL,
-<<<<<<< HEAD
-        messages varchar(255),
-=======
->>>>>>> master
         mentee_id int NOT NULL
     );`
     return sql; 
@@ -78,10 +51,7 @@ module.exports.create_matches_table_sql = function()  {
 module.exports.create_messages_table_sql = function()  {
     sql = `CREATE TABLE IF NOT EXISTS Messages (
         message_id int NOT NULL UNIQUE,
-<<<<<<< HEAD
-=======
         match_id int NOT NULL,
->>>>>>> master
         to_id int NOT NULL,
         from_id int NOT NULL,
         message_body varchar(255),
@@ -94,11 +64,7 @@ module.exports.create_messages_table_sql = function()  {
 module.exports.post_mentor_sql = function(user)  {
     sql = `INSERT INTO Mentors VALUES ('${user.user_id}', '${user.first_name}', '${user.last_name}', '${user.email_address}', 
     '${user.biography}', '${user.zipcode}', '${user.date_of_birth}', '${user.occupation}', '${user.skills}', 
-<<<<<<< HEAD
-    '${user.blocked_users}', '${user.rating}', '${user.profile_pic_URL}', '${user.match_key}', '${user.hobbies}') `
-=======
       '${user.profile_pic_URL}', '${user.hobbies}' ,'${user.password}') `
->>>>>>> master
 
     return sql; 
 }
@@ -107,33 +73,21 @@ module.exports.post_mentor_sql = function(user)  {
 module.exports.post_mentee_sql = function(user)  {
     sql = `INSERT INTO Mentees VALUES ('${user.user_id}', '${user.first_name}', '${user.last_name}', '${user.email_address}', 
     '${user.biography}', '${user.zipcode}', '${user.date_of_birth}', '${user.area_of_study}', '${user.skills}', 
-<<<<<<< HEAD
-    '${user.blocked_users}', '${user.profile_pic_URL}', '${user.match_key}', '${user.hobbies}') `
-=======
      '${user.profile_pic_URL}', '${user.hobbies}','${user.password}') `
->>>>>>> master
 
     return sql; 
 }
 
 //create new match 
 module.exports.post_matches_sql = function(user){
-<<<<<<< HEAD
-    sql = `INSERT INTO Matches VALUES ('${user.match_id}', '${user.mentor_id}', '${user.messages}','${user.mentee_id}')`
-=======
     sql = `INSERT INTO Matches VALUES ('${user.match_id}', '${user.mentor_id}','${user.mentee_id}')`
->>>>>>> master
     return sql; 
 }
 
 //create new message 
 module.exports.post_message_sql = function(user){
-<<<<<<< HEAD
-    sql = `INSERT INTO Messages VALUES ('${user.message_id}', '${user.to_id}', '${user.from_id}','${user.message}','${user.timestamp}')`
-=======
     console.log(user)
     sql = `INSERT INTO Messages VALUES ('${user.message_id}','${user.match_id}', '${user.to_id}', '${user.from_id}','${user.message}','${user.timestamp}')`
->>>>>>> master
     return sql; 
 }
 
@@ -178,15 +132,9 @@ module.exports.confirm_email = function(id,email){
 //get email by Id 
 module.exports.get_email_by_id = function(id){
     if(isMentor(id))
-<<<<<<< HEAD
-        sql = `SELECT email_adress FROM Mentors WHERE user_id = ${id}`;    //starts with 1
-    else
-        sql = `SELECT email_adress FROM Mentees WHERE user_id = ${id}`;    //starts with 2 
-=======
         sql = `SELECT email_address FROM Mentors WHERE user_id = ${id}`;    //starts with 1
     else
         sql = `SELECT email_address FROM Mentees WHERE user_id = ${id}`;    //starts with 2 
->>>>>>> master
 
     return sql; 
 }
@@ -194,15 +142,9 @@ module.exports.get_email_by_id = function(id){
 //update email by Id 
 module.exports.update_email_by_id = function(id,email_address){
     if(isMentor(id))
-<<<<<<< HEAD
-        sql = `UPDATE Mentors SET email_adress='${email_address}' WHERE user_id = ${id}`;    //starts with 1
-    else
-        sql = `UPDATE Mentees SET email_adress='${email_address}' WHERE user_id = ${id}`;    //starts with 2 
-=======
         sql = `UPDATE Mentors SET email_address='${email_address}' WHERE user_id = ${id}`;    //starts with 1
     else
         sql = `UPDATE Mentees SET email_address='${email_address}' WHERE user_id = ${id}`;    //starts with 2 
->>>>>>> master
 
     return sql; 
 }
@@ -356,13 +298,6 @@ module.exports.update_zip = function(id,new_zip){
     return sql; 
 }
 
-<<<<<<< HEAD
-//get match by id
-module.exports.get_match_by_id = function(id){
-    sql = `SELECT * FROM Matches WHERE match_id = ${id};`;    
-    return sql; 
-}
-=======
 //get match by match match id 
 module.exports.get_match_by_id = function(id){
     sql = `SELECT * FROM Matches WHERE match_id = ${id};`;    
@@ -388,4 +323,3 @@ module.exports.get_match_by_UserId = function(id){
     return sql; 
 }
 
->>>>>>> master
