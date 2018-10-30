@@ -14,8 +14,7 @@ module.exports.create_mentee_table_sql = function()  {
             area_of_study varchar(255) NOT NULL,
             skills varchar(255) NOT NULL,
             profile_pic_URL varchar(255) NOT NULL,
-            hobbies varchar(255),
-            password varchar(255) 
+            hobbies varchar(255)
         );`
     return sql; 
 }
@@ -33,7 +32,15 @@ module.exports.create_mentor_table_sql = function()  {
         occupation varchar(255) NOT NULL,
         skills varchar(255) NOT NULL,
         profile_pic_URL varchar(255) NOT NULL,
-        hobbies varchar(255),
+        hobbies varchar(255)
+    );`
+    return sql; 
+}
+module.exports.create_password_table_sql = function()  {
+    sql = `  
+    CREATE TABLE IF NOT EXISTS Passwords ( 
+        user_id int NOT NULL UNIQUE,
+        email_address varchar(255) NOT NULL UNIQUE,
         password varchar(255) 
     );`
     return sql; 
@@ -64,7 +71,7 @@ module.exports.create_messages_table_sql = function()  {
 module.exports.post_mentor_sql = function(user)  {
     sql = `INSERT INTO Mentors VALUES ('${user.user_id}', '${user.first_name}', '${user.last_name}', '${user.email_address}', 
     '${user.biography}', '${user.zipcode}', '${user.date_of_birth}', '${user.occupation}', '${user.skills}', 
-      '${user.profile_pic_URL}', '${user.hobbies}' ,'${user.password}') `
+      '${user.profile_pic_URL}', '${user.hobbies}') `
 
     return sql; 
 }
@@ -73,7 +80,14 @@ module.exports.post_mentor_sql = function(user)  {
 module.exports.post_mentee_sql = function(user)  {
     sql = `INSERT INTO Mentees VALUES ('${user.user_id}', '${user.first_name}', '${user.last_name}', '${user.email_address}', 
     '${user.biography}', '${user.zipcode}', '${user.date_of_birth}', '${user.area_of_study}', '${user.skills}', 
-     '${user.profile_pic_URL}', '${user.hobbies}','${user.password}') `
+     '${user.profile_pic_URL}', '${user.hobbies}') `
+
+    return sql; 
+}
+
+//create new password
+module.exports.post_password_sql = function(user)  {
+    sql = `INSERT INTO Passwords VALUES ('${user.user_id}', '${user.email_address}', '${user.password}') `
 
     return sql; 
 }
@@ -100,6 +114,12 @@ module.exports.get_all_mentors = function(){
 //get all mentees
 module.exports.get_all_mentees = function(){
     sql = `SELECT * FROM Mentees;`;   
+    return sql; 
+}
+
+//get all passwords
+module.exports.get_all_passwords = function(){
+    sql = `SELECT * FROM Passwords;`;   
     return sql; 
 }
 
@@ -306,11 +326,8 @@ module.exports.get_match_by_id = function(id){
 
 
 //login 
-module.exports.login = function(email,password,userType){
-    if(userType==1)
-        sql = `SELECT COUNT(*) FROM (SELECT * FROM Mentors WHERE email_address='${email}' AND password='${password}');`;    
-    else
-        sql = `SELECT COUNT(*) FROM (SELECT * FROM Mentees WHERE email_address='${email}' AND password='${password}');`; 
+module.exports.login = function(email,password){
+    sql = `SELECT COUNT(*) FROM (SELECT * FROM Passwords WHERE email_address='${email}' AND password='${password}');`;  
     return sql; 
 }
 
