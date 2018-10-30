@@ -80,7 +80,7 @@ function validate(email, password, confirmedPassword) {
                placeholder = "Confirm Password Change"
                placeholderTextColor = "#000000"
                autoCapitalize = "none"
-               onChangeText = {this.handlePassword}/>
+               onChangeText = {this.handleConfirmedPassword}/>
             
             <TouchableOpacity
                style = {styles.submitButton}
