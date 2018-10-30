@@ -10,3 +10,6 @@ router.post('/', controller.postMessage);
 
 //get all messages 
 router.get('/', controller.getMessages);
+
+//get message by message id 
+router.get('/:matchid', controller.getFirstMessagebyId);

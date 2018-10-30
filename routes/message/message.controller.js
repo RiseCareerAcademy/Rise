@@ -33,3 +33,16 @@ module.exports.postMessage = (req, res) => {
     res.json({ success: true, rows: rows });
   });
   }
+  
+  //get message by match id 
+  module.exports.getFirstMessagebyId = (req, res) => {
+    matchId = req.params.id;
+    sql = user_sql_constants.get_message_by_matchid(matchId);
+
+    db.all(sql, [], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+    res.json({ success: true, rows: rows });
+  });
+  }

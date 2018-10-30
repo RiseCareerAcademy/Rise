@@ -323,3 +323,8 @@ module.exports.get_match_by_UserId = function(id){
     return sql; 
 }
 
+//get message by match id 
+module.exports.get_match_by_id = function(id){
+    sql = `SELECT * FROM Messages WHERE match_id = ${id};`;    
+    return sql; 
+}
