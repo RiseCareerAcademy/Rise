@@ -3,7 +3,6 @@ import { Text } from "native-base";
 import { Card, Icon, SearchBar } from 'react-native-elements'
 import { ImagePicker, Permissions } from 'expo'
 import{
-  Button,
   Image,
   ImageBackground,
   Linking,
@@ -13,6 +12,7 @@ import{
   StyleSheet,
   View
 } from 'react-native';
+import { Button } from 'native-base';
 
 import mainColor from './constants'
 
@@ -107,6 +107,12 @@ const styles = StyleSheet.create({
     paddingBottom: 8,
     textAlign: 'center',
   },
+  uploadBtnContainer: {
+    margin: 'auto',
+  },
+  uploadBtn: {
+    margin: 'auto',
+  },
 })
 
 class Contact extends Component {
@@ -195,13 +201,14 @@ class Contact extends Component {
               }}
             />
 
-            <Button
-              full dark
-              title= "Select image from Camera Roll"
-             onPress={this.handleImagePickerPress}
-            >
-              <Text>Pick an image from camera roll</Text>
-            </Button>
+              <View style={styles.uploadBtnContainer}>
+                <Button
+                onPress={this.handleImagePickerPress}
+                style={styles.uploadBtn}
+                >
+                <Text>Select image from Camera Roll</Text>
+                </Button>
+              </View>
             <Text style={styles.userNameText}>{name}</Text>
             <View style={styles.userAddressRow}>
               <View>
