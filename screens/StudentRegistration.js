@@ -1,6 +1,23 @@
 import React from "react";
-import { Button, Text, Container, Header, Content, Form, Item, Label, Input } from "native-base";
-import { Platform, ScrollView, StyleSheet, Image, TextInput, View } from "react-native";
+import {
+  Button,
+  Text,
+  Container,
+  Header,
+  Content,
+  Form,
+  Item,
+  Label,
+  Input
+} from "native-base";
+import {
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Image,
+  TextInput,
+  View
+} from "react-native";
 import { AuthSession } from "expo";
 
 import { MonoText } from "../components/StyledText";
@@ -10,16 +27,30 @@ export default class MentorRegistration extends React.Component {
     super(props);
     
     this.state = {
-      result: null,
+      result: null
     };
   }
+
+ 
 
   render() {
     const { navigate } = this.props.navigation;
     return (
-      <Container>
+      <Container style={styles.container}>
         <Content>
           <Form>
+            <Item stackedLabel>
+              <Label>Username</Label>
+              <Input placeholder="Enter your email" />
+            </Item>
+            <Item stackedLabel last>
+              <Label>Password</Label>
+              <Input placeholder="Enter your password" />
+            </Item>
+            <Item stackedLabel last>
+              <Label>Confirm Password</Label>
+              <Input placeholder="Re-enter your password" />
+            </Item>
             <Item stackedLabel>
               <Label>Skills</Label>
               <Input placeholder="Enter skills you want to learn" />
@@ -28,15 +59,29 @@ export default class MentorRegistration extends React.Component {
               <Label>Profession</Label>
               <Input placeholder="Enter profession you want to learn" />
             </Item>
+            <Item stackedLabel last>
+              <Label>Name</Label>
+              <Input placeholder="Enter your name" />
+            </Item>
+            <Item stackedLabel last>
+              <Label>Zip Code</Label>
+              <Input placeholder="Enter your zip code" />
+            </Item>
+            <Item stackedLabel last>
+              <Label>city</Label>
+              <Input placeholder="Enter your city" />
+            </Item>
+            <Item stackedLabel last>
+              <Label>state</Label>
+              <Input placeholder="Enter your state" />
+            </Item>
           </Form>
         </Content>
         <View>
-        <Button full light onPress={() =>
-          navigate('Main')
-        }>
-          <Text style={styles.greyText}>Next</Text>
-        </Button>
-      </View>
+          <Button full light onPress={() => navigate("Main")}>
+            <Text style={styles.greyText}>Next</Text>
+          </Button>
+        </View>
       </Container>
     );
   }
@@ -66,5 +111,8 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     paddingTop: 30
+  },
+  container: {
+    margin: 5,
   },
 });
