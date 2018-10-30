@@ -129,6 +129,6 @@ const styles = StyleSheet.create({
     color: "grey"
   },
   contentContainer: {
-    paddingTop: 30
+   paddingTop: 30
   },
 });
