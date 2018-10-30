@@ -101,7 +101,7 @@ module.exports.post_matches_sql = function(user){
 //create new message 
 module.exports.post_message_sql = function(user){
     console.log(user)
-    sql = `INSERT INTO Messages VALUES ('${user.message_id}','${user.match_id}', '${user.to_id}', '${user.from_id}','${user.message}','${user.timestamp}')`
+    sql = `INSERT INTO Messages VALUES ('${user.message_id}','${user.match_id}', '${user.to_id}', '${user.from_id}','${user.message_body}','${user.timestamp}')`
     return sql; 
 }
 
@@ -340,8 +340,15 @@ module.exports.get_match_by_UserId = function(id){
     return sql; 
 }
 
-//get message by match id 
-module.exports.get_match_by_id = function(id){
-    sql = `SELECT * FROM Messages WHERE match_id = ${id};`;    
+//get latest message by match id 
+module.exports.get_message_by_matchid = function(id){
+    console.log(id)
+    sql = `SELECT * FROM Messages WHERE match_id = ${id} order by timestamp LIMIT 1;`;    
+    return sql; 
+}
+
+//get all message by match id 
+module.exports.get_all_message_by_matchid = function(id){
+    sql = `SELECT * FROM Messages WHERE match_id = ${id} order by timestamp;`;    
     return sql; 
 }
