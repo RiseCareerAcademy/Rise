@@ -2,6 +2,7 @@ import React from 'react'
 import {View, TouchableOpacity, StyleSheet, Image, Text, FlatList} from 'react-native'
 
 const Message = props => {
+    const { navigate } = props.navigation;
    // console.log(JSON.stringify(props))
    const style = []
    style.push(styles.message)
@@ -15,7 +16,7 @@ const Message = props => {
     return (
         <TouchableOpacity 
            // onPress={() => alert('message')}
-           onPress={() => this.props.navigate('Conversation')}
+           onPress={() => navigate('Convo')}
            activeOpacity={0.7}
             style = {style}>
             <View style = {styles.topRow}>
