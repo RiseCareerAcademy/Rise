@@ -10,6 +10,9 @@ import { Icon } from 'expo';
 import Colors from '../constants/Colors';
 import ProfileScreen from '../screens/Profile1';
 import Messages from '../screens/Messages';
+import Convo from '../screens/Convo';
+
+
 
 const ProfileStack = createStackNavigator({
   Profile: ProfileScreen,
@@ -26,6 +29,7 @@ ProfileStack.navigationOptions = {
     />
   ),
 };
+
 
 
 const SuggestedMatchStack = createStackNavigator({
@@ -49,7 +53,25 @@ const MessageStack = createStackNavigator({
 });
 
 MessageStack.navigationOptions = {
+  headerTintColor: "rgb(212, 21, 2)",
   tabBarLabel: 'Messages',
+  tabBarIcon: ({ focused }) => (
+    <Icon.Feather
+      name="message-circle"
+      size={26}
+      style={{ marginBottom: -3 }}
+      color={focused ? Colors.tabIconSelected : Colors.tabIconDefault}
+    />
+  ),
+};
+
+const ConvoStack = createStackNavigator({
+  Conversation: Convo,
+});
+
+ConvoStack.navigationOptions = {
+  headerTintColor: "rgb(212, 21, 2)",
+  tabBarLabel: 'Convo',
   tabBarIcon: ({ focused }) => (
     <Icon.Feather
       name="message-circle"
@@ -82,4 +104,5 @@ export default createBottomTabNavigator({
   SuggestedMatchStack,
   MessageStack,
   SettingStack,
+  ConvoStack
 });

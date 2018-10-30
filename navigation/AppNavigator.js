@@ -9,13 +9,15 @@ import MentorRegistration from '../screens/MentorRegistration'
 import StudentRegistration from '../screens/StudentRegistration'
 import SignIn from '../screens/SignIn'
 import Profile from '../screens/Profile1/Profile'
+import Conversation from '../screens/Convo/Conversation'
 
 const App = createStackNavigator({
   Home: { screen: HomeScreen },
   Mentor: { screen: MentorRegistration },
   Student: {screen: StudentRegistration},
   SignIn: {screen: SignIn},
-  Main: MainTabNavigator
+  Main: MainTabNavigator,
+  Convo: Conversation
 });
 
 //export default createSwitchNavigator({
