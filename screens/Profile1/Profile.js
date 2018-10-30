@@ -191,7 +191,7 @@ class Contact extends Component {
             <Image
               style={styles.userImage}
               source={{
-                uri: avatar,
+                uri: image ? image : avatar,
               }}
             />
 
@@ -202,11 +202,6 @@ class Contact extends Component {
             >
               <Text>Pick an image from camera roll</Text>
             </Button>
-
-            <View>
-         {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
-            </View>
-
             <Text style={styles.userNameText}>{name}</Text>
             <View style={styles.userAddressRow}>
               <View>
