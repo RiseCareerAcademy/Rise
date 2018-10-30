@@ -15,7 +15,7 @@ export default class Main extends Component {
   }
 
   componentDidMount(){
-    const { navigate } = this.props.navigation;
+    //const { navigate } = this.props.navigation;
     // query
     const query = `?toUser=${"101"}`
     console.log(query)
