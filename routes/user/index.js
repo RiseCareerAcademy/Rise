@@ -39,11 +39,14 @@ router.put("/:id/hobbies/:hobby", controller.updateHobbiesById);
 //delete hobbies by id
 router.delete("/:id/hobbies", controller.deleteHobbiesById);
 
+<<<<<<< HEAD
 //get blocked users by id
 router.get("/:id/blockedusers", controller.getBlockedUsersById);
 //add blocked users by id
 router.put("/:id/blockedusers/:blockid", controller.addBlockedUsersById);
 
+=======
+>>>>>>> master
 
 //get skill by id 
 router.get("/:id/skills", controller.getSkillbyId);
@@ -74,4 +77,12 @@ router.put("/:id/bio/:bio", controller.updateBio);
 router.delete("/:id/bio", controller.deleteBio);
 
 //update zipcode
+<<<<<<< HEAD
 router.put("/:id/zipcode/:zipcode",controller.updateZipcode);
+=======
+router.put("/:id/zipcode/:zipcode",controller.updateZipcode);
+
+//login using email/password
+router.post("/login",controller.login);
+
+>>>>>>> master

@@ -64,7 +64,11 @@ app.use('/api', (req, res, next) => {
 }, api);
 app.use('/user', user);
 app.use('/match', match);
+<<<<<<< HEAD
 app.use('/message', match);
+=======
+app.use('/message', message);
+>>>>>>> master
 
 // so when people try to access it via browser
 app.get("/", function(req, res) {
