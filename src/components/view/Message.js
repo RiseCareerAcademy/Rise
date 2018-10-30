@@ -3,7 +3,6 @@ import {View, TouchableOpacity, StyleSheet, Image, Text, FlatList} from 'react-n
 
 const Message = props => {
    // console.log(JSON.stringify(props))
-   console.log('item: ' + props.hello)
    const style = []
    style.push(styles.message)
 //    if (props.last) {
@@ -15,9 +14,9 @@ const Message = props => {
 
     return (
         <TouchableOpacity 
-            onPress={() => alert('message')}
-          //  onPress={() => this.props.navigation.navigate('Main')}
-            activeOpacity={0.7}
+           // onPress={() => alert('message')}
+           onPress={() => this.props.navigate('Conversation')}
+           activeOpacity={0.7}
             style = {style}>
             <View style = {styles.topRow}>
                 <View style = {styles.userCol}>

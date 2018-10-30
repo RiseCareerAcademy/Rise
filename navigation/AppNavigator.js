@@ -9,7 +9,7 @@ import MentorRegistration from '../screens/MentorRegistration'
 import StudentRegistration from '../screens/StudentRegistration'
 import SignIn from '../screens/SignIn'
 import Profile from '../screens/Profile1/Profile'
-import Conversation from '../screens/Convo/Conversation'
+
 
 const App = createStackNavigator({
   Home: { screen: HomeScreen },
@@ -17,14 +17,12 @@ const App = createStackNavigator({
   Student: {screen: StudentRegistration},
   SignIn: {screen: SignIn},
   Main: MainTabNavigator,
-  Convo: Conversation
 });
 
-//export default createSwitchNavigator({
+//   // export default createSwitchNavigator({
 //   // You could add another route here for authentication.
 //   // Read more at https://reactnavigation.org/docs/en/auth-flow.html
-
-  //Main: MainTabNavigator,
+//   Main: MainTabNavigator,
 //});
 
 export default App;

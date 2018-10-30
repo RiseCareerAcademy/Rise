@@ -10,7 +10,7 @@ import { Icon } from 'expo';
 import Colors from '../constants/Colors';
 import ProfileScreen from '../screens/Profile1';
 import Messages from '../screens/Messages';
-import Convo from '../screens/Convo';
+import Conversation from '../screens/Convo';
 
 
 
@@ -49,7 +49,8 @@ SuggestedMatchStack.navigationOptions = {
 };
 
 const MessageStack = createStackNavigator({
-  Main: Messages,
+  Main: {screen: Messages},
+  Convo: {screen: Conversation},
 });
 
 MessageStack.navigationOptions = {
@@ -66,7 +67,7 @@ MessageStack.navigationOptions = {
 };
 
 const ConvoStack = createStackNavigator({
-  Conversation: Convo,
+  Convo: Conversation,
 });
 
 ConvoStack.navigationOptions = {

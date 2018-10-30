@@ -6,8 +6,8 @@ import config from '../../src/config'
 
 class Conversation extends Component {
 
-    constructor() {
-        super()
+    constructor(props) {
+        super(props)
         this.state = {
             messages: []
         }

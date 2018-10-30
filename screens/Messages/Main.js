@@ -15,6 +15,7 @@ export default class Main extends Component {
   }
 
   componentDidMount(){
+    const { navigate } = this.props.navigation;
     // query
     const query = `?toUser=${"101"}`
     console.log(query)
@@ -45,7 +46,6 @@ export default class Main extends Component {
     // {"toUser":"Ryan3","fromUser":"Dan","message":"Turbo is Awesome","dateTime":"2018-10-29T03:19:50.594Z"},
     // {"toUser":"Ryan4","fromUser":"Dan","message":"Turbo is Awesome","dateTime":"2018-10-29T03:19:50.594Z"},
     // {"toUser":"Ryan5","fromUser":"Dan","message":"Turbo is Awesome","dateTime":"2018-10-29T03:19:50.594Z"}]
-
     const { messages } = this.state;
 
     // const { navigate } = this.props.navigation;
