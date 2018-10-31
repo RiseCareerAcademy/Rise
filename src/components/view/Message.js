@@ -2,10 +2,11 @@ import React from 'react'
 import {View, TouchableOpacity, StyleSheet, Image, Text, FlatList} from 'react-native'
 
 const Message = props => {
-    const { navigate } = props.navigation;
+   const { navigate } = props.navigation;
    // console.log(JSON.stringify(props))
    const style = []
    style.push(styles.message)
+   console.log(props.isPassing)
 //    if (props.last) {
 //        console.log("last")
 //        style.push({borderBottomWidth: StyleSheet.hairlineWidth})

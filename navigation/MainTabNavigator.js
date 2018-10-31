@@ -66,23 +66,6 @@ MessageStack.navigationOptions = {
   ),
 };
 
-const ConvoStack = createStackNavigator({
-  Convo: Conversation,
-});
-
-ConvoStack.navigationOptions = {
-  headerTintColor: "rgb(212, 21, 2)",
-  tabBarLabel: 'Convo',
-  tabBarIcon: ({ focused }) => (
-    <Icon.Feather
-      name="message-circle"
-      size={26}
-      style={{ marginBottom: -3 }}
-      color={focused ? Colors.tabIconSelected : Colors.tabIconDefault}
-    />
-  ),
-};
-
 
 const SettingStack = createStackNavigator({
   Settings: SettingsScreen,
@@ -104,6 +87,5 @@ export default createBottomTabNavigator({
   ProfileStack,
   SuggestedMatchStack,
   MessageStack,
-  SettingStack,
-  ConvoStack
+  SettingStack
 });

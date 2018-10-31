@@ -10,7 +10,8 @@ export default class Main extends Component {
     super(props)
     this.state = {
       showActivityIndicator: true,
-      messages :  []
+      messages :  [],
+      isPassing : "hello"
       }
   }
 
@@ -42,10 +43,10 @@ export default class Main extends Component {
 
 
   render() {
-    const messages = [{"toUser":"Ryan2","fromUser":"Dan","message":"Turbo is Awesome","dateTime":"2018-10-29T03:19:50.594Z"},
-    {"toUser":"Ryan3","fromUser":"Dan","message":"Turbo is Awesome","dateTime":"2018-10-29T03:19:50.594Z"},
-    {"toUser":"Ryan4","fromUser":"Dan","message":"Turbo is Awesome","dateTime":"2018-10-29T03:19:50.594Z"},
-    {"toUser":"Ryan5","fromUser":"Dan","message":"Turbo is Awesome","dateTime":"2018-10-29T03:19:50.594Z"}]
+    const messages = [{"toUser":"Ryan2","fromUser":"Dan","message":"Varun is really nice.","dateTime":"2018-10-29T03:19:50.594Z"},
+    {"toUser":"Ryan3","fromUser":"Tone","message":"I think we'll get an A","dateTime":"2018-10-29T03:19:50.594Z"},
+    {"toUser":"Ryan4","fromUser":"Rita","message":"I'm a big fan of the Milwaukee Bucks","dateTime":"2018-10-29T03:19:50.594Z"},
+    {"toUser":"Ryan5","fromUser":"Kevin","message":"That's pretty cooool","dateTime":"2018-10-29T03:19:50.594Z"}]
     // const { messages } = this.state;
 
     // const { navigate } = this.props.navigation;
