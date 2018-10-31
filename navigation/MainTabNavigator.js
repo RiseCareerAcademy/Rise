@@ -1,16 +1,13 @@
 import React from 'react';
-import { Platform } from 'react-native';
+import { Icon } from 'expo';
 import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
 
-import TabBarIcon from '../components/TabBarIcon';
-import HomeScreen from '../screens/HomeScreen';
 import LinksScreen from '../screens/LinksScreen';
 import SettingsScreen from '../screens/Settings';
-import { Icon } from 'expo';
 import Colors from '../constants/Colors';
 import ProfileScreen from '../screens/Profile1';
 import Messages from '../screens/Messages';
-import Conversation from '../screens/Convo';
+import Conversation from '../screens/Conversation';
 
 
 
@@ -50,7 +47,7 @@ SuggestedMatchStack.navigationOptions = {
 
 const MessageStack = createStackNavigator({
   Main: {screen: Messages},
-  Convo: {screen: Conversation},
+  Conversation: {screen: Conversation},
 });
 
 MessageStack.navigationOptions = {
@@ -66,13 +63,13 @@ MessageStack.navigationOptions = {
   ),
 };
 
-const ConvoStack = createStackNavigator({
-  Convo: Conversation,
+const ConversationStack = createStackNavigator({
+  Conversation: Conversation,
 });
 
-ConvoStack.navigationOptions = {
+ConversationStack.navigationOptions = {
   headerTintColor: "rgb(212, 21, 2)",
-  tabBarLabel: 'Convo',
+  tabBarLabel: 'Conversation',
   tabBarIcon: ({ focused }) => (
     <Icon.Feather
       name="message-circle"
@@ -105,5 +102,5 @@ export default createBottomTabNavigator({
   SuggestedMatchStack,
   MessageStack,
   SettingStack,
-  ConvoStack
+  ConversationStack
 });
