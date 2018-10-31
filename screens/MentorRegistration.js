@@ -5,9 +5,9 @@ import { StyleSheet, View } from "react-native";
 export default class MentorRegistration extends React.Component {
   constructor(props) {
     super(props);
-    
+
     this.state = {
-      result: null,
+      result: null
     };
   }
 
@@ -33,9 +33,9 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center"
   },
   center: {
     flex: 1,
@@ -50,5 +50,5 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     paddingTop: 30
-  },
+  }
 });

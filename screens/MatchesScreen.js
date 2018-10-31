@@ -1,6 +1,5 @@
 import React, { Component } from "react";
-import { Text } from "native-base";
-import { ScrollView, StyleSheet, View, SectionList } from "react-native";
+import { ScrollView, StyleSheet, View, SectionList, Text } from "react-native";
 
 export default class MatchesScreen extends Component {
   state = {
