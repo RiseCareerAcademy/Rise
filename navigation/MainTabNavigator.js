@@ -4,6 +4,7 @@ import { createStackNavigator, createBottomTabNavigator } from 'react-navigation
 
 import SettingsScreen from '../screens/Settings';
 import MatchesScreen from '../screens/MatchesScreen';
+// import SearchScreen from '../screens/SearchScreen'
 import Colors from '../constants/Colors';
 import ProfileScreen from '../screens/Profile1';
 import Messages from '../screens/Messages';
