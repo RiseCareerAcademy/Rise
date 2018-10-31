@@ -1,16 +1,13 @@
 import React from 'react';
-import { Platform } from 'react-native';
+import { Icon } from 'expo';
 import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
 
-import TabBarIcon from '../components/TabBarIcon';
-import HomeScreen from '../screens/HomeScreen';
-import LinksScreen from '../screens/LinksScreen';
 import SettingsScreen from '../screens/Settings';
-import { Icon } from 'expo';
+import MatchesScreen from '../screens/MatchesScreen';
 import Colors from '../constants/Colors';
 import ProfileScreen from '../screens/Profile1';
 import Messages from '../screens/Messages';
-import Conversation from '../screens/Convo';
+import Conversation from '../screens/Conversation';
 
 
 
@@ -33,7 +30,7 @@ ProfileStack.navigationOptions = {
 
 
 const SuggestedMatchStack = createStackNavigator({
-  Links: LinksScreen,
+  Links: MatchesScreen,
 });
 
 SuggestedMatchStack.navigationOptions = {
@@ -50,7 +47,7 @@ SuggestedMatchStack.navigationOptions = {
 
 const MessageStack = createStackNavigator({
   Main: {screen: Messages},
-  Convo: {screen: Conversation},
+  Conversation: {screen: Conversation},
 });
 
 MessageStack.navigationOptions = {
