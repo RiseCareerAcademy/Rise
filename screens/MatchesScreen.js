@@ -1,6 +1,5 @@
 import React, { Component } from "react";
-import { Text } from "native-base";
-import { ScrollView, StyleSheet, View, SectionList } from "react-native";
+import { ScrollView, StyleSheet, View, SectionList, Text } from "react-native";
 
 export default class MatchesScreen extends Component {
   state = {
@@ -10,6 +9,35 @@ export default class MatchesScreen extends Component {
     matches: [],
     scores: []
   };
+
+  constructor(props) {
+    super(props);
+
+    //fakeData organized by iterations of (name, profession, skills);
+    const fakeData = [
+      ["Daniel Ng"],
+      ["Software Developer"],
+      ["JQuery", "Python", "UX"], //should be number 4
+      ["Tracy Lewis"],
+      [""],
+      ["UX", "Prototyping"], //should be number 3
+      ["Kevin Mui"],
+      ["Product Manager"],
+      [""], //should be number 2
+      ["Lewis Tracy"],
+      ["Product Manager"],
+      ["UX"], //should be number 1
+      ["Tone Yu"],
+      ["Nurse"],
+      ["Birthing", "Yelling", "Running"] //should not be in the results
+    ];
+
+    const { desiredSkills, desiredProfessions } = this.state;
+    const { scores, matches } = this.match(desiredSkills, desiredProfessions, fakeData);
+
+    this.state.scores = scores;
+    this.state.matches = matches;
+  }
 
   //match function
   match = (desiredSkills, desiredProfessions, fakeData) => {
@@ -61,32 +89,12 @@ export default class MatchesScreen extends Component {
       }
     }
 
-    this.setState({ scores, matches });
+    return { scores, matches };
   }
 
   render() {
-    //fakeData organized by iterations of (name, profession, skills);
-    const fakeData = [
-      ["Daniel Ng"],
-      ["Software Developer"],
-      ["JQuery", "Python", "UX"], //should be number 4
-      ["Tracy Lewis"],
-      [""],
-      ["UX", "Prototyping"], //should be number 3
-      ["Kevin Mui"],
-      ["Product Manager"],
-      [""], //should be number 2
-      ["Lewis Tracy"],
-      ["Product Manager"],
-      ["UX"], //should be number 1
-      ["Tone Yu"],
-      ["Nurse"],
-      ["Birthing", "Yelling", "Running"] //should not be in the results
-    ];
 
-    const { desiredSkills, desiredProfessions, matches, scores } = this.state;
-
-    this.match(desiredSkills, desiredProfessions, fakeData);
+    const { matches, scores } = this.state;
 
     return (
       <View style={styles.container}>
