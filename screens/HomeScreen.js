@@ -1,5 +1,6 @@
 import React from "react";
-import { Button, Text, ScrollView, StyleSheet, Image, View } from "react-native";
+import { Button, Text } from "native-base";
+import { ScrollView, StyleSheet, Image, View } from "react-native";
 import { AuthSession } from "expo";
 
 export default class HomeScreen extends React.Component {
@@ -9,6 +10,10 @@ export default class HomeScreen extends React.Component {
     this.state = {
       result: null
     };
+  }
+
+  hello = () => {
+    return 'hello';
   }
 
   handleMentorPress = async () => {
