@@ -1,9 +1,6 @@
 import React from "react";
 import { Button, Text } from "native-base";
-import { Platform, ScrollView, StyleSheet, Image, View } from "react-native";
-import { AuthSession } from "expo";
-import { Ionicons } from '@expo/vector-icons';
-import { MonoText } from "../components/StyledText";
+import { StyleSheet, View } from "react-native";
 
 export default class MentorRegistration extends React.Component {
   constructor(props) {
@@ -18,7 +15,7 @@ export default class MentorRegistration extends React.Component {
     const { navigate } = this.props.navigation;
     return (
         <View>
-        <Text>You've been authorized by Linkedin</Text>
+        <Text>You have been authorized by Linkedin</Text>
         <Button full light onPress={() =>
           navigate('Main')
         }>

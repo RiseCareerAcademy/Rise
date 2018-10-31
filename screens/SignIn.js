@@ -1,9 +1,6 @@
 import React from "react";
-import { Button, Text, Container, Header, Content, Form, Item, Label, Input } from "native-base";
-import { Platform, ScrollView, StyleSheet, Image, View } from "react-native";
-import { AuthSession } from "expo";
-import { Ionicons } from '@expo/vector-icons';
-import { MonoText } from "../components/StyledText";
+import { Button, Text, Container, Content, Form, Item, Label, Input } from "native-base";
+import { StyleSheet, View } from "react-native";
 
 export default class SignIn extends React.Component {
   constructor(props) {
