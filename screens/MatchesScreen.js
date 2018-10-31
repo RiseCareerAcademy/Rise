@@ -1,53 +1,18 @@
-import React from "react";
+import React, { Component } from "react";
 import { Text } from "native-base";
 import { ScrollView, StyleSheet, View, SectionList } from "react-native";
 
-export default class MatchesScreen extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      result: null
-    };
-  }
-
-  render() {
-    ////matching algo////
-
-    const desiredSkills = ["Joking", "Smiling", "Yawning"]; //temp
-    const desiredProfessions = ["Professor", "Tech Expert"]; //temp
-
-    //fakeData organized by iterations of (name, profession, skills)
-    const fakeData = [
-      ["Rita Roloff"],
-      ["Tech Expert"],
-      ["Coding", "Slaying", "Singing"],
-      ["Flower"],
-      ["Tech Expert"],
-      ["Coding", "Sending flowers", "Singing"],
-      ["Obama"],
-      ["POTUS"],
-      ["Speaking", "Joking", "Dancing"],
-      ["Tracey"],
-      ["Professor"],
-      ["Talking"],
-      ["YO Mama"],
-      ["Mother"],
-      ["Birthing", "Yelling", "Running"],
-      ["Dan"],
-      ["Software Engineer"],
-      ["Smiling", "Gaming"],
-      ["Goku"],
-      ["Super Saiyan"],
-      ["Fighting", "Slaying", "Reviving"],
-      ["My cat"],
-      ["God", "Professor"],
-      ["Sleeping", "Snoring", "Yawning"],
-      ["R Federer"],
-      ["GOAT"],
-      ["Winning", "Slaying", "Tennis"]
-    ];
+export default class MatchesScreen extends Component {
+  state = {
+    desiredSkills: ["Agile Methodologies", "UX", "Prototyping"], //temp
+    desiredProfessions: ["Product Manager"], //temp
     //array of matches with respective scores
+    matches: [],
+    scores: []
+  };
+
+  //match function
+  match = (desiredSkills, desiredProfessions, fakeData) => {
     const matches = [];
     const scores = [];
 
@@ -66,11 +31,12 @@ export default class MatchesScreen extends React.Component {
         }
       }
     }
+
     for (let i = 0; i < desiredProfessions.length; i++) {
       for (let j = 0; j < fakeData.length; j += 3)
         if (fakeData[j + 1].indexOf(desiredProfessions[i]) > -1) {
-          //if matching skill, add to match list, score ++
           if (matches.indexOf(fakeData[j]) > -1)
+            //if matching skill, add to match list, score ++
             //if already has points
             scores[matches.indexOf(fakeData[j])] += 3;
           else {
@@ -94,6 +60,33 @@ export default class MatchesScreen extends React.Component {
         }
       }
     }
+
+    this.setState({ scores, matches });
+  }
+
+  render() {
+    //fakeData organized by iterations of (name, profession, skills);
+    const fakeData = [
+      ["Daniel Ng"],
+      ["Software Developer"],
+      ["JQuery", "Python", "UX"], //should be number 4
+      ["Tracy Lewis"],
+      [""],
+      ["UX", "Prototyping"], //should be number 3
+      ["Kevin Mui"],
+      ["Product Manager"],
+      [""], //should be number 2
+      ["Lewis Tracy"],
+      ["Product Manager"],
+      ["UX"], //should be number 1
+      ["Tone Yu"],
+      ["Nurse"],
+      ["Birthing", "Yelling", "Running"] //should not be in the results
+    ];
+
+    const { desiredSkills, desiredProfessions, matches, scores } = this.state;
+
+    this.match(desiredSkills, desiredProfessions, fakeData);
 
     return (
       <View style={styles.container}>

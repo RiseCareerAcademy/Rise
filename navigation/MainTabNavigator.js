@@ -1,10 +1,10 @@
 import React from 'react';
-import { Icon } from 'expo';
 import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
 
 import SettingsScreen from '../screens/Settings';
 import MatchesScreen from '../screens/MatchesScreen';
-// import SearchScreen from '../screens/SearchScreen'
+//import SearchScreen from '../screens/SearchScreen'
+import { Icon } from 'expo';
 import Colors from '../constants/Colors';
 import ProfileScreen from '../screens/Profile1';
 import Messages from '../screens/Messages';
