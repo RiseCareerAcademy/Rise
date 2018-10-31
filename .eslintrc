@@ -1,8 +1,19 @@
 {
-    "env": {
-        "node": true,
-        "browser": true,
-        "es6": true
-    },
-    "parser": "babel-eslint"
+  "env": {
+    "node": true,
+    "browser": true,
+    "es6": true,
+    "jest/globals": true
+  },
+  "parser": "babel-eslint",
+  "extends": [
+    "eslint:recommended",
+    "plugin:jest/recommended",
+    "plugin:react/recommended"
+  ],
+  "plugins": ["jest", "react"],
+  "rules": {
+    "react/prop-types": "off",
+    "react/display-name": "off"
+  }
 }
