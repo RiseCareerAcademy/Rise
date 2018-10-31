@@ -17,7 +17,7 @@ export default class MatchesScreen extends Component {
     const scores = [];
 
     for (let i = 0; i < desiredSkills.length; i++) {
-      for (let j = 0; j < fakeData.length; j += 3)
+      for (let j = 0; j < fakeData.length; j += 3) {
         if (fakeData[j + 2].indexOf(desiredSkills[i]) > -1) {
           //if matching skill, add to match list, score ++
           if (matches.indexOf(fakeData[j]) > -1)
@@ -29,11 +29,12 @@ export default class MatchesScreen extends Component {
             scores[scores.length] = 1;
           }
         }
+      }
     }
 
     for (let i = 0; i < desiredProfessions.length; i++) {
       for (let j = 0; j < fakeData.length; j += 3)
-        if (fakeData[j + 1].indexOf(desiredProfessions[i]) > -1)
+        if (fakeData[j + 1].indexOf(desiredProfessions[i]) > -1) {
           if (matches.indexOf(fakeData[j]) > -1)
             //if matching skill, add to match list, score ++
             //if already has points
@@ -43,6 +44,7 @@ export default class MatchesScreen extends Component {
             matches[matches.length] = fakeData[j];
             scores[scores.length] = 3;
           }
+        }
     }
 
     //sort by score
