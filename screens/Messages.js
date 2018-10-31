@@ -47,8 +47,8 @@ export default class Messages extends Component {
         <FlatList
           data={messages}
           keyExtractor={item => item.id}
-          renderItem={({ item }) => (
-            <Message {...item} navigation={this.props.navigation} />
+          renderItem={({ item }, i) => (
+            <Message {...item} key = {i} navigation={this.props.navigation} />
           )}
         />
       </View>

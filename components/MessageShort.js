@@ -9,16 +9,29 @@ import {
 const Message = props => {
   const style = [];
   style.push(styles.message);
-  const profileImg =
-    "https://cdn.cnn.com/cnnnext/dam/assets/180923222528-tiger-woods-fedex-playoff-exlarge-169.jpg";
-  const croppedImg = profileImg + "=s40-c";
+  var profileImg = "https://cdn.cnn.com/cnnnext/dam/assets/180923222528-tiger-woods-fedex-playoff-exlarge-169.jpg";
+  var croppedImg = profileImg + "=s40-c";
+  var pad = {paddingHorizontal : 30}
 
-  const dir = !props.sentMessage
+
+  var dir = !props.sentMessage
     ? { flexDirection: "row-reverse" }
     : { flexDirection: "row" };
 
+  if (props.fromUser ==  "Me") {
+    dir = {flexDirection: "row"};
+    profileImg = "https://tmssl.akamaized.net//images/portrait/header/94529-1454599346.jpg?lm=1454599357"
+    croppedImg = profileImg + "=s40-c";
+    pad = {paddingHorizontal : -30}
+
+  }
+
+
   const containerStyle = [styles.container];
   containerStyle.push(dir);
+  containerStyle.push(pad);
+
+  
 
   return (
     <View style={containerStyle}>
