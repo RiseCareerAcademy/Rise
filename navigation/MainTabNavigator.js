@@ -2,8 +2,8 @@ import React from 'react';
 import { Icon } from 'expo';
 import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
 
-import LinksScreen from '../screens/LinksScreen';
 import SettingsScreen from '../screens/Settings';
+import MatchesScreen from '../screens/MatchesScreen';
 import Colors from '../constants/Colors';
 import ProfileScreen from '../screens/Profile1';
 import Messages from '../screens/Messages';
@@ -30,7 +30,7 @@ ProfileStack.navigationOptions = {
 
 
 const SuggestedMatchStack = createStackNavigator({
-  Links: LinksScreen,
+  Links: MatchesScreen,
 });
 
 SuggestedMatchStack.navigationOptions = {
