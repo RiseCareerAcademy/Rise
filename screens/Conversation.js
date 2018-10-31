@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View } from "native-base";
+import { View } from "react-native";
 import { MessageShort } from "../components/view";
 
 class Conversation extends Component {
