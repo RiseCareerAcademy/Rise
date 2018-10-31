@@ -1,5 +1,6 @@
 import React from "react";
-import { Button, Text, StyleSheet, View } from "react-native";
+import { Button, Text } from "native-base";
+import { StyleSheet, View } from "react-native";
 
 export default class MentorRegistration extends React.Component {
   constructor(props) {
@@ -13,15 +14,13 @@ export default class MentorRegistration extends React.Component {
   render() {
     const { navigate } = this.props.navigation;
     return (
-      <View>
+        <View>
         <Text>You have been authorized by Linkedin</Text>
-        <Button
-          full
-          light
-          onPress={() => navigate("Main")}
-          style={styles.greyText}
-          title="Student"
-        />
+        <Button full light onPress={() =>
+          navigate('Main')
+        }>
+          <Text style={styles.greyText}>Student</Text>
+        </Button>
       </View>
     );
   }
