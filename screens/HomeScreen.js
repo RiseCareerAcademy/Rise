@@ -4,15 +4,19 @@ import { Platform, ScrollView, StyleSheet, Image, View } from "react-native";
 import { AuthSession, ImagePicker, Permissions } from "expo";
 import { MonoText } from "../components/StyledText";
 
+
 export default class HomeScreen extends React.Component {
   constructor(props) {
     super(props);
-
     this.state = {
       result: null,
     };
   }
 
+
+  hello = () => {
+    return 'hello';
+  }
 
   handleMentorPress = async () => {
     // Setup params for Linkedin API
