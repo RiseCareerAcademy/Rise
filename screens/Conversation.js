@@ -1,5 +1,6 @@
 import React, { Component } from "react";
-import { Text, View } from "native-base";
+import { Button, Text, View, Container, Header, Content, Form, Item, Label, Input  } from "native-base";
+import {  StyleSheet} from "react-native";
 import { MessageShort } from "../components/view";
 
 class Conversation extends Component {
@@ -42,9 +43,41 @@ class Conversation extends Component {
         {this.state.messages.map((message, i) => {
           return <MessageShort key={i} {...message} />;
         })}
+      <View style={styles.container}>
+
+      </View>
       </View>
     );
   }
 }
+
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "rgb(0, 0, 0)"
+  },
+  buttonContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  center: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "center"
+  },
+  buttonStyle: {
+    margin: 10
+  },
+  greyText: {
+    color: "grey"
+  },
+  contentContainer: {
+    paddingTop: 30
+  },
+});
+
 
 export default Conversation;
