@@ -13,6 +13,8 @@ export default class MatchesScreen extends Component {
   constructor(props) {
     super(props);
 
+    //populate array with data from database
+    
     //fakeData organized by iterations of (name, profession, skills);
     const fakeData = [
       ["Daniel Ng"],
