@@ -13,3 +13,13 @@ it('renders correctly', () => {
 
   expect(tree).toMatchSnapshot();
 });
+
+it('returns hello', () => {
+    const props = {
+        navigation: {
+            navigate: () => {}
+        },
+    };
+  const instance = renderer.create(<Home {...props}>Snapshot test!</Home>).getInstance();
+  expect(instance.hello()).toEqual('hello');
+});

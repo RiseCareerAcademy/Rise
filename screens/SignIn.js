@@ -1,13 +1,6 @@
 import React from "react";
-import {
-  Container,
-  Content,
-  Form,
-  Item,
-  Label,
-  Input
-} from "native-base";
-import { Button, StyleSheet, View } from "react-native";
+import { Button, Container, Content, Form, Item, Label, Input } from "native-base";
+import { StyleSheet, View } from "react-native";
 
 export default class SignIn extends React.Component {
   constructor(props) {
