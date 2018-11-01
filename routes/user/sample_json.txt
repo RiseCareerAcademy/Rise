@@ -10,8 +10,12 @@
     "occupation": "Software Engineering", 
     "skills": "JAVA",
     "profile_pic_URL": "katwal",
+<<<<<<< HEAD
     "hobbies": "hi",
     "password" : "npasdqnonwd"
+=======
+    "hobbies": "hi"
+>>>>>>> 305b3a3b8298c9b4e6492f18701116328a591b89
 }
 
 
@@ -27,10 +31,22 @@
     "area_of_study": "Computer Science", 
     "skills": "JAVA",
     "profile_pic_URL": "bill.com",
+<<<<<<< HEAD
     "hobbies": "testiing hobbies",
     "password": "qwerty"
 }
 
+=======
+    "hobbies": "testiing hobbies"
+}
+
+//PASSWORD
+{
+    "user_id": 20101,
+    "email_address": "mike@wisc.edu", 
+    "password": "testiing hobbies"
+}
+>>>>>>> 305b3a3b8298c9b4e6492f18701116328a591b89
 
 //MATCHES
 {

@@ -7,7 +7,10 @@ var user_sql_constants = require("../../config/user_sql_constants.js");
 module.exports.postMatches = (req, res) => {
   
     const fields = ['match_id', 'mentor_id', 'mentee_id'];
+<<<<<<< HEAD
     console.log('nigga this is match')
+=======
+>>>>>>> 305b3a3b8298c9b4e6492f18701116328a591b89
     const user = {};
     fields.forEach(field => {
       if (req.body[field] === undefined) {
@@ -67,4 +70,8 @@ module.exports.getMatchbyUserId = (req, res) => {
     res.json({ success: true, rows: rows });
   });
   
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 305b3a3b8298c9b4e6492f18701116328a591b89

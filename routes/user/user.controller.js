@@ -9,8 +9,14 @@ module.exports.createTables = (req, res) => {
   
   sql1 = user_sql_constants.create_mentor_table_sql();
   sql2 = user_sql_constants.create_mentee_table_sql();
+<<<<<<< HEAD
   sql3 = user_sql_constants.create_matches_table_sql();
   sql4 = user_sql_constants.create_messages_table_sql();
+=======
+  sql3 = user_sql_constants.create_password_table_sql();
+  sql4 = user_sql_constants.create_matches_table_sql();
+  sql5 = user_sql_constants.create_messages_table_sql();
+>>>>>>> 305b3a3b8298c9b4e6492f18701116328a591b89
 
 
   db.all(sql1, [], (err, rows) => {
@@ -32,6 +38,14 @@ module.exports.createTables = (req, res) => {
     if (err) {
       throw err;
     }
+<<<<<<< HEAD
+=======
+  });
+  db.all(sql5, [], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+>>>>>>> 305b3a3b8298c9b4e6492f18701116328a591b89
     res.json({ success: true, rows: rows });
   });
 }
@@ -69,7 +83,11 @@ module.exports.deletetable = (req, res) => {
 //create new mentor
 module.exports.postMentors = (req, res) => {
   const fields = ['user_id', 'first_name', 'last_name', 'email_address' ,'biography','zipcode',
+<<<<<<< HEAD
   'date_of_birth','occupation','skills','profile_pic_URL','hobbies','password'];
+=======
+  'date_of_birth','occupation','skills','profile_pic_URL','hobbies'];
+>>>>>>> 305b3a3b8298c9b4e6492f18701116328a591b89
   const user = {};
   
   fields.forEach(field => {
@@ -92,7 +110,11 @@ module.exports.postMentors = (req, res) => {
 //create new mentee
 module.exports.postMentees = (req, res) => {
   const fields = ['user_id', 'first_name', 'last_name', 'email_address' ,'biography','zipcode',
+<<<<<<< HEAD
   'date_of_birth','area_of_study','skills','profile_pic_URL','hobbies','password'];
+=======
+  'date_of_birth','area_of_study','skills','profile_pic_URL','hobbies'];
+>>>>>>> 305b3a3b8298c9b4e6492f18701116328a591b89
   const user = {};
   fields.forEach(field => {
     if (req.body[field] === undefined) {
@@ -111,6 +133,7 @@ module.exports.postMentees = (req, res) => {
   res.json({ success: true, rows: rows });
 });
 }
+<<<<<<< HEAD
 
 //get all mentors
 module.exports.getAllMentors = (req, res) => {
@@ -161,12 +184,136 @@ module.exports.checkEmail = (req, res) => {
   db.all(sql, [], (err, rows) => {
     if (err) {
       throw err;
+=======
+
+//create new password
+module.exports.postPasswords = (req, res) => {
+  const fields = ['user_id', 'email_address' ,'password'];
+  const user = {};
+  fields.forEach(field => {
+    if (req.body[field] === undefined) {
+     res
+        .status(500)
+        .json({ error: "Missing credentials", success: false });
+>>>>>>> 305b3a3b8298c9b4e6492f18701116328a591b89
+    }
+    res.json({ success: true, rows: rows });
+  });
+<<<<<<< HEAD
+  
+}
+
+module.exports.getEmailById = (req, res) => {
+  
+  userID = req.params.id
+  sql = user_sql_constants.get_email_by_id(userID);
+  
+=======
+  sql = user_sql_constants.post_password_sql(user)
+  console.log(sql);
+>>>>>>> 305b3a3b8298c9b4e6492f18701116328a591b89
+  db.all(sql, [], (err, rows) => {
+    if (err) {
+      throw err;
     }
     res.json({ success: true, rows: rows });
   });
   
 }
 
+<<<<<<< HEAD
+module.exports.updateEmailById = (req, res) => {
+  
+  userID = req.params.id
+  newEmail = req.params.email
+  sql = user_sql_constants.update_email_by_id(userID,newEmail);
+=======
+//get all mentors
+module.exports.getAllMentors = (req, res) => {
+    sql = user_sql_constants.get_all_mentors();
+>>>>>>> 305b3a3b8298c9b4e6492f18701116328a591b89
+  
+  db.all(sql, [], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+    res.json({ success: true, rows: rows });
+  });
+  
+}
+<<<<<<< HEAD
+
+module.exports.getHobbiesById = (req, res) => {
+  
+  userID = req.params.id
+  sql = user_sql_constants.get_hobbies_by_id(userID);
+=======
+//get all mentees
+  module.exports.getAllMentees = (req, res) => {
+    sql = user_sql_constants.get_all_mentees();
+>>>>>>> 305b3a3b8298c9b4e6492f18701116328a591b89
+  
+  db.all(sql, [], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+    res.json({ success: true, rows: rows });
+  });
+  
+}
+<<<<<<< HEAD
+
+module.exports.updateHobbiesById = (req, res) => {
+  userID = req.params.id
+  hobbies = req.params.hobby
+  sql = user_sql_constants.update_hobbies_by_id(userID,hobbies);
+=======
+//get all mentees
+module.exports.getAllPasswords = (req, res) => {
+  sql = user_sql_constants.get_all_passwords();
+
+db.all(sql, [], (err, rows) => {
+  if (err) {
+    throw err;
+  }
+  res.json({ success: true, rows: rows });
+});
+}
+
+//get user by ID
+module.exports.getUserById = (req, res) => {
+  
+  userID = req.params.id
+  sql = user_sql_constants.get_user_id(userID);
+  
+  db.all(sql, [], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+    res.json({ success: true, rows: rows });
+  });
+  
+}
+
+//todo: get email by id, and check if its the same as one passed in param 
+module.exports.checkEmail = (req, res) => {
+  userID = req.params.id;
+  email = req.params.email;
+
+  sql = user_sql_constants.confirm_email(userID,email);
+>>>>>>> 305b3a3b8298c9b4e6492f18701116328a591b89
+  
+  db.all(sql, [], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+    res.json({ success: true, rows: rows });
+  });
+  
+}
+
+<<<<<<< HEAD
+=======
 module.exports.getEmailById = (req, res) => {
   
   userID = req.params.id
@@ -224,6 +371,7 @@ module.exports.updateHobbiesById = (req, res) => {
   
 }
 
+>>>>>>> 305b3a3b8298c9b4e6492f18701116328a591b89
 module.exports.deleteHobbiesById = (req, res) => {
   
   userID = req.params.id
@@ -382,8 +530,12 @@ module.exports.updateZipcode = (req, res) => {
 module.exports.login = (req, res) => {
   email = req.body.email_address;
   password = req.body.password;
+<<<<<<< HEAD
   userType = req.body.userType;
   sql = user_sql_constants.login(email,password,userType);
+=======
+  sql = user_sql_constants.login(email,password);
+>>>>>>> 305b3a3b8298c9b4e6492f18701116328a591b89
   
   db.all(sql, [], (err, rows) => {
     if (err) {
