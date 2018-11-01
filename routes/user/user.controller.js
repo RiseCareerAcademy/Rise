@@ -128,16 +128,17 @@ module.exports.postPasswords = (req, res) => {
         .status(500)
         .json({ error: "Missing credentials", success: false });
     }
-    user[field] = req.body[field];
+    res.json({ success: true, rows: rows });
   });
   sql = user_sql_constants.post_password_sql(user)
   console.log(sql);
   db.all(sql, [], (err, rows) => {
-  if (err) {
-    throw err;
-  }
-  res.json({ success: true, rows: rows });
-});
+    if (err) {
+      throw err;
+    }
+    res.json({ success: true, rows: rows });
+  });
+  
 }
 
 //get all mentors
@@ -150,6 +151,7 @@ module.exports.getAllMentors = (req, res) => {
     }
     res.json({ success: true, rows: rows });
   });
+  
 }
 //get all mentees
   module.exports.getAllMentees = (req, res) => {
@@ -161,6 +163,7 @@ module.exports.getAllMentors = (req, res) => {
     }
     res.json({ success: true, rows: rows });
   });
+  
 }
 //get all mentees
 module.exports.getAllPasswords = (req, res) => {

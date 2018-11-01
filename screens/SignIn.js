@@ -1,43 +1,41 @@
 import React from "react";
-import { Button, Text, Container, Header, Content, Form, Item, Label, Input } from "native-base";
-import { Platform, ScrollView, StyleSheet, Image, View } from "react-native";
-import { AuthSession } from "expo";
-import { Ionicons } from '@expo/vector-icons';
-import { MonoText } from "../components/StyledText";
+import { Button, Container, Content, Form, Item, Label, Input } from "native-base";
+import { StyleSheet, View } from "react-native";
 
 export default class SignIn extends React.Component {
   constructor(props) {
     super(props);
-    
+
     this.state = {
-      result: null,
+      result: null
     };
   }
 
   render() {
     const { navigate } = this.props.navigation;
     return (
-        <Container>
+      <Container>
         <Content>
           <Form>
             <Item stackedLabel>
               <Label>Email</Label>
-              <Input/>
+              <Input />
             </Item>
             <Item stackedLabel last>
               <Label>Password</Label>
-              <Input/>
+              <Input />
             </Item>
           </Form>
         </Content>
         <View>
-        <Button full light onPress={() =>
-          navigate('Main')
-        }>
-          <Text style={styles.greyText}>Next</Text>
-        </Button>
-      </View>
-        </Container>
+          <Button
+            color="grey"
+            onPress={() => navigate("Main")}
+            style={styles.greyText}
+            title="Next"
+          />
+        </View>
+      </Container>
     );
   }
 }
@@ -49,9 +47,9 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center"
   },
   center: {
     flex: 1,
@@ -66,5 +64,5 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     paddingTop: 30
-  },
+  }
 });
