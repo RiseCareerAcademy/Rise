@@ -1,6 +1,9 @@
 import React from "react";
-import { Button, Container, Content, Form, Item, Label, Input } from "native-base";
-import { StyleSheet, View } from "react-native";
+import { Button, Text, Container, Header, Content, Form, Item, Label, Input } from "native-base";
+import { Platform, ScrollView, StyleSheet, Image, View } from "react-native";
+import { AuthSession } from "expo";
+import { Ionicons } from '@expo/vector-icons';
+import { MonoText } from "../components/StyledText";
 
 export default class SignIn extends React.Component {
   constructor(props) {
@@ -28,12 +31,11 @@ export default class SignIn extends React.Component {
           </Form>
         </Content>
         <View>
-          <Button
-            color="grey"
-            onPress={() => navigate("Main")}
-            style={styles.greyText}
-            title="Next"
-          />
+        <Button full light onPress={() =>
+          navigate('Main')
+        }>
+          <Text style={styles.greyText}>Next</Text>
+        </Button>
         </View>
       </Container>
     );
