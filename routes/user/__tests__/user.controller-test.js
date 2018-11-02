@@ -1305,12 +1305,13 @@ describe('getProfession', () => {
         const req = {
             params: {
                 id: 1000,
+                profilepic: 'MyProfilePic'
             },
         };
 
         updateProfilePic(req, res);
 
-        expect(parse(db.all.mock.calls[0][0])).toEqual("UPDATE Mentees SET profile_pic_URL ='undefined' WHERE user_id = 1000");
+        expect(parse(db.all.mock.calls[0][0])).toEqual("UPDATE Mentees SET profile_pic_URL ='MyProfilePic' WHERE user_id = 1000");
 
         expect(res.json.mock.calls[0][0]).toEqual({
             success: true,
@@ -1322,12 +1323,13 @@ describe('getProfession', () => {
         const req = {
             params: {
                 id: 2000,
+                profilepic: 'MyProfilePic',
             },
         };
 
         updateProfilePic(req, res);
 
-        expect(parse(db.all.mock.calls[0][0])).toEqual("UPDATE Mentees SET profile_pic_URL ='undefined' WHERE user_id = 2000");
+        expect(parse(db.all.mock.calls[0][0])).toEqual("UPDATE Mentees SET profile_pic_URL ='MyProfilePic' WHERE user_id = 2000");
 
         expect(res.json.mock.calls[0][0]).toEqual({
             success: true,
@@ -1339,6 +1341,7 @@ describe('getProfession', () => {
         const req = {
             params: {
                 id: 2000,
+                profilepic: 'MyProfilePic',
             },
         };
 
