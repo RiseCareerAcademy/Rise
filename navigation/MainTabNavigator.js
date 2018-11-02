@@ -83,27 +83,9 @@ SettingStack.navigationOptions = {
 };
 
 
-
-const TestStack = createStackNavigator({
-  Test: TestScreen,
-});
-
-TestStack.navigationOptions = {
-  tabBarLabel: 'Settings',
-  tabBarIcon: ({ focused }) => (
-    <Icon.Feather
-      name="settings"
-      size={26}
-      style={{ marginBottom: -3 }}
-      color={focused ? Colors.tabIconSelected : Colors.tabIconDefault}
-    />
-  ),
-};
-
 export default createBottomTabNavigator({
   ProfileStack,
   SuggestedMatchStack,
   MessageStack,
-  SettingStack,
-  TestStack
+  SettingStack
 });
