@@ -143,7 +143,7 @@ module.exports.postPasswords = (req, res) => {
 
 //get all mentors
 module.exports.getAllMentors = (req, res) => {
-    sql = user_sql_constants.get_all_mentors();
+  sql = user_sql_constants.get_all_mentors();
   
   db.all(sql, [], (err, rows) => {
     if (err) {
