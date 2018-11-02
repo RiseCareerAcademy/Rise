@@ -1,60 +1,90 @@
 import React from 'react';
-import { Platform } from 'react-native';
 import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
 
-import TabBarIcon from '../components/TabBarIcon';
-import HomeScreen from '../screens/HomeScreen';
-import LinksScreen from '../screens/LinksScreen';
-import SettingsScreen from '../screens/SettingsScreen';
+import SettingsScreen from '../screens/Settings';
+import MatchesScreen from '../screens/MatchesScreen';
+// import SearchScreen from '../screens/SearchScreen'
+import { Icon } from 'expo';
+import Colors from '../constants/Colors';
+import ProfileScreen from '../screens/Profile1';
+import Messages from '../screens/Messages';
+import Conversation from '../screens/Conversation';
 
-const HomeStack = createStackNavigator({
-  Home: HomeScreen,
+
+
+const ProfileStack = createStackNavigator({
+  Profile: ProfileScreen,
 });
 
-HomeStack.navigationOptions = {
-  tabBarLabel: 'Home',
+ProfileStack.navigationOptions = {
+  tabBarLabel: 'Profile',
   tabBarIcon: ({ focused }) => (
-    <TabBarIcon
-      focused={focused}
-      name={
-        Platform.OS === 'ios'
-          ? `ios-information-circle${focused ? '' : '-outline'}`
-          : 'md-information-circle'
-      }
+    <Icon.MaterialCommunityIcons
+      name="face-profile"
+      size={26}
+      style={{ marginBottom: -3 }}
+      color={focused ? Colors.tabIconSelected : Colors.tabIconDefault}
     />
   ),
 };
 
-const LinksStack = createStackNavigator({
-  Links: LinksScreen,
+
+
+const SuggestedMatchStack = createStackNavigator({
+  Links: MatchesScreen,
 });
 
-LinksStack.navigationOptions = {
-  tabBarLabel: 'Links',
+SuggestedMatchStack.navigationOptions = {
+  tabBarLabel: 'Suggested Matches',
   tabBarIcon: ({ focused }) => (
-    <TabBarIcon
-      focused={focused}
-      name={Platform.OS === 'ios' ? `ios-link${focused ? '' : '-outline'}` : 'md-link'}
+    <Icon.Feather
+      name="users"
+      size={26}
+      style={{ marginBottom: -3 }}
+      color={focused ? Colors.tabIconSelected : Colors.tabIconDefault}
     />
   ),
 };
 
-const SettingsStack = createStackNavigator({
+const MessageStack = createStackNavigator({
+  Main: {screen: Messages},
+  Conversation: {screen: Conversation},
+});
+
+MessageStack.navigationOptions = {
+  headerTintColor: "rgb(212, 21, 2)",
+  tabBarLabel: 'Messages',
+  tabBarIcon: ({ focused }) => (
+    <Icon.Feather
+      name="message-circle"
+      size={26}
+      style={{ marginBottom: -3 }}
+      color={focused ? Colors.tabIconSelected : Colors.tabIconDefault}
+    />
+  ),
+};
+
+
+const SettingStack = createStackNavigator({
   Settings: SettingsScreen,
 });
 
-SettingsStack.navigationOptions = {
+SettingStack.navigationOptions = {
   tabBarLabel: 'Settings',
   tabBarIcon: ({ focused }) => (
-    <TabBarIcon
-      focused={focused}
-      name={Platform.OS === 'ios' ? `ios-options${focused ? '' : '-outline'}` : 'md-options'}
+    <Icon.Feather
+      name="settings"
+      size={26}
+      style={{ marginBottom: -3 }}
+      color={focused ? Colors.tabIconSelected : Colors.tabIconDefault}
     />
   ),
 };
 
+
 export default createBottomTabNavigator({
-  HomeStack,
-  LinksStack,
-  SettingsStack,
+  ProfileStack,
+  SuggestedMatchStack,
+  MessageStack,
+  SettingStack,
 });

@@ -12,24 +12,28 @@ const jwt = require('jsonwebtoken');
 
 const { router: api } = require("./routes/api/api.js"); //gets api logic from path
 const { router: user } = require("./routes/user/index.js"); //gets user logic from path
+const { router: match } = require("./routes/match/matchapi.js"); //gets match logic from path 
+const { router: message } = require("./routes/message/messageapi.js"); //gets message logic from path 
 const config = require('./config/database');
 
 const app = express(); //creates an instance of express
 const server = http.createServer(app); //creates an HTTP server instance
+
+// const db = require('./db');
 
 // TODO: Switch to SQLite
 // Tutorial: http://www.sqlitetutorial.net/sqlite-nodejs/connect/ 
 // Preferably use the Promises wrapper (callbacks can get nasty):
 // https://www.npmjs.com/package/sqlite
 // Connect To Database
-mongoose.Promise = global.Promise;
-mongoose.connect(config.database);
-mongoose.connection.on("error", err => {
-  console.log(err.message);
-});
-mongoose.connection.once("open", () => {
-  console.log("mongodb connection open");
-});
+// mongoose.Promise = global.Promise;
+// mongoose.connect(config.database);
+// mongoose.connection.on("error", err => {
+//   console.log(err.message);
+// });
+// mongoose.connection.once("open", () => {
+//   console.log("mongodb connection open");
+// });
 
 
 
@@ -59,6 +63,8 @@ app.use('/api', (req, res, next) => {
   });
 }, api);
 app.use('/user', user);
+app.use('/match', match);
+app.use('/message', message);
 
 // so when people try to access it via browser
 app.get("/", function(req, res) {

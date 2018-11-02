@@ -1,0 +1,92 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly 1`] = `
+<View
+  style={
+    Object {
+      "paddingTop": 23,
+    }
+  }
+>
+  <TextInput
+    allowFontScaling={true}
+    autoCapitalize="none"
+    onChangeText={[Function]}
+    placeholder="Change Email"
+    placeholderTextColor="#000000"
+    style={
+      Object {
+        "borderColor": "#000000",
+        "borderWidth": 1,
+        "height": 40,
+        "margin": 15,
+      }
+    }
+    underlineColorAndroid="transparent"
+  />
+  <TextInput
+    allowFontScaling={true}
+    autoCapitalize="none"
+    onChangeText={[Function]}
+    placeholder="Change Password"
+    placeholderTextColor="#000000"
+    style={
+      Object {
+        "borderColor": "#000000",
+        "borderWidth": 1,
+        "height": 40,
+        "margin": 15,
+      }
+    }
+    underlineColorAndroid="transparent"
+  />
+  <TextInput
+    allowFontScaling={true}
+    autoCapitalize="none"
+    onChangeText={[Function]}
+    placeholder="Confirm Password Change"
+    placeholderTextColor="#000000"
+    style={
+      Object {
+        "borderColor": "#000000",
+        "borderWidth": 1,
+        "height": 40,
+        "margin": 15,
+      }
+    }
+    underlineColorAndroid="transparent"
+  />
+  <View
+    accessible={true}
+    isTVSelectable={true}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
+    style={
+      Object {
+        "backgroundColor": "#000000",
+        "height": 40,
+        "margin": 15,
+        "opacity": 1,
+        "padding": 10,
+      }
+    }
+  >
+    <Text
+      accessible={true}
+      allowFontScaling={true}
+      ellipsizeMode="tail"
+      style={
+        Object {
+          "color": "white",
+        }
+      }
+    >
+       Save 
+    </Text>
+  </View>
+</View>
+`;
