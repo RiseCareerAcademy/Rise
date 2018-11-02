@@ -102,7 +102,7 @@ export default class MentorRegistration extends React.Component {
   }
 
     const { navigate } = this.props.navigation;
-    if (errors.length == 0) {
+    if (errors.length == 0 /* && process.env.NODE_ENV !== 'development' */) {
       navigate('Main');
     } else {
       alert(errors);

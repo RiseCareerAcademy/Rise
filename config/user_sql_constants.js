@@ -47,7 +47,8 @@ module.exports.create_password_table_sql = function()  {
 }
 
 module.exports.create_matches_table_sql = function()  {
-    sql = `CREATE TABLE IF NOT EXISTS Matches (
+    sql = `
+    CREATE TABLE IF NOT EXISTS Matches (
         match_id int NOT NULL UNIQUE,
         mentor_id int NOT NULL,
         mentee_id int NOT NULL

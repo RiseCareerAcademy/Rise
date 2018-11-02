@@ -78,14 +78,21 @@ module.exports.postMentors = (req, res) => {
   'date_of_birth','occupation','skills','profile_pic_URL','hobbies'];
   const user = {};
   
-  fields.forEach(field => {
+  const missingFields = fields.some(field => {
     if (req.body[field] === undefined) {
      res
         .status(500)
         .json({ error: "Missing credentials", success: false });
+        return true;
     }
     user[field] = req.body[field];
+    return false;
   });
+
+  if (missingFields) {
+    return;
+  }
+
   sql = user_sql_constants.post_mentor_sql(user);
   console.log(sql);
   db.all(sql, [], (err, rows) => {
@@ -95,19 +102,26 @@ module.exports.postMentors = (req, res) => {
   res.json({ success: true, rows: rows });
 });
 }
+
 //create new mentee
 module.exports.postMentees = (req, res) => {
   const fields = ['user_id', 'first_name', 'last_name', 'email_address' ,'biography','zipcode',
   'date_of_birth','area_of_study','skills','profile_pic_URL','hobbies'];
   const user = {};
-  fields.forEach(field => {
+  const missingFields = fields.some(field => {
     if (req.body[field] === undefined) {
      res
         .status(500)
         .json({ error: "Missing credentials", success: false });
+        return true;
     }
     user[field] = req.body[field];
+    return false;
   });
+
+  if (missingFields) {
+    return;
+  }
   sql = user_sql_constants.post_mentee_sql(user)
   console.log(sql);
   db.all(sql, [], (err, rows) => {
@@ -143,7 +157,7 @@ module.exports.postPasswords = (req, res) => {
 
 //get all mentors
 module.exports.getAllMentors = (req, res) => {
-    sql = user_sql_constants.get_all_mentors();
+  sql = user_sql_constants.get_all_mentors();
   
   db.all(sql, [], (err, rows) => {
     if (err) {
