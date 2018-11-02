@@ -7,13 +7,12 @@ import MentorRegistration from '../screens/MentorRegistration'
 import StudentRegistration from '../screens/StudentRegistration'
 import SignIn from '../screens/SignIn'
 
-
 const App = createStackNavigator({
   Home: { screen: HomeScreen },
   Mentor: { screen: MentorRegistration },
   Student: {screen: StudentRegistration},
   SignIn: {screen: SignIn},
-  Main: {screen: MainTabNavigator},
+  Main: MainTabNavigator,
 });
 
 export default App;

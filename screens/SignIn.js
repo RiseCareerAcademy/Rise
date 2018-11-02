@@ -8,25 +8,25 @@ import { MonoText } from "../components/StyledText";
 export default class SignIn extends React.Component {
   constructor(props) {
     super(props);
-    
+
     this.state = {
-      result: null,
+      result: null
     };
   }
 
   render() {
     const { navigate } = this.props.navigation;
     return (
-        <Container>
+      <Container>
         <Content>
           <Form>
             <Item stackedLabel>
               <Label>Email</Label>
-              <Input/>
+              <Input />
             </Item>
             <Item stackedLabel last>
               <Label>Password</Label>
-              <Input/>
+              <Input />
             </Item>
           </Form>
         </Content>
@@ -36,8 +36,8 @@ export default class SignIn extends React.Component {
         }>
           <Text style={styles.greyText}>Next</Text>
         </Button>
-      </View>
-        </Container>
+        </View>
+      </Container>
     );
   }
 }
@@ -49,9 +49,9 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center"
   },
   center: {
     flex: 1,
@@ -66,5 +66,5 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     paddingTop: 30
-  },
+  }
 });

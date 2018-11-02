@@ -27,7 +27,7 @@ function validate(email, password, confirmedPassword) {
             errors.push("Password should be at least 6 characters long");
           }
           if (password != confirmedPassword) {
-              errors.push("Password doesn't match");
+              errors.push("Password doesn't match" + password + " " +  confirmedPassword);
           }
     }
    

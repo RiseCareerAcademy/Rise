@@ -10,8 +10,7 @@
     "occupation": "Software Engineering", 
     "skills": "JAVA",
     "profile_pic_URL": "katwal",
-    "hobbies": "hi",
-    "password" : "npasdqnonwd"
+    "hobbies": "hi"
 }
 
 
@@ -27,10 +26,15 @@
     "area_of_study": "Computer Science", 
     "skills": "JAVA",
     "profile_pic_URL": "bill.com",
-    "hobbies": "testiing hobbies",
-    "password": "qwerty"
+    "hobbies": "testiing hobbies"
 }
 
+//PASSWORD
+{
+    "user_id": 20101,
+    "email_address": "mike@wisc.edu", 
+    "password": "testiing hobbies"
+}
 
 //MATCHES
 {
