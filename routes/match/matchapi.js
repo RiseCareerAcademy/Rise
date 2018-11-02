@@ -11,7 +11,7 @@ router.post('/', controller.postMatches);
 router.get('/',controller.getAllMatches);
 
 //get match by match id 
-router.get('/matchid/:id',controller.getMatchbyId);
+router.get('/matchid/:id',controller.getMatchById);
 
 //get match by user id 
-router.get('/userid/:id',controller.getMatchbyUserId);
+router.get('/userid/:id',controller.getMatchByUserId);
