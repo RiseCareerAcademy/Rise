@@ -5,7 +5,7 @@ const db = require('../../db');
 var user_sql_constants = require("../../config/user_sql_constants.js");
 
 module.exports.postMessage = (req, res) => {
-    const fields = ['message_id', 'to_id','from_id', 'message', 'timestamp', 'match_id'];
+    const fields = ['message_id', 'to_id','from_id', 'message_body', 'timestamp', 'match_id'];
     const user = {};
     fields.forEach(field => {
       if (req.body[field] === undefined) {
@@ -26,6 +26,32 @@ module.exports.postMessage = (req, res) => {
 
   module.exports.getMessages = (req, res) => {
     sql = 'SELECT * FROM Messages;'
+    db.all(sql, [], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+    res.json({ success: true, rows: rows });
+  });
+  }
+  
+  //get latest message by match id 
+  module.exports.getLatestMessagebyId = (req, res) => {
+    matchId = req.params.matchid;
+    sql = user_sql_constants.get_message_by_matchid(matchId);
+
+    db.all(sql, [], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+    res.json({ success: true, rows: rows });
+  });
+  }
+
+   //get message chain  by match id 
+   module.exports.getMessageChain = (req, res) => {
+    matchId = req.params.matchid;
+    sql = user_sql_constants.get_all_message_by_matchid(matchId);
+
     db.all(sql, [], (err, rows) => {
     if (err) {
       throw err;
