@@ -1,5 +1,8 @@
 const { createTables,
-    postMentors, postMentees, getAllMentors, getAllMentees, getAllPasswords,
+    deletetable,
+    postMentors, postMentees, 
+    postPasswords,
+    getAllMentors, getAllMentees, getAllPasswords,
     getUserById,
     checkEmail,
     getEmailById,
@@ -49,11 +52,6 @@ describe('createTables', () => {
 
     it('should respond with rows when db is valid', () => {
         const req = {
-            body: {
-                match_id: 'MyMatchId',
-                mentor_id: 'MyMentorId',
-                mentee_id: 'MyMenteeId',
-            },
         };
 
         createTables(req, res);
@@ -77,6 +75,53 @@ describe('createTables', () => {
         // NOTE: Create a new anonymous function that returns the function
         // that throws the error.
         expect(() => createTables(req, res)).toThrowError(err);
+    });
+});
+
+
+describe('deletetable', () => {
+    let res;
+    let rows;
+    let err;
+
+    beforeEach(() => {
+        rows = [['yo mamma'], ['suckerbergs']];
+        err = undefined;
+        db.all = jest.fn((sql, args, cb) => {
+            cb(err, rows);
+        });
+
+        res = {
+            json: jest.fn(() => res),
+            status: jest.fn(() => res),
+        };
+    });
+
+    it('should respond with rows when db is valid', () => {
+        const req = {
+        };
+
+        deletetable(req, res);
+
+        expect(db.all.mock.calls[0][0]).toEqual('DROP TABLE IF EXISTS Mentors;');
+        expect(db.all.mock.calls[1][0]).toEqual('DROP TABLE IF EXISTS Mentees;');
+        expect(db.all.mock.calls[2][0]).toEqual('DROP TABLE IF EXISTS Matches;');
+        expect(db.all.mock.calls[3][0]).toEqual('DROP TABLE IF EXISTS Messages;');
+
+        expect(res.json.mock.calls[0][0]).toEqual({
+            success: true,
+            rows: rows,
+        });
+    });
+
+    it('should throw an error on database error', () => {
+        const req = {};
+
+        err = new Error('Some Fatal Database Error');
+
+        // NOTE: Create a new anonymous function that returns the function
+        // that throws the error.
+        expect(() => deletetable(req, res)).toThrowError(err);
     });
 });
 
@@ -257,6 +302,78 @@ describe('postMentees', () => {
         // NOTE: Create a new anonymous function that returns the function
         // that throws the error.
         expect(() => postMentees(req, res)).toThrowError(err);
+    });
+});
+
+describe('postPasswords', () => {
+    let res;
+    let rows;
+    let err;
+
+    beforeEach(() => {
+        rows = [['yo mamma'], ['suckerbergs']];
+        err = undefined;
+        db.all = jest.fn((sql, args, cb) => {
+            cb(err, rows);
+        });
+
+        res = {
+            json: jest.fn(() => res),
+            status: jest.fn(() => res),
+        };
+    });
+
+    it('should respond 500 with missing fields', () => {
+        const req = {
+            body: {
+                user_id: 'MyUserId',
+                email_address: 'MyEmailAddress',
+            },
+        };
+
+        postPasswords(req, res);
+
+        expect(res.status.mock.calls[0][0]).toBe(500);
+        expect(res.json.mock.calls).toHaveLength(1);
+    });
+
+    it('should respond with rows when db is valid', () => {
+        const req = {
+            body: {
+                user_id: 'MyUserId',
+                email_address: 'MyEmailAddress',
+                password: 'MyPassword',
+            },
+        };
+
+        postPasswords(req, res);
+
+        // console.log(db.all.mock.calls);
+
+        expect(parse(db.all.mock.calls[0][0])).toEqual(
+            "INSERT INTO Passwords VALUES ('MyUserId', 'MyEmailAddress', 'MyPassword')"
+        );
+
+        expect(res.json.mock.calls[0][0]).toEqual({
+            success: true,
+            rows: rows,
+        });
+    });
+
+    it('should throw an error on database error', () => {
+        const req = {
+            body: {
+                user_id: 'MyUserId',
+                email_address: 'MyEmailAddress',
+                password: 'MyPassword',
+            },
+        };
+
+        err = new Error('Some Fatal Database Error');
+
+        // NOTE: Create a new anonymous function that returns the function
+        // that throws the error.
+        expect(() => postPasswords(req, res)).toThrowError(err);
     });
 });
 

@@ -136,14 +136,20 @@ module.exports.postMentees = (req, res) => {
 module.exports.postPasswords = (req, res) => {
   const fields = ['user_id', 'email_address' ,'password'];
   const user = {};
-  fields.forEach(field => {
+  const missingFields = fields.some(field => {
     if (req.body[field] === undefined) {
      res
         .status(500)
         .json({ error: "Missing credentials", success: false });
+        return true;
     }
-    res.json({ success: true, rows: rows });
+    user[field] = req.body[field];
+    return false;
   });
+
+  if (missingFields) {
+    return;
+  }
   sql = user_sql_constants.post_password_sql(user)
   console.log(sql);
   db.all(sql, [], (err, rows) => {
