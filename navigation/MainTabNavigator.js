@@ -81,6 +81,7 @@ SettingStack.navigationOptions = {
   ),
 };
 
+
 export default createBottomTabNavigator({
   ProfileStack,
   SuggestedMatchStack,
