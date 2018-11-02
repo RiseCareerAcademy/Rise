@@ -39,6 +39,7 @@ class Inputs extends Component {
       }
       if (email.split("").filter(x => x === "@").length !== 1) {
         errors.push("Email should contain one @");
+
       }
       if (email.indexOf(".") === -1) {
         errors.push("Email should contain at least one dot");
