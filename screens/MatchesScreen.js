@@ -31,7 +31,7 @@ export default class MatchesScreen extends Component {
             mentors.push([curr_row.occupation])
             mentors.push( curr_row.skills);
        }
-      console.log(mentors.join('\n'))
+      //console.log(mentors.join('\n'))
       const { desiredSkills, desiredProfessions } = this.state;
       const { scores, matches } = this.match(desiredSkills, desiredProfessions, mentors);
       this.setState({scores: scores});
