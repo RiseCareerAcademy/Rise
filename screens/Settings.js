@@ -38,7 +38,7 @@ class Inputs extends Component {
         errors.push("Email should be at least 5 charcters long");
       }
       if (email.split("").filter(x => x === "@").length !== 1) {
-        errors.push("Email should contain a @");
+        errors.push("Email should contain one @");
       }
       if (email.indexOf(".") === -1) {
         errors.push("Email should contain at least one dot");
@@ -96,7 +96,7 @@ class Inputs extends Component {
         <TouchableOpacity
           style={styles.submitButton}
           onPress={ () =>
-            validate(
+            this.validate(
               this.state.email,
               this.state.password,
               this.state.confirmedPassword
