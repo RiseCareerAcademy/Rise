@@ -9,6 +9,7 @@ import Colors from '../constants/Colors';
 import ProfileScreen from '../screens/Profile1';
 import Messages from '../screens/Messages';
 import Conversation from '../screens/Conversation';
+import TestScreen from '../screens/testScreen'
 
 
 
@@ -81,9 +82,28 @@ SettingStack.navigationOptions = {
   ),
 };
 
+
+
+const TestStack = createStackNavigator({
+  Test: TestScreen,
+});
+
+TestStack.navigationOptions = {
+  tabBarLabel: 'Settings',
+  tabBarIcon: ({ focused }) => (
+    <Icon.Feather
+      name="settings"
+      size={26}
+      style={{ marginBottom: -3 }}
+      color={focused ? Colors.tabIconSelected : Colors.tabIconDefault}
+    />
+  ),
+};
+
 export default createBottomTabNavigator({
   ProfileStack,
   SuggestedMatchStack,
   MessageStack,
-  SettingStack
+  SettingStack,
+  TestStack
 });
