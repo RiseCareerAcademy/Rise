@@ -91,7 +91,6 @@ export default class MatchesScreen extends Component {
         }
       }
     }
-
     return { scores, matches };
   }
 
