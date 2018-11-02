@@ -7,7 +7,6 @@ var user_sql_constants = require("../../config/user_sql_constants.js");
 module.exports.postMatches = (req, res) => {
   
     const fields = ['match_id', 'mentor_id', 'mentee_id'];
-    console.log('nigga this is match')
     const user = {};
     fields.forEach(field => {
       if (req.body[field] === undefined) {
