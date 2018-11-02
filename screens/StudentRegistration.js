@@ -61,7 +61,6 @@ export default class MentorRegistration extends React.Component {
     skills,
     profession,
     name,
-    zipCode,
     city,
     state
   ) => {
@@ -72,7 +71,6 @@ export default class MentorRegistration extends React.Component {
       skills.length == 0 ||
       profession.length == 0 ||
       name.length == 0 ||
-      zipCode.length == 0 ||
       city.length == 0 ||
       state.length == 0 ||
       email.length == 0 ||
@@ -152,13 +150,6 @@ export default class MentorRegistration extends React.Component {
               <Input
                 placeholder="Enter your name"
                 onChangeText={this.handleName}
-              />
-            </Item>
-            <Item stackedLabel last>
-              <Label>Zip Code</Label>
-              <Input
-                placeholder="Enter your zip code"
-                onChangeText={this.handleZipCode}
               />
             </Item>
             <Item stackedLabel last>

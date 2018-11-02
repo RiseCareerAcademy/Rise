@@ -70,17 +70,6 @@ it("returns true if name state is changed", () => {
     expect(instance.state.name).toEqual('name')
 });
 
-it("returns true if zipCode state is changed", () => {
-    const props = {
-        navigation: {
-            navigate: () => { }
-        },
-    };
-    const instance = renderer.create(<Reg {...props} />).getInstance();
-    instance.handleZipCode('zipCode');
-    expect(instance.state.zipCode).toEqual('zipCode')
-});
-
 it("returns true if city state is changed", () => {
     const props = {
         navigation: {
