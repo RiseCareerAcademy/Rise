@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { ScrollView, StyleSheet, View, SectionList, Text } from "react-native";
+//import {NetworkInfo} from 'react-native-network-info';
 
 export default class MatchesScreen extends Component {
   state = {
@@ -14,11 +15,25 @@ export default class MatchesScreen extends Component {
   constructor(props) {
     super(props);
     var mentors = [];
-    //populate array with data from database
+    
+    
+    // require module
+    //var NetworkInfo = require('react-native-network-info');
+
+    // Get Local IP
+    //DeviceInfo.getIPAddress().then(ip => {
+      // "92.168.32.44"
+     // console.log(ip);
+    //});
+    // require module
+    //var NetworkInfo = require('react-native-network-info');
+
+    
 
     
     //replace 10.141.17.61 with your own ip address
-    fetch('http://10.141.17.61:8000/user/mentor', {
+    //home ip: 192.168.0.107
+    fetch('http://192.168.0.107:8000/user/mentor', {
       method: 'GET'
     })
     .then((response) => response.json())
@@ -31,7 +46,7 @@ export default class MatchesScreen extends Component {
             mentors.push([curr_row.occupation])
             mentors.push( curr_row.skills);
        }
-      console.log(mentors.join('\n'))
+      //console.log(mentors.join('\n'))
       const { desiredSkills, desiredProfessions } = this.state;
       const { scores, matches } = this.match(desiredSkills, desiredProfessions, mentors);
       this.setState({scores: scores});
