@@ -29,7 +29,6 @@ export default class MentorRegistration extends React.Component {
   handleEmail = text => {
     this.setState({ email: text });
   };
-  e;
   handlePassword = text => {
     this.setState({ password: text });
   };
@@ -75,37 +74,36 @@ export default class MentorRegistration extends React.Component {
       name.length == 0 ||
       zipCode.length == 0 ||
       city.length == 0 ||
-      state.length == 0
+      state.length == 0 ||
+      email.length == 0 ||
+      password.length == 0
     ) {
       errors.push("All fields must be filled");
-    }else{
-    if (email.length == 0 && password.length == 0) {
-      errors.push("New email or password must be entered");
-    } else if (password.length == 0 && email.length > 0) {
-      if (email.length < 5) {
-        errors.push("Email should be at least 5 charcters long");
-      }
-      if (email.split("").filter(x => x === "@").length !== 1) {
-        errors.push("Email should contain a @");
-      }
-      if (email.indexOf(".") === -1) {
-        errors.push("Email should contain at least one dot");
-      }
     } else {
-      if (password.length < 6) {
-        errors.push("Password should be at least 6 characters long");
+        if (email.length < 5) {
+          errors.push("Email should be at least 5 characters long");
+        }
+        else if (email.split("").filter(x => x === "@").length !== 1) {
+          errors.push("Email should contain a @");
+        }
+        else if (email.indexOf(".") === -1) {
+          errors.push("Email should contain at least one dot");
+        }
+        else if (password.length < 6) {
+          errors.push("Password should be at least 6 characters long");
+        }
+        else if (password != confirmedPassword) {
+          errors.push("Password doesn't match");
+        }
       }
-      if (password != confirmedPassword) {
-        errors.push("Password doesn't match");
-      }
-    }
-  }
 
     const { navigate } = this.props.navigation;
     if (errors.length == 0) {
       navigate('Main');
+      return true;
     } else {
       alert(errors);
+      return false;
     }
   };
 
@@ -183,17 +181,17 @@ export default class MentorRegistration extends React.Component {
           style={styles.submitButton}
           onPress={() => {
             this.validate(
-                  this.state.email,
-                  this.state.password,
-                  this.state.confirmedPassword,
-                  this.state.skills,
-                  this.state.profession,
-                  this.state.name,
-                  this.state.zipCode,
-                  this.state.city,
-                  this.state.state
-                )
-            }
+              this.state.email,
+              this.state.password,
+              this.state.confirmedPassword,
+              this.state.skills,
+              this.state.profession,
+              this.state.name,
+              this.state.zipCode,
+              this.state.city,
+              this.state.state
+            )
+          }
           }
         >
           <Text style={styles.submitButtonText}> Next </Text>

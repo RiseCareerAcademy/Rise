@@ -29,7 +29,7 @@ export default class SignIn extends React.Component {
       errors.push("please enter your email and password");
     }
     else if (email.length < 5) {
-      errors.push("Email should be at least 5 charcters long");
+      errors.push("Email should be at least 5 characters long");
     }
     else if (email.split("").filter(x => x === "@").length !== 1) {
       errors.push("Email should contain one @");
@@ -41,8 +41,8 @@ export default class SignIn extends React.Component {
       errors.push("Password should be at least 6 characters long");
     }
 
+    const { navigate } = this.props.navigation;
     if (errors.length == 0) {
-      const { navigate } = this.props.navigation;
       navigate('Main')
       return true
     } else {

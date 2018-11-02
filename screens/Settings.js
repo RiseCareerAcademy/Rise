@@ -35,7 +35,7 @@ class Inputs extends Component {
       errors.push("New email or password must be entered");
     } else if (password.length == 0 && email.length > 0) {
       if (email.length < 5) {
-        errors.push("Email should be at least 5 charcters long");
+        errors.push("Email should be at least 5 characters long");
       }
       if (email.split("").filter(x => x === "@").length !== 1) {
         errors.push("Email should contain one @");
