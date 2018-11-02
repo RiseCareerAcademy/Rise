@@ -1,9 +1,7 @@
 import React from "react";
 import {
-  Button,
   Text,
   Container,
-  Header,
   Content,
   Form,
   Item,
@@ -11,17 +9,9 @@ import {
   Input
 } from "native-base";
 import {
-  Platform,
-  ScrollView,
   StyleSheet,
-  Image,
-  TextInput,
-  View,
   TouchableOpacity
 } from "react-native";
-import { AuthSession } from "expo";
-
-import { MonoText } from "../components/StyledText";
 
 export default class MentorRegistration extends React.Component {
   state = {
