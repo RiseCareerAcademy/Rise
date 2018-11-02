@@ -109,7 +109,7 @@ it('returns error if all fields are not filled', () => {
       },
     };
     const instance = renderer.create(<Reg {...props} />).getInstance();
-    expect(instance.validate('user', 'password', 'password', 'skills', 'profession', 'name', 'zipCode', 'city', 'state', )).toEqual(false);
+    expect(instance.validate('user', 'password', 'password', 'skills', 'profession', 'name', 'city', 'state', )).toEqual(false);
   });
 
   it('returns error if email doesnt have one @', () => {
@@ -119,7 +119,7 @@ it('returns error if all fields are not filled', () => {
       },
     };
     const instance = renderer.create(<Reg {...props} />).getInstance();
-    expect(instance.validate('useremail', 'password', 'password', 'skills', 'profession', 'name', 'zipCode', 'city', 'state', )).toEqual(false);
+    expect(instance.validate('useremail', 'password', 'password', 'skills', 'profession', 'name', 'city', 'state', )).toEqual(false);
   });
 
   it('returns error if email doesnt have atleast one .', () => {
@@ -129,7 +129,7 @@ it('returns error if all fields are not filled', () => {
       },
     };
     const instance = renderer.create(<Reg {...props} />).getInstance();
-    expect(instance.validate('user@emailcom', 'password', 'password', 'skills', 'profession', 'name', 'zipCode', 'city', 'state', )).toEqual(false);
+    expect(instance.validate('user@emailcom', 'password', 'password', 'skills', 'profession', 'name', 'city', 'state', )).toEqual(false);
   });
 
   it('returns error if password length is less than 6', () => {
@@ -139,7 +139,7 @@ it('returns error if all fields are not filled', () => {
       },
     };
     const instance = renderer.create(<Reg {...props} />).getInstance();
-    expect(instance.validate('user@email.com', 'pass', 'pass', 'skills', 'profession', 'name', 'zipCode', 'city', 'state', )).toEqual(false);
+    expect(instance.validate('user@email.com', 'pass', 'pass', 'skills', 'profession', 'name', 'city', 'state', )).toEqual(false);
   });
 
   it("returns error if password doesn't match confirmPassword", () => {
@@ -149,7 +149,7 @@ it('returns error if all fields are not filled', () => {
       },
     };
     const instance = renderer.create(<Reg {...props} />).getInstance();
-    expect(instance.validate('user@email.com', 'passwoord', 'password', 'skills', 'profession', 'name', 'zipCode', 'city', 'state', )).toEqual(false);
+    expect(instance.validate('user@email.com', 'passwoord', 'password', 'skills', 'profession', 'name', 'city', 'state', )).toEqual(false);
   });
 
   it("returns error if password doesn't match confirmPassword", () => {
@@ -159,7 +159,7 @@ it('returns error if all fields are not filled', () => {
       },
     };
     const instance = renderer.create(<Reg {...props} />).getInstance();
-    expect(instance.validate('user@email.com', 'password', 'password', 'skills', 'profession', 'name', 'zipCode', 'city', 'state', )).toEqual(true);
+    expect(instance.validate('user@email.com', 'password', 'password', 'skills', 'profession', 'name', 'city', 'state', )).toEqual(true);
   });
 
 it('renders correctly', () => {
