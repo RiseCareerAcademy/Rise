@@ -25,7 +25,7 @@ ProfileStack.navigationOptions = {
       color={focused ? Colors.tabIconSelected : Colors.tabIconDefault}
     />
   ),
-};
+}
 
 
 

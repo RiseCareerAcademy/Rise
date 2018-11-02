@@ -13,7 +13,7 @@ const App = createStackNavigator({
   Mentor: { screen: MentorRegistration },
   Student: {screen: StudentRegistration},
   SignIn: {screen: SignIn},
-  Main: MainTabNavigator,
+  Main: {screen: MainTabNavigator},
 });
 
 export default App;

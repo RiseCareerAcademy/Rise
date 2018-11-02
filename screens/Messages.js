@@ -3,47 +3,49 @@ import { View, FlatList, ActivityIndicator } from 'react-native';
 import { Message } from "../components/view";
 
 export default class Messages extends Component {
+  static navigationOptions = {
+    title: 'Messages',
+  };
+
   constructor(props) {
     super(props);
     this.state = {
       showActivityIndicator: true,
-      messages: []
+      messages: [],
+      name: "Paul"
     };
   }
 
   render() {
     const messages = [
       {
-        toUser: "Ryan2",
-        fromUser: "Dan",
-        message: "Turbo is Awesome",
+        toUser: "Paul",
+        fromUser: "Rita",
+        message: "Hey what's up hello",
         dateTime: "2018-10-29T03:19:50.594Z"
       },
       {
-        toUser: "Ryan3",
-        fromUser: "Dan",
-        message: "Turbo is Awesome",
+        toUser: "Paul",
+        fromUser: "Daniel",
+        message: "More content.",
         dateTime: "2018-10-29T03:19:50.594Z"
       },
       {
-        toUser: "Ryan4",
-        fromUser: "Dan",
-        message: "Turbo is Awesome",
+        toUser: "Paul",
+        fromUser: "Kevin",
+        message: "Here is some more conent",
         dateTime: "2018-10-29T03:19:50.594Z"
       },
       {
-        toUser: "Ryan5",
-        fromUser: "Dan",
-        message: "Turbo is Awesome",
+        toUser: "Paul",
+        fromUser: "Yank",
+        message: "Our group loves Kwik Trip",
         dateTime: "2018-10-29T03:19:50.594Z"
       }
     ];
 
     return (
       <View style={styles.container}>
-        {this.state.showActivityIndicator ? (
-          <ActivityIndicator animating size="large" />
-        ) : null}
         <FlatList
           data={messages}
           keyExtractor={item => item.id}

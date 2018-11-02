@@ -12,9 +12,10 @@ const Message = props => {
   return (
     <TouchableOpacity
       // onPress={() => alert('message')}
-      onPress={() => navigate("Conversation")}
+      onPress={() => navigate("Conversation", { name: props.fromUser }) }
       activeOpacity={0.7}
       style={style}
+ 
     >
       <View style={styles.topRow}>
         <View style={styles.userCol}>
