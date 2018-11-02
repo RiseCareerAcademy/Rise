@@ -100,6 +100,7 @@ it('returns error if all fields are not filled', () => {
     };
     const instance = renderer.create(<Reg {...props} />).getInstance();
     expect(instance.validate('', 'password', 'password', 'skills', 'profession', 'name', 'city', 'state', )).toEqual(false);
+  });
 
   it('returns error if email length is less than 5 characters long', () => {
     const props = {
