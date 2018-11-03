@@ -3,7 +3,6 @@ import { ScrollView, StyleSheet, View, SectionList, Text } from "react-native";
 
 export default class SearchScreen extends Component {
   state = {
-    tempSearch: 'Kevin', //temp
     //array of matches with respective scores
     matches: [],
     scores: []
@@ -31,25 +30,25 @@ export default class SearchScreen extends Component {
       ["Birthing", "Yelling", "Running"] //should not be in the results
     ];
 
-    const { tempSearch } = this.state;
-    const { scores, matches } = this.search(tempSearch, fakeData);
-
+    const { scores, matches } = this.search(fakeData);
     this.state.scores = scores;
     this.state.matches = matches;
   }
 
   //search function
-  search = (tempSearch, fakeData) => {
+  search = (fakeData) => {
+    const { navigation } = this.props;
+    searchInput = navigation.getParam('text');
     matches = [];
     scores = [];
-
-    console.log(fakeData[2].toString().split());
-
-
+    if (searchInput.length == 0 || fakeData.length == 0){
+      return {scores,matches}
+    }
+    
       for (let j = 0; j < fakeData.length; j += 3) {
         var parsedData = fakeData[j+2].toString().split(' ');
         for(let k = 0; k < parsedData.length; k++){
-          if (parsedData[k].indexOf(tempSearch) > -1) {
+          if (parsedData[k].indexOf(searchInput) > -1) {
             //if matching skill, add to match list, score ++
             if (matches.indexOf(fakeData[j]) > -1)
               //if already has points
@@ -61,7 +60,7 @@ export default class SearchScreen extends Component {
             }
           }
         }
-        if (fakeData[j+2].indexOf(tempSearch) > -1) {
+        if (fakeData[j+2].indexOf(searchInput) > -1) {
           //if matching skill, add to match list, score ++
           if (matches.indexOf(fakeData[j]) > -1)
             //if already has points
@@ -77,7 +76,7 @@ export default class SearchScreen extends Component {
       for (let j = 0; j < fakeData.length; j += 3){
         var parsedData = fakeData[j+1].toString().split(' ');
         for(let k = 0; k < parsedData.length; k++){
-          if (parsedData[k].indexOf(tempSearch) > -1) {
+          if (parsedData[k].indexOf(searchInput) > -1) {
             if (matches.indexOf(fakeData[j]) > -1)
               //if matching skill, add to match list, score ++
               //if already has points
@@ -89,7 +88,7 @@ export default class SearchScreen extends Component {
             }
           }
         }
-        if (fakeData[j+1].indexOf(tempSearch) > -1) {
+        if (fakeData[j+1].indexOf(searchInput) > -1) {
           //if matching skill, add to match list, score ++
           if (matches.indexOf(fakeData[j]) > -1)
             //if already has points
@@ -105,7 +104,7 @@ export default class SearchScreen extends Component {
       for (let j = 0; j < fakeData.length; j += 3){
         var parsedData = fakeData[j].toString().split(' ');
         for(let k = 0; k < parsedData.length; k++){
-          if (parsedData[k].indexOf(tempSearch) > -1) {
+          if (parsedData[k].indexOf(searchInput) > -1) {
             if (matches.indexOf(fakeData[j]) > -1)
               //if matching skill, add to match list, score ++
               //if already has points
@@ -117,7 +116,7 @@ export default class SearchScreen extends Component {
             }
           }
         }
-        if (fakeData[j].indexOf(tempSearch) > -1) {
+        if (fakeData[j].indexOf(searchInput) > -1) {
           //if matching skill, add to match list, score ++
           if (matches.indexOf(fakeData[j]) > -1)
             //if already has points
@@ -168,7 +167,7 @@ export default class SearchScreen extends Component {
               renderSectionHeader={({ section }) => (
                 <Text style={styles.sectionHeader}>{section.title}</Text>
               )}
-              keyExtractor={(item, index) => index}
+              keyExtractor={(index) => index}
             />
           </View>
         </ScrollView>
