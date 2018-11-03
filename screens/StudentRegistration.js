@@ -70,9 +70,9 @@ export default class MentorRegistration extends React.Component {
       name.length == 0 ||
       city.length == 0 ||
       state.length == 0 ||
-      state.email == 0 || 
-      state.password == 0 ||
-      state.confirmedPassword == 0
+      email.length == 0 || 
+      password.length == 0 ||
+      confirmedPassword.length == 0
     ) {
       errors.push("All fields must be filled");
     }

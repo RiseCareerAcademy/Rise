@@ -42,6 +42,12 @@ Run the .exe file in [nvm-setup.zip](https://github.com/coreybutler/nvm-windows/
 ```bash
 nvm install 10.11.0 
 ```
+## Set up Postman and local server
+
+In order to fully run Rise on expo, one must also have a local server. Here are instructions to get you started:
+https://docs.google.com/document/d/1qTC6WCncEo7d6_XF3DdekR6pyNq37f7atdX5i14J3xI/edit?usp=sharing
+
+This will allow you to find a matching mentor that is pre-populated in the database.
 
 ## Setup the Rise Repo
 1. Clone the repo
