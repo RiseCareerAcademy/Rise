@@ -3,7 +3,6 @@ import { createStackNavigator, createBottomTabNavigator } from 'react-navigation
 
 import SettingsScreen from '../screens/Settings';
 import MatchesScreen from '../screens/MatchesScreen';
-// import SearchScreen from '../screens/SearchScreen'
 import { Icon } from 'expo';
 import Colors from '../constants/Colors';
 import ProfileScreen from '../screens/Profile1';
@@ -35,7 +34,7 @@ const SuggestedMatchStack = createStackNavigator({
 });
 
 SuggestedMatchStack.navigationOptions = {
-  tabBarLabel: 'Suggested Matches',
+  tabBarLabel: 'Faaaaaaak',
   tabBarIcon: ({ focused }) => (
     <Icon.Feather
       name="users"
@@ -81,10 +80,9 @@ SettingStack.navigationOptions = {
   ),
 };
 
-
 export default createBottomTabNavigator({
   ProfileStack,
   SuggestedMatchStack,
   MessageStack,
-  SettingStack,
+  SettingStack
 });

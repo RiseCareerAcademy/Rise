@@ -15,7 +15,7 @@ it('renders correctly', () => {
 
 //create unit test for no match
 //create unit test for match
-    //2 exact match
+    //exact match with mentor
     //1. match profession but no skill
     //2. no profession match but skills match
     //3. two people with same profession but one with more skills
