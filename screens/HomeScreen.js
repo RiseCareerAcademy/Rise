@@ -12,10 +12,6 @@ export default class HomeScreen extends React.Component {
     };
   }
 
-  hello = () => {
-    return 'hello';
-  }
-
   handleMentorPress = async () => {
     // Setup params for Linkedin API
     // For more details: https://developer.linkedin.com/docs/oauth2

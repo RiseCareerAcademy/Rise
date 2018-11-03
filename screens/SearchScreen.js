@@ -39,10 +39,8 @@ export default class SearchScreen extends Component {
 
   //search function
   search = (tempSearch, fakeData) => {
-
     const { navigation } = this.props;
     searchInput = navigation.getParam('text');
-
     matches = [];
     scores = [];
 
