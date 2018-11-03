@@ -16,50 +16,30 @@ export default class MatchesScreen extends Component {
     var mentors = [];
     //populate array with data from database
 
-    //fakeData organized by iterations of (name, profession, skills);
-    /*const fakeData = [
-      ["Daniel Ng"],
-      ["Software Developer"],
-      ["JQuery", "Python", "UX"], //should be number 4
-      ["Tracy Lewis"],
-      [""],
-      ["UX", "Prototyping"], //should be number 3
-      ["Kevin Mui"],
-      ["Product Manager"],
-      [""], //should be number 2
-      ["Lewis Tracy"],
-      ["Product Manager"],
-      ["UX"], //should be number 1
-      ["Tone Yu"],
-      ["Nurse"],
-      ["Birthing", "Yelling", "Running"] //should not be in the results
-    ];*/
-    //replace 19.168.0.104 with your own ip address
-    fetch('http://192.168.0.104:8000/user/mentor', {
+    
+    //replace 10.141.17.61 with your own ip address
+    fetch('http://10.141.17.61:8000/user/mentor', {
       method: 'GET'
-})
+    })
     .then((response) => response.json())
     .then((responseJson) => {
         //TO DO: add mentors name and skills in array
         
         for (var i = 0; i < responseJson.rows.length; i++){
             var curr_row = responseJson.rows[i];
-            mentors.push([curr_row.first_name],[curr_row.skills]);
+            mentors.push([curr_row.first_name])
+            mentors.push([curr_row.occupation])
+            mentors.push( curr_row.skills);
        }
- console.log(responseJson.rows[0].first_name + "'s skills are  " + responseJson.rows[0].skills);
- console.log(responseJson.rows.length);
- console.log(mentors.toString())
+      console.log(mentors.join('\n'))
+      const { desiredSkills, desiredProfessions } = this.state;
+      const { scores, matches } = this.match(desiredSkills, desiredProfessions, mentors);
+      this.setState({scores: scores});
+      this.setState({matches: matches});
     })
     .catch((error) => {
       console.log("error is: " + error);
     });
-
-    const { desiredSkills, desiredProfessions } = this.state;
-    const { scores, matches } = this.match(desiredSkills, desiredProfessions, mentors);
-
-    this.state.scores = scores;
-    this.state.matches = matches;
-    this.mentorsFromServer = mentors;
   }
 
   //match function
