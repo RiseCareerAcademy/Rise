@@ -35,7 +35,6 @@ const Message = props => {
 
   return (
     <View style={containerStyle}>
-      {" "}
       <View style={styles.userCol}>
         <Image
           style={styles.profile}
