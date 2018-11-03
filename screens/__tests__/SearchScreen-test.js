@@ -18,6 +18,7 @@ it('renders correctly', () => {
 
 });
 
+
 it('returns scores and matches on Tracy', () => {
     const props = {
       navigation: {
