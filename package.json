@@ -8,7 +8,7 @@
     "ios": "expo start --ios",
     "eject": "expo eject",
     "test": "node_modules/.bin/jest",
-    "test:coverage": "jest --coverage --coverageReporters=text-lcov | coveralls",
+    "test:coverage": "jest --coverage --coverageReporters=text-lcov --verbose | coveralls --verbose",
     "coverage": "jest --coverage --coverageReporters=html",
     "serve": "nodemon server.js"
   },
