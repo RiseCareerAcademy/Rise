@@ -144,14 +144,14 @@ module.exports.postPasswords = (req, res) => {
 //get all mentors
 module.exports.getAllMentors = (req, res) => {
     sql = user_sql_constants.get_all_mentors();
-  
+    //console.log(res)
   db.all(sql, [], (err, rows) => {
     if (err) {
       throw err;
     }
     res.json({ success: true, rows: rows });
   });
-  
+  console.log(res.json)
 }
 //get all mentees
   module.exports.getAllMentees = (req, res) => {
@@ -163,7 +163,6 @@ module.exports.getAllMentors = (req, res) => {
     }
     res.json({ success: true, rows: rows });
   });
-  
 }
 //get all mentees
 module.exports.getAllPasswords = (req, res) => {
