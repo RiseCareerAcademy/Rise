@@ -10,29 +10,33 @@ export default class SearchScreen extends Component {
 
   constructor(props) {
     super(props);
+    
+   var mentors = [];
+    //populate array with data from database
 
-    //fakeData organized by iterations of (name, profession, skills);
-    const fakeData = [
-      ["Daniel Ng"],
-      ["Software Developer"],
-      ["JQuery", "Python", "UX"], //should be number 4
-      ["Tracy Lewis"],
-      [""],
-      ["UX", "Prototyping"], //should be number 3
-      ["Kevin Mui"],
-      ["Product Manager"],
-      [""], //should be number 2
-      ["Lewis Tracy"],
-      ["Product Manager"],
-      ["UX"], //should be number 1
-      ["Tone Yu"],
-      ["Nurse"],
-      ["Birthing", "Yelling", "Running"] //should not be in the results
-    ];
-
-    const { scores, matches } = this.search(fakeData);
-    this.state.scores = scores;
-    this.state.matches = matches;
+    const { manifest } = Expo.Constants;
+  const api = (typeof manifest.packagerOpts === `object`) && manifest.packagerOpts.dev
+  ? manifest.debuggerHost.split(`:`).shift().concat(`:8000`)
+  : `api.example.com`;
+    console.log(api);
+    fetch('http://'+api+'/user/mentor', {
+      method: 'GET'
+    })
+    .then((response) => response.json())
+    .then((responseJson) => {
+        for (var i = 0; i < responseJson.rows.length; i++){
+            var curr_row = responseJson.rows[i];
+            mentors.push([curr_row.first_name])
+            mentors.push([curr_row.occupation])
+            mentors.push( curr_row.skills);
+       }
+      const { scores, matches } = this.search(mentors);
+      this.setState({scores: scores});
+      this.setState({matches: matches});
+    })
+    .catch((error) => {
+      console.log("error is: " + error);
+    });
   }
 
   //search function
