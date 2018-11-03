@@ -5,7 +5,7 @@ import contactData from '../../mocks/contact.json'
 
 import Profile from './Profile'
 
-const ProfileScreen = (props) => <Profile {...contactData} {...props} />
+const ProfileScreen = () => <Profile {...contactData} />
 
 ProfileScreen.navigationOptions = () => ({
   header: null,
