@@ -6,7 +6,10 @@
   * [Git (If Not Already Installed)](#git--if-not-already-installed-)
   * [VSCode](#vscode)
   * [Node.js](#nodejs)
+  * [Set up Postman and local server](#set-up-postman-and-local-server)
   * [Setup the Rise Repo](#setup-the-rise-repo)
+- [Development](#development)
+  * [Folder Structure](#folder-structure)
 
 <small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
 
