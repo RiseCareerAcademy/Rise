@@ -17,21 +17,18 @@ export default class MatchesScreen extends Component {
     var mentors = [];
     //populate array with data from database
 
-    const { manifest } = Expo.Constants;
+  const { manifest } = Expo.Constants;
   const api = (typeof manifest.packagerOpts === `object`) && manifest.packagerOpts.dev
   ? manifest.debuggerHost.split(`:`).shift().concat(`:8000`)
   : `api.example.com`;
-    console.log(api);
     fetch('http://'+api+'/user/mentor', {
       method: 'GET'
     })
     .then((response) => response.json())
     .then((responseJson) => {
-        //TO DO: add mentors name and skills in array
-        
         for (var i = 0; i < responseJson.rows.length; i++){
             var curr_row = responseJson.rows[i];
-            mentors.push([curr_row.first_name])
+            mentors.push([curr_row.user_id])//need to eventually add name and user id
             mentors.push([curr_row.occupation])
             mentors.push( curr_row.skills);
        }
@@ -39,10 +36,34 @@ export default class MatchesScreen extends Component {
       const { scores, matches } = this.match(desiredSkills, desiredProfessions, mentors);
       this.setState({scores: scores});
       this.setState({matches: matches});
-    })
-    .catch((error) => {
-      console.log("error is: " + error);
-    });
+    }).catch((error) => {
+        console.log("error is: " + error);
+      });
+
+      //post match to match table
+      //need id of person being matched and those they were matched with
+      fetch('http://'+api+'/match', {
+        method: 'POST',
+        headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+              //create unique match id, can get number of row in db + 1
+              "match_id": 5,
+              //loop through all mentor id
+              "mentor_id": 10105,
+              //find mentee id
+              "mentee_id": 20105
+        }),
+      })//fetch
+      .then((response) => response.json())
+      .then((responseJson) => {
+        console.log(JSON.stringify(responseJson));
+        })
+      .catch((error) => {
+        console.error("error is " + error);
+      });
   }
 
   //match function
