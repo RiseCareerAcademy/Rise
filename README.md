@@ -1,5 +1,5 @@
 [![CircleCI](https://circleci.com/gh/RiseCareerAcademy/Rise/tree/master.svg?style=svg)](https://circleci.com/gh/RiseMentors/Rise/tree/master)
-[![Coverage Status](https://coveralls.io/repos/github/RiseCareerAcademy/Rise/badge.svg?branch=master)](https://coveralls.io/github/RiseCareerAcademy/Rise?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/RiseCareerAcademy/Rise/badge.svg?branch=master&service=github)](https://coveralls.io/github/RiseCareerAcademy/Rise?branch=master)
 # Rise
 ![logo](http://risecareer.org/images/logo.png)
 - [Rise](#rise)
