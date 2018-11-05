@@ -49,12 +49,13 @@ export default class MatchesScreen extends Component {
         'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-              //create unique match id, can get number of row in db + 1
-              "match_id": 5,
+              //change the match id, it has to be unique
+              //this is hardcoded data to just give an example
+              "match_id": 1,
               //loop through all mentor id
-              "mentor_id": 10105,
+              "mentor_id": 10101,
               //find mentee id
-              "mentee_id": 20105
+              "mentee_id": 20101
         }),
       })//fetch
       .then((response) => response.json())
