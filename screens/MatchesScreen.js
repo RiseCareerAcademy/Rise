@@ -1,85 +1,106 @@
-import React from "react";
-import { Button, Text } from "native-base";
-import { Platform, ScrollView, StyleSheet, Image, View, SectionList } from "react-native";
-import { AuthSession } from "expo";
-import { MonoText } from "../components/StyledText";
+import React, { Component } from "react";
+import { ScrollView, StyleSheet, View, SectionList, Text } from "react-native";
+import Expo from "expo";
 
+export default class MatchesScreen extends Component {
+  state = {
+    desiredSkills: ["Agile Methodologies", "UX", "Prototyping"], //temp
+    desiredProfessions: ["Product Manager"], //temp
+    //array of matches with respective scores
+    matches: [],
+    scores: [],
+    mentorsFromServer:[]
+  };
 
-
-export default class MatchesScreen extends React.Component {
   constructor(props) {
     super(props);
-    
-    this.state = {
-      result: null,
-    };
+    var mentors = [];
+    //populate array with data from database
+
+    const { manifest } = Expo.Constants;
+  const api = (typeof manifest.packagerOpts === `object`) && manifest.packagerOpts.dev
+  ? manifest.debuggerHost.split(`:`).shift().concat(`:8000`)
+  : `api.example.com`;
+    console.log(api);
+    fetch('http://'+api+'/user/mentor', {
+      method: 'GET'
+    })
+    .then((response) => response.json())
+    .then((responseJson) => {
+        //TO DO: add mentors name and skills in array
+        
+        for (var i = 0; i < responseJson.rows.length; i++){
+            var curr_row = responseJson.rows[i];
+            mentors.push([curr_row.first_name])
+            mentors.push([curr_row.occupation])
+            mentors.push( curr_row.skills);
+       }
+      const { desiredSkills, desiredProfessions } = this.state;
+      const { scores, matches } = this.match(desiredSkills, desiredProfessions, mentors);
+      this.setState({scores: scores});
+      this.setState({matches: matches});
+    })
+    .catch((error) => {
+      console.log("error is: " + error);
+    });
   }
 
+  //match function
+  match = (desiredSkills, desiredProfessions, fakeData) => {
+    const matches = [];
+    const scores = [];
 
-  render() {
-    const { navigate } = this.props.navigation;
+    for (let i = 0; i < desiredSkills.length; i++) {
+      for (let j = 0; j < fakeData.length; j += 3) {
+        if (fakeData[j + 2].indexOf(desiredSkills[i]) > -1) {
+          //if matching skill, add to match list, score ++
+          if (matches.indexOf(fakeData[j]) > -1)
+            //if already has points
+            scores[matches.indexOf(fakeData[j])] += 1;
+          else {
+            //else add to list of matches with new score
+            matches[matches.length] = fakeData[j];
+            scores[scores.length] = 1;
+          }
+        }
+      }
+    }
 
-    ////matching algo////
-
-    desiredSkills = ['Joking', 'Smiling','Yawning']; //temp
-    desiredProfessions = ['Professor', 'Tech Expert']; //temp
-
-    //fakeData organized by iterations of (name, profession, skills)
-    fakeData = [
-        ['Rita Roloff'], ['Tech Expert'], ['Coding', 'Slaying', 'Singing'],
-        ['Flower'], ['Tech Expert'], ['Coding', 'Sending flowers', 'Singing'],
-        ['Obama'], ['POTUS'], ['Speaking', 'Joking', 'Dancing'],
-        ['Tracey'], ['Professor'], ['Talking'],
-        ['YO Mama'], ['Mother'], ['Birthing', 'Yelling', 'Running'],
-        ['Dan'], ['Software Engineer'], ['Smiling', 'Gaming'],
-        ['Goku'], ['Super Saiyan'], ['Fighting', 'Slaying', 'Reviving'],
-        ['My cat'], ['God', 'Professor'], ['Sleeping', 'Snoring', 'Yawning'],
-        ['R Federer'], ['GOAT'], ['Winning', 'Slaying', 'Tennis']
-    ];
-    //array of matches with respective scores
-    matches = [];
-    scores = [];
-
-    for (i = 0; i < desiredSkills.length; i++){
-        for (j = 0; j < fakeData.length;j+= 3){
-            if (fakeData[j+2].indexOf(desiredSkills[i]) > -1)
-                //if matching skill, add to match list, score ++
-                if (matches.indexOf(fakeData[j])>-1)
-                    //if already has points
-                    scores[matches.indexOf(fakeData[j])] += 1;
-                else{
-                    //else add to list of matches with new score
-                    matches[matches.length] = fakeData[j]
-                    scores[scores.length] = 1
-                }
+    for (let i = 0; i < desiredProfessions.length; i++) {
+      for (let j = 0; j < fakeData.length; j += 3)
+        if (fakeData[j + 1].indexOf(desiredProfessions[i]) > -1) {
+          if (matches.indexOf(fakeData[j]) > -1)
+            //if matching skill, add to match list, score ++
+            //if already has points
+            scores[matches.indexOf(fakeData[j])] += 3;
+          else {
+            //else add to list of matches with new score
+            matches[matches.length] = fakeData[j];
+            scores[scores.length] = 3;
+          }
         }
     }
-    for (i = 0; i < desiredProfessions.length; i++){
-        for (j = 0; j < fakeData.length;j+= 3)
-            if (fakeData[j+1].indexOf(desiredProfessions[i]) > -1)
-                //if matching skill, add to match list, score ++
-                if (matches.indexOf(fakeData[j])>-1)
-                    //if already has points
-                    scores[matches.indexOf(fakeData[j])] += 3;
-                else{
-                    //else add to list of matches with new score
-                    matches[matches.length] = fakeData[j]
-                    scores[scores.length] = 3
-                }
-    } 
 
     //sort by score
-    for (i = 1; i < scores.length; i++)
-    for (j = 0; j < i; j++){
+    for (let i = 1; i < scores.length; i++) {
+      for (let j = 0; j < i; j++) {
         if (scores[i] > scores[j]) {
-          x = scores[i];
+          let x = scores[i];
           scores[i] = scores[j];
           scores[j] = x;
-          y = matches[i];
+          let y = matches[i];
           matches[i] = matches[j];
           matches[j] = y;
         }
+      }
     }
+
+    return { scores, matches };
+  }
+
+  render() {
+
+    const { matches, scores } = this.state;
 
     return (
       <View style={styles.container}>
@@ -90,11 +111,13 @@ export default class MatchesScreen extends React.Component {
           <View style={styles.container}>
             <SectionList
               sections={[
-                {title: 'Suggested Matches', data:matches},
-                {title: 'Scores of Matches(temp)', data:scores}
+                { title: "Suggested Matches", data: matches },
+                { title: "Scores of Matches(temp)", data: scores }
               ]}
-              renderItem={({item}) => <Text style={styles.item}>{item}</Text>}
-              renderSectionHeader={({section}) => <Text style={styles.sectionHeader}>{section.title}</Text>}
+              renderItem={({ item }) => <Text style={styles.item}>{item}</Text>}
+              renderSectionHeader={({ section }) => (
+                <Text style={styles.sectionHeader}>{section.title}</Text>
+              )}
               keyExtractor={(item, index) => index}
             />
           </View>
@@ -104,8 +127,6 @@ export default class MatchesScreen extends React.Component {
   }
 }
 
-
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -113,9 +134,9 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center"
   },
   center: {
     flex: 1,
@@ -129,6 +150,6 @@ const styles = StyleSheet.create({
     color: "grey"
   },
   contentContainer: {
-   paddingTop: 30
-  },
+    paddingTop: 30
+  }
 });
