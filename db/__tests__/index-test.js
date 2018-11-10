@@ -8,6 +8,7 @@ jest.mock('sqlite3', () => ({
 
 const sqlite3 = require('sqlite3');
 
+
 it('connects to the database', () => {
     expect(db).toBeTruthy();
 })
