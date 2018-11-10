@@ -1,0 +1,392 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly 1`] = `
+<Component
+  style={
+    Object {
+      "backgroundColor": "#fff",
+      "flex": 1,
+    }
+  }
+>
+  <ScrollViewMock
+    contentContainerStyle={
+      Object {
+        "paddingTop": 30,
+      }
+    }
+    style={
+      Object {
+        "backgroundColor": "#fff",
+        "flex": 1,
+      }
+    }
+  >
+    <Component
+      style={
+        Object {
+          "flex": 1,
+          "flexDirection": "row",
+          "justifyContent": "center",
+        }
+      }
+    >
+      <Image
+        source={1}
+        style={
+          Object {
+            "height": 200,
+            "width": 200,
+          }
+        }
+      />
+    </Component>
+    <Styled(Button)
+      dark={true}
+      full={true}
+      onPress={[Function]}
+    >
+      <Styled(Text)>
+        Mentor
+      </Styled(Text)>
+    </Styled(Button)>
+    <Component>
+      <Styled(Button)
+        full={true}
+        light={true}
+        onPress={[Function]}
+      >
+        <Styled(Text)
+          style={
+            Object {
+              "color": "grey",
+            }
+          }
+        >
+          Student
+        </Styled(Text)>
+      </Styled(Button)>
+    </Component>
+    <Component
+      style={
+        Object {
+          "flex": 1,
+          "flexDirection": "row",
+          "justifyContent": "center",
+        }
+      }
+    >
+      <Styled(Text)>
+        --- Or ---
+      </Styled(Text)>
+    </Component>
+    <Component>
+      <Styled(Button)
+        dark={true}
+        full={true}
+        onPress={[Function]}
+      >
+        <Styled(Text)>
+          SIGN IN
+        </Styled(Text)>
+      </Styled(Button)>
+    </Component>
+  </ScrollViewMock>
+</Component>
+`;
+
+exports[`renders with authUrl set 1`] = `
+<Component
+  style={
+    Object {
+      "backgroundColor": "#fff",
+      "flex": 1,
+    }
+  }
+>
+  <ScrollViewMock
+    contentContainerStyle={
+      Object {
+        "paddingTop": 30,
+      }
+    }
+    style={
+      Object {
+        "backgroundColor": "#fff",
+        "flex": 1,
+      }
+    }
+  >
+    <Component
+      style={
+        Object {
+          "flex": 1,
+          "flexDirection": "row",
+          "justifyContent": "center",
+        }
+      }
+    >
+      <Image
+        source={1}
+        style={
+          Object {
+            "height": 200,
+            "width": 200,
+          }
+        }
+      />
+    </Component>
+    <Styled(Button)
+      dark={true}
+      full={true}
+      onPress={[Function]}
+    >
+      <Styled(Text)>
+        Mentor
+      </Styled(Text)>
+    </Styled(Button)>
+    <Component>
+      <Styled(Button)
+        full={true}
+        light={true}
+        onPress={[Function]}
+      >
+        <Styled(Text)
+          style={
+            Object {
+              "color": "grey",
+            }
+          }
+        >
+          Student
+        </Styled(Text)>
+      </Styled(Button)>
+    </Component>
+    <Component
+      style={
+        Object {
+          "flex": 1,
+          "flexDirection": "row",
+          "justifyContent": "center",
+        }
+      }
+    >
+      <Styled(Text)>
+        --- Or ---
+      </Styled(Text)>
+    </Component>
+    <Component>
+      <Styled(Button)
+        dark={true}
+        full={true}
+        onPress={[Function]}
+      >
+        <Styled(Text)>
+          SIGN IN
+        </Styled(Text)>
+      </Styled(Button)>
+      <Styled(Text)>
+        "http://linkedin.com"
+      </Styled(Text)>
+    </Component>
+  </ScrollViewMock>
+</Component>
+`;
+
+exports[`renders with result set 1`] = `
+<Component
+  style={
+    Object {
+      "backgroundColor": "#fff",
+      "flex": 1,
+    }
+  }
+>
+  <ScrollViewMock
+    contentContainerStyle={
+      Object {
+        "paddingTop": 30,
+      }
+    }
+    style={
+      Object {
+        "backgroundColor": "#fff",
+        "flex": 1,
+      }
+    }
+  >
+    <Component
+      style={
+        Object {
+          "flex": 1,
+          "flexDirection": "row",
+          "justifyContent": "center",
+        }
+      }
+    >
+      <Image
+        source={1}
+        style={
+          Object {
+            "height": 200,
+            "width": 200,
+          }
+        }
+      />
+    </Component>
+    <Styled(Button)
+      dark={true}
+      full={true}
+      onPress={[Function]}
+    >
+      <Styled(Text)>
+        Mentor
+      </Styled(Text)>
+    </Styled(Button)>
+    <Component>
+      <Styled(Button)
+        full={true}
+        light={true}
+        onPress={[Function]}
+      >
+        <Styled(Text)
+          style={
+            Object {
+              "color": "grey",
+            }
+          }
+        >
+          Student
+        </Styled(Text)>
+      </Styled(Button)>
+    </Component>
+    <Component
+      style={
+        Object {
+          "flex": 1,
+          "flexDirection": "row",
+          "justifyContent": "center",
+        }
+      }
+    >
+      <Styled(Text)>
+        --- Or ---
+      </Styled(Text)>
+    </Component>
+    <Component>
+      <Styled(Button)
+        dark={true}
+        full={true}
+        onPress={[Function]}
+      >
+        <Styled(Text)>
+          SIGN IN
+        </Styled(Text)>
+      </Styled(Button)>
+      <Styled(Text)>
+        "MyResult"
+      </Styled(Text)>
+    </Component>
+  </ScrollViewMock>
+</Component>
+`;
+
+exports[`renders with validi set 1`] = `
+<Component
+  style={
+    Object {
+      "backgroundColor": "#fff",
+      "flex": 1,
+    }
+  }
+>
+  <ScrollViewMock
+    contentContainerStyle={
+      Object {
+        "paddingTop": 30,
+      }
+    }
+    style={
+      Object {
+        "backgroundColor": "#fff",
+        "flex": 1,
+      }
+    }
+  >
+    <Component
+      style={
+        Object {
+          "flex": 1,
+          "flexDirection": "row",
+          "justifyContent": "center",
+        }
+      }
+    >
+      <Image
+        source={1}
+        style={
+          Object {
+            "height": 200,
+            "width": 200,
+          }
+        }
+      />
+    </Component>
+    <Styled(Button)
+      dark={true}
+      full={true}
+      onPress={[Function]}
+    >
+      <Styled(Text)>
+        Mentor
+      </Styled(Text)>
+    </Styled(Button)>
+    <Component>
+      <Styled(Button)
+        full={true}
+        light={true}
+        onPress={[Function]}
+      >
+        <Styled(Text)
+          style={
+            Object {
+              "color": "grey",
+            }
+          }
+        >
+          Student
+        </Styled(Text)>
+      </Styled(Button)>
+    </Component>
+    <Component
+      style={
+        Object {
+          "flex": 1,
+          "flexDirection": "row",
+          "justifyContent": "center",
+        }
+      }
+    >
+      <Styled(Text)>
+        --- Or ---
+      </Styled(Text)>
+    </Component>
+    <Component>
+      <Styled(Button)
+        dark={true}
+        full={true}
+        onPress={[Function]}
+      >
+        <Styled(Text)>
+          SIGN IN
+        </Styled(Text)>
+      </Styled(Button)>
+      <Styled(Text)>
+        undefined
+RequestState: undefined
+ResponseState: undefined
+      </Styled(Text)>
+    </Component>
+  </ScrollViewMock>
+</Component>
+`;

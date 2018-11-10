@@ -1,11 +1,16 @@
-[![CircleCI](https://circleci.com/gh/RiseMentors/Rise/tree/master.svg?style=svg)](https://circleci.com/gh/RiseMentors/Rise/tree/master)
+[![CircleCI](https://circleci.com/gh/RiseCareerAcademy/Rise/tree/master.svg?style=svg)](https://circleci.com/gh/RiseMentors/Rise/tree/master)
+[![Coverage Status](https://coveralls.io/repos/github/RiseCareerAcademy/Rise/badge.svg?branch=master&service=github)](https://coveralls.io/github/RiseCareerAcademy/Rise?branch=master)
 # Rise
+![logo](http://risecareer.org/images/logo.png)
 - [Rise](#rise)
 - [How to Install](#how-to-install)
   * [Git (If Not Already Installed)](#git--if-not-already-installed-)
   * [VSCode](#vscode)
   * [Node.js](#nodejs)
+  * [Set up Postman and local server](#set-up-postman-and-local-server)
   * [Setup the Rise Repo](#setup-the-rise-repo)
+- [Development](#development)
+  * [Folder Structure](#folder-structure)
 
 <small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
 
@@ -41,6 +46,12 @@ Run the .exe file in [nvm-setup.zip](https://github.com/coreybutler/nvm-windows/
 ```bash
 nvm install 10.11.0 
 ```
+## Set up Postman and local server
+
+In order to fully run Rise on expo, one must also have a local server. Here are instructions to get you started:
+https://docs.google.com/document/d/1qTC6WCncEo7d6_XF3DdekR6pyNq37f7atdX5i14J3xI/edit?usp=sharing
+
+This will allow you to find a matching mentor that is pre-populated in the database.
 
 ## Setup the Rise Repo
 1. Clone the repo
