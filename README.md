@@ -1,12 +1,16 @@
 [![CircleCI](https://circleci.com/gh/RiseCareerAcademy/Rise/tree/master.svg?style=svg)](https://circleci.com/gh/RiseMentors/Rise/tree/master)
-[![Coverage Status](https://coveralls.io/repos/github/RiseCareerAcademy/Rise/badge.svg?branch=master)](https://coveralls.io/github/RiseCareerAcademy/Rise?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/RiseCareerAcademy/Rise/badge.svg?branch=master&service=github)](https://coveralls.io/github/RiseCareerAcademy/Rise?branch=master)
 # Rise
+![logo](http://risecareer.org/images/logo.png)
 - [Rise](#rise)
 - [How to Install](#how-to-install)
   * [Git (If Not Already Installed)](#git--if-not-already-installed-)
   * [VSCode](#vscode)
   * [Node.js](#nodejs)
+  * [Set up Postman and local server](#set-up-postman-and-local-server)
   * [Setup the Rise Repo](#setup-the-rise-repo)
+- [Development](#development)
+  * [Folder Structure](#folder-structure)
 
 <small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
 
