@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Button, Text } from "native-base";
 import { Platform, ScrollView, StyleSheet, Image, View } from "react-native";
@@ -8,12 +7,10 @@ import { MonoText } from "../components/StyledText";
 export default class HomeScreen extends React.Component {
   constructor(props) {
     super(props);
-
     this.state = {
       result: null,
     };
   }
-
 
   handleMentorPress = async () => {
     // Setup params for Linkedin API

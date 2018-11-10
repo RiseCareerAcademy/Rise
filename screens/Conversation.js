@@ -1,5 +1,6 @@
 import React, { Component } from "react";
-import { View } from "native-base";
+import { View, Text, TouchableOpacity, TextInput, StyleSheet } from "react-native";
+import {Item,Input} from "native-base";
 import { MessageShort } from "../components/view";
 
 class Conversation extends Component {
@@ -22,9 +23,24 @@ class Conversation extends Component {
         {messages.map((message, i) => {
           return <MessageShort key={i} {...message} />;
         })}
+        <TextInput style = {styles.input}
+        underlineColorAndroid = "transparent"
+        placeholder = "Type here"
+        placeholderTextColor = "#D3D3D3"
+        autoCapitalize = "none"
+        backgroundColor = '#F5FCFF'
+        onChangeText = {this.handleEmail}/>
       </View>
+      
     );
   }
 }
-
+const styles = StyleSheet.create({
+  input: {
+     margin: 15,
+     height: 40,
+     borderColor: '#000000',
+     borderWidth: 1
+  }
+})
 export default Conversation;

@@ -8,13 +8,20 @@
     "ios": "expo start --ios",
     "eject": "expo eject",
     "test": "node_modules/.bin/jest",
-    "test:coverage": "jest --coverage --coverageReporters=text-lcov | coveralls",
+    "test:coverage": "jest --coverage --maxWorkers=2 --coverageReporters=text-lcov --verbose | coveralls --verbose",
+    "coverage": "jest --coverage --coverageReporters=html",
     "serve": "nodemon server.js"
   },
   "jest": {
     "preset": "jest-expo",
     "transformIgnorePatterns": [
       "/node_modules/(?!native-base)/"
+    ],
+    "setupFiles": [
+      "./setupTests.js"
+    ],
+    "snapshotSerializers": [
+      "enzyme-to-json/serializer"
     ]
   },
   "dependencies": {
@@ -31,14 +38,19 @@
     "native-base": "^2.8.0",
     "nodemon": "^1.18.4",
     "react": "16.3.1",
+    "react-dom": "^16.6.0",
     "react-native": "https://github.com/expo/react-native/archive/sdk-30.0.0.tar.gz",
     "react-native-elements": "^0.19.1",
+    "react-native-sqlite-storage": "^3.3.7",
     "react-navigation": "^2.18.0",
-    "sqlite3": "^4.0.2"
+    "sqlite3": "^4.0.3"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.1",
     "coveralls": "^3.0.2",
+    "enzyme": "^3.7.0",
+    "enzyme-adapter-react-16": "^1.6.0",
+    "enzyme-to-json": "^3.3.4",
     "eslint": "^5.6.0",
     "eslint-config-airbnb": "^17.1.0",
     "eslint-plugin-import": "^2.14.0",
