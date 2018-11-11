@@ -68,6 +68,14 @@ module.exports.create_messages_table_sql = function()  {
     return sql; 
 }
 
+module.exports.create_skills_table_sql = function()  {
+    sql = `CREATE TABLE IF NOT EXISTS Skills (
+        skill varchar(255) NOT NULL UNIQUE,
+        users varchar(255) NOT NULL
+    );`
+    return sql; 
+}
+
 //create new mentor
 module.exports.post_mentor_sql = function(user)  {
     sql = `INSERT INTO Mentors VALUES ('${user.user_id}', '${user.first_name}', '${user.last_name}', '${user.email_address}', 

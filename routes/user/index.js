@@ -43,10 +43,10 @@ router.put("/:id/hobbies/:hobby", controller.updateHobbiesById);
 router.delete("/:id/hobbies", controller.deleteHobbiesById);
 
 
-//get skill by id 
+//get skill by user_id 
 router.get("/:id/skills", controller.getSkillbyId);
 
-//add skill by id 
+//add skill by user_id 
 router.put("/:id/skills/:skill", controller.addSkill);
 
 //delete skill by id 

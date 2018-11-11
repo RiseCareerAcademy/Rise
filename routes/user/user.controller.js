@@ -12,6 +12,7 @@ module.exports.createTables = (req, res) => {
   sql3 = user_sql_constants.create_password_table_sql();
   sql4 = user_sql_constants.create_matches_table_sql();
   sql5 = user_sql_constants.create_messages_table_sql();
+  sql6 = user_sql_constants.create_skills_table_sql();
 
 
   db.all(sql1, [], (err, rows) => {
@@ -38,6 +39,11 @@ module.exports.createTables = (req, res) => {
     if (err) {
       throw err;
     }
+  });
+  db.all(sql6, [], (err, rows) => {
+    if (err) {
+      throw err;
+    }
     res.json({ success: true, rows: rows });
   });
 }
@@ -48,6 +54,7 @@ module.exports.deletetable = (req, res) => {
   sql2 = `DROP TABLE IF EXISTS Mentees;`;
   sql3 = `DROP TABLE IF EXISTS Matches;`;
   sql4 = `DROP TABLE IF EXISTS Messages;`;
+  sql5 = `DROP TABLE IF EXISTS Skills;`;
 
   db.all(sql1, [], (err, rows) => {
     if (err) {
