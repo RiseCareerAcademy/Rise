@@ -160,11 +160,6 @@ class Contact extends Component {
       console.log(result); //check output
       if (!result.cancelled) {
         this.setState({ image: result.uri });
-        console.log("uri: " + result.uri)
-        console.log("api: " + global.api)
-        console.log("uri: " + JSON.stringify(result.uri))
-        console.log('http://'+global.api+'/10101/profilepic/'+result.uri);
-        //need to create user id
         fetch('http://'+global.api+'/user/10101/profilepic/', {
         method: 'PUT',
         headers: {
@@ -173,7 +168,7 @@ class Contact extends Component {
           },
           body: JSON.stringify({
                 //create unique match id, can get number of row in db + 1
-                "profile_pic": JSON.stringify(result.uri)
+                "profilepic": JSON.stringify(result.uri)
           }),
       })//fetch
       .then((response) => response.json())
