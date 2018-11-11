@@ -3,6 +3,8 @@ const path = require("path");
 const fs = require('fs');
 const config = require("../../config/database.js");
 const db = require('../../db');
+const os = require('os');
+const ip = require('ip');
 
 
 var user_sql_constants = require("../../config/user_sql_constants.js");
@@ -112,7 +114,7 @@ module.exports.postMentor = (req, res) => {
 //create new mentee
 module.exports.postMentee = (req, res) => {
   const fields = ['first_name', 'last_name', 'email_address' ,'biography','zipcode',
-  'date_of_birth','skills','profile_pic_URL','hobbies'];
+  'date_of_birth','skills','hobbies'];
   const user = {};
   const missingFields = fields.some(field => {
     if (req.body[field] === undefined) {
@@ -130,6 +132,8 @@ module.exports.postMentee = (req, res) => {
   }
 
   user.user_id = getRandomArbitrary(0, 100000);
+  ip_address = ip.address();
+  user.profile_pic_URL = `http://${ip_address}:8000/user/${user.user_id}/profilepic`;
 
   sql = user_sql_constants.post_mentee_sql(user)
   console.log(sql);

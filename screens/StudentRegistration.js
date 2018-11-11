@@ -186,10 +186,8 @@ class MentorRegistration extends React.Component {
       return;
     }
 
-    const user_id = uuidv1();
 
     const mentee = {
-      user_id,
       first_name: this.state.name,
       last_name: 'Doe',
       email_address: this.state.email,
@@ -197,7 +195,6 @@ class MentorRegistration extends React.Component {
       zipcode: this.state.zipcode,
       date_of_birth: '12/24/1996',
       skills: this.state.skills,
-      profile_pic_URL: `http://${DOMAIN}/user/${user_id}/profilepic`,
       hobbies: 'fake hobbies',
       area_of_study: this.state.profession,
       password: this.state.password,

@@ -138,7 +138,8 @@ class Contact extends Component {
       emailDS: new ListView.DataSource({
         rowHasChanged: (r1, r2) => r1 !== r2
       }).cloneWithRows(this.props.emails),
-      image: `http://${DOMAIN}/user/${this.props.user_id}/profilepic`,
+      image: process.env.NODE_ENV === 'development' ? `http://${DOMAIN}/user/${this.props.user_id}/profilepic` : this.props.profile_pic_URL,
+      image: this.props.profile_pic_URL,
       text: ""
     };
   }
@@ -241,6 +242,9 @@ class Contact extends Component {
     const { first_name, last_name, user_id } = this.props;
     const name = `${first_name} ${last_name}`;
 
+    // const image = process.env.NODE_ENV === 'development' ? `http://${DOMAIN}/user/${user_id}/profilepic` : this.state.image;
+    const { image } = this.state;
+
     return (
       <View style={styles.headerContainer}>
         <SearchBar
@@ -262,7 +266,7 @@ class Contact extends Component {
             <Image
               style={styles.userImage}
               source={{
-                uri: this.state.image
+                uri: image
               }}
             />
 
