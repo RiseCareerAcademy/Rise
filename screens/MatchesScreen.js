@@ -43,6 +43,33 @@ export default class MatchesScreen extends Component {
     .catch((error) => {
       console.log("error is: " + error);
     });
+
+
+
+     //post match to match table
+      //need id of person being matched and those they were matched with
+      fetch('http://'+api+'/match', {
+        method: 'POST',
+        headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+              //create unique match id, can get number of row in db + 1
+              "match_id": 5,
+              //loop through all mentor id
+              "mentor_id": 10105,
+              //find mentee id
+              "mentee_id": 20105
+        }),
+      })//fetch
+      .then((response) => response.json())
+      .then((responseJson) => {
+        console.log(JSON.stringify(responseJson));
+        })
+      .catch((error) => {
+        console.error("error is " + error);
+      });
   }
 
   //match function
