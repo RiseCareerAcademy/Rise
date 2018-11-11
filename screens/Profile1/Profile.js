@@ -13,12 +13,14 @@ import {
   Text,
   Button,
 } from "react-native";
+import { connect } from 'react-redux';
 
 import mainColor from "./constants";
 
 import Email from "./Email";
 import Separator from "./Separator";
 import Tel from "./Tel";
+import { DOMAIN } from "../../config/url";
 
 const styles = StyleSheet.create({
   cardContainer: {
@@ -175,12 +177,16 @@ class Contact extends Component {
     const {
       avatar,
       avatarBackground,
-      name,
+      // name,
       address: { city, country },
       navigation: { navigate },
     } = this.props;
     
-    let { image } = this.state;
+    // let { image } = this.state;
+    const { first_name, last_name, user_id } = this.props;
+    const name = `${first_name} ${last_name}`;
+
+    const image = `http://${DOMAIN}/user/${user_id}/profilepic`;
 
     return (
       <View style={styles.headerContainer}>
@@ -203,7 +209,7 @@ class Contact extends Component {
             <Image
               style={styles.userImage}
               source={{
-                uri: image ? image : avatar
+                uri: image,
               }}
             />
 
@@ -303,4 +309,8 @@ class Contact extends Component {
   }
 }
 
-export default Contact;
+const mapStateToProps = state => ({
+  ...state.user,
+});
+
+export default connect(mapStateToProps, {})(Contact);

@@ -1,9 +1,13 @@
 import { all } from 'redux-saga/effects';
 
-import messaging from './messaging.saga';
+// import conversation from './conversation.saga';
+import userSearch from './users-search.saga';
+import userSaga from './user.saga';
 
 export default function* rootSaga() {
   yield all([
-    messaging(),
+    // conversation(),
+    userSearch(),
+    userSaga(),
   ]);
 }

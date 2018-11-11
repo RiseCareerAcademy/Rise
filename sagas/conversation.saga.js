@@ -20,21 +20,21 @@ export function createSocketChannel(socket) {
 }
 
 export default function* messagesWatcher() {
-	while (true) {
-	  yield take(SET_RECEIVER);
-	  // FIXME: Need to gracefully handle WS not connected errors.
-	  const socket = new WebSocket(wsUrl);
-	  const socketChannel = yield call(createSocketChannel, socket);
+  while (true) {
+    yield take(SET_RECEIVER);
+    // FIXME: Need to gracefully handle WS not connected errors.
+    const socket = new WebSocket(wsUrl);
+    const socketChannel = yield call(createSocketChannel, socket);
   
-	  yield race({
-		listeners: all([
-		  call(receiveMessagesWatcher, socketChannel),
-		  call(sendMessagesWatcher, socket),
-		]),
-		close: take(SET_RECEIVER),
-	  });
+    yield race({
+    listeners: all([
+      call(receiveMessagesWatcher, socketChannel),
+      call(sendMessagesWatcher, socket),
+    ]),
+    close: take(SET_RECEIVER),
+    });
   
-	  yield socketChannel.close();
-	  yield put(disconnectedFromWs());
-	}
+    yield socketChannel.close();
+    yield put(disconnectedFromWs());
+  }
   }

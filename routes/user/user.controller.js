@@ -1,6 +1,9 @@
 const jwt = require("jsonwebtoken");
+const path = require("path");
+const fs = require('fs');
 const config = require("../../config/database.js");
 const db = require('../../db');
+
 
 var user_sql_constants = require("../../config/user_sql_constants.js");
 
@@ -93,6 +96,14 @@ module.exports.postMentors = (req, res) => {
     return;
   }
 
+  upload(req, res, (err) => {
+    console.log("Request ---", req.body);
+    console.log("Request file ---", req.file);//Here you get file.
+    /*Now do where ever you want to do*/
+    if(!err)
+       return res.send(200).end();
+  });
+
   sql = user_sql_constants.post_mentor_sql(user);
   console.log(sql);
   db.all(sql, [], (err, rows) => {
@@ -105,31 +116,36 @@ module.exports.postMentors = (req, res) => {
 
 //create new mentee
 module.exports.postMentees = (req, res) => {
-  const fields = ['user_id', 'first_name', 'last_name', 'email_address' ,'biography','zipcode',
-  'date_of_birth','area_of_study','skills','profile_pic_URL','hobbies'];
-  const user = {};
-  const missingFields = fields.some(field => {
-    if (req.body[field] === undefined) {
-     res
-        .status(500)
-        .json({ error: "Missing credentials", success: false });
-        return true;
-    }
-    user[field] = req.body[field];
-    return false;
-  });
+  // const fields = ['user_id', 'first_name', 'last_name', 'email_address' ,'biography','zipcode',
+  // 'date_of_birth','area_of_study','skills','profile_pic_URL','hobbies'];
+  // const user = {};
+  // const missingFields = fields.some(field => {
+  //   if (req.body[field] === undefined) {
+  //    res
+  //       .status(500)
+  //       .json({ error: "Missing credentials", success: false });
+  //       return true;
+  //   }
+  //   user[field] = req.body[field];
+  //   return false;
+  // });
 
-  if (missingFields) {
-    return;
-  }
-  sql = user_sql_constants.post_mentee_sql(user)
-  console.log(sql);
-  db.all(sql, [], (err, rows) => {
-  if (err) {
-    throw err;
-  }
-  res.json({ success: true, rows: rows });
-});
+  // if (missingFields) {
+  //   return;
+  // }
+
+  const buffer = Buffer.from(req.body.image, 'base64');
+  fs.writeFileSync('uploads/upload.jpg', buffer);
+  res.json({ success: true });
+    
+  // sql = user_sql_constants.post_mentee_sql(user)
+  // console.log(sql);
+  // db.all(sql, [], (err, rows) => {
+  // if (err) {
+  //   throw err;
+  // }
+  // res.json({ success: true, rows: rows });
+// });
 }
 
 //create new password
@@ -332,16 +348,18 @@ module.exports.addSkill = (req, res) => {
 
 
 module.exports.getProfilePic = (req, res) => {
-  userID = req.params.id;
-  sql = user_sql_constants.get_profile_pic(userID);
+  const userID = req.params.id;
+  // sql = user_sql_constants.get_profile_pic(userID);
   
-  db.all(sql, [], (err, rows) => {
-    if (err) {
-      throw err;
-    }
-    res.json({ success: true, rows: rows });
-  });
-  
+  // db.all(sql, [], (err, rows) => {
+  //   if (err) {
+  //     throw err;
+  //   }
+  //   res.json({ success: true, rows: rows });
+  // });
+  const filepath = path.join(__dirname, '../../uploads', `${userID}.jpg`);
+  console.log(filepath);
+  res.sendFile(filepath);
 }
 
 module.exports.updateProfilePic = (req, res) => {
@@ -356,6 +374,10 @@ module.exports.updateProfilePic = (req, res) => {
     res.json({ success: true, rows: rows });
   });
   
+}
+
+module.exports.postProfilePic = (req, res) => {
+  res.json(req.file)
 }
 
 module.exports.getProfession = (req, res) => {

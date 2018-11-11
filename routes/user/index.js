@@ -1,5 +1,19 @@
 const express = require("express");
 const controller = require("./user.controller.js");
+const multer = require("multer");
+const path = require('path');
+
+const storage = multer.diskStorage({
+	destination: path.resolve('./uploads/'),
+	filename: function(req, file, cb){
+	   cb(null, file.originalname);
+	}
+  });
+  
+const upload = multer({
+	storage: storage,
+	limits: { fileSize: 1000000 },
+});
 
 const router = express.Router();
 module.exports.router = router;
@@ -52,12 +66,11 @@ router.put("/:id/skills/:skill", controller.addSkill);
 //delete skill by id 
 //router.delete("/:id/:skill", controller.deleteSkill);
 
-
 //get profile pic by id 
 router.get("/:id/profilepic", controller.getProfilePic);
 //update profile pic by id 
 router.put("/:id/profilepic/:profilepic", controller.updateProfilePic);
-
+router.post("/:id/profilepic", upload.single('photo'), controller.postProfilePic);
 
 //get profession/area of study 
 router.get("/:id/profession", controller.getProfession);
