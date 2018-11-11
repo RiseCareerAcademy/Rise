@@ -30,6 +30,7 @@ module.exports.create_mentor_table_sql = function()  {
         zipcode varchar(5) NOT NULL,
         date_of_birth DATE NOT NULL,
         occupation varchar(255) NOT NULL,
+        rating int, 
         skills varchar(255) NOT NULL,
         profile_pic_URL varchar(255) NOT NULL,
         hobbies varchar(255)
