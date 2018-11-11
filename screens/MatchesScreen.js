@@ -46,9 +46,6 @@ export default class MatchesScreen extends Component {
       });
   }
 
-
-  
-
   //add skills to desiredSkills
   addMenteeSkill = (desiredSkills, additionalSkill) => {
     if (desiredSkills.split(",").indexOf(additionalSkill) == -1) {

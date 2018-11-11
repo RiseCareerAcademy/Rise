@@ -127,10 +127,6 @@ const styles = StyleSheet.create({
 class Contact extends Component {
   constructor(props) {
     super(props);
-    const { manifest } = Expo.Constants;
-    global.api= (typeof manifest.packagerOpts === `object`) && manifest.packagerOpts.dev
-    ? manifest.debuggerHost.split(`:`).shift().concat(`:8000`)
-    : `api.example.com`;
 
     this.state = {
       telDS: new ListView.DataSource({
@@ -160,24 +156,6 @@ class Contact extends Component {
       console.log(result); //check output
       if (!result.cancelled) {
         this.setState({ image: result.uri });
-        fetch('http://'+global.api+'/user/10101/profilepic/', {
-        method: 'PUT',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-                //create unique match id, can get number of row in db + 1
-                "profilepic": JSON.stringify(result.uri)
-          }),
-      })//fetch
-      .then((response) => response.json())
-      .then((responseJson) => {
-        console.log(JSON.stringify(responseJson));
-        })
-      .catch((error) => {
-        console.error("error is " + error);
-      });
       }
     }
   };
