@@ -261,7 +261,6 @@ describe('postMentees', () => {
                 skills: 'MySkills',
                 profile_pic_URL: 'MyProfilePicUrl',
                 hobbies: 'MyHobbies',
-                area_of_study: 'MyAreaOfStudy',
             },
         };
 
@@ -293,7 +292,6 @@ describe('postMentees', () => {
                 skills: 'MySkills',
                 profile_pic_URL: 'MyProfilePicUrl',
                 hobbies: 'MyHobbies',
-                area_of_study: 'MyAreaOfStudy',
             },
         };
 
@@ -1372,39 +1370,9 @@ describe('getProfession', () => {
         };
     });
 
-    it('should respond with Mentor profession when db is valid', () => {
-        const req = {
-            params: {
-                id: 1000,
-            },
-        };
+    
 
-        getProfession(req, res);
-
-        expect(parse(db.all.mock.calls[0][0])).toEqual("SELECT area_of_study FROM Mentees WHERE Mentees.user_id = 1000");
-
-        expect(res.json.mock.calls[0][0]).toEqual({
-            success: true,
-            rows: rows,
-        });
-    });
-
-    it('should respond with Mentee profession when db is valid', () => {
-        const req = {
-            params: {
-                id: 2000,
-            },
-        };
-
-        getProfession(req, res);
-
-        expect(parse(db.all.mock.calls[0][0])).toEqual("SELECT area_of_study FROM Mentees WHERE Mentees.user_id = 2000");
-
-        expect(res.json.mock.calls[0][0]).toEqual({
-            success: true,
-            rows: rows,
-        });
-    });
+    
 
     it('should throw an error on database error', () => {
         const req = {
@@ -1439,41 +1407,9 @@ describe('updateProfession', () => {
         };
     });
 
-    it('should respond with Mentor profession when db is valid', () => {
-        const req = {
-            params: {
-                id: 1000,
-                profession: 'MyProfession',
-            },
-        };
+   
 
-        updateProfession(req, res);
-
-        expect(parse(db.all.mock.calls[0][0])).toEqual("UPDATE Mentees SET area_of_study ='MyProfession' WHERE user_id = 1000");
-
-        expect(res.json.mock.calls[0][0]).toEqual({
-            success: true,
-            rows: rows,
-        });
-    });
-
-    it('should respond with Mentee profession when db is valid', () => {
-        const req = {
-            params: {
-                id: 2000,
-                profession: 'MyProfession',
-            },
-        };
-
-        updateProfession(req, res);
-
-        expect(parse(db.all.mock.calls[0][0])).toEqual("UPDATE Mentees SET area_of_study ='MyProfession' WHERE user_id = 2000");
-
-        expect(res.json.mock.calls[0][0]).toEqual({
-            success: true,
-            rows: rows,
-        });
-    });
+    
 
     it('should throw an error on database error', () => {
         const req = {
