@@ -11,7 +11,7 @@
     "plugin:jest/recommended",
     "plugin:react/recommended"
   ],
-  "plugins": ["jest", "react"],
+  "plugins": ["jest", "react", "flowtype"],
   "rules": {
     "react/prop-types": "off",
     "react/display-name": "off"
