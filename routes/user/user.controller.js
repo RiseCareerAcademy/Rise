@@ -429,7 +429,7 @@ module.exports.getProfilePic = (req, res) => {
 
 module.exports.updateProfilePic = (req, res) => {
   userID = req.params.id;
-  profile_pic = req.params.profilepic;
+  profile_pic = req.body.profilepic;
   sql = user_sql_constants.update_profile_pic(userID,profile_pic);
   
   db.all(sql, [], (err, rows) => {

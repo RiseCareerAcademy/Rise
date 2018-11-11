@@ -61,7 +61,7 @@ router.put("/skill/:skill", controller.updateUsersbySkill);
 //get profile pic by id 
 router.get("/:id/profilepic", controller.getProfilePic);
 //update profile pic by id 
-router.put("/:id/profilepic/:profilepic", controller.updateProfilePic);
+router.put("/:id/profilepic", controller.updateProfilePic);
 
 
 //get profession/area of study 
