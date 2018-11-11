@@ -15,6 +15,7 @@ module.exports.createTables = (req, res) => {
   sql3 = user_sql_constants.create_password_table_sql();
   sql4 = user_sql_constants.create_matches_table_sql();
   sql5 = user_sql_constants.create_messages_table_sql();
+  sql6 = user_sql_constants.create_skills_table_sql();
 
 
   db.all(sql1, [], (err, rows) => {
@@ -41,6 +42,11 @@ module.exports.createTables = (req, res) => {
     if (err) {
       throw err;
     }
+  });
+  db.all(sql6, [], (err, rows) => {
+    if (err) {
+      throw err;
+    }
     res.json({ success: true, rows: rows });
   });
 }
@@ -51,6 +57,7 @@ module.exports.deletetable = (req, res) => {
   sql2 = `DROP TABLE IF EXISTS Mentees;`;
   sql3 = `DROP TABLE IF EXISTS Matches;`;
   sql4 = `DROP TABLE IF EXISTS Messages;`;
+  sql5 = `DROP TABLE IF EXISTS Skills;`;
 
   db.all(sql1, [], (err, rows) => {
     if (err) {
@@ -76,34 +83,19 @@ module.exports.deletetable = (req, res) => {
 }
 
 //create new mentor
-module.exports.postMentors = (req, res) => {
+module.exports.postMentor = (req, res) => {
   const fields = ['user_id', 'first_name', 'last_name', 'email_address' ,'biography','zipcode',
   'date_of_birth','occupation','skills','profile_pic_URL','hobbies'];
   const user = {};
   
-  const missingFields = fields.some(field => {
+  fields.forEach(field => {
     if (req.body[field] === undefined) {
      res
         .status(500)
         .json({ error: "Missing credentials", success: false });
-        return true;
     }
     user[field] = req.body[field];
-    return false;
   });
-
-  if (missingFields) {
-    return;
-  }
-
-  upload(req, res, (err) => {
-    console.log("Request ---", req.body);
-    console.log("Request file ---", req.file);//Here you get file.
-    /*Now do where ever you want to do*/
-    if(!err)
-       return res.send(200).end();
-  });
-
   sql = user_sql_constants.post_mentor_sql(user);
   console.log(sql);
   db.all(sql, [], (err, rows) => {
@@ -113,18 +105,17 @@ module.exports.postMentors = (req, res) => {
   res.json({ success: true, rows: rows });
 });
 }
-
 //create new mentee
-module.exports.postMentees = (req, res) => {
+module.exports.postMentee = (req, res) => {
   const fields = ['user_id', 'first_name', 'last_name', 'email_address' ,'biography','zipcode',
-  'date_of_birth','area_of_study','skills','profile_pic_URL','hobbies'];
+  'date_of_birth','skills','profile_pic_URL','hobbies'];
   const user = {};
   const missingFields = fields.some(field => {
     if (req.body[field] === undefined) {
      res
         .status(500)
         .json({ error: "Missing credentials", success: false });
-        return true;
+      return true;
     }
     user[field] = req.body[field];
     return false;
@@ -140,7 +131,7 @@ module.exports.postMentees = (req, res) => {
     if (err) {
       res
          .status(500)
-         .json({ error: err.message, success: false });
+         .send({ error: err.message, success: false });
          return true;
     }
     res.json({ success: true, rows: rows });
@@ -148,6 +139,59 @@ module.exports.postMentees = (req, res) => {
 }
 
 //create new password
+module.exports.postPassword = (req, res) => {
+  const fields = ['user_id', 'email_address' ,'password'];
+  const user = {};
+  const missingFields = fields.some(field => {
+    if (req.body[field] === undefined) {
+     res
+        .status(500)
+        .json({ error: "Missing credentials", success: false });
+        return true;
+    }
+    user[field] = req.body[field];
+    return false;
+  });
+
+  if (missingFields) {
+    return;
+  }
+  sql = user_sql_constants.post_password_sql(user)
+  console.log(sql);
+  db.all(sql, [], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+    res.json({ success: true, rows: rows });
+  });
+  
+}
+
+//create new skill
+module.exports.postSkill = (req, res) => {
+  const fields = ['skill','users'];
+  const skill = {};
+  const missingFields = fields.some(field => {
+    if (req.body[field] === undefined) {
+     res
+        .status(500)
+        .json({ error: "Missing credentials", success: false });
+        return true;
+    }
+    skill[field] = req.body[field];
+    return false;
+  });
+  sql = user_sql_constants.post_skill_sql(skill)
+  console.log(sql);
+  db.all(sql, [], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+    res.json({ success: true, rows: rows });
+  });
+}
+
+//create new skill
 module.exports.postPasswords = (req, res) => {
   const fields = ['user_id', 'email_address' ,'password'];
   const user = {};
@@ -178,15 +222,14 @@ module.exports.postPasswords = (req, res) => {
 
 //get all mentors
 module.exports.getAllMentors = (req, res) => {
-  sql = user_sql_constants.get_all_mentors();
-  
+    sql = user_sql_constants.get_all_mentors();
   db.all(sql, [], (err, rows) => {
     if (err) {
       throw err;
     }
     res.json({ success: true, rows: rows });
-  });
-  
+  }); 
+ 
 }
 //get all mentees
   module.exports.getAllMentees = (req, res) => {
@@ -198,11 +241,22 @@ module.exports.getAllMentors = (req, res) => {
     }
     res.json({ success: true, rows: rows });
   });
-  
 }
 //get all mentees
 module.exports.getAllPasswords = (req, res) => {
   sql = user_sql_constants.get_all_passwords();
+
+db.all(sql, [], (err, rows) => {
+  if (err) {
+    throw err;
+  }
+  res.json({ success: true, rows: rows });
+});
+}
+
+//get all skills
+module.exports.getAllSkills = (req, res) => {
+  sql = user_sql_constants.get_all_skills();
 
 db.all(sql, [], (err, rows) => {
   if (err) {
@@ -329,11 +383,38 @@ module.exports.getSkillbyId = (req, res) => {
   
 }
 
-module.exports.addSkill = (req, res) => {
-  userID = req.params.id
-  new_skill = req.params.skill
-  sql = user_sql_constants.add_skill(userID,new_skill);
+module.exports.getUsersbySkill = (req, res) => {
   
+  skill = req.params.skill
+  sql = user_sql_constants.get_users_by_skill(skill);
+  
+  db.all(sql, [], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+    res.json({ success: true, rows: rows });
+  });
+  
+}
+
+module.exports.updateSkill = (req, res) => {
+  userID = req.params.id;
+  skill_list = req.body.skills;
+  sql = user_sql_constants.update_skill(userID,skill_list);
+  
+  db.all(sql, [], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+    res.json({ success: true, rows: rows });
+  });
+  
+}
+
+module.exports.updateUsersbySkill = (req, res) => {
+  skill = req.params.skill;
+  user_list = req.body.users;
+  sql = user_sql_constants.update_users_by_skill(skill,user_list);
   
   db.all(sql, [], (err, rows) => {
     if (err) {
@@ -363,7 +444,7 @@ module.exports.getProfilePic = (req, res) => {
 
 module.exports.updateProfilePic = (req, res) => {
   userID = req.params.id;
-  profile_pic = req.params.profilepic;
+  profile_pic = req.body.profilepic;
   sql = user_sql_constants.update_profile_pic(userID,profile_pic);
   
   db.all(sql, [], (err, rows) => {

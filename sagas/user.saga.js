@@ -30,6 +30,7 @@ export function* registerMentee({ mentee }) {
 		yield call(uploadProfilePic, mentee.user_id, mentee.uri);
 		yield put(setUser(mentee));
 	} catch(e) {
+		console.log(e.response.data.error);
 	}
 }
 

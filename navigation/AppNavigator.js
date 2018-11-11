@@ -14,7 +14,7 @@ const App = createStackNavigator({
   Mentor: { screen: MentorRegistration },
   Student: {screen: StudentRegistration},
   SignIn: {screen: SignIn},
-  Main: MainTabNavigator,
+  Main: { screen: MainTabNavigator, navigationOptions: () => ({ header: null }) },
   Search: { screen: SearchScreen},
   Profile: { screen: Profile}
 });

@@ -11,6 +11,7 @@ import {
 import { StyleSheet, TouchableOpacity, View, Image, Button } from "react-native";
 import { connect } from "react-redux";
 import { ImagePicker, Permissions } from "expo";
+import { StackActions, NavigationActions } from 'react-navigation';
 
 import { registerMentee } from '../actions/user.actions';
 import { DOMAIN } from "../config/url";
@@ -28,13 +29,18 @@ class MentorRegistration extends React.Component {
     name: "",
     city: "",
     state: "",
-    image: null
+    image: null,
+    lastName:"",
+    zipcode:"",
   };
 
   componentDidUpdate = prevProps => {
     if (!prevProps.loggedIn && this.props.loggedIn) {
-      const { navigate } = this.props.navigation;
-      navigate("Main");
+      const resetAction = StackActions.reset({
+        index: 0,
+        actions: [NavigationActions.navigate({ routeName: 'Main' })],
+      });
+      this.props.navigation.dispatch(resetAction);
     }
   }
 
@@ -63,7 +69,6 @@ class MentorRegistration extends React.Component {
   handleEmail = text => {
     this.setState({ email: text });
   };
-  e;
   handlePassword = text => {
     this.setState({ password: text });
   };
@@ -79,11 +84,11 @@ class MentorRegistration extends React.Component {
   handleName = text => {
     this.setState({ name: text });
   };
-  handleCity = text => {
-    this.setState({ city: text });
+  handleLastName = text => {
+    this.setState({ lastName: text });
   };
-  handleState = text => {
-    this.setState({ state: text });
+  handleZipCode = text => {
+    this.setState({ zipcode: text });
   };
 
   validate = (
@@ -93,8 +98,8 @@ class MentorRegistration extends React.Component {
     skills,
     profession,
     name,
-    city,
-    state
+    lastName,
+    zipcode
   ) => {
     // we are going to store errors for all fields
     // in a signle array
@@ -103,11 +108,11 @@ class MentorRegistration extends React.Component {
       skills.length == 0 ||
       profession.length == 0 ||
       name.length == 0 ||
-      city.length == 0 ||
-      state.length == 0 ||
-      email.length == 0 ||
+      email.length == 0 || 
       password.length == 0 ||
-      confirmedPassword.length == 0
+      confirmedPassword.length == 0 ||
+      lastName.length == 0 ||
+      zipcode.length == 0
     ) {
       errors.push("All fields must be filled");
     } else if (email.length < 5) {
@@ -123,13 +128,47 @@ class MentorRegistration extends React.Component {
         "Password doesn't match" + password + " " + confirmedPassword
       );
     }
-
+    else if (zipcode.length != 5 && /^\d+$/.test(zipcode)){
+      errors.push("zipcode must contain only numbers and be 5 characters long");
+    }
+    // const { manifest } = Expo.Constants;
+    // const api = (typeof manifest.packagerOpts === `object`) && manifest.packagerOpts.dev
+    // ? manifest.debuggerHost.split(`:`).shift().concat(`:8000`)
+    // : `api.example.com`;
+    // fetch('http://'+api+'/user/mentee', {
+    //   method: 'POST',
+    //   headers: {
+    //   Accept: 'application/json',
+    //   'Content-Type': 'application/json',
+    //   },
+    //   body: JSON.stringify({
+    //         "user_id": 10002,
+    //         "first_name": this.state.name, 
+    //         "last_name": "john",
+    //         "email_address": this.state.email, 
+    //         "biography": "hi",
+    //         "zipcode": this.state.zipcode, 
+    //         "date_of_birth": "2/24/1996",
+    //         "area_of_study": "Computer Science", 
+    //         "skills": this.state.skills,
+    //         "profile_pic_URL": "bill.com",
+    //         "hobbies": "testiing hobbies",
+    //   }),
+    // })//fetch
+    // .then((response) => response.json())
+    // .then((responseJson) => {
+    //   console.log(JSON.stringify(responseJson));
+    //   })
+    // .catch((error) => {
+    //   console.error("error is " + error);
+    // });
     if (errors.length == 0) {
       alert(errors);
       return true;
     } else {
       return false;
     }
+    
   };
 
   handleSubmit = () => {
@@ -140,8 +179,8 @@ class MentorRegistration extends React.Component {
       this.state.skills,
       this.state.profession,
       this.state.name,
-      this.state.city,
-      this.state.state
+      this.state.lastName,
+      this.state.zipcode,
     );
     if (!valid && process.env.NODE_ENV !== "development") {
       return;
@@ -151,18 +190,17 @@ class MentorRegistration extends React.Component {
 
     const mentee = {
       user_id,
-      first_name: 'John',
+      first_name: this.state.name,
       last_name: 'Doe',
       email_address: this.state.email,
-      biography: '',
-      zipcode: '53703',
+      biography: 'hi',
+      zipcode: this.state.zipcode,
       date_of_birth: '12/24/1996',
-      area_of_study: this.state.profession,
       skills: this.state.skills,
       profile_pic_URL: `http://${DOMAIN}/user/${user_id}/profilepic`,
       hobbies: 'fake hobbies',
+      area_of_study: this.state.profession,
       password: this.state.password,
-      name: this.state.name,
       city: this.state.city,
       state: this.state.state,
       image: this.state.image,
@@ -178,80 +216,78 @@ class MentorRegistration extends React.Component {
       <Container style={styles.container}>
         <Content>
           <Form>
-            <View style={styles.headerColumn}>
-              {this.state.image !== null && (
-                <Image
-                  style={styles.userImage}
-                  source={{
-                    uri: this.state.image
-                  }}
-                />
-              )}
+            {this.state.image !== null && (
+              <Image
+                style={styles.userImage}
+                source={{
+                  uri: this.state.image,
+                }}
+              />
+            )}
 
-              <View style={styles.uploadBtnContainer}>
-                <Button
-                  onPress={this.handleImagePickerPress}
-                  style={styles.uploadBtn}
-                  title="Select image from Camera Roll"
-                />
-              </View>
-              <Item stackedLabel>
-                <Label>Username</Label>
-                <Input
-                  placeholder="Enter your email"
-                  onChangeText={this.handleEmail}
-                />
-              </Item>
-              <Item stackedLabel>
-                <Label>Password</Label>
-                <Input
-                  placeholder="Enter your password"
-                  onChangeText={this.handlePassword}
-                />
-              </Item>
-              <Item stackedLabel>
-                <Label>Confirm Password</Label>
-                <Input
-                  placeholder="Confirm Password Change"
-                  onChangeText={this.handleConfirmedPassword}
-                />
-              </Item>
-              <Item stackedLabel>
-                <Label>Skills</Label>
-                <Input
-                  placeholder="Enter skills you want to learn"
-                  onChangeText={this.handleSkills}
-                />
-              </Item>
-              <Item stackedLabel last>
-                <Label>Profession</Label>
-                <Input
-                  placeholder="Enter profession you want to learn"
-                  onChangeText={this.handleProfession}
-                />
-              </Item>
-              <Item stackedLabel last>
-                <Label>Name</Label>
-                <Input
-                  placeholder="Enter your name"
-                  onChangeText={this.handleName}
-                />
-              </Item>
-              <Item stackedLabel last>
-                <Label>city</Label>
-                <Input
-                  placeholder="Enter your city"
-                  onChangeText={this.handleCity}
-                />
-              </Item>
-              <Item stackedLabel last>
-                <Label>state</Label>
-                <Input
-                  placeholder="Enter your state"
-                  onChangeText={this.handleState}
-                />
-              </Item>
+            <View style={styles.uploadBtnContainer}>
+              <Button
+                onPress={this.handleImagePickerPress}
+                style={styles.uploadBtn}
+                title="Select image from Camera Roll"
+              />
             </View>
+            <Item stackedLabel>
+              <Label>Username</Label>
+              <Input
+                placeholder="Enter your email"
+                onChangeText={this.handleEmail}
+              />
+            </Item>
+            <Item stackedLabel>
+              <Label>Password</Label>
+              <Input
+                placeholder="Enter your password"
+                onChangeText={this.handlePassword}
+              />
+            </Item>
+            <Item stackedLabel>
+              <Label>Confirm Password</Label>
+              <Input
+                placeholder="Confirm Password Change"
+                onChangeText={this.handleConfirmedPassword}
+              />
+            </Item>
+            <Item stackedLabel>
+              <Label>Skills</Label>
+              <Input
+                placeholder="Enter skills you want to learn"
+                onChangeText={this.handleSkills}
+              />
+            </Item>
+            <Item stackedLabel last>
+              <Label>Profession</Label>
+              <Input
+                placeholder="Enter profession you want to learn"
+                onChangeText={this.handleProfession}
+              />
+            </Item>
+            <Item stackedLabel last>
+              <Label>Name</Label>
+              <Input
+                placeholder="Enter your name"
+                onChangeText={this.handleName}
+              />
+            </Item>
+            <Item stackedLabel last>
+              <Label>lastName</Label>
+              <Input
+                placeholder="Enter your last name"
+                onChangeText={this.handleLastName}
+              />
+            </Item>
+            <Item stackedLabel last>
+              <Label>zipcode</Label>
+              <Input
+                placeholder="Enter your zipcode"
+                onChangeText={this.handleZipCode}
+              />
+            </Item>
           </Form>
         </Content>
         <TouchableOpacity
