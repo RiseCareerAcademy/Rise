@@ -76,7 +76,6 @@ module.exports.create_skills_table_sql = function()  {
 }
 
 
-
 //create new password
 module.exports.post_password_sql = function(user)  {
     sql = `INSERT INTO Passwords VALUES ('${user.user_id}', '${user.email_address}', '${user.password}') `
@@ -358,5 +357,12 @@ module.exports.get_message_by_matchid = function(id){
 //get all message by match id 
 module.exports.get_all_message_by_matchid = function(id){
     sql = `SELECT * FROM Messages WHERE match_id = ${id} order by timestamp;`;    
+    return sql; 
+}
+
+//get rating by id
+//get match by match match id 
+module.exports.get_rating_by_id = function(id){
+    sql = `SELECT rating FROM Mentors WHERE user_id = ${id};`;    
     return sql; 
 }

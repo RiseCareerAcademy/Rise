@@ -539,3 +539,18 @@ module.exports.login = (req, res) => {
   });
   
 }
+
+
+module.exports.getRating = (req, res) => {
+  
+  id = req.params.id
+  sql = user_sql_constants.get_rating_by_id(id);
+  
+  db.all(sql, [], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+    res.json({ success: true, rows: rows });
+  });
+  
+}
