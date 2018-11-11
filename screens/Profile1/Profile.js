@@ -1,10 +1,9 @@
-import React, { Component } from "react";
-import { Card, Icon, SearchBar } from "react-native-elements";
+import React, { Component} from "react";
+import { Card, Icon, SearchBar} from "react-native-elements";
 import { ImagePicker, Permissions } from "expo";
 import {
   Image,
   ImageBackground,
-  Linking,
   ListView,
   Platform,
   ScrollView,
@@ -12,6 +11,7 @@ import {
   View,
   Text,
   Button,
+  AlertIOS,
 } from "react-native";
 
 import mainColor from "./constants";
@@ -112,6 +112,15 @@ const styles = StyleSheet.create({
   },
   uploadBtn: {
     margin: "auto"
+  },
+  editBtn:{
+      backgroundColor: "rgba(92, 99,216, 1)",
+      width: 200,
+      height: 100,
+      marginHorizontal: 300,
+      borderColor: "transparent",
+      borderWidth: 0,
+      borderRadius: 5
   }
 });
 
@@ -151,10 +160,71 @@ class Contact extends Component {
     }
   };
 
+  //allows one to edit their about me section
+  handleEditAboutMePress = async () => {
+    AlertIOS.prompt(
+      'Edit About Me',
+      null,
+      [
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel',
+        },
+        {
+          text: 'OK',
+          onPress: (aboutMe) => console.log('OK Pressed, new about me: ' + aboutMe),
+        },
+      ],
+    );
+  }
+
+  //allows one to edit desired profession
+  handleEditProfessionPress = async () => {
+    AlertIOS.prompt(
+      'Edit Profession',
+      null,
+      [
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel',
+        },
+        {
+          text: 'OK',
+          onPress: (profession) => console.log('OK Pressed, new about me: ' + profession),
+        },
+      ],
+    );
+  }
+
+
+  //allows one to edit desired skills
+  handleEditSkillsPress = async () => {
+    AlertIOS.prompt(
+      'Edit Skills',
+      null,
+      [
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel',
+        },
+        {
+          text: 'OK',
+          onPress: (skills) => console.log('OK Pressed, new about me: ' + skills),
+        },
+      ],
+    );
+  }
+
+
+
+
   onPressPlace = () => {
     console.log("place");
   };
-
+ /*
   onPressTel = number => {
     Linking.openURL(`tel://${number}`).catch(err => console.log("Error:", err));
   };
@@ -167,7 +237,7 @@ class Contact extends Component {
     Linking.openURL(`mailto://${email}?subject=subject&body=body`).catch(err =>
       console.log("Error:", err)
     );
-  };
+  };*/
 
 
 
@@ -240,17 +310,45 @@ class Contact extends Component {
   renderBio = () => {
     const { bio, desiredProfession, desiredSkills } = this.props;
     return (
-      <View style={styles.userBioRow}>
-        <Text style={styles.userTitleText}>About Me</Text>
+      <View>
+        //about me section
+        <View style={{ flexDirection:'row' }}>
+          <Text style={styles.userTitleText}>About Me</Text>
+          <Button
+                onPress={this.handleEditAboutMePress}
+                style={styles.editBtn}
+                title="Edit"
+          />
+        </View>
         <Text style={styles.userBioText}>{bio}</Text>
-        <Text style={styles.userTitleText}>Desired Profession</Text>
+          
+
+        //desired profession section
+        <View style={{ flexDirection:'row' }}>
+          <Text style={styles.userTitleText}>Desired Profession</Text>
+          <Button
+                onPress={this.handleEditProfessionPress}
+                style={styles.editBtn}
+                title="Edit"
+          />
+        </View>
         <Text style={styles.userBioText}>{desiredProfession}</Text>
-        <Text style={styles.userTitleText}>Desired Skills</Text>
+        
+        //desired skills section
+        <View style={{ flexDirection:'row' }}>
+          <Text style={styles.userTitleText}>Desired Skills</Text>
+          <Button
+                onPress={this.handleEditSkillsPress}
+                style={styles.editBtn}
+                title="Edit"
+          />
+        </View>
         <Text style={styles.userBioText}>{desiredSkills}</Text>
       </View>
     );
   };
 
+  /*
   renderTel = () => (
     <ListView
       contentContainerStyle={styles.telContainer}
@@ -286,7 +384,7 @@ class Contact extends Component {
         );
       }}
     />
-  );
+  );*/
 
   render() {
     return (
