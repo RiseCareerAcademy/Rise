@@ -540,12 +540,12 @@ module.exports.login = (req, res) => {
     }
     salt = rows[0]['salt']
     console.log(user.email_address)
-    sql2 = `SELECT COUNT(*) FROM (SELECT * FROM Passwords WHERE email_address='${user.email_address}' AND password='${hp.minh(user.password, salt)['passwordHash']}');`;  
+    sql2 = `SELECT * FROM Passwords WHERE email_address='${user.email_address}' AND password='${hp.minh(user.password, salt)['passwordHash']}';`;  
     db.all(sql2, [], (err, rows) => {
       if (err) {
         throw err;
       }
-      res.json({ success: true, rows: rows });
+      res.json({ success: true, rows: rows.length });
     });
   });
 }
