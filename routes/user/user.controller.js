@@ -116,36 +116,35 @@ module.exports.postMentors = (req, res) => {
 
 //create new mentee
 module.exports.postMentees = (req, res) => {
-  // const fields = ['user_id', 'first_name', 'last_name', 'email_address' ,'biography','zipcode',
-  // 'date_of_birth','area_of_study','skills','profile_pic_URL','hobbies'];
-  // const user = {};
-  // const missingFields = fields.some(field => {
-  //   if (req.body[field] === undefined) {
-  //    res
-  //       .status(500)
-  //       .json({ error: "Missing credentials", success: false });
-  //       return true;
-  //   }
-  //   user[field] = req.body[field];
-  //   return false;
-  // });
+  const fields = ['user_id', 'first_name', 'last_name', 'email_address' ,'biography','zipcode',
+  'date_of_birth','area_of_study','skills','profile_pic_URL','hobbies'];
+  const user = {};
+  const missingFields = fields.some(field => {
+    if (req.body[field] === undefined) {
+     res
+        .status(500)
+        .json({ error: "Missing credentials", success: false });
+        return true;
+    }
+    user[field] = req.body[field];
+    return false;
+  });
 
-  // if (missingFields) {
-  //   return;
-  // }
+  if (missingFields) {
+    return;
+  }
 
-  const buffer = Buffer.from(req.body.image, 'base64');
-  fs.writeFileSync('uploads/upload.jpg', buffer);
-  res.json({ success: true });
-    
-  // sql = user_sql_constants.post_mentee_sql(user)
-  // console.log(sql);
-  // db.all(sql, [], (err, rows) => {
-  // if (err) {
-  //   throw err;
-  // }
-  // res.json({ success: true, rows: rows });
-// });
+  sql = user_sql_constants.post_mentee_sql(user)
+  console.log(sql);
+  db.all(sql, [], (err, rows) => {
+    if (err) {
+      res
+         .status(500)
+         .json({ error: err.message, success: false });
+         return true;
+    }
+    res.json({ success: true, rows: rows });
+  });
 }
 
 //create new password

@@ -31,8 +31,6 @@ class MentorRegistration extends React.Component {
     image: null
   };
 
-  // base64 = null;
-
   componentDidUpdate = prevProps => {
     if (!prevProps.loggedIn && this.props.loggedIn) {
       const { navigate } = this.props.navigation;
@@ -149,51 +147,29 @@ class MentorRegistration extends React.Component {
       return;
     }
 
-    const user_id = uuidv1();  
+    const user_id = uuidv1();
 
-    const uriParts = this.state.image.split('.');
-    const fileType = uriParts[uriParts.length - 1];
-    const apiUrl = `http://${DOMAIN}/user/${user_id}/profilepic`;
-
-    const formData = new FormData();
-    formData.append('photo', {
+    const mentee = {
+      user_id,
+      first_name: 'John',
+      last_name: 'Doe',
+      email_address: this.state.email,
+      biography: '',
+      zipcode: '53703',
+      date_of_birth: '12/24/1996',
+      area_of_study: this.state.profession,
+      skills: this.state.skills,
+      profile_pic_URL: `http://${DOMAIN}/user/${user_id}/profilepic`,
+      hobbies: 'fake hobbies',
+      password: this.state.password,
+      name: this.state.name,
+      city: this.state.city,
+      state: this.state.state,
+      image: this.state.image,
       uri: this.state.image,
-      name: `${user_id}.${fileType}`,
-      type: `image/${fileType}`,
-    });
-  
-    let options = {
-      method: 'POST',
-      body: formData,
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'multipart/form-data',
-      },
     };
-
-    fetch(apiUrl, options).then(response => {
-      const mentee = {
-        user_id,
-        first_name: 'John',
-        last_name: 'Doe',
-        email_address: this.state.email,
-        biography: '',
-        zipcode: '53703',
-        date_of_birth: '12/24/1996',
-        area_of_study: this.state.profession,
-        skills: this.state.skills,
-        profile_pic_URL: `http://${DOMAIN}/user/${user_id}/profilepic`,
-        hobbies: 'fake hobbies',
-        password: this.state.password,
-        name: this.state.name,
-        city: this.state.city,
-        state: this.state.state,
-        // image: this.base64,
-        image: this.state.image,
-      };
-  
-      this.props.registerMentee(mentee);
-    });
+    
+    this.props.registerMentee(mentee);
 
   };
 
