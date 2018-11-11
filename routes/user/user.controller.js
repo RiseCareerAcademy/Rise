@@ -82,7 +82,7 @@ module.exports.deletetable = (req, res) => {
 //create new mentor
 module.exports.postMentor = (req, res) => {
   const fields = ['user_id', 'first_name', 'last_name', 'email_address' ,'biography','zipcode',
-  'date_of_birth','occupation','skills','profile_pic_URL','hobbies'];
+  'date_of_birth','occupation','rating','skills','profile_pic_URL','hobbies'];
   const user = {};
   
   fields.forEach(field => {
@@ -527,6 +527,21 @@ module.exports.login = (req, res) => {
   email = req.body.email_address;
   password = req.body.password;
   sql = user_sql_constants.login(email,password);
+  
+  db.all(sql, [], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+    res.json({ success: true, rows: rows });
+  });
+  
+}
+
+
+module.exports.getRating = (req, res) => {
+  
+  id = req.params.id
+  sql = user_sql_constants.get_rating_by_id(id);
   
   db.all(sql, [], (err, rows) => {
     if (err) {

@@ -84,3 +84,5 @@ router.put("/:id/zipcode/:zipcode",controller.updateZipcode);
 router.post("/login",controller.login);
 
 
+//get rating 
+router.get("/:id/rating", controller.getRating);
