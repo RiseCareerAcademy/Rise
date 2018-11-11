@@ -3,13 +3,23 @@ import { Button, Text } from "native-base";
 import { Platform, ScrollView, StyleSheet, Image, View } from "react-native";
 import { AuthSession, ImagePicker, Permissions } from "expo";
 import { MonoText } from "../components/StyledText";
+import { connect } from 'react-redux';
 
-export default class HomeScreen extends React.Component {
+class HomeScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       result: null,
     };
+
+    if (this.props.loggedIn) {
+      this.goToMainScreen();
+    }
+  }
+
+  goToMainScreen = () => {
+    const { navigate } = this.props.navigation;
+    navigate('Main');
   }
 
   handleMentorPress = async () => {
@@ -116,3 +126,9 @@ const styles = StyleSheet.create({
     paddingTop: 30
   },
 });
+
+const mapStateToProps = state => ({
+  loggedIn: state.user.loggedIn,
+});
+
+export default connect(mapStateToProps, {})(HomeScreen);

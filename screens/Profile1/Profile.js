@@ -23,6 +23,8 @@ import Tel from "./Tel";
 import { DOMAIN } from "../../config/url";
 import { uploadProfilePic } from '../../actions/user.actions';
 
+const uuidv1 = require('uuid/v1');
+
 const styles = StyleSheet.create({
   cardContainer: {
     backgroundColor: "#FFF",
@@ -266,7 +268,7 @@ class Contact extends Component {
             <Image
               style={styles.userImage}
               source={{
-                uri: image
+                uri: `${image}?${encodeURI(uuidv1())}`
               }}
             />
 

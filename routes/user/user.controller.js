@@ -439,17 +439,11 @@ module.exports.updateUsersbySkill = (req, res) => {
 
 module.exports.getProfilePic = (req, res) => {
   const userID = req.params.id;
-  const filepath = path.join(__dirname, '../../uploads', `${userID}.jpg`);
-  // sql = user_sql_constants.get_profile_pic(userID);
-  
-  // db.all(sql, [], (err, rows) => {
-  //   if (err) {
-  //     throw err;
-  //   }
-  //   // console.log(filepath);
-  //   res.json({ success: true, profile_pic_URL: rows[0].profile_pic_URL });
-  // });
-  // res.json({ success: true, rows: rows });
+  const uploadsPath = path.join(__dirname, '../../uploads')
+  if (!fs.existsSync(uploadsPath)) {
+    fs.mkdirSync(uploadsPath);
+  }
+  const filepath = path.join(uploadsPath, `${userID}.jpg`);
   res.sendFile(filepath);
 }
 
