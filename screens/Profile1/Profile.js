@@ -126,7 +126,8 @@ class Contact extends Component {
       emailDS: new ListView.DataSource({
         rowHasChanged: (r1, r2) => r1 !== r2
       }).cloneWithRows(this.props.emails),
-      image: null
+      image: null,
+      text: ''
     };
   }
 
@@ -168,14 +169,17 @@ class Contact extends Component {
     );
   };
 
+
+
   renderHeader = () => {
     const {
       avatar,
       avatarBackground,
       name,
-      address: { city, country }
+      address: { city, country },
+      navigation: { navigate },
     } = this.props;
-
+    
     let { image } = this.state;
 
     return (
@@ -185,6 +189,8 @@ class Contact extends Component {
           platform="ios"
           cancelButtonTitle="Cancel"
           placeholder="Search"
+          onChangeText={(text) => this.setState({text})}
+          onSubmitEditing={() => navigate("Search", {text:this.state.text})}
         />
         <ImageBackground
           style={styles.headerBackgroundImage}
@@ -229,6 +235,7 @@ class Contact extends Component {
       </View>
     );
   };
+
 
   renderBio = () => {
     const { bio, desiredProfession, desiredSkills } = this.props;
