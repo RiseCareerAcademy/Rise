@@ -144,7 +144,7 @@ export default class MentorRegistration extends React.Component {
         <Content>
           <Form>
             <Item stackedLabel>
-              <Label>Username</Label>
+              <Label>Email</Label>
               <Input
                 placeholder="Enter your email"
                 onChangeText={this.handleEmail}
