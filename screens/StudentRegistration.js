@@ -8,15 +8,22 @@ import {
   Label,
   Input
 } from "native-base";
-import { StyleSheet, TouchableOpacity, View, Image, Button } from "react-native";
+import {
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  Image,
+  Button,
+  ActivityIndicator
+} from "react-native";
 import { connect } from "react-redux";
 import { ImagePicker, Permissions } from "expo";
-import { StackActions, NavigationActions } from 'react-navigation';
+import { StackActions, NavigationActions } from "react-navigation";
 
-import { registerMentee } from '../actions/user.actions';
+import { registerMentee } from "../actions/user.actions";
 import { DOMAIN } from "../config/url";
 
-const uuidv1 = require('uuid/v1');
+const uuidv1 = require("uuid/v1");
 
 class MentorRegistration extends React.Component {
   state = {
@@ -30,19 +37,19 @@ class MentorRegistration extends React.Component {
     city: "",
     state: "",
     image: null,
-    lastName:"",
-    zipcode:"",
+    lastName: "",
+    zipcode: ""
   };
 
   componentDidUpdate = prevProps => {
     if (!prevProps.loggedIn && this.props.loggedIn) {
       const resetAction = StackActions.reset({
         index: 0,
-        actions: [NavigationActions.navigate({ routeName: 'Main' })],
+        actions: [NavigationActions.navigate({ routeName: "Main" })]
       });
       this.props.navigation.dispatch(resetAction);
     }
-  }
+  };
 
   handleImagePickerPress = async () => {
     const { status: cameraPerm } = await Permissions.askAsync(
@@ -55,7 +62,7 @@ class MentorRegistration extends React.Component {
     if (cameraPerm === "granted" && cameraRollPerm === "granted") {
       const result = await ImagePicker.launchImageLibraryAsync({
         allowsEditing: true, //Android editing only
-        aspect: [4, 3], //Aspect ratio to maintain if user allowed to edit image
+        aspect: [4, 3] //Aspect ratio to maintain if user allowed to edit image
         // base64: true,
       });
       // this.base64 = result.base64;
@@ -108,7 +115,7 @@ class MentorRegistration extends React.Component {
       skills.length == 0 ||
       profession.length == 0 ||
       name.length == 0 ||
-      email.length == 0 || 
+      email.length == 0 ||
       password.length == 0 ||
       confirmedPassword.length == 0 ||
       lastName.length == 0 ||
@@ -127,8 +134,7 @@ class MentorRegistration extends React.Component {
       errors.push(
         "Password doesn't match" + password + " " + confirmedPassword
       );
-    }
-    else if (zipcode.length != 5 && /^\d+$/.test(zipcode)){
+    } else if (zipcode.length != 5 && /^\d+$/.test(zipcode)) {
       errors.push("zipcode must contain only numbers and be 5 characters long");
     }
     // const { manifest } = Expo.Constants;
@@ -143,13 +149,13 @@ class MentorRegistration extends React.Component {
     //   },
     //   body: JSON.stringify({
     //         "user_id": 10002,
-    //         "first_name": this.state.name, 
+    //         "first_name": this.state.name,
     //         "last_name": "john",
-    //         "email_address": this.state.email, 
+    //         "email_address": this.state.email,
     //         "biography": "hi",
-    //         "zipcode": this.state.zipcode, 
+    //         "zipcode": this.state.zipcode,
     //         "date_of_birth": "2/24/1996",
-    //         "area_of_study": "Computer Science", 
+    //         "area_of_study": "Computer Science",
     //         "skills": this.state.skills,
     //         "profile_pic_URL": "bill.com",
     //         "hobbies": "testiing hobbies",
@@ -168,7 +174,6 @@ class MentorRegistration extends React.Component {
     } else {
       return false;
     }
-    
   };
 
   handleSubmit = () => {
@@ -180,44 +185,43 @@ class MentorRegistration extends React.Component {
       this.state.profession,
       this.state.name,
       this.state.lastName,
-      this.state.zipcode,
+      this.state.zipcode
     );
     if (!valid && process.env.NODE_ENV !== "development") {
       return;
     }
 
-
     const mentee = {
       first_name: this.state.name,
-      last_name: 'Doe',
+      last_name: "Doe",
       email_address: this.state.email,
-      biography: 'hi',
+      biography: "hi",
       zipcode: this.state.zipcode,
-      date_of_birth: '12/24/1996',
+      date_of_birth: "12/24/1996",
       skills: this.state.skills,
-      hobbies: 'fake hobbies',
+      hobbies: "fake hobbies",
       area_of_study: this.state.profession,
       password: this.state.password,
       city: this.state.city,
       state: this.state.state,
       image: this.state.image,
-      uri: this.state.image,
+      uri: this.state.image
     };
-    
-    this.props.registerMentee(mentee);
 
+    this.props.registerMentee(mentee);
   };
 
   render() {
     return (
       <Container style={styles.container}>
         <Content>
+          <Text style={styles.error}>{!this.props.registering && this.props.error}</Text>
           <Form>
             {this.state.image !== null && (
               <Image
                 style={styles.userImage}
                 source={{
-                  uri: this.state.image,
+                  uri: this.state.image
                 }}
               />
             )}
@@ -287,12 +291,16 @@ class MentorRegistration extends React.Component {
             </Item>
           </Form>
         </Content>
-        <TouchableOpacity
-          style={styles.submitButton}
-          onPress={this.handleSubmit}
-        >
-          <Text style={styles.submitButtonText}> Next </Text>
-        </TouchableOpacity>
+        {this.props.registering ? (
+          <ActivityIndicator animating size="large" />
+        ) : (
+          <TouchableOpacity
+            style={styles.submitButton}
+            onPress={this.handleSubmit}
+          >
+            <Text style={styles.submitButtonText}> Next </Text>
+          </TouchableOpacity>
+        )}
       </Container>
     );
   }
@@ -352,11 +360,16 @@ const styles = StyleSheet.create({
   },
   uploadBtn: {
     margin: "auto"
+  },
+  error: {
+    color: "red"
   }
 });
 
 const mapStateToProps = state => ({
   loggedIn: state.user.loggedIn,
+  registering: state.user.registering,
+  error: state.user.error,
 });
 
 export default connect(

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { GET_USER, setUser, REGISTER_MENTEE, UPLOAD_PROFILE_PIC } from "../actions/user.actions";
+import { GET_USER, setUser, REGISTER_MENTEE, UPLOAD_PROFILE_PIC, failedRegisterMentee } from "../actions/user.actions";
 import { takeLatest, put, all, call } from 'redux-saga/effects';
 import { DOMAIN } from "../config/url";
 
@@ -32,7 +32,8 @@ export function* registerMentee({ mentee }) {
 		yield call(uploadProfilePic, { user_id: data.mentee.user_id, uri: mentee.uri });
 		yield put(setUser(data.mentee));
 	} catch(e) {
-		console.log(e.response.data.error);
+		const error = e.response.data.error;
+		yield put(failedRegisterMentee(error));
 	}
 }
 
