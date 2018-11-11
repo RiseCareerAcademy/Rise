@@ -11,15 +11,17 @@ router.post('/tables',controller.createTables);
 router.delete('/tables',controller.deletetable);
 
 // POST request API for /user
-router.post('/mentor', controller.postMentors);
-router.post('/mentee', controller.postMentees);
-router.post('/password', controller.postPasswords);
+router.post('/mentor', controller.postMentor);
+router.post('/mentee', controller.postMentee);
+router.post('/password', controller.postPassword);
+router.post('/skill', controller.postSkill);
 
 
 // GET request API for /user 
-router.get('/mentor',controller.getAllMentors);
-router.get('/mentee',controller.getAllMentees);  
-router.get('/password',controller.getAllPasswords);  
+router.get('/mentors',controller.getAllMentors);
+router.get('/mentees',controller.getAllMentees);  
+router.get('/passwords',controller.getAllPasswords);  
+router.get('/skills',controller.getAllSkills);  
 
 
 
@@ -46,11 +48,14 @@ router.delete("/:id/hobbies", controller.deleteHobbiesById);
 //get skill by user_id 
 router.get("/:id/skills", controller.getSkillbyId);
 
-//add skill by user_id 
-router.put("/:id/skills/:skill", controller.addSkill);
+//update skill by user_id 
+router.put("/:id/skills", controller.updateSkill);
 
-//delete skill by id 
-//router.delete("/:id/:skill", controller.deleteSkill);
+//get users by skill 
+router.get("/skill/:skill", controller.getUsersbySkill);
+
+//update users by skills 
+router.put("/skill/:skill", controller.updateUsersbySkill);
 
 
 //get profile pic by id 

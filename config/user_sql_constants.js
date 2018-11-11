@@ -101,6 +101,13 @@ module.exports.post_password_sql = function(user)  {
     return sql; 
 }
 
+//create new skill
+module.exports.post_skill_sql = function(skill)  {
+    sql = `INSERT INTO Skills VALUES ('${skill.skill}', '${skill.users}') `
+
+    return sql; 
+}
+
 //create new match 
 module.exports.post_matches_sql = function(user){
     sql = `INSERT INTO Matches VALUES ('${user.match_id}', '${user.mentor_id}','${user.mentee_id}')`
@@ -131,6 +138,13 @@ module.exports.get_all_passwords = function(){
     sql = `SELECT * FROM Passwords;`;   
     return sql; 
 }
+
+//get all skills
+module.exports.get_all_skills = function(){
+    sql = `SELECT * FROM Skills;`;   
+    return sql; 
+}
+
 
 //get all matches 
 module.exports.get_all_matches = function(){
@@ -239,14 +253,24 @@ module.exports.get_skill_by_id = function(id){
     return sql; 
 }
 
-module.exports.add_skill = function(id,new_skill){
-    if(isMentor(id))
-        sql = `UPDATE Mentors SET skills = printf('%s,%s', skills, '${new_skill}') WHERE user_id = ${id}`;    //starts with 1
-    else
-        sql = `UPDATE Mentees SET skills = printf('%s,%s', skills, '${new_skill}') WHERE user_id = ${id}`;    //starts with 2 
-    return sql; 
-    }
+module.exports.get_users_by_skill = function(skill){
+    sql = `SELECT users FROM Skills WHERE Skills.skill = '${skill}'`;    //starts with 2 
 
+    return sql; 
+}
+
+module.exports.update_skill = function(id,new_skill){
+    if(isMentor(id))
+        sql = `UPDATE Mentors SET skills = '${new_skill}' WHERE user_id = ${id}`;    //starts with 1
+    else
+        sql = `UPDATE Mentees SET skills = '${new_skill}' WHERE user_id = ${id}`;   //starts with 2 
+    return sql; 
+}
+
+module.exports.update_users_by_skill = function(skill,user_list){
+    sql = `UPDATE Skills SET users = '${user_list}' WHERE skill = '${skill}'`;
+    return sql; 
+}
 
 //get profile pic 
 module.exports.get_profile_pic = function(id){
