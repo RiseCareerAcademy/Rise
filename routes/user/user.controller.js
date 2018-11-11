@@ -4,6 +4,7 @@ const db = require('../../db');
 var date = new Date();
 
 var user_sql_constants = require("../../config/user_sql_constants.js");
+var hp = require("../../config/helper.js");
 
 //create all tables
 module.exports.createTables = (req, res) => {
@@ -53,9 +54,10 @@ module.exports.deletetable = (req, res) => {
   
   sql1 = `DROP TABLE IF EXISTS Mentors;`;
   sql2 = `DROP TABLE IF EXISTS Mentees;`;
-  sql3 = `DROP TABLE IF EXISTS Matches;`;
-  sql4 = `DROP TABLE IF EXISTS Messages;`;
-  sql5 = `DROP TABLE IF EXISTS Skills;`;
+  sql3 = `DROP TABLE IF EXISTS Passwords;`;
+  sql4 = `DROP TABLE IF EXISTS Matches;`;
+  sql5 = `DROP TABLE IF EXISTS Messages;`;
+  sql6 = `DROP TABLE IF EXISTS Skills;`;
 
   db.all(sql1, [], (err, rows) => {
     if (err) {
@@ -73,6 +75,16 @@ module.exports.deletetable = (req, res) => {
     }
   });
   db.all(sql4, [], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+  });
+  db.all(sql5, [], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+  });
+  db.all(sql6, [], (err, rows) => {
     if (err) {
       throw err;
     }
@@ -130,7 +142,7 @@ module.exports.postMentee = (req, res) => {
 
 //create new password
 module.exports.postPassword = (req, res) => {
-  const fields = ['user_id', 'email_address' ,'password'];
+  const fields = ['email_address' ,'password'];
   const user = {};
   const missingFields = fields.some(field => {
     if (req.body[field] === undefined) {
@@ -140,13 +152,14 @@ module.exports.postPassword = (req, res) => {
         return true;
     }
     user[field] = req.body[field];
-    return false;
   });
 
   if (missingFields) {
     return;
   }
-  sql = user_sql_constants.post_password_sql(user)
+  var salt = hp.genRandomString(16)
+  var passwordData = hp.minh(user.password, salt)
+  sql = `INSERT INTO Passwords VALUES ('${user.email_address}','${passwordData.passwordHash}', '${passwordData.salt}') `
   console.log(sql);
   db.all(sql, [], (err, rows) => {
     if (err) {
@@ -181,34 +194,7 @@ module.exports.postSkill = (req, res) => {
   });
 }
 
-//create new skill
-module.exports.postPasswords = (req, res) => {
-  const fields = ['user_id', 'email_address' ,'password'];
-  const user = {};
-  const missingFields = fields.some(field => {
-    if (req.body[field] === undefined) {
-     res
-        .status(500)
-        .json({ error: "Missing credentials", success: false });
-        return true;
-    }
-    user[field] = req.body[field];
-    return false;
-  });
 
-  if (missingFields) {
-    return;
-  }
-  sql = user_sql_constants.post_password_sql(user)
-  console.log(sql);
-  db.all(sql, [], (err, rows) => {
-    if (err) {
-      throw err;
-    }
-    res.json({ success: true, rows: rows });
-  });
-  
-}
 
 //get all mentors
 module.exports.getAllMentors = (req, res) => {
@@ -527,17 +513,41 @@ module.exports.updateZipcode = (req, res) => {
 }
 
 module.exports.login = (req, res) => {
-  email = req.body.email_address;
-  password = req.body.password;
-  sql = user_sql_constants.login(email,password);
-  
-  db.all(sql, [], (err, rows) => {
+  const fields = ['email_address' ,'password'];
+  const user = {};
+  const missingFields = fields.some(field => {
+    if (req.body[field] === undefined) {
+     res
+        .status(500)
+        .json({ error: "Missing credentials", success: false });
+        return true;
+    }
+    user[field] = req.body[field];
+  });
+
+  if (missingFields) {
+    return;
+  }
+  sql1 = `SELECT salt FROM Passwords WHERE email_address= '${user.email_address}';`
+  a = db.all(sql1, [], (err, rows) => {
     if (err) {
       throw err;
     }
-    res.json({ success: true, rows: rows });
+    if (rows.length==0){
+      res
+      .status(400)
+      .json({ error: "Email doesn't exist", success: false });
+    }
+    salt = rows[0]['salt']
+    console.log(user.email_address)
+    sql2 = `SELECT COUNT(*) FROM (SELECT * FROM Passwords WHERE email_address='${user.email_address}' AND password='${hp.minh(user.password, salt)['passwordHash']}');`;  
+    db.all(sql2, [], (err, rows) => {
+      if (err) {
+        throw err;
+      }
+      res.json({ success: true, rows: rows });
+    });
   });
-  
 }
 
 

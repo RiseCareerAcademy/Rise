@@ -28,7 +28,6 @@
 
 //PASSWORD
 {
-    "user_id": 20101,
     "email_address": "mike@wisc.edu", 
     "password": "testiing hobbies"
 }

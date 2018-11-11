@@ -38,9 +38,9 @@ module.exports.create_mentor_table_sql = function()  {
 module.exports.create_password_table_sql = function()  {
     sql = `  
     CREATE TABLE IF NOT EXISTS Passwords ( 
-        user_id int NOT NULL UNIQUE,
         email_address varchar(255) NOT NULL UNIQUE,
-        password varchar(255) 
+        password varchar(255),
+        salt varchar(255)
     );`
     return sql; 
 }
