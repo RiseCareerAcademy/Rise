@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const config = require("../../config/database.js");
 const db = require('../../db');
+var date = new Date();
 
 var user_sql_constants = require("../../config/user_sql_constants.js");
 
@@ -81,7 +82,7 @@ module.exports.deletetable = (req, res) => {
 
 //create new mentor
 module.exports.postMentor = (req, res) => {
-  const fields = ['user_id', 'first_name', 'last_name', 'email_address' ,'biography','zipcode',
+  const fields = ['first_name', 'last_name', 'email_address' ,'biography','zipcode',
   'date_of_birth','occupation','skills','profile_pic_URL','hobbies'];
   const user = {};
   
@@ -93,7 +94,8 @@ module.exports.postMentor = (req, res) => {
     }
     user[field] = req.body[field];
   });
-  sql = user_sql_constants.post_mentor_sql(user);
+  sql = `INSERT INTO Mentors VALUES ('10000000000000'+'${date.getTime()}', '${user.first_name}', '${user.last_name}', '${user.email_address}', 
+  '${user.biography}', '${user.zipcode}', '${user.date_of_birth}', '${user.occupation}', '${user.skills}', '${user.profile_pic_URL}', '${user.hobbies}') `
   console.log(sql);
   db.all(sql, [], (err, rows) => {
   if (err) {
@@ -104,7 +106,7 @@ module.exports.postMentor = (req, res) => {
 }
 //create new mentee
 module.exports.postMentee = (req, res) => {
-  const fields = ['user_id', 'first_name', 'last_name', 'email_address' ,'biography','zipcode',
+  const fields = ['first_name', 'last_name', 'email_address' ,'biography','zipcode',
   'date_of_birth','skills','profile_pic_URL','hobbies'];
   const user = {};
   fields.forEach(field => {
@@ -115,7 +117,8 @@ module.exports.postMentee = (req, res) => {
     }
     user[field] = req.body[field];
   });
-  sql = user_sql_constants.post_mentee_sql(user)
+  sql = `INSERT INTO Mentees VALUES ('20000000000000'+'${date.getTime()}','${user.first_name}', '${user.last_name}', '${user.email_address}', 
+  '${user.biography}', '${user.zipcode}', '${user.date_of_birth}', '${user.skills}', '${user.profile_pic_URL}', '${user.hobbies}') `
   console.log(sql);
   db.all(sql, [], (err, rows) => {
   if (err) {

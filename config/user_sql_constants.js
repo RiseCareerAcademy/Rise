@@ -75,23 +75,7 @@ module.exports.create_skills_table_sql = function()  {
     return sql; 
 }
 
-//create new mentor
-module.exports.post_mentor_sql = function(user)  {
-    sql = `INSERT INTO Mentors VALUES ('${user.user_id}', '${user.first_name}', '${user.last_name}', '${user.email_address}', 
-    '${user.biography}', '${user.zipcode}', '${user.date_of_birth}', '${user.occupation}', '${user.skills}', 
-      '${user.profile_pic_URL}', '${user.hobbies}') `
 
-    return sql; 
-}
-
-//create new mentee
-module.exports.post_mentee_sql = function(user)  {
-    sql = `INSERT INTO Mentees VALUES ('${user.user_id}', '${user.first_name}', '${user.last_name}', '${user.email_address}', 
-    '${user.biography}', '${user.zipcode}', '${user.date_of_birth}', '${user.skills}', 
-     '${user.profile_pic_URL}', '${user.hobbies}') `
-
-    return sql; 
-}
 
 //create new password
 module.exports.post_password_sql = function(user)  {
