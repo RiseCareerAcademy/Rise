@@ -23,7 +23,6 @@
     "biography": "hi",
     "zipcode": "57585", 
     "date_of_birth": "2/24/1996",
-    "area_of_study": "Computer Science", 
     "skills": "JAVA",
     "profile_pic_URL": "bill.com",
     "hobbies": "testiing hobbies"
@@ -50,4 +49,10 @@
     "from_id": 20101,
     "message": "this is a message",
     "timestamp": "2013-10-07 08:23:19.120"
+}
+
+//SKILLS 
+{
+    "skill": "Java",
+    "users": "10101001"
 }
