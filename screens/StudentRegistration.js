@@ -25,7 +25,7 @@ import { DOMAIN } from "../config/url";
 
 const uuidv1 = require("uuid/v1");
 
-class MentorRegistration extends React.Component {
+export class MentorRegistration extends React.Component {
   state = {
     email: "",
     password: "",
@@ -138,11 +138,12 @@ class MentorRegistration extends React.Component {
       errors.push("zipcode must contain only numbers and be 5 characters long");
     }
     if (errors.length == 0) {
-      alert(errors);
+      // alert(errors);
       return true;
     } else {
       return false;
     }
+    
   };
 
   handleSubmit = () => {

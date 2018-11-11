@@ -435,6 +435,34 @@ module.exports.updateUsersbySkill = (req, res) => {
   
 }
 
+module.exports.updateSkill = (req, res) => {
+  userID = req.params.id;
+  skill_list = req.body.skills;
+  sql = user_sql_constants.update_skill(userID,skill_list);
+  
+  db.all(sql, [], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+    res.json({ success: true, rows: rows });
+  });
+  
+}
+
+module.exports.updateUsersbySkill = (req, res) => {
+  skill = req.params.skill;
+  user_list = req.body.users;
+  sql = user_sql_constants.update_users_by_skill(skill,user_list);
+  
+  db.all(sql, [], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+    res.json({ success: true, rows: rows });
+  });
+  
+}
+
 
 
 module.exports.getProfilePic = (req, res) => {

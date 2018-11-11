@@ -1,5 +1,5 @@
-import React, { Component } from "react";
-import { Card, Icon, SearchBar } from "react-native-elements";
+import React, { Component} from "react";
+import { Card, Icon, SearchBar} from "react-native-elements";
 import { ImagePicker, Permissions } from "expo";
 import {
   Image,

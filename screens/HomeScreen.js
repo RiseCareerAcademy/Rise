@@ -5,7 +5,7 @@ import { AuthSession, ImagePicker, Permissions } from "expo";
 import { MonoText } from "../components/StyledText";
 import { connect } from 'react-redux';
 
-class HomeScreen extends React.Component {
+export class HomeScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
