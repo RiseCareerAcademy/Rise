@@ -7,6 +7,10 @@ const db = require('../../db');
 
 var user_sql_constants = require("../../config/user_sql_constants.js");
 
+function getRandomArbitrary(min, max) {
+  return Math.floor(Math.random() * (max - min)) + min;
+}
+
 //create all tables
 module.exports.createTables = (req, res) => {
   
@@ -107,7 +111,7 @@ module.exports.postMentor = (req, res) => {
 }
 //create new mentee
 module.exports.postMentee = (req, res) => {
-  const fields = ['user_id', 'first_name', 'last_name', 'email_address' ,'biography','zipcode',
+  const fields = ['first_name', 'last_name', 'email_address' ,'biography','zipcode',
   'date_of_birth','skills','profile_pic_URL','hobbies'];
   const user = {};
   const missingFields = fields.some(field => {
@@ -125,6 +129,8 @@ module.exports.postMentee = (req, res) => {
     return;
   }
 
+  user.user_id = getRandomArbitrary(0, 100000);
+
   sql = user_sql_constants.post_mentee_sql(user)
   console.log(sql);
   db.all(sql, [], (err, rows) => {
@@ -134,7 +140,7 @@ module.exports.postMentee = (req, res) => {
          .send({ error: err.message, success: false });
          return true;
     }
-    res.json({ success: true, rows: rows });
+    res.json({ success: true, mentee: user });
   });
 }
 
@@ -429,16 +435,17 @@ module.exports.updateUsersbySkill = (req, res) => {
 
 module.exports.getProfilePic = (req, res) => {
   const userID = req.params.id;
+  const filepath = path.join(__dirname, '../../uploads', `${userID}.jpg`);
   // sql = user_sql_constants.get_profile_pic(userID);
   
   // db.all(sql, [], (err, rows) => {
   //   if (err) {
   //     throw err;
   //   }
-  //   res.json({ success: true, rows: rows });
+  //   // console.log(filepath);
+  //   res.json({ success: true, profile_pic_URL: rows[0].profile_pic_URL });
   // });
-  const filepath = path.join(__dirname, '../../uploads', `${userID}.jpg`);
-  console.log(filepath);
+  // res.json({ success: true, rows: rows });
   res.sendFile(filepath);
 }
 

@@ -21,6 +21,7 @@ import Email from "./Email";
 import Separator from "./Separator";
 import Tel from "./Tel";
 import { DOMAIN } from "../../config/url";
+import { uploadProfilePic } from '../../actions/user.actions';
 
 const styles = StyleSheet.create({
   cardContainer: {
@@ -137,7 +138,7 @@ class Contact extends Component {
       emailDS: new ListView.DataSource({
         rowHasChanged: (r1, r2) => r1 !== r2
       }).cloneWithRows(this.props.emails),
-      image: null,
+      image: `http://${DOMAIN}/user/${this.props.user_id}/profilepic`,
       text: ""
     };
   }
@@ -157,6 +158,7 @@ class Contact extends Component {
       });
       console.log(result); //check output
       if (!result.cancelled) {
+        this.props.uploadProfilePic(result.uri, this.props.user_id);
         this.setState({ image: result.uri });
       }
     }
@@ -239,8 +241,6 @@ class Contact extends Component {
     const { first_name, last_name, user_id } = this.props;
     const name = `${first_name} ${last_name}`;
 
-    const image = `http://${DOMAIN}/user/${user_id}/profilepic`;
-
     return (
       <View style={styles.headerContainer}>
         <SearchBar
@@ -262,7 +262,7 @@ class Contact extends Component {
             <Image
               style={styles.userImage}
               source={{
-                uri: image
+                uri: this.state.image
               }}
             />
 
@@ -391,5 +391,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  {}
+  { uploadProfilePic }
 )(Contact);

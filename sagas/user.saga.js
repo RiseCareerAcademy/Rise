@@ -1,9 +1,9 @@
 import axios from 'axios';
-import { GET_USER, setUser, REGISTER_MENTEE } from "../actions/user.actions";
+import { GET_USER, setUser, REGISTER_MENTEE, UPLOAD_PROFILE_PIC } from "../actions/user.actions";
 import { takeLatest, put, all, call } from 'redux-saga/effects';
 import { DOMAIN } from "../config/url";
 
-export function* uploadProfilePic( user_id, uri ) {
+export function* uploadProfilePic({ user_id, uri }) {
     const uriParts = uri.split('.');
     const fileType = uriParts[uriParts.length - 1];
     const formData = new FormData();
@@ -21,14 +21,16 @@ export function* uploadProfilePic( user_id, uri ) {
 	  },
 	  url: `http://${DOMAIN}/user/${user_id}/profilepic`,
     };
-	yield axios(options);
+	const { data } = yield axios(options);
+	return data.profile_pic_URL;
 }
 
 export function* registerMentee({ mentee }) {
 	try {
-		yield axios.post(`http://${DOMAIN}/user/mentee`, mentee);
-		yield call(uploadProfilePic, mentee.user_id, mentee.uri);
-		yield put(setUser(mentee));
+		const response = yield axios.post(`http://${DOMAIN}/user/mentee`, mentee);
+		const { data } = response;
+		yield call(uploadProfilePic, { user_id: data.mentee.user_id, uri: mentee.uri });
+		yield put(setUser(data.mentee));
 	} catch(e) {
 		console.log(e.response.data.error);
 	}
@@ -44,5 +46,6 @@ export default function* userSaga() {
 	yield all([
 		takeLatest(GET_USER, getUser),
 		takeLatest(REGISTER_MENTEE, registerMentee),
+		takeLatest(UPLOAD_PROFILE_PIC, uploadProfilePic),
 	]);
 }
