@@ -105,7 +105,7 @@ module.exports.postMentor = (req, res) => {
 //create new mentee
 module.exports.postMentee = (req, res) => {
   const fields = ['user_id', 'first_name', 'last_name', 'email_address' ,'biography','zipcode',
-  'date_of_birth','area_of_study','skills','profile_pic_URL','hobbies'];
+  'date_of_birth','skills','profile_pic_URL','hobbies'];
   const user = {};
   fields.forEach(field => {
     if (req.body[field] === undefined) {
