@@ -1,6 +1,6 @@
 const { createTables,
     deletetable,
-    postMentors, postMentees, 
+    postMentor, postMentee, 
     postPasswords,
     getAllMentors, getAllMentees, getAllPasswords,
     getUserById,
@@ -24,6 +24,10 @@ const { createTables,
 } = require('../user.controller');
 
 jest.mock('../../../db');
+jest.mock('../../../utils/getRandomArbitrary', () => ({
+    getRandomArbitrary: () => 1,
+}));
+
 const db = require('../../../db');
 
 /**
@@ -125,7 +129,7 @@ describe('deletetable', () => {
     });
 });
 
-describe('postMentors', () => {
+describe('postMentor', () => {
     let res;
     let rows;
     let err;
@@ -152,7 +156,7 @@ describe('postMentors', () => {
             },
         };
 
-        postMentors(req, res);
+        postMentor(req, res);
 
         expect(res.status.mock.calls[0][0]).toBe(500);
         expect(res.json.mock.calls).toHaveLength(1);
@@ -175,7 +179,7 @@ describe('postMentors', () => {
             },
         };
 
-        postMentors(req, res);
+        postMentor(req, res);
 
         expect(parse(db.all.mock.calls[0][0])).toEqual(
             `INSERT INTO Mentors VALUES ('MyUserId', 'MyFirstName', 'MyLastName', 'MyEmailAddress', 'MyBiography', 'MyZipcode', 'MyDateOfBirth', 'MyOccupation', 'MySkills', 'MyProfilePicUrl', 'MyHobbies')`
@@ -208,12 +212,12 @@ describe('postMentors', () => {
 
         // NOTE: Create a new anonymous function that returns the function
         // that throws the error.
-        expect(() => postMentors(req, res)).toThrowError(err);
+        expect(() => postMentor(req, res)).toThrowError(err);
     });
 });
 
 
-describe('postMentees', () => {
+describe('postMentee', () => {
     let res;
     let rows;
     let err;
@@ -241,13 +245,13 @@ describe('postMentees', () => {
             },
         };
 
-        postMentees(req, res);
+        postMentee(req, res);
 
         expect(res.status.mock.calls[0][0]).toBe(500);
         expect(res.json.mock.calls).toHaveLength(1);
     });
 
-    it('should respond with rows when db is valid', () => {
+    it('should respond with user object when db is valid', () => {
         const req = {
             body: {
                 user_id: 'MyUserId',
@@ -264,17 +268,17 @@ describe('postMentees', () => {
             },
         };
 
-        postMentees(req, res);
+        postMentee(req, res);
 
         // console.log(db.all.mock.calls);
 
         expect(parse(db.all.mock.calls[0][0])).toEqual(
-            "INSERT INTO Mentees VALUES ('MyUserId', 'MyFirstName', 'MyLastName', 'MyEmailAddress', 'MyBiography', 'MyZipcode', 'MyDateOfBirth', 'MyAreaOfStudy', 'MySkills', 'MyProfilePicUrl', 'MyHobbies')"
+            "INSERT INTO Mentees VALUES ('1', 'MyFirstName', 'MyLastName', 'MyEmailAddress', 'MyBiography', 'MyZipcode', 'MyDateOfBirth', 'MySkills', 'http://10.140.65.177:8000/user/1/profilepic', 'MyHobbies')"
         );
 
         expect(res.json.mock.calls[0][0]).toEqual({
             success: true,
-            rows: rows,
+            mentee: {"mentee": {"biography": "MyBiography", "date_of_birth": "MyDateOfBirth", "email_address": "MyEmailAddress", "first_name": "MyFirstName", "hobbies": "MyHobbies","last_name": "MyLastName", "profile_pic_URL": "http://10.140.65.177:8000/user/1/profilepic", "skills": "MySkills", "user_id": 1, "zipcode": "MyZipcode"}, "success": true},
         });
     });
 
@@ -299,7 +303,7 @@ describe('postMentees', () => {
 
         // NOTE: Create a new anonymous function that returns the function
         // that throws the error.
-        expect(() => postMentees(req, res)).toThrowError(err);
+        expect(() => postMentee(req, res)).toThrowError(err);
     });
 });
 

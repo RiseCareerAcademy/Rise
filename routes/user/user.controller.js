@@ -5,13 +5,10 @@ const config = require("../../config/database.js");
 const db = require('../../db');
 const os = require('os');
 const ip = require('ip');
+const { getRandomArbitrary } = require('../../utils/getRandomArbitrary');
 
 
 var user_sql_constants = require("../../config/user_sql_constants.js");
-
-function getRandomArbitrary(min, max) {
-  return Math.floor(Math.random() * (max - min)) + min;
-}
 
 //create all tables
 module.exports.createTables = (req, res) => {
@@ -94,14 +91,21 @@ module.exports.postMentor = (req, res) => {
   'date_of_birth','occupation','skills','profile_pic_URL','hobbies'];
   const user = {};
   
-  fields.forEach(field => {
+  const missingFields = fields.some(field => {
     if (req.body[field] === undefined) {
      res
         .status(500)
         .json({ error: "Missing credentials", success: false });
+      return true;
     }
     user[field] = req.body[field];
+    return false;
   });
+
+  if (missingFields) {
+    return;
+  }
+
   sql = user_sql_constants.post_mentor_sql(user);
   console.log(sql);
   db.all(sql, [], (err, rows) => {
@@ -141,7 +145,7 @@ module.exports.postMentee = (req, res) => {
     if (err) {
       res
          .status(500)
-         .send({ error: err.message, success: false });
+         .json({ error: err.message, success: false });
          return true;
     }
     res.json({ success: true, mentee: user });
