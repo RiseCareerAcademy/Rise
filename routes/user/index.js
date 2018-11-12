@@ -37,6 +37,8 @@ router.put("/:id/hobbies", controller.updateHobbiesById);
 
 //get skill by user_id 
 router.get("/:id/skills", controller.getSkillbyId);
+router.put("/:id/addskill", controller.getSkillbyId);
+
 //get users by skill 
 router.get("/skill/:skill", controller.getUsersbySkill);
 
@@ -69,7 +71,7 @@ router.post("/login",controller.login);
 router.post('/message', controller.postMessage);
 
 //get all messages 
-router.get('/messages', controller.getMessages);
+router.get('/message', controller.getMessages);
 
 //get message by message id 
 router.get('/message/:matchid', controller.getLatestMessageById);

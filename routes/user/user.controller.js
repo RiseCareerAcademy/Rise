@@ -138,10 +138,10 @@ module.exports.postMentee = (req, res) => {
   res.json({ success: true, rows: rows });
 });
 }
-
+1
 //create a new message
 module.exports.postMessage = (req, res) => {
-  const fields = ['match_id','to_id','from_id', 'message_body', 'timestamp'];
+  const fields = ['match_id','to_id','from_id', 'message_body'];
   const user = {};
   const missingFields = fields.some(field => {
     if (req.body[field] === undefined) {
@@ -158,9 +158,9 @@ module.exports.postMessage = (req, res) => {
     return;
   }
   console.log(user)
-  sql = `INSERT INTO Messages VALUES ('10000000000000'+'${date.getTime()}',?,?,?,?,?)`  
-  console.log(sql)
-  db.all(sql, [user.match_id, user.to_id, user.from_id, user.message_body, user.timestamp], (err, rows) => {
+  sql = `INSERT INTO Messages VALUES ('${date.getTime()}',?,?,?,?)`  
+  console.log(date.getTime())
+  db.all(sql, [user.match_id, user.to_id, user.from_id, user.message_body], (err, rows) => {
     if (err) {
     throw err;
   }
@@ -187,9 +187,9 @@ module.exports.postPassword = (req, res) => {
   }
   var salt = hp.genRandomString(16)
   var passwordData = hp.minh(user.password, salt)
-  sql = `INSERT INTO Passwords VALUES ('${user.email_address}','${passwordData.passwordHash}', '${passwordData.salt}') `
+  sql = `INSERT INTO Passwords VALUES (?,'${passwordData.passwordHash}', '${passwordData.salt}') `
   console.log(sql);
-  db.all(sql, [], (err, rows) => {
+  db.all(sql, [user.email_address], (err, rows) => {
     if (err) {
       throw err;
     }
@@ -366,6 +366,20 @@ module.exports.getUsersbySkill = (req, res) => {
   
 }
 
+module.exports.addSkill = (req, res) => {
+  userID = req.params.user_id
+  skill = req.body.skill
+  sql = `SELECT skills FROM '${userType(userID)}' WHERE user_id = ?`;   
+  console.log(sql) 
+  db.all(sql, [userID], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+    console.log(rows)
+    // res.json({ success: true, rows: rows });
+  });
+  
+}
 
 module.exports.getProfilePic = (req, res) => {
   userID = req.params.id;
@@ -423,11 +437,7 @@ module.exports.updateProfession = (req, res) => {
 
 module.exports.getBio = (req, res) => {
   userID = req.params.id;
-<<<<<<< HEAD
   sql = `SELECT biography FROM '${userType(userID)}' where user_id = ?;`;   
-=======
-  sql = `SELECT biography FROM '${userType(userID)}' WHERE user_id = ?`;    
->>>>>>> a2ece4c1bd47866a880cd9af2d3749ae6a060bab
   
   db.all(sql, [userID], (err, rows) => {
     if (err) {
@@ -534,11 +544,12 @@ module.exports.login = (req, res) => {
 //MESSAGE API
 
 module.exports.getMessages = (req, res) => {
-  sql = 'SELECT * FROM Messages;'
+  sql = `SELECT * FROM Messages;`
   db.all(sql, [], (err, rows) => {
   if (err) {
     throw err;
   }
+  console.log(rows)
   res.json({ success: true, rows: rows });
 });
 }
@@ -546,7 +557,7 @@ module.exports.getMessages = (req, res) => {
 //get latest message by match id 
 module.exports.getLatestMessageById = (req, res) => {
   matchId = req.params.matchid;
-  sql = `SELECT * FROM Messages WHERE match_id = ? order by timestamp LIMIT 1;`;    
+  sql = `SELECT * FROM Messages WHERE match_id = ? order by message_id LIMIT 1;`;    
   db.all(sql, [matchId], (err, rows) => {
   if (err) {
     throw err;
@@ -558,7 +569,7 @@ module.exports.getLatestMessageById = (req, res) => {
  //get message chain  by match id 
  module.exports.getMessageChain = (req, res) => {
   matchId = req.params.matchid;
-  sql = `SELECT * FROM Messages WHERE match_id = ? order by timestamp;`;    
+  sql = `SELECT * FROM Messages WHERE match_id = ? order by message_id;`;    
 
   db.all(sql, [matchId], (err, rows) => {
   if (err) {
