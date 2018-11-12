@@ -64,7 +64,9 @@ class Inputs extends Component {
     }
   }
 
+
   render() {
+    const { navigate } = this.props.navigation;
     return (
       <View style={styles.container}>
         <TextInput
@@ -105,6 +107,15 @@ class Inputs extends Component {
           }
         >
           <Text style={styles.submitButtonText}> Save </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.submitButton}
+          onPress={() =>
+            navigate('Home')
+          }
+        >
+          <Text style={styles.submitButtonText}> Logout </Text>
         </TouchableOpacity>
       </View>
     );
