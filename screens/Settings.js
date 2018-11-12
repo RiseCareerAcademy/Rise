@@ -114,6 +114,7 @@ class Inputs extends Component {
           onPress={() =>
             navigate('Home')
           }
+          
         >
           <Text style={styles.submitButtonText}> Logout </Text>
         </TouchableOpacity>
