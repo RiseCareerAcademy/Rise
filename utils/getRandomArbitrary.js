@@ -1,3 +1,3 @@
-export const getRandomArbitrary = (min, max) => {
+module.exports.getRandomArbitrary = (min, max) => {
     return Math.floor(Math.random() * (max - min)) + min;
 }
