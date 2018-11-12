@@ -40,6 +40,7 @@ export default class Messages extends Component {
     ];
 
     return (
+      
       <View style={styles.container}>
         {this.state.showActivityIndicator ? (
           <ActivityIndicator animating size="large" />

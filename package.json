@@ -45,7 +45,7 @@
     "react-native-elements": "^0.19.1",
     "react-native-sqlite-storage": "^3.3.7",
     "react-navigation": "^2.18.0",
-    "sqlite3": "^4.0.3"
+    "sqlite3": "^4.0.4"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.1",

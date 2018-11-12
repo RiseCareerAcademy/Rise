@@ -10,11 +10,11 @@ import SearchScreen from '../screens/SearchScreen'
 import Profile from '../screens/Profile1/Profile'
 
 const App = createStackNavigator({
+  Main: MainTabNavigator,
   Home: { screen: HomeScreen },
   Mentor: { screen: MentorRegistration },
   Student: {screen: StudentRegistration},
   SignIn: {screen: SignIn},
-  Main: MainTabNavigator,
   Search: { screen: SearchScreen},
   Profile: { screen: Profile}
 });
