@@ -1,14 +1,16 @@
 import React from 'react';
-import { Platform } from 'react-native';
 import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
 
-import TabBarIcon from '../components/TabBarIcon';
-import HomeScreen from '../screens/HomeScreen';
-import LinksScreen from '../screens/LinksScreen';
 import SettingsScreen from '../screens/Settings';
+import MatchesScreen from '../screens/MatchesScreen';
+// import SearchScreen from '../screens/SearchScreen'
 import { Icon } from 'expo';
 import Colors from '../constants/Colors';
 import ProfileScreen from '../screens/Profile1';
+import Messages from '../screens/Messages';
+import Conversation from '../screens/Conversation';
+
+
 
 const ProfileStack = createStackNavigator({
   Profile: ProfileScreen,
@@ -27,8 +29,9 @@ ProfileStack.navigationOptions = {
 };
 
 
+
 const SuggestedMatchStack = createStackNavigator({
-  Links: LinksScreen,
+  Links: MatchesScreen,
 });
 
 SuggestedMatchStack.navigationOptions = {
@@ -44,10 +47,12 @@ SuggestedMatchStack.navigationOptions = {
 };
 
 const MessageStack = createStackNavigator({
-  Settings: LinksScreen,
+  Main: {screen: Messages},
+  Conversation: {screen: Conversation},
 });
 
 MessageStack.navigationOptions = {
+  headerTintColor: "rgb(212, 21, 2)",
   tabBarLabel: 'Messages',
   tabBarIcon: ({ focused }) => (
     <Icon.Feather
@@ -75,6 +80,7 @@ SettingStack.navigationOptions = {
     />
   ),
 };
+
 
 export default createBottomTabNavigator({
   ProfileStack,

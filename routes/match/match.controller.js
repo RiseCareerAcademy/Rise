@@ -7,17 +7,22 @@ var user_sql_constants = require("../../config/user_sql_constants.js");
 module.exports.postMatches = (req, res) => {
   
     const fields = ['match_id', 'mentor_id', 'mentee_id'];
-    console.log('nigga this is match')
     const user = {};
-    fields.forEach(field => {
+    const missingCredentials = fields.some(field => {
       if (req.body[field] === undefined) {
        res
           .status(500)
           .json({ error: "Missing credentials", success: false });
+          return true;
       }
       user[field] = req.body[field];
+      return false;
     });
-    sql = user_sql_constants.post_matches_sql(user);
+
+    if (missingCredentials) {
+      return;
+    }
+    const sql = user_sql_constants.post_matches_sql(user);
   
     console.log(sql);
     db.all(sql, [], (err, rows) => {
@@ -42,7 +47,7 @@ module.exports.postMatches = (req, res) => {
 }
 
 //get match by match id
-module.exports.getMatchbyId = (req, res) => {
+module.exports.getMatchById = (req, res) => {
     matchId = req.params.id;
     sql = user_sql_constants.get_match_by_id(matchId);
     
@@ -56,7 +61,7 @@ module.exports.getMatchbyId = (req, res) => {
   }
 
   //get match by user id
-module.exports.getMatchbyUserId = (req, res) => {
+module.exports.getMatchByUserId = (req, res) => {
   userId = req.params.id;
   sql = user_sql_constants.get_match_by_UserId(userId);
   
