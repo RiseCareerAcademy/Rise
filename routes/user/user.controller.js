@@ -439,21 +439,43 @@ module.exports.updateUsersbySkill = (req, res) => {
   
 }
 
+module.exports.updateSkill = (req, res) => {
+  userID = req.params.id;
+  skill_list = req.body.skills;
+  sql = user_sql_constants.update_skill(userID,skill_list);
+  
+  db.all(sql, [], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+    res.json({ success: true, rows: rows });
+  });
+  
+}
+
+module.exports.updateUsersbySkill = (req, res) => {
+  skill = req.params.skill;
+  user_list = req.body.users;
+  sql = user_sql_constants.update_users_by_skill(skill,user_list);
+  
+  db.all(sql, [], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+    res.json({ success: true, rows: rows });
+  });
+  
+}
+
 
 
 module.exports.getProfilePic = (req, res) => {
   const userID = req.params.id;
-  const filepath = path.join(__dirname, '../../uploads', `${userID}.jpg`);
-  // sql = user_sql_constants.get_profile_pic(userID);
-  
-  // db.all(sql, [], (err, rows) => {
-  //   if (err) {
-  //     throw err;
-  //   }
-  //   // console.log(filepath);
-  //   res.json({ success: true, profile_pic_URL: rows[0].profile_pic_URL });
-  // });
-  // res.json({ success: true, rows: rows });
+  const uploadsPath = path.join(__dirname, '../../uploads')
+  if (!fs.existsSync(uploadsPath)) {
+    fs.mkdirSync(uploadsPath);
+  }
+  const filepath = path.join(uploadsPath, `${userID}.jpg`);
   res.sendFile(filepath);
 }
 

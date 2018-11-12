@@ -25,7 +25,7 @@ import { DOMAIN } from "../config/url";
 
 const uuidv1 = require("uuid/v1");
 
-class MentorRegistration extends React.Component {
+export class MentorRegistration extends React.Component {
   state = {
     email: "",
     password: "",
@@ -137,43 +137,13 @@ class MentorRegistration extends React.Component {
     } else if (zipcode.length != 5 && /^\d+$/.test(zipcode)) {
       errors.push("zipcode must contain only numbers and be 5 characters long");
     }
-    // const { manifest } = Expo.Constants;
-    // const api = (typeof manifest.packagerOpts === `object`) && manifest.packagerOpts.dev
-    // ? manifest.debuggerHost.split(`:`).shift().concat(`:8000`)
-    // : `api.example.com`;
-    // fetch('http://'+api+'/user/mentee', {
-    //   method: 'POST',
-    //   headers: {
-    //   Accept: 'application/json',
-    //   'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify({
-    //         "user_id": 10002,
-    //         "first_name": this.state.name,
-    //         "last_name": "john",
-    //         "email_address": this.state.email,
-    //         "biography": "hi",
-    //         "zipcode": this.state.zipcode,
-    //         "date_of_birth": "2/24/1996",
-    //         "area_of_study": "Computer Science",
-    //         "skills": this.state.skills,
-    //         "profile_pic_URL": "bill.com",
-    //         "hobbies": "testiing hobbies",
-    //   }),
-    // })//fetch
-    // .then((response) => response.json())
-    // .then((responseJson) => {
-    //   console.log(JSON.stringify(responseJson));
-    //   })
-    // .catch((error) => {
-    //   console.error("error is " + error);
-    // });
     if (errors.length == 0) {
-      alert(errors);
+      // alert(errors);
       return true;
     } else {
       return false;
     }
+    
   };
 
   handleSubmit = () => {
