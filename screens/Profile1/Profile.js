@@ -11,14 +11,19 @@ import {
   View,
   Text,
   Button,
-  AlertIOS,
+  AlertIOS
 } from "react-native";
+import { connect } from "react-redux";
 
 import mainColor from "./constants";
 
 import Email from "./Email";
 import Separator from "./Separator";
 import Tel from "./Tel";
+import { DOMAIN } from "../../config/url";
+import { uploadProfilePic } from '../../actions/user.actions';
+
+const uuidv1 = require('uuid/v1');
 
 const styles = StyleSheet.create({
   cardContainer: {
@@ -113,14 +118,14 @@ const styles = StyleSheet.create({
   uploadBtn: {
     margin: "auto"
   },
-  editBtn:{
-      backgroundColor: "rgba(92, 99,216, 1)",
-      width: 200,
-      height: 100,
-      marginHorizontal: 300,
-      borderColor: "transparent",
-      borderWidth: 0,
-      borderRadius: 5
+  editBtn: {
+    backgroundColor: "rgba(92, 99,216, 1)",
+    width: 200,
+    height: 100,
+    marginHorizontal: 300,
+    borderColor: "transparent",
+    borderWidth: 0,
+    borderRadius: 5
   }
 });
 
@@ -135,8 +140,9 @@ class Contact extends Component {
       emailDS: new ListView.DataSource({
         rowHasChanged: (r1, r2) => r1 !== r2
       }).cloneWithRows(this.props.emails),
-      image: null,
-      text: ''
+      image: process.env.NODE_ENV === 'development' ? `http://${DOMAIN}/user/${this.props.user_id}/profilepic` : this.props.profile_pic_URL,
+      image: this.props.profile_pic_URL,
+      text: ""
     };
   }
 
@@ -155,6 +161,7 @@ class Contact extends Component {
       });
       console.log(result); //check output
       if (!result.cancelled) {
+        this.props.uploadProfilePic(result.uri, this.props.user_id);
         this.setState({ image: result.uri });
       }
     }
@@ -162,69 +169,54 @@ class Contact extends Component {
 
   //allows one to edit their about me section
   handleEditAboutMePress = async () => {
-    AlertIOS.prompt(
-      'Edit About Me',
-      null,
-      [
-        {
-          text: 'Cancel',
-          onPress: () => console.log('Cancel Pressed'),
-          style: 'cancel',
-        },
-        {
-          text: 'OK',
-          onPress: (aboutMe) => console.log('OK Pressed, new about me: ' + aboutMe),
-        },
-      ],
-    );
-  }
+    AlertIOS.prompt("Edit About Me", null, [
+      {
+        text: "Cancel",
+        onPress: () => console.log("Cancel Pressed"),
+        style: "cancel"
+      },
+      {
+        text: "OK",
+        onPress: aboutMe => console.log("OK Pressed, new about me: " + aboutMe)
+      }
+    ]);
+  };
 
   //allows one to edit desired profession
   handleEditProfessionPress = async () => {
-    AlertIOS.prompt(
-      'Edit Profession',
-      null,
-      [
-        {
-          text: 'Cancel',
-          onPress: () => console.log('Cancel Pressed'),
-          style: 'cancel',
-        },
-        {
-          text: 'OK',
-          onPress: (profession) => console.log('OK Pressed, new about me: ' + profession),
-        },
-      ],
-    );
-  }
-
+    AlertIOS.prompt("Edit Profession", null, [
+      {
+        text: "Cancel",
+        onPress: () => console.log("Cancel Pressed"),
+        style: "cancel"
+      },
+      {
+        text: "OK",
+        onPress: profession =>
+          console.log("OK Pressed, new about me: " + profession)
+      }
+    ]);
+  };
 
   //allows one to edit desired skills
   handleEditSkillsPress = async () => {
-    AlertIOS.prompt(
-      'Edit Skills',
-      null,
-      [
-        {
-          text: 'Cancel',
-          onPress: () => console.log('Cancel Pressed'),
-          style: 'cancel',
-        },
-        {
-          text: 'OK',
-          onPress: (skills) => console.log('OK Pressed, new about me: ' + skills),
-        },
-      ],
-    );
-  }
-
-
-
+    AlertIOS.prompt("Edit Skills", null, [
+      {
+        text: "Cancel",
+        onPress: () => console.log("Cancel Pressed"),
+        style: "cancel"
+      },
+      {
+        text: "OK",
+        onPress: skills => console.log("OK Pressed, new about me: " + skills)
+      }
+    ]);
+  };
 
   onPressPlace = () => {
     console.log("place");
   };
- /*
+  /*
   onPressTel = number => {
     Linking.openURL(`tel://${number}`).catch(err => console.log("Error:", err));
   };
@@ -239,18 +231,21 @@ class Contact extends Component {
     );
   };*/
 
-
-
   renderHeader = () => {
     const {
       avatar,
       avatarBackground,
-      name,
+      // name,
       address: { city, country },
-      navigation: { navigate },
+      navigation: { navigate }
     } = this.props;
-    
-    let { image } = this.state;
+
+    // let { image } = this.state;
+    const { first_name, last_name, user_id } = this.props;
+    const name = `${first_name} ${last_name}`;
+
+    // const image = process.env.NODE_ENV === 'development' ? `http://${DOMAIN}/user/${user_id}/profilepic` : this.state.image;
+    const { image } = this.state;
 
     return (
       <View style={styles.headerContainer}>
@@ -259,8 +254,8 @@ class Contact extends Component {
           platform="ios"
           cancelButtonTitle="Cancel"
           placeholder="Search"
-          onChangeText={(text) => this.setState({text})}
-          onSubmitEditing={() => navigate("Search", {text:this.state.text})}
+          onChangeText={text => this.setState({ text })}
+          onSubmitEditing={() => navigate("Search", { text: this.state.text })}
         />
         <ImageBackground
           style={styles.headerBackgroundImage}
@@ -273,7 +268,7 @@ class Contact extends Component {
             <Image
               style={styles.userImage}
               source={{
-                uri: image ? image : avatar
+                uri: `${image}?${encodeURI(uuidv1())}`
               }}
             />
 
@@ -306,41 +301,36 @@ class Contact extends Component {
     );
   };
 
-
   renderBio = () => {
     const { bio, desiredProfession, desiredSkills } = this.props;
     return (
       <View>
-        //about me section
-        <View style={{ flexDirection:'row' }}>
+        <View style={{ flexDirection: "row" }}>
           <Text style={styles.userTitleText}>About Me</Text>
           <Button
-                onPress={this.handleEditAboutMePress}
-                style={styles.editBtn}
-                title="Edit"
+            onPress={this.handleEditAboutMePress}
+            style={styles.editBtn}
+            title="Edit"
           />
         </View>
         <Text style={styles.userBioText}>{bio}</Text>
-          
 
-        //desired profession section
-        <View style={{ flexDirection:'row' }}>
+        <View style={{ flexDirection: "row" }}>
           <Text style={styles.userTitleText}>Desired Profession</Text>
           <Button
-                onPress={this.handleEditProfessionPress}
-                style={styles.editBtn}
-                title="Edit"
+            onPress={this.handleEditProfessionPress}
+            style={styles.editBtn}
+            title="Edit"
           />
         </View>
         <Text style={styles.userBioText}>{desiredProfession}</Text>
-        
-        //desired skills section
-        <View style={{ flexDirection:'row' }}>
+
+        <View style={{ flexDirection: "row" }}>
           <Text style={styles.userTitleText}>Desired Skills</Text>
           <Button
-                onPress={this.handleEditSkillsPress}
-                style={styles.editBtn}
-                title="Edit"
+            onPress={this.handleEditSkillsPress}
+            style={styles.editBtn}
+            title="Edit"
           />
         </View>
         <Text style={styles.userBioText}>{desiredSkills}</Text>
@@ -401,4 +391,11 @@ class Contact extends Component {
   }
 }
 
-export default Contact;
+const mapStateToProps = state => ({
+  ...state.user
+});
+
+export default connect(
+  mapStateToProps,
+  { uploadProfilePic }
+)(Contact);
