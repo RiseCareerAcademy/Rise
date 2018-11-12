@@ -83,12 +83,6 @@ module.exports.post_password_sql = function(user)  {
     return sql; 
 }
 
-//create new skill
-module.exports.post_skill_sql = function(skill)  {
-    sql = `INSERT INTO Skills VALUES ('${skill.skill}', '${skill.users}') `
-
-    return sql; 
-}
 
 //create new match 
 module.exports.post_matches_sql = function(user){
@@ -249,10 +243,6 @@ module.exports.update_skill = function(id,new_skill){
     return sql; 
 }
 
-module.exports.update_users_by_skill = function(skill,user_list){
-    sql = `UPDATE Skills SET users = '${user_list}' WHERE skill = '${skill}'`;
-    return sql; 
-}
 
 //get profile pic 
 module.exports.get_profile_pic = function(id){
@@ -357,12 +347,5 @@ module.exports.get_message_by_matchid = function(id){
 //get all message by match id 
 module.exports.get_all_message_by_matchid = function(id){
     sql = `SELECT * FROM Messages WHERE match_id = ${id} order by timestamp;`;    
-    return sql; 
-}
-
-//get rating by id
-//get match by match match id 
-module.exports.get_rating_by_id = function(id){
-    sql = `SELECT rating FROM Mentors WHERE user_id = ${id};`;    
     return sql; 
 }

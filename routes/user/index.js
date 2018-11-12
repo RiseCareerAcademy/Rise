@@ -8,7 +8,7 @@ module.exports.router = router;
 router.post('/tables',controller.createTables);
 
 //delete table
-router.delete('/tables',controller.deletetable);
+router.delete('/tables',controller.deletetable);  
 
 // POST request API for /user
 router.post('/mentor', controller.postMentor);
@@ -28,34 +28,25 @@ router.get('/skills',controller.getAllSkills);
 //get user by id
 router.get("/:id", controller.getUserById);
 
-//login in to check if id = email for account 
-router.post('/:id/email/:email',controller.checkEmail);
 
 
 //get email by id
 router.get("/:id/email", controller.getEmailById);
 //update email by id
-router.put("/:id/email/:email", controller.updateEmailById);
+router.put("/:id/email", controller.updateEmailById);
 
 //get hobbies by id
 router.get("/:id/hobbies", controller.getHobbiesById);
 //update hobbies by id
-router.put("/:id/hobbies/:hobby", controller.updateHobbiesById);
-//delete hobbies by id
-router.delete("/:id/hobbies", controller.deleteHobbiesById);
+router.put("/:id/hobbies", controller.updateHobbiesById);
 
 
 //get skill by user_id 
 router.get("/:id/skills", controller.getSkillbyId);
-
-//update skill by user_id 
-router.put("/:id/skills", controller.updateSkill);
-
 //get users by skill 
 router.get("/skill/:skill", controller.getUsersbySkill);
 
-//update users by skills 
-router.put("/skill/:skill", controller.updateUsersbySkill);
+
 
 
 //get profile pic by id 
@@ -82,7 +73,3 @@ router.put("/:id/zipcode/:zipcode",controller.updateZipcode);
 
 //login using email/password
 router.post("/login",controller.login);
-
-
-//get rating 
-router.get("/:id/rating", controller.getRating);

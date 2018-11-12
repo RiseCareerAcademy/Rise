@@ -16,7 +16,6 @@ module.exports.createTables = (req, res) => {
   sql5 = user_sql_constants.create_messages_table_sql();
   sql6 = user_sql_constants.create_skills_table_sql();
 
-
   db.all(sql1, [], (err, rows) => {
     if (err) {
       throw err;
@@ -170,7 +169,7 @@ module.exports.postPassword = (req, res) => {
   
 }
 
-//create new skill
+//post a new skill
 module.exports.postSkill = (req, res) => {
   const fields = ['skill','users'];
   const skill = {};
@@ -184,7 +183,7 @@ module.exports.postSkill = (req, res) => {
     skill[field] = req.body[field];
     return false;
   });
-  sql = user_sql_constants.post_skill_sql(skill)
+  sql = `INSERT INTO Skills VALUES ('${skill.skill}', '${skill.users}') `
   console.log(sql);
   db.all(sql, [], (err, rows) => {
     if (err) {
@@ -194,12 +193,10 @@ module.exports.postSkill = (req, res) => {
   });
 }
 
-
-
 //get all mentors
 module.exports.getAllMentors = (req, res) => {
-    sql = user_sql_constants.get_all_mentors();
-  db.all(sql, [], (err, rows) => {
+  sql = `SELECT * FROM Mentors;`; 
+    db.all(sql, [], (err, rows) => {
     if (err) {
       throw err;
     }
@@ -208,8 +205,8 @@ module.exports.getAllMentors = (req, res) => {
  
 }
 //get all mentees
-  module.exports.getAllMentees = (req, res) => {
-    sql = user_sql_constants.get_all_mentees();
+module.exports.getAllMentees = (req, res) => {
+  sql = `SELECT * FROM Mentees;`;   
   
   db.all(sql, [], (err, rows) => {
     if (err) {
@@ -220,7 +217,7 @@ module.exports.getAllMentors = (req, res) => {
 }
 //get all mentees
 module.exports.getAllPasswords = (req, res) => {
-  sql = user_sql_constants.get_all_passwords();
+  sql = `SELECT * FROM Passwords;`;   
 
 db.all(sql, [], (err, rows) => {
   if (err) {
@@ -232,7 +229,7 @@ db.all(sql, [], (err, rows) => {
 
 //get all skills
 module.exports.getAllSkills = (req, res) => {
-  sql = user_sql_constants.get_all_skills();
+  sql = `SELECT * FROM Skills;`;   
 
 db.all(sql, [], (err, rows) => {
   if (err) {
@@ -246,25 +243,8 @@ db.all(sql, [], (err, rows) => {
 module.exports.getUserById = (req, res) => {
   
   userID = req.params.id
-  sql = user_sql_constants.get_user_id(userID);
-  
-  db.all(sql, [], (err, rows) => {
-    if (err) {
-      throw err;
-    }
-    res.json({ success: true, rows: rows });
-  });
-  
-}
-
-//todo: get email by id, and check if its the same as one passed in param 
-module.exports.checkEmail = (req, res) => {
-  userID = req.params.id;
-  email = req.params.email;
-
-  sql = user_sql_constants.confirm_email(userID,email);
-  
-  db.all(sql, [], (err, rows) => {
+  sql = `SELECT * FROM '${userType(userID)}'where user_id = ?;` ;  
+  db.all(sql, [userID], (err, rows) => {
     if (err) {
       throw err;
     }
@@ -274,11 +254,9 @@ module.exports.checkEmail = (req, res) => {
 }
 
 module.exports.getEmailById = (req, res) => {
-  
   userID = req.params.id
-  sql = user_sql_constants.get_email_by_id(userID);
-  
-  db.all(sql, [], (err, rows) => {
+  sql = `SELECT email_address FROM '${userType(userID)}'where user_id = ?;` ;     
+  db.all(sql, [userID], (err, rows) => {
     if (err) {
       throw err;
     }
@@ -290,10 +268,11 @@ module.exports.getEmailById = (req, res) => {
 module.exports.updateEmailById = (req, res) => {
   
   userID = req.params.id
-  newEmail = req.params.email
-  sql = user_sql_constants.update_email_by_id(userID,newEmail);
+  newEmail = req.body.email_address
+
+  sql = `UPDATE '${userType(userID)}' SET email_address = ? WHERE user_id = ?`;    //starts with 1
   
-  db.all(sql, [], (err, rows) => {
+  db.all(sql, [newEmail,userID], (err, rows) => {
     if (err) {
       throw err;
     }
@@ -305,9 +284,9 @@ module.exports.updateEmailById = (req, res) => {
 module.exports.getHobbiesById = (req, res) => {
   
   userID = req.params.id
-  sql = user_sql_constants.get_hobbies_by_id(userID);
+  sql = `SELECT hobbies FROM '${userType(userID)}' where user_id = ?;`;    //starts with 1
   
-  db.all(sql, [], (err, rows) => {
+  db.all(sql, [userID], (err, rows) => {
     if (err) {
       throw err;
     }
@@ -318,10 +297,10 @@ module.exports.getHobbiesById = (req, res) => {
 
 module.exports.updateHobbiesById = (req, res) => {
   userID = req.params.id
-  hobbies = req.params.hobby
-  sql = user_sql_constants.update_hobbies_by_id(userID,hobbies);
+  hobbies = req.body.hobbies
+  sql = `UPDATE '${userType(userID)}' SET hobbies = ? WHERE user_id = ?`;    //starts with 1
   
-  db.all(sql, [], (err, rows) => {
+  db.all(sql, [hobbies, userID], (err, rows) => {
     if (err) {
       throw err;
     }
@@ -329,28 +308,13 @@ module.exports.updateHobbiesById = (req, res) => {
   });
   
 }
-
-module.exports.deleteHobbiesById = (req, res) => {
-  
-  userID = req.params.id
-  sql = user_sql_constants.update_hobbies_by_id(userID,'');
-  
-  db.all(sql, [], (err, rows) => {
-    if (err) {
-      throw err;
-    }
-    res.json({ success: true, rows: rows });
-  });
-  
-}
-
 
 module.exports.getSkillbyId = (req, res) => {
   
   userID = req.params.id
-  sql = user_sql_constants.get_skill_by_id(userID);
+  sql = `SELECT skills FROM '${userType(userID)}' where user_id = ?;`;   
   
-  db.all(sql, [], (err, rows) => {
+  db.all(sql, [userID], (err, rows) => {
     if (err) {
       throw err;
     }
@@ -362,9 +326,9 @@ module.exports.getSkillbyId = (req, res) => {
 module.exports.getUsersbySkill = (req, res) => {
   
   skill = req.params.skill
-  sql = user_sql_constants.get_users_by_skill(skill);
+  sql = `SELECT users FROM Skills WHERE skill = ?`;    
   
-  db.all(sql, [], (err, rows) => {
+  db.all(sql, [skill], (err, rows) => {
     if (err) {
       throw err;
     }
@@ -372,42 +336,13 @@ module.exports.getUsersbySkill = (req, res) => {
   });
   
 }
-
-module.exports.updateSkill = (req, res) => {
-  userID = req.params.id;
-  skill_list = req.body.skills;
-  sql = user_sql_constants.update_skill(userID,skill_list);
-  
-  db.all(sql, [], (err, rows) => {
-    if (err) {
-      throw err;
-    }
-    res.json({ success: true, rows: rows });
-  });
-  
-}
-
-module.exports.updateUsersbySkill = (req, res) => {
-  skill = req.params.skill;
-  user_list = req.body.users;
-  sql = user_sql_constants.update_users_by_skill(skill,user_list);
-  
-  db.all(sql, [], (err, rows) => {
-    if (err) {
-      throw err;
-    }
-    res.json({ success: true, rows: rows });
-  });
-  
-}
-
 
 
 module.exports.getProfilePic = (req, res) => {
   userID = req.params.id;
-  sql = user_sql_constants.get_profile_pic(userID);
+  sql = `SELECT profile_pic_URL FROM '${userType(userID)}' where user_id = ?;`;   
   
-  db.all(sql, [], (err, rows) => {
+  db.all(sql, [userID], (err, rows) => {
     if (err) {
       throw err;
     }
@@ -418,10 +353,10 @@ module.exports.getProfilePic = (req, res) => {
 
 module.exports.updateProfilePic = (req, res) => {
   userID = req.params.id;
-  profile_pic = req.body.profilepic;
-  sql = user_sql_constants.update_profile_pic(userID,profile_pic);
+  profile_pic = req.body.profile_pic_URL;
+  sql = `UPDATE '${userType(userID)}' SET profile_pic_URL = ? WHERE user_id = ?`;    //starts with 1
   
-  db.all(sql, [], (err, rows) => {
+  db.all(sql, [profile_pic,userID], (err, rows) => {
     if (err) {
       throw err;
     }
@@ -432,9 +367,9 @@ module.exports.updateProfilePic = (req, res) => {
 
 module.exports.getProfession = (req, res) => {
   userID = req.params.id;
-  sql = user_sql_constants.get_profession(userID);
+  sql = `SELECT occupation FROM '${userType(userID)}' where user_id = ?;`;   
   
-  db.all(sql, [], (err, rows) => {
+  db.all(sql, [userID], (err, rows) => {
     if (err) {
       throw err;
     }
@@ -446,9 +381,9 @@ module.exports.getProfession = (req, res) => {
 module.exports.updateProfession = (req, res) => {
   userID = req.params.id;
   prof = req.params.profession;
-  sql = user_sql_constants.update_profession(userID,prof);
+  sql = `UPDATE '${userType(userID)}' SET occupation = ? WHERE user_id = ?`;    //starts with 1
   
-  db.all(sql, [], (err, rows) => {
+  db.all(sql, [prof,userID], (err, rows) => {
     if (err) {
       throw err;
     }
@@ -550,17 +485,9 @@ module.exports.login = (req, res) => {
   });
 }
 
-
-module.exports.getRating = (req, res) => {
-  
-  id = req.params.id
-  sql = user_sql_constants.get_rating_by_id(id);
-  
-  db.all(sql, [], (err, rows) => {
-    if (err) {
-      throw err;
-    }
-    res.json({ success: true, rows: rows });
-  });
-  
+function userType(id){
+  while(id>10)
+      id/=10
+  if(Math.floor(id)==1) return "Mentors"
+  return "Mentees"
 }
