@@ -163,7 +163,7 @@ export class MentorRegistration extends React.Component {
 
     const mentee = {
       first_name: this.state.name,
-      last_name: "Doe",
+      last_name: this.state.lastName,
       email_address: this.state.email,
       biography: "hi",
       zipcode: this.state.zipcode,
