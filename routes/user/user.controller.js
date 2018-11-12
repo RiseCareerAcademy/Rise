@@ -394,7 +394,7 @@ module.exports.updateProfession = (req, res) => {
 
 module.exports.getBio = (req, res) => {
   userID = req.params.id;
-  sql = `SELECT biography FROM '${userType(userID)}' WHERE Mentors.user_id = ?`;    
+  sql = `SELECT biography FROM '${userType(userID)}' WHERE user_id = ?`;    
   
   db.all(sql, [userID], (err, rows) => {
     if (err) {
