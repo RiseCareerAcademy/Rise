@@ -9,7 +9,7 @@ export default class MatchesScreen extends Component {
     //array of matches with respective scores
     matches: [],
     scores: [],
-    mentorsFromServer:[]
+    mentorsFromServer: []
   };
 
   constructor(props) {
@@ -17,58 +17,68 @@ export default class MatchesScreen extends Component {
     var mentors = [];
     //populate array with data from database
 
-  const { manifest } = Expo.Constants;
-  const api = (typeof manifest.packagerOpts === `object`) && manifest.packagerOpts.dev
-  ? manifest.debuggerHost.split(`:`).shift().concat(`:8000`)
-  : `api.example.com`;
-    fetch('http://'+api+'/user/mentor', {
+    const { manifest } = Expo.Constants;
+    const api = (typeof manifest.packagerOpts === `object`) && manifest.packagerOpts.dev
+      ? manifest.debuggerHost.split(`:`).shift().concat(`:8000`)
+      : `api.example.com`;
+    console.log(api);
+    fetch('http://' + api + '/user/mentor', {
       method: 'GET'
     })
-    .then((response) => response.json())
-    .then((responseJson) => {
-        for (var i = 0; i < responseJson.rows.length; i++){
-            var curr_row = responseJson.rows[i];
-            mentors.push([curr_row.user_id])//need to eventually add name and user id
-            mentors.push([curr_row.occupation])
-            mentors.push( curr_row.skills);
-       }
-      const { desiredSkills, desiredProfessions } = this.state;
-      const { scores, matches } = this.match(desiredSkills, desiredProfessions, mentors);
-      this.setState({scores: scores});
-      this.setState({matches: matches});
-    }).catch((error) => {
-        console.log("error is: " + error);
-      });
-
-      //post match to match table
-      //need id of person being matched and those they were matched with
-      fetch('http://'+api+'/match', {
-        method: 'POST',
-        headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-              //change the match id, it has to be unique
-              //this is hardcoded data to just give an example
-              "match_id": 1,
-              //loop through all mentor id
-              "mentor_id": 10101,
-              //find mentee id
-              "mentee_id": 20101
-        }),
-      })//fetch
       .then((response) => response.json())
       .then((responseJson) => {
-        console.log(JSON.stringify(responseJson));
-        })
+        //TO DO: add mentors name and skills in array
+
+        for (var i = 0; i < responseJson.rows.length; i++) {
+          var curr_row = responseJson.rows[i];
+          mentors.push([curr_row.first_name])
+          mentors.push([curr_row.occupation])
+          mentors.push(curr_row.skills);
+          console.log(curr_row.skills.split(','))
+        }
+        const { desiredSkills, desiredProfessions } = this.state;
+        const { scores, matches } = this.match(desiredSkills, desiredProfessions, mentors);
+        this.setState({ scores: scores });
+        this.setState({ matches: matches });
+      })
       .catch((error) => {
-        console.error("error is " + error);
+        console.log("error is: " + error);
       });
+  }
+
+  //add skills to desiredSkills
+  addMenteeSkill = (desiredSkills, additionalSkill) => {
+    if (desiredSkills.split(",").indexOf(additionalSkill) == -1) {
+      desiredSkills = desiredSkills + "," + additionalSkill
+    }
+  }
+
+  //delete skills from desiredSkills
+  deleteMenteeSkill = (desiredSkills, skill) => {
+    if (desiredSkills.split(",").indexOf(skill) != -1) {
+      const firstHalf = desiredSkills.slice(0, desiredSkills.indexOf(skill))
+      const secondHalf = desiredSkills.slice(desiredSkills.indexOf(skill) + 1 + skill.length)
+      desiredSkills = firstHalf + secondHalf
+    }
   }
 
   //match function
   match = (desiredSkills, desiredProfessions, fakeData) => {
+    // if (! global.Buffer) {
+    //   global.Buffer = require("buffer").Buffer;
+    // }
+    // var findMatching = require("bipartite-matching")
+    // console.log(findMatching(5, 5, [
+    //   [0, 0],
+    //   [0, 1],
+    //   [1, 0],
+    //   [2, 1],
+    //   [2, 2],
+    //   [3, 2],
+    //   [3, 3],
+    //   [3, 4],
+    //   [4, 4]
+    // ]))
     const matches = [];
     const scores = [];
 
