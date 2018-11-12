@@ -1,6 +1,6 @@
 import 'react-native';
 import React from 'react';
-import Home from '../HomeScreen';
+import { HomeScreen } from '../HomeScreen';
 import renderer from 'react-test-renderer';
 import { shallow } from 'enzyme';
 
@@ -24,7 +24,7 @@ it('renders correctly', () => {
             navigate: () => {}
         },
     };
-  const wrapper = shallow(<Home {...props} />);
+  const wrapper = shallow(<HomeScreen {...props} />);
   expect(wrapper).toMatchSnapshot();
 });
 
@@ -34,7 +34,7 @@ it('renders with validi set', () => {
             navigate: () => {}
         },
     };
-  const wrapper = shallow(<Home {...props} />);
+  const wrapper = shallow(<HomeScreen {...props} />);
   wrapper.setState({ validi: true });
   expect(wrapper).toMatchSnapshot();
 });
@@ -45,7 +45,7 @@ it('renders with authUrl set', () => {
             navigate: () => {}
         },
     };
-  const wrapper = shallow(<Home {...props} />);
+  const wrapper = shallow(<HomeScreen {...props} />);
   wrapper.setState({ authUrl: 'http://linkedin.com' });
   expect(wrapper).toMatchSnapshot();
 });
@@ -56,7 +56,7 @@ it('renders with result set', () => {
             navigate: () => {}
         },
     };
-  const wrapper = shallow(<Home {...props} />);
+  const wrapper = shallow(<HomeScreen {...props} />);
   wrapper.setState({ result: 'MyResult' });
   expect(wrapper).toMatchSnapshot();
 });
@@ -68,7 +68,7 @@ it('opens linkedin', async () => {
         },
     };
 
-    const wrapper = shallow(<Home {...props} />);
+    const wrapper = shallow(<HomeScreen {...props} />);
     await wrapper.instance().handleMentorPress();
     expect(wrapper.state('result')).toEqual({"params": {"code": "MyLinkedinCode", "state": "MyLinkedinState"}});
     expect(wrapper.state('validState')).toBeDefined();
