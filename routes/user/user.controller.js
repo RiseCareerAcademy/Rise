@@ -463,24 +463,36 @@ module.exports.login = (req, res) => {
   if (missingFields) {
     return;
   }
-  sql1 = `SELECT salt FROM Passwords WHERE email_address= '${user.email_address}';`
-  a = db.all(sql1, [], (err, rows) => {
+  sql1 = `SELECT salt FROM Passwords WHERE email_address= ?;`
+  a = db.all(sql1, [user.email_address], (err, rows1) => {
     if (err) {
       throw err;
     }
-    if (rows.length==0){
+    if (rows1.length==0){
       res
       .status(400)
       .json({ error: "Email doesn't exist", success: false });
     }
-    salt = rows[0]['salt']
-    console.log(user.email_address)
-    sql2 = `SELECT * FROM Passwords WHERE email_address='${user.email_address}' AND password='${hp.minh(user.password, salt)['passwordHash']}';`;  
-    db.all(sql2, [], (err, rows) => {
+    salt = rows1[0]['salt']
+    sql2 = `SELECT * FROM Passwords WHERE email_address=? AND password=?;`;  
+    db.all(sql2, [user.email_address,hp.minh(user.password, salt)['passwordHash']], (err, rows2) => {
       if (err) {
         throw err;
       }
-      res.json({ success: true, rows: rows.length });
+      if (rows2.length==0){
+        res
+        .status(400)
+        .json({ error: "Wrong password", success: false });
+      }
+      console.log(rows2[0].email_address)
+      sql3 = `SELECT user_id FROM Mentors WHERE email_address=? UNION SELECT user_id FROM Mentees WHERE email_address=?`
+      db.all(sql3, [user.email_address,user.email_address], (err,rows3) =>{
+        if (err) {
+          throw err;
+        }
+        console.log(rows3)
+        res.json({ success: true, rows: rows3});
+      })
     });
   });
 }
