@@ -22,13 +22,12 @@ export default class MentorRegistration extends React.Component {
     skills: "",
     profession: "",
     name: "",
-    city: "",
-    state: ""
+    lastName:"",
+    zipcode:""
   };
   handleEmail = text => {
     this.setState({ email: text });
   };
-  e;
   handlePassword = text => {
     this.setState({ password: text });
   };
@@ -44,11 +43,11 @@ export default class MentorRegistration extends React.Component {
   handleName = text => {
     this.setState({ name: text });
   };
-  handleCity = text => {
-    this.setState({ city: text });
+  handleLastName = text => {
+    this.setState({ lastName: text });
   };
-  handleState = text => {
-    this.setState({ state: text });
+  handleZipCode = text => {
+    this.setState({ zipcode: text });
   };
 
   validate = (
@@ -58,8 +57,8 @@ export default class MentorRegistration extends React.Component {
     skills,
     profession,
     name,
-    city,
-    state
+    lastName,
+    zipcode
   ) => {
     // we are going to store errors for all fields
     // in a signle array
@@ -68,11 +67,11 @@ export default class MentorRegistration extends React.Component {
       skills.length == 0 ||
       profession.length == 0 ||
       name.length == 0 ||
-      city.length == 0 ||
-      state.length == 0 ||
       email.length == 0 || 
       password.length == 0 ||
-      confirmedPassword.length == 0
+      confirmedPassword.length == 0 ||
+      lastName.length == 0 ||
+      zipcode.length == 0
     ) {
       errors.push("All fields must be filled");
     }
@@ -93,7 +92,40 @@ export default class MentorRegistration extends React.Component {
         "Password doesn't match" + password + " " + confirmedPassword
       );
     }
-
+    else if (zipcode.length != 5 && /^\d+$/.test(zipcode)){
+      errors.push("zipcode must contain only numbers and be 5 characters long");
+    }
+    const { manifest } = Expo.Constants;
+    const api = (typeof manifest.packagerOpts === `object`) && manifest.packagerOpts.dev
+    ? manifest.debuggerHost.split(`:`).shift().concat(`:8000`)
+    : `api.example.com`;
+    fetch('http://'+api+'/user/mentee', {
+      method: 'POST',
+      headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+            "user_id": 10002,
+            "first_name": this.state.name, 
+            "last_name": "john",
+            "email_address": this.state.email, 
+            "biography": "hi",
+            "zipcode": this.state.zipcode, 
+            "date_of_birth": "2/24/1996",
+            "area_of_study": "Computer Science", 
+            "skills": this.state.skills,
+            "profile_pic_URL": "bill.com",
+            "hobbies": "testiing hobbies",
+      }),
+    })//fetch
+    .then((response) => response.json())
+    .then((responseJson) => {
+      console.log(JSON.stringify(responseJson));
+      })
+    .catch((error) => {
+      console.error("error is " + error);
+    });
     const { navigate } = this.props.navigation;
     if (errors.length == 0 /* && process.env.NODE_ENV !== 'development' */) {
       navigate('Main');
@@ -102,7 +134,9 @@ export default class MentorRegistration extends React.Component {
       alert(errors);
       return false;
     }
+    
   };
+
 
   render() {
     return (
@@ -110,7 +144,7 @@ export default class MentorRegistration extends React.Component {
         <Content>
           <Form>
             <Item stackedLabel>
-              <Label>Username</Label>
+              <Label>Email</Label>
               <Input
                 placeholder="Enter your email"
                 onChangeText={this.handleEmail}
@@ -152,17 +186,17 @@ export default class MentorRegistration extends React.Component {
               />
             </Item>
             <Item stackedLabel last>
-              <Label>city</Label>
+              <Label>lastName</Label>
               <Input
-                placeholder="Enter your city"
-                onChangeText={this.handleCity}
+                placeholder="Enter your last name"
+                onChangeText={this.handleLastName}
               />
             </Item>
             <Item stackedLabel last>
-              <Label>state</Label>
+              <Label>zipcode</Label>
               <Input
-                placeholder="Enter your state"
-                onChangeText={this.handleState}
+                placeholder="Enter your zipcode"
+                onChangeText={this.handleZipCode}
               />
             </Item>
           </Form>
@@ -177,8 +211,8 @@ export default class MentorRegistration extends React.Component {
               this.state.skills,
               this.state.profession,
               this.state.name,
-              this.state.city,
-              this.state.state
+              this.state.lastName,
+              this.state.zipcode
             )
           }
           }
