@@ -76,6 +76,9 @@ module.exports.create_skills_table_sql = function()  {
 }
 
 
+/*TODO: everything below here needs to be deleted */
+
+
 //create new password
 module.exports.post_password_sql = function(user)  {
     sql = `INSERT INTO Passwords VALUES ('${user.user_id}', '${user.email_address}', '${user.password}') `

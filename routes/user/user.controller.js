@@ -105,10 +105,11 @@ module.exports.postMentor = (req, res) => {
     }
     user[field] = req.body[field];
   });
-  sql = `INSERT INTO Mentors VALUES ('10000000000000'+'${date.getTime()}', '${user.first_name}', '${user.last_name}', '${user.email_address}', 
-  '${user.biography}', '${user.zipcode}', '${user.date_of_birth}', '${user.occupation}', '${user.skills}', '${user.profile_pic_URL}', '${user.hobbies}') `
-  console.log(sql);
-  db.all(sql, [], (err, rows) => {
+  
+  sql = `INSERT INTO Mentors VALUES ('10000000000000'+'${date.getTime()}', ? , ?, ?, ?, ?, ?, ?, ?, ?, ?) `
+  console.log(sql); 
+  
+  db.all(sql, [user.first_name,user.last_name,user.email_address,user.biography,user.zipcode,user.date_of_birth,user.occupation,user.skills,user.profile_pic_URL,user.hobbies], (err, rows) => {
   if (err) {
     throw err;
   }
@@ -128,10 +129,9 @@ module.exports.postMentee = (req, res) => {
     }
     user[field] = req.body[field];
   });
-  sql = `INSERT INTO Mentees VALUES ('20000000000000'+'${date.getTime()}','${user.first_name}', '${user.last_name}', '${user.email_address}', 
-  '${user.biography}', '${user.zipcode}', '${user.date_of_birth}', '${user.skills}', '${user.profile_pic_URL}', '${user.hobbies}') `
+  sql = `INSERT INTO Mentees VALUES ('20000000000000'+'${date.getTime()}',?,?,?,?,?,?,?,?,?) `
   console.log(sql);
-  db.all(sql, [], (err, rows) => {
+  db.all(sql, [user.first_name,user.last_name,user.email_address,user.biography,user.zipcode,user.date_of_birth,user.skills,user.profile_pic_URL,user.hobbies], (err, rows) => {
   if (err) {
     throw err;
   }
@@ -139,7 +139,36 @@ module.exports.postMentee = (req, res) => {
 });
 }
 
-//create new password
+//create a new message
+module.exports.postMessage = (req, res) => {
+  const fields = ['match_id','to_id','from_id', 'message_body', 'timestamp'];
+  const user = {};
+  const missingFields = fields.some(field => {
+    if (req.body[field] === undefined) {
+     res
+        .status(500)
+        .json({ error: "Missing credentials", success: false });
+        return true;
+    }
+    user[field] = req.body[field];
+    return false;
+  });
+
+  if (missingFields) {
+    return;
+  }
+  console.log(user)
+  sql = `INSERT INTO Messages VALUES ('10000000000000'+'${date.getTime()}',?,?,?,?,?)`  
+  console.log(sql)
+  db.all(sql, [user.match_id, user.to_id, user.from_id, user.message_body, user.timestamp], (err, rows) => {
+    if (err) {
+    throw err;
+  }
+  res.json({ success: true, rows: rows });
+});
+}
+
+//create new password (SQL INJ.)
 module.exports.postPassword = (req, res) => {
   const fields = ['email_address' ,'password'];
   const user = {};
@@ -183,9 +212,9 @@ module.exports.postSkill = (req, res) => {
     skill[field] = req.body[field];
     return false;
   });
-  sql = `INSERT INTO Skills VALUES ('${skill.skill}', '${skill.users}') `
+  sql = `INSERT INTO Skills VALUES (?, ?) `
   console.log(sql);
-  db.all(sql, [], (err, rows) => {
+  db.all(sql, [skill.skill,skill.users], (err, rows) => {
     if (err) {
       throw err;
     }
@@ -394,9 +423,9 @@ module.exports.updateProfession = (req, res) => {
 
 module.exports.getBio = (req, res) => {
   userID = req.params.id;
-  sql = user_sql_constants.get_bio(userID);
+  sql = `SELECT biography FROM '${userType(userID)}' where user_id = ?;`;   
   
-  db.all(sql, [], (err, rows) => {
+  db.all(sql, [userID], (err, rows) => {
     if (err) {
       throw err;
     }
@@ -407,10 +436,10 @@ module.exports.getBio = (req, res) => {
 
 module.exports.updateBio = (req, res) => {
   userID = req.params.id;
-  bio = req.params.bio;
-  sql = user_sql_constants.update_bio(userID,bio);
+  bio = req.body.biography;
+  sql = `UPDATE '${userType(userID)}' SET biography = ? WHERE user_id = ?`;   
   
-  db.all(sql, [], (err, rows) => {
+  db.all(sql, [bio,userID], (err, rows) => {
     if (err) {
       throw err;
     }
@@ -422,9 +451,9 @@ module.exports.updateBio = (req, res) => {
 module.exports.deleteBio = (req, res) => {
   
   userID = req.params.id
-  sql = user_sql_constants.delete_bio(userID);
+  sql = `UPDATE '${userType(userID)}' SET biography = ' ' WHERE user_id = ?`;   
   
-  db.all(sql, [], (err, rows) => {
+  db.all(sql, [userID], (err, rows) => {
     if (err) {
       throw err;
     }
@@ -436,9 +465,9 @@ module.exports.deleteBio = (req, res) => {
 module.exports.updateZipcode = (req, res) => {
   userID = req.params.id;
   zip = req.params.zipcode;
-  sql = user_sql_constants.update_zip(userID,zip);
+  sql = `UPDATE '${userType(userID)}' SET zipcode = ? WHERE user_id = ?`;   
   
-  db.all(sql, [], (err, rows) => {
+  db.all(sql, [zip,userID], (err, rows) => {
     if (err) {
       throw err;
     }
@@ -485,6 +514,45 @@ module.exports.login = (req, res) => {
   });
 }
 
+
+//MESSAGE API
+
+module.exports.getMessages = (req, res) => {
+  sql = 'SELECT * FROM Messages;'
+  db.all(sql, [], (err, rows) => {
+  if (err) {
+    throw err;
+  }
+  res.json({ success: true, rows: rows });
+});
+}
+
+//get latest message by match id 
+module.exports.getLatestMessageById = (req, res) => {
+  matchId = req.params.matchid;
+  sql = `SELECT * FROM Messages WHERE match_id = ? order by timestamp LIMIT 1;`;    
+  db.all(sql, [matchId], (err, rows) => {
+  if (err) {
+    throw err;
+  }
+  res.json({ success: true, rows: rows });
+});
+}
+
+ //get message chain  by match id 
+ module.exports.getMessageChain = (req, res) => {
+  matchId = req.params.matchid;
+  sql = `SELECT * FROM Messages WHERE match_id = ? order by timestamp;`;    
+
+  db.all(sql, [matchId], (err, rows) => {
+  if (err) {
+    throw err;
+  }
+  res.json({ success: true, rows: rows });
+});
+}
+
+//controller function to determine if mentee or mentor based on id, returns corresponding table name 
 function userType(id){
   while(id>10)
       id/=10

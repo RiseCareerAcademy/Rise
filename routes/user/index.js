@@ -4,31 +4,26 @@ const controller = require("./user.controller.js");
 const router = express.Router();
 module.exports.router = router;
 
-//CREATE all five tables
+//CREATE all 5 tables
 router.post('/tables',controller.createTables);
 
-//delete table
+//Delete all 5 tables
 router.delete('/tables',controller.deletetable);  
 
-// POST request API for /user
+//POST request API for /user
 router.post('/mentor', controller.postMentor);
 router.post('/mentee', controller.postMentee);
 router.post('/password', controller.postPassword);
 router.post('/skill', controller.postSkill);
 
-
-// GET request API for /user 
+//GET request API for /user 
 router.get('/mentors',controller.getAllMentors);
 router.get('/mentees',controller.getAllMentees);  
 router.get('/passwords',controller.getAllPasswords);  
 router.get('/skills',controller.getAllSkills);  
 
-
-
 //get user by id
 router.get("/:id", controller.getUserById);
-
-
 
 //get email by id
 router.get("/:id/email", controller.getEmailById);
@@ -40,20 +35,15 @@ router.get("/:id/hobbies", controller.getHobbiesById);
 //update hobbies by id
 router.put("/:id/hobbies", controller.updateHobbiesById);
 
-
 //get skill by user_id 
 router.get("/:id/skills", controller.getSkillbyId);
 //get users by skill 
 router.get("/skill/:skill", controller.getUsersbySkill);
 
-
-
-
 //get profile pic by id 
 router.get("/:id/profilepic", controller.getProfilePic);
 //update profile pic by id 
 router.put("/:id/profilepic", controller.updateProfilePic);
-
 
 //get profession/area of study 
 router.get("/:id/profession", controller.getProfession);
@@ -63,13 +53,26 @@ router.put("/:id/profession/:profession", controller.updateProfession);
 //get bio of study 
 router.get("/:id/bio", controller.getBio);
 //update bio 
-router.put("/:id/bio/:bio", controller.updateBio);
+router.put("/:id/bio", controller.updateBio);
 //delete bio
 router.delete("/:id/bio", controller.deleteBio);
 
 //update zipcode
 router.put("/:id/zipcode/:zipcode",controller.updateZipcode);
 
-
 //login using email/password
 router.post("/login",controller.login);
+
+//MESSAGE API
+
+//create a new message 
+router.post('/message', controller.postMessage);
+
+//get all messages 
+router.get('/messages', controller.getMessages);
+
+//get message by message id 
+router.get('/message/:matchid', controller.getLatestMessageById);
+
+//get all message by message id 
+router.get('/message/all/:matchid', controller.getMessageChain);
