@@ -5,117 +5,85 @@ searchFunction = text => {
 
   //const { navigation } = this.props;
   //searchInput = navigation.getParam('text');
-  
-  fakeData = [
-    ["Daniel Ng"],
-    ["Software Developer"],
-    ["JQuery", "Python", "UX"], //should be number 4
-    ["Tracy Lewis"],
-    [""],
-    ["UX", "Prototyping"], //should be number 3
-    ["Kevin Mui"],
-    ["Product Manager"],
-    [""], //should be number 2
-    ["Lewis Tracy"],
-    ["Product Manager"],
-    ["UX"], //should be number 1
-    ["Tone Yu"],
-    ["Nurse"],
-    ["Birthing", "Yelling", "Running"] //should not be in the results
-  ];
 
-  searchInput = text;
-  matches = [];
-  scores = [];
-  if (searchInput.length == 0 || fakeData.length == 0){
-    return {scores,matches}
-  }
-  
-    for (let j = 0; j < fakeData.length; j += 3) {
-      var parsedData = fakeData[j+2].toString().split(' ');
-      for(let k = 0; k < parsedData.length; k++){
-        if (parsedData[k].indexOf(searchInput) > -1) {
-          //if matching skill, add to match list, score ++
-          if (matches.indexOf(fakeData[j]) > -1)
-            //if already has points
-            scores[matches.indexOf(fakeData[j])] += 1;
-          else {
-            //else add to list of matches with new score
-            matches[matches.length] = fakeData[j];
-            scores[scores.length] = 1;
-          }
-        }
-      }
-      if (fakeData[j+2].indexOf(searchInput) > -1) {
-        //if matching skill, add to match list, score ++
-        if (matches.indexOf(fakeData[j]) > -1)
-          //if already has points
-          scores[matches.indexOf(fakeData[j])] += 1;
-        else {
-          //else add to list of matches with new score
-          matches[matches.length] = fakeData[j];
-          scores[scores.length] = 1;
-        }
-      }
-    }
-  
-    for (let j = 0; j < fakeData.length; j += 3){
-      var parsedData = fakeData[j+1].toString().split(' ');
-      for(let k = 0; k < parsedData.length; k++){
-        if (parsedData[k].indexOf(searchInput) > -1) {
-          if (matches.indexOf(fakeData[j]) > -1)
-            //if matching skill, add to match list, score ++
-            //if already has points
-            scores[matches.indexOf(fakeData[j])] += 2;
-          else {
-            //else add to list of matches with new score
-            matches[matches.length] = fakeData[j];
-            scores[scores.length] = 3;
-          }
-        }
-      }
-      if (fakeData[j+1].indexOf(searchInput) > -1) {
-        //if matching skill, add to match list, score ++
-        if (matches.indexOf(fakeData[j]) > -1)
-          //if already has points
-          scores[matches.indexOf(fakeData[j])] += 2;
-        else {
-          //else add to list of matches with new score
-          matches[matches.length] = fakeData[j];
-          scores[scores.length] = 2;
-        }
-      }
-    }
-  
-    for (let j = 0; j < fakeData.length; j += 3){
-      var parsedData = fakeData[j].toString().split(' ');
-      for(let k = 0; k < parsedData.length; k++){
-        if (parsedData[k].indexOf(searchInput) > -1) {
-          if (matches.indexOf(fakeData[j]) > -1)
-            //if matching skill, add to match list, score ++
-            //if already has points
-            scores[matches.indexOf(fakeData[j])] += 2;
-          else {
-            //else add to list of matches with new score
-            matches[matches.length] = fakeData[j];
-            scores[scores.length] = 2;
-          }
-        }
-      }
-      if (fakeData[j].indexOf(searchInput) > -1) {
-        //if matching skill, add to match list, score ++
-        if (matches.indexOf(fakeData[j]) > -1)
-          //if already has points
-          scores[matches.indexOf(fakeData[j])] += 2;
-        else {
-          //else add to list of matches with new score
-          matches[matches.length] = fakeData[j];
-          scores[scores.length] = 2;
-        }
-      }
-    }
+  searchInput = text.toLowerCase();
+  var results = []; //keep search results (user ID's)
+  var scores = []; //scores of respective results
+
+  const { manifest } = Expo.Constants;
+    const api = (typeof manifest.packagerOpts === `object`) && manifest.packagerOpts.dev
+      ? manifest.debuggerHost.split(`:`).shift().concat(`:8000`)
+      : `api.example.com`;
+    console.log(api);
+    fetch('http://' + api + '/user/mentor', {
+      method: 'GET'
+    })
+      .then((response) => response.json())
+      .then((responseJson) => {
+
+  for (i = 0; i < responseJson.rows.length; i++){
+    //for each user in db
     
+    //firstName
+    loweredText = responseJson.rows[i].first_name.join().toLowerCase();
+    parsedText = loweredText.split();
+    if (parsedText.contains(searchInput)){
+      indexOf = results.indexOf(responseJson.rows[i].user_id.toString());
+      if (indexOf > -1){
+          scores[indexOf] += 2;
+      }else{
+          results[results.length] = responseJson.rows[i].user_id.toString();
+          scores[score.length] = 2;
+      }
+    }
 
+    //lastName
+    loweredText = responseJson.rows[i].last_name.join().toLowerCase();
+    parsedText = loweredText.split();
+    if (parsedText.contains(searchInput)){
+      indexOf = results.indexOf(responseJson.rows[i].user_id.toString());
+      if (indexOf > -1){
+          scores[indexOf] += 2;
+      }else{
+          results[results.length] = responseJson.rows[i].user_id.toString();
+          scores[score.length] = 2;
+      }
+    }
+
+    //skills
+    loweredText = responseJson.rows[i].skills.join().toLowerCase();
+    parsedText = loweredText.split();
+    if (parsedText.contains(searchInput)){
+      indexOf = results.indexOf(responseJson.rows[i].user_id.toString());
+      if (indexOf > -1){
+          scores[indexOf] += 2;
+      }else{
+          results[results.length] = responseJson.rows[i].user_id.toString();
+          scores[score.length] = 2;
+      }
+    }
+
+    //Occupation
+    loweredText = responseJson.rows[i].occupation.join().toLowerCase();
+    parsedText = loweredText.split();
+    if (parsedText.contains(searchInput)){
+      indexOf = results.indexOf(responseJson.rows[i].user_id.toString());
+      if (indexOf > -1){
+          scores[indexOf] += 2;
+      }else{
+          results[results.length] = responseJson.rows[i].user_id.toString();
+          scores[score.length] = 2;
+      }
+    }
+
+  }
+
+
+})
+.catch((error) => {
+  console.log("error is: " + error);
+});
+  
   //sort by score
   for (let i = 1; i < scores.length; i++) {
     for (let j = 0; j < i; j++) {
@@ -123,14 +91,14 @@ searchFunction = text => {
         let x = scores[i];
         scores[i] = scores[j];
         scores[j] = x;
-        let y = matches[i];
-        matches[i] = matches[j];
-        matches[j] = y;
+        let y = results[i];
+        results[i] = results[j];
+        results[j] = y;
       }
     }
   }
 
-  return { scores, matches };
+  return results;
 
 };
 
@@ -149,4 +117,5 @@ searchFunction = text => {
     });    
     this.setState({ data: newData });  
   };
-  
+
+  */
