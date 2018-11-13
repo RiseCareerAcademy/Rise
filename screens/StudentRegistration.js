@@ -41,16 +41,6 @@ export class MentorRegistration extends React.Component {
     zipcode: ""
   };
 
-  componentDidUpdate = prevProps => {
-    if (!prevProps.loggedIn && this.props.loggedIn) {
-      const resetAction = StackActions.reset({
-        index: 0,
-        actions: [NavigationActions.navigate({ routeName: "Main" })]
-      });
-      this.props.navigation.dispatch(resetAction);
-    }
-  };
-
   handleImagePickerPress = async () => {
     const { status: cameraPerm } = await Permissions.askAsync(
       Permissions.CAMERA
