@@ -6,7 +6,7 @@ var user_sql_constants = require("../../config/user_sql_constants.js");
 //create new match 
 module.exports.postMatches = (req, res) => {
   
-    const fields = ['mentor_id', 'mentee_id'];
+    const fields = ['mentor_id', 'mentee_id','ratings'];
     const user = {};
     const missingCredentials = fields.some(field => {
       if (req.body[field] === undefined) {
@@ -22,11 +22,11 @@ module.exports.postMatches = (req, res) => {
     if (missingCredentials) {
       return;
     }
-    sql = `INSERT INTO Matches VALUES (?, ?,?)`
+    sql = `INSERT INTO Matches VALUES (?,?,?,?)`
   
     console.log(sql);
     match_id = user.mentor_id+""+user.mentee_id
-    db.all(sql, [match_id,user.mentor_id,user.mentee_id], (err, rows) => {
+    db.all(sql, [match_id,user.mentor_id,user.mentee_id,user.ratings], (err, rows) => {
     if (err) {
       throw err;
     }
@@ -70,6 +70,7 @@ module.exports.getMatchByUserId = (req, res) => {
     if (err) {
       throw err;
     }
+    console.log(rows)
     res.json({ success: true, rows: rows });
   });
   
@@ -80,4 +81,33 @@ function userIDType(id){
       id/=10
   if(Math.floor(id)==1) return "mentor_id"
   return "mentee_id"
+}
+
+module.exports.getRatingByMatchId = (req, res) => {
+  matchid = req.params.matchid;
+  console.log(matchid)
+  sql = `SELECT ratings FROM Matches WHERE match_id = ?;`;    
+  db.all(sql, [matchid], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+    console.log(rows)
+    res.json({ success: true, rows: rows });
+  });
+  
+}
+
+//average rating
+module.exports.getRatingByMentorId = (req, res) => {
+  userid = req.params.userid;
+  sql = `SELECT avg(ratings) FROM Matches WHERE mentor_id = ?;`;    
+  db.all(sql, [userid], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+    //ratings = rows[0]['ratings']
+    //console.log(ratings)  
+    res.json({ success: true, rows: rows });
+  });
+  
 }

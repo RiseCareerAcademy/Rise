@@ -34,9 +34,9 @@
 
 //MATCHES
 {
-    "match_id": 67844,
     "mentor_id": 10101, 
-    "mentee_id": 20101
+    "mentee_id": 20101,
+    "ratings": 4
 }
 
 //MESSAGES

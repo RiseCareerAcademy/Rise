@@ -412,6 +412,7 @@ module.exports.getUsersbySkill = (req, res) => {
   
 }
 
+//LARGE SKILLS METHODS 
 module.exports.addSkill = (req, res) => {
   //get input
   userID = req.params.id
@@ -470,7 +471,7 @@ module.exports.addSkill = (req, res) => {
       }
       
       sql5 = `UPDATE Skills SET users = ? WHERE skills = ?` 
-      db.all(sql5, [userID,skills], (err, rows5) => {
+      db.all(sql5, [users,skills], (err, rows5) => {
         if (err) {
           throw err;
         }
@@ -595,11 +596,13 @@ module.exports.updateProfession = (req, res) => {
       .status(500)
       .json({ error: "Missing credentials", success: false });
   }
-  //new profession 
+  //THIS IS THE NEW PROFESSION VALUE USED
   profession = req.body.profession
-  old_profession =""
+  
+  old_profession = " "
   //get old profession to delete 
   sql = `Select profession from '${userType(userID)}' WHERE user_id = ?`;
+  console.log(sql)
   db.all(sql, [userID], (err, rows) => {
     if (err) {
       throw err;
@@ -608,7 +611,7 @@ module.exports.updateProfession = (req, res) => {
   });
   console.log(old_profession)
      
-    //add profession to user tbale 
+    //updates profession in a user table (works) 
     sql1 = `UPDATE '${userType(userID)}' SET profession = ? WHERE user_id = ?`;
     db.all(sql1, [profession,userID], (err, rows1) => {
     if (err) {
@@ -616,48 +619,79 @@ module.exports.updateProfession = (req, res) => {
     }
   });
 
-     //remove user from old profession in profession table 
-     sql2 = `UPDATE Profession SET user_id = "" WHERE profession = ? `
-     db.all(sql2, [old_profession], (err, rows2) => {
-       if (err) {
-         throw err;
-       }
-     });  
+  //ADD A USER TO A PROFESSSION IN PROFESSION TABLE (DONE)
+    sql3 = `SELECT users FROM Profession WHERE profession = ?`;   
+    db.all(sql3, [profession], (err, rows3) => {
+      if (err) {
+        throw err;
+      }
+      //this means profession doesnt exist 
+      if (rows3.length==0){
+        sql4 = `INSERT INTO Profession VALUES (?,?)`
+        db.all(sql4, [profession,userID], (err, rows4) => {
+          if (err) {
+            throw err;
+          }
+          res.json({ success: true, rows: "new profession added, user attached" });
+        });
+      }
+      //profession exists, append the user to list  
+      else {
+        users = rows3[0]['users']
+        if (users.split(",").indexOf(userID) == -1) {
+          users = users + "," + userID
+        }
+        //add the users to the profession 
+        sql5 = `UPDATE Profession SET users = ? WHERE profession = ?` 
+        db.all(sql5, [users,profession], (err, rows5) => {
+          if (err) {
+            throw err;
+          }
+          res.json({ success: true, rows: "Appended a user to an existed users list" });
+        });
+      }
+    });
 
-    //add user to profession table
+
+  //REMOVE A USER FROM A PROFESSION IN A PROFESSION TABLE (not working) 
   sql3 = `SELECT users FROM Profession WHERE profession = ?`;   
-  db.all(sql3, [profession], (err, rows3) => {
+  db.all(sql3, [old_profession], (err, rows3) => {
     if (err) {
       throw err;
     }
+    //seing if there was an old profession (there should always be)
     if (rows3.length==0){
-      sql4 = `INSERT INTO Profession VALUES (?,?)`
-      db.all(sql4, [profession,userID], (err, rows4) => {
-        if (err) {
-          throw err;
-        }
-        res.json({ success: true, rows: "insert users into new profession" });
-      });
+      res.json({ success: true, rows: "Profession not found !" });
     } 
     else {
       users = rows3[0]['users']
-      if (users.split(",").indexOf(userID) == -1) {
-        users = users + "," + userID
-      }
+      console.log(users)  
+      console.log(userID)
+      console.log(removeFromArray(stringToArray(users),userID))
+      users = removeFromArray(stringToArray(users),userID)
       
+      console.log(old_profession)
       sql5 = `UPDATE Profession SET users = ? WHERE profession = ?` 
-      db.all(sql5, [userID,profession], (err, rows5) => {
+      db.all(sql5, [users,old_profession], (err, rows5) => {
         if (err) {
           throw err;
         }
-        res.json({ success: true, rows: "updated new profession" });
+        res.json({ success: true, rows: "remove user successfully from old profession" });
       });
     }
+    
+
   });
+
+  
+
+
+
+
   
   
   
-  };
+  };//end of updatedProfession
 
 
 

@@ -50,7 +50,8 @@ module.exports.create_matches_table_sql = function()  {
     CREATE TABLE IF NOT EXISTS Matches (
         match_id int NOT NULL UNIQUE,
         mentor_id int NOT NULL,
-        mentee_id int NOT NULL
+        mentee_id int NOT NULL,
+        ratings int
     );`
     return sql; 
 }
