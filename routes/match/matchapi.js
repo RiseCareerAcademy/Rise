@@ -23,3 +23,4 @@ router.get('/rating/:matchid',controller.getRatingByMatchId);
 router.get('/rating/userid/:userid',controller.getRatingByMentorId);
 
 //add a rating in a new match 
+router.put("/rating/:matchid/:rating",controller.addRating);

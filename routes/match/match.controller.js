@@ -111,3 +111,17 @@ module.exports.getRatingByMentorId = (req, res) => {
   });
   
 }
+
+//add a rating
+module.exports.addRating = (req, res) => {
+  matchid = req.params.matchid;
+  rating = req.params.rating;
+  sql = `UPDATE Matches SET ratings = ? WHERE match_id = ?`
+  db.all(sql, [rating,matchid], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+    res.json({ success: true, rows: rows });
+  });
+  
+}
