@@ -15,13 +15,14 @@ router.post('/mentor', controller.postMentor);
 router.post('/mentee', controller.postMentee);
 router.post('/password', controller.postPassword);
 router.post('/skill', controller.postSkill);
+router.post('/profession', controller.postProfession);
 
 //GET request API for /user 
 router.get('/mentors',controller.getAllMentors);
 router.get('/mentees',controller.getAllMentees);  
 router.get('/passwords',controller.getAllPasswords);  
 router.get('/skills',controller.getAllSkills);  
-
+router.get('/professions',controller.getAllProfessions);  
 //get user by id
 router.get("/:id", controller.getUserById);
 

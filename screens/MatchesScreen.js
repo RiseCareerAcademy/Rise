@@ -32,7 +32,7 @@ export default class MatchesScreen extends Component {
         for (var i = 0; i < responseJson.rows.length; i++){
             var curr_row = responseJson.rows[i];
             mentors.push([curr_row.first_name])
-            mentors.push([curr_row.occupation])
+            mentors.push([curr_row.profession])
             mentors.push( curr_row.skills);
        }
       const { desiredSkills, desiredProfessions } = this.state;

@@ -15,6 +15,7 @@ module.exports.createTables = (req, res) => {
   sql4 = user_sql_constants.create_matches_table_sql();
   sql5 = user_sql_constants.create_messages_table_sql();
   sql6 = user_sql_constants.create_skills_table_sql();
+  sql7 = user_sql_constants.create_professions_table_sql();
 
   db.all(sql1, [], (err, rows) => {
     if (err) {
@@ -45,8 +46,13 @@ module.exports.createTables = (req, res) => {
     if (err) {
       throw err;
     }
-    res.json({ success: true, rows: rows });
   });
+  db.all(sql7, [], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+  });
+  res.json({ success: true, rows: "all tables created" });
 }
 //drop table 
 module.exports.deletetable = (req, res) => {
@@ -57,6 +63,7 @@ module.exports.deletetable = (req, res) => {
   sql4 = `DROP TABLE IF EXISTS Matches;`;
   sql5 = `DROP TABLE IF EXISTS Messages;`;
   sql6 = `DROP TABLE IF EXISTS Skills;`;
+  sql7 = `DROP TABLE IF EXISTS Profession;`;
 
   db.all(sql1, [], (err, rows) => {
     if (err) {
@@ -87,14 +94,19 @@ module.exports.deletetable = (req, res) => {
     if (err) {
       throw err;
     }
-    res.json({ success: true, rows: rows });
   });
+  db.all(sql7, [], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+  });
+  res.json({ success: true, rows: "delete all tables" });
 }
 
 //create new mentor
 module.exports.postMentor = (req, res) => {
   const fields = ['first_name', 'last_name', 'email_address' ,'biography','zipcode',
-  'date_of_birth','occupation','skills','profile_pic_URL','hobbies'];
+  'date_of_birth','profession','skills','profile_pic_URL','hobbies'];
   const user = {};
   
   fields.forEach(field => {
@@ -109,7 +121,7 @@ module.exports.postMentor = (req, res) => {
   sql = `INSERT INTO Mentors VALUES ('10000000000000'+'${date.getTime()}', ? , ?, ?, ?, ?, ?, ?, ?, ?, ?) `
   console.log(sql); 
   
-  db.all(sql, [user.first_name,user.last_name,user.email_address,user.biography,user.zipcode,user.date_of_birth,user.occupation,user.skills,user.profile_pic_URL,user.hobbies], (err, rows) => {
+  db.all(sql, [user.first_name,user.last_name,user.email_address,user.biography,user.zipcode,user.date_of_birth,user.profession,user.skills,user.profile_pic_URL,user.hobbies], (err, rows) => {
   if (err) {
     throw err;
   }
@@ -222,6 +234,30 @@ module.exports.postSkill = (req, res) => {
   });
 }
 
+//post a new profession
+module.exports.postProfession = (req, res) => {
+  const fields = ['profession','users'];
+  const profession = {};
+  const missingFields = fields.some(field => {
+    if (req.body[field] === undefined) {
+     res
+        .status(500)
+        .json({ error: "Missing credentials", success: false });
+        return true;
+    }
+    profession[field] = req.body[field];
+    return false;
+  });
+  sql = `INSERT INTO Profession VALUES (?, ?) `
+  console.log(sql);
+  db.all(sql, [profession.profession,profession.users], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+    res.json({ success: true, rows: rows });
+  });
+}
+
 //get all mentors
 module.exports.getAllMentors = (req, res) => {
   sql = `SELECT * FROM Mentors;`; 
@@ -258,8 +294,18 @@ db.all(sql, [], (err, rows) => {
 
 //get all skills
 module.exports.getAllSkills = (req, res) => {
-  console.log('get all skills')
   sql = `SELECT * FROM Skills`;
+  db.all(sql, [], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+    res.json({ success: true, rows: rows });
+  });
+}
+
+//get all skills
+module.exports.getAllProfessions = (req, res) => {
+  sql = `SELECT * FROM Profession`;
   db.all(sql, [], (err, rows) => {
     if (err) {
       throw err;
@@ -530,7 +576,7 @@ module.exports.updateProfilePic = (req, res) => {
 
 module.exports.getProfession = (req, res) => {
   userID = req.params.id;
-  sql = `SELECT occupation FROM '${userType(userID)}' where user_id = ?;`;   
+  sql = `SELECT profession FROM '${userType(userID)}' where user_id = ?;`;   
   
   db.all(sql, [userID], (err, rows) => {
     if (err) {
@@ -544,7 +590,7 @@ module.exports.getProfession = (req, res) => {
 module.exports.updateProfession = (req, res) => {
   userID = req.params.id;
   prof = req.params.profession;
-  sql = `UPDATE '${userType(userID)}' SET occupation = ? WHERE user_id = ?`;    //starts with 1
+  sql = `UPDATE '${userType(userID)}' SET profession = ? WHERE user_id = ?`;    //starts with 1
   
   db.all(sql, [prof,userID], (err, rows) => {
     if (err) {

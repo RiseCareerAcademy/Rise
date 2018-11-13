@@ -168,7 +168,7 @@ describe('postMentors', () => {
                 biography: 'MyBiography',
                 zipcode: 'MyZipcode',
                 date_of_birth: 'MyDateOfBirth',
-                occupation: 'MyOccupation',
+                profession: 'Myprofession',
                 skills: 'MySkills',
                 profile_pic_URL: 'MyProfilePicUrl',
                 hobbies: 'MyHobbies',
@@ -178,7 +178,7 @@ describe('postMentors', () => {
         postMentors(req, res);
 
         expect(parse(db.all.mock.calls[0][0])).toEqual(
-            `INSERT INTO Mentors VALUES ('MyUserId', 'MyFirstName', 'MyLastName', 'MyEmailAddress', 'MyBiography', 'MyZipcode', 'MyDateOfBirth', 'MyOccupation', 'MySkills', 'MyProfilePicUrl', 'MyHobbies')`
+            `INSERT INTO Mentors VALUES ('MyUserId', 'MyFirstName', 'MyLastName', 'MyEmailAddress', 'MyBiography', 'MyZipcode', 'MyDateOfBirth', 'Myprofession', 'MySkills', 'MyProfilePicUrl', 'MyHobbies')`
         );
 
         expect(res.json.mock.calls[0][0]).toEqual({
@@ -197,7 +197,7 @@ describe('postMentors', () => {
                 biography: 'MyBiography',
                 zipcode: 'MyZipcode',
                 date_of_birth: 'MyDateOfBirth',
-                occupation: 'MyOccupation',
+                profession: 'Myprofession',
                 skills: 'MySkills',
                 profile_pic_URL: 'MyProfilePicUrl',
                 hobbies: 'MyHobbies',
@@ -257,7 +257,7 @@ describe('postMentees', () => {
                 biography: 'MyBiography',
                 zipcode: 'MyZipcode',
                 date_of_birth: 'MyDateOfBirth',
-                occupation: 'MyOccupation',
+                profession: 'Myprofession',
                 skills: 'MySkills',
                 profile_pic_URL: 'MyProfilePicUrl',
                 hobbies: 'MyHobbies',
@@ -288,7 +288,7 @@ describe('postMentees', () => {
                 biography: 'MyBiography',
                 zipcode: 'MyZipcode',
                 date_of_birth: 'MyDateOfBirth',
-                occupation: 'MyOccupation',
+                profession: 'Myprofession',
                 skills: 'MySkills',
                 profile_pic_URL: 'MyProfilePicUrl',
                 hobbies: 'MyHobbies',
