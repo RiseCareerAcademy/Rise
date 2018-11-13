@@ -16,5 +16,6 @@ export default combineReducers({
   messages: messagesReducer,
   conversation: conversationReducer,
   usersSearch: usersSearchReducer,
-  user: persistReducer(authPersistConfig, userReducer),
+  // user: persistReducer(authPersistConfig, userReducer),
+  user: userReducer,
 });
