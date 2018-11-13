@@ -34,4 +34,17 @@ jobs:
           key: v1-dependencies-{{ checksum "package.json" }}
         
       # run tests!
-      - run: npm run test:coverage
+      - run: 
+        name: Run Jest Tests
+        command: npm run test:coverage
+
+      # send converage to coveralls
+      - run: 
+        name: Upload Coverage to Coveralls
+        command: cat ./coverage/lcov.info | coveralls
+        when: on_fail
+      
+      # send converage to coveralls
+      - run: 
+        name: Upload Coverage to Coveralls
+        command: cat ./coverage/lcov.info | coveralls
