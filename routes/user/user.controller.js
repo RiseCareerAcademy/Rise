@@ -259,8 +259,7 @@ db.all(sql, [], (err, rows) => {
 //get all skills
 module.exports.getAllSkills = (req, res) => {
   console.log('get all skills')
-  sql = `SELECT * FROM Skills`;   
-  console.log(sql)
+  sql = `SELECT * FROM Skills`;
   db.all(sql, [], (err, rows) => {
     if (err) {
       throw err;
@@ -377,7 +376,7 @@ module.exports.addSkill = (req, res) => {
   }
   skill = req.body.skill
 
- 
+  //add skill to user table
   sql1 = `SELECT skills FROM ${userType(userID)} WHERE user_id = ?`;   
   db.all(sql1, [userID], (err, rows1) => {
     if (err) {
@@ -388,7 +387,7 @@ module.exports.addSkill = (req, res) => {
       .status(400)
       .json({ error: "User not found!", success: false });
     }
-    //add skill to user table
+    
     skills = rows1[0]['skills']
     if (skills.split(",").indexOf(skill) == -1) {
       skills = skills + "," + skill
@@ -404,7 +403,7 @@ module.exports.addSkill = (req, res) => {
   });
 
   
-  //add skill to user table
+  //add user to skill table
   sql3 = `SELECT users FROM Skills WHERE skills = ?`;   
   db.all(sql3, [skill], (err, rows3) => {
     if (err) {
@@ -412,7 +411,7 @@ module.exports.addSkill = (req, res) => {
     }
     if (rows3.length==0){
       sql4 = `INSERT INTO Skills VALUES (?,?)`
-      db.all(sql4, [userID,skills], (err, rows4) => {
+      db.all(sql4, [skill,userID], (err, rows4) => {
         if (err) {
           throw err;
         }
@@ -436,9 +435,69 @@ module.exports.addSkill = (req, res) => {
 
   });
 
+}
 
+module.exports.removeSkill = (req, res) => {
+  //get input
+  userID = req.params.id
+  if (req.body.skill === undefined) {
+    res
+      .status(500)
+      .json({ error: "Missing credentials", success: false });
+  }
+  skill = req.body.skill
 
+ //remove skill to user table
+  sql1 = `SELECT skills FROM ${userType(userID)} WHERE user_id = ?`;   
+  db.all(sql1, [userID], (err, rows1) => {
+    if (err) {
+      throw err;
+    }
+    if (rows1.length==0){
+    res
+      .status(400)
+      .json({ error: "User not found!", success: false });
+    }
+    
+    skills = rows1[0]['skills']
+    skills = removeFromArray(stringToArray(skills),skill)
+    
+    sql2 = `UPDATE '${userType(userID)}' SET skills = ? WHERE user_id = ?`
+    db.all(sql2, [skills,userID], (err, rows2) => {
+      if (err) {
+        throw err;
+      }
+    });
 
+  });
+
+  
+  //remove user to skill table
+  sql3 = `SELECT users FROM Skills WHERE skills = ?`;   
+  db.all(sql3, [skill], (err, rows3) => {
+    if (err) {
+      throw err;
+    }
+    if (rows3.length==0){
+      res.json({ success: true, rows: "Skill not found !" });
+    } else {
+      users = rows3[0]['users']
+      console.log(users)  
+      console.log(userID)
+      console.log(removeFromArray(stringToArray(users),userID))
+      users = removeFromArray(stringToArray(users),userID)
+      
+      sql5 = `UPDATE Skills SET users = ? WHERE skills = ?` 
+      db.all(sql5, [users,skill], (err, rows5) => {
+        if (err) {
+          throw err;
+        }
+        res.json({ success: true, rows: "remove user successfully" });
+      });
+    }
+    
+
+  });
 
 }
 
@@ -646,4 +705,22 @@ function userType(id){
       id/=10
   if(Math.floor(id)==1) return "Mentors"
   return "Mentees"
+}
+
+function stringToArray(string){
+  return string.split(",")
+}
+
+function removeFromArray(array,rem){
+  string = ""
+  for(i=0; i <array.length;i++){
+    if(array[i]==rem){
+      continue;
+    }
+    string += array[i]+","
+  }
+  if(string.charAt(string.length-1)==","){
+    string=string.substring(0, string.length - 1)
+  }
+  return string
 }

@@ -38,6 +38,7 @@ router.put("/:id/hobbies", controller.updateHobbiesById);
 //get skill by user_id 
 router.get("/:id/skills", controller.getSkillbyId);
 router.put("/:id/addskill", controller.addSkill);
+router.put("/:id/removeskill", controller.removeSkill);
 
 //get users by skill 
 router.get("/skill/:skill", controller.getUsersbySkill);
