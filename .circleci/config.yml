@@ -40,11 +40,11 @@ jobs:
 
       # send converage to coveralls
       - run: 
-        name: Upload Coverage to Coveralls
-        command: cat ./coverage/lcov.info | coveralls
-        when: on_fail
+          name: Upload Coverage to Coveralls
+          command: cat ./coverage/lcov.info | coveralls
+          when: on_fail
       
       # send converage to coveralls
       - run: 
-        name: Upload Coverage to Coveralls
-        command: cat ./coverage/lcov.info | coveralls
+          name: Upload Coverage to Coveralls
+          command: cat ./coverage/lcov.info | coveralls
