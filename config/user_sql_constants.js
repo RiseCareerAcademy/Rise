@@ -68,7 +68,7 @@ module.exports.create_messages_table_sql = function()  {
 
 module.exports.create_skills_table_sql = function()  {
     sql = `CREATE TABLE IF NOT EXISTS Skills (
-        skill varchar(255) NOT NULL UNIQUE,
+        skills varchar(255) NOT NULL UNIQUE,
         users varchar(255) NOT NULL
     );`
     return sql; 

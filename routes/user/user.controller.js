@@ -258,14 +258,15 @@ db.all(sql, [], (err, rows) => {
 
 //get all skills
 module.exports.getAllSkills = (req, res) => {
-  sql = `SELECT * FROM Skills;`;   
-
-db.all(sql, [], (err, rows) => {
-  if (err) {
-    throw err;
-  }
-  res.json({ success: true, rows: rows });
-});
+  console.log('get all skills')
+  sql = `SELECT * FROM Skills`;   
+  console.log(sql)
+  db.all(sql, [], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+    res.json({ success: true, rows: rows });
+  });
 }
 
 //get user by ID
@@ -355,7 +356,7 @@ module.exports.getSkillbyId = (req, res) => {
 module.exports.getUsersbySkill = (req, res) => {
   
   skill = req.params.skill
-  sql = `SELECT users FROM Skills WHERE skill = ?`;    
+  sql = `SELECT users FROM Skills WHERE skills = ?`;    
   
   db.all(sql, [skill], (err, rows) => {
     if (err) {
@@ -367,18 +368,78 @@ module.exports.getUsersbySkill = (req, res) => {
 }
 
 module.exports.addSkill = (req, res) => {
-  userID = req.params.user_id
+  //get input
+  userID = req.params.id
+  if (req.body.skill === undefined) {
+    res
+      .status(500)
+      .json({ error: "Missing credentials", success: false });
+  }
   skill = req.body.skill
-  sql = `SELECT skills FROM '${userType(userID)}' WHERE user_id = ?`;   
-  console.log(sql) 
-  db.all(sql, [userID], (err, rows) => {
+
+ 
+  sql1 = `SELECT skills FROM ${userType(userID)} WHERE user_id = ?`;   
+  db.all(sql1, [userID], (err, rows1) => {
     if (err) {
       throw err;
     }
-    console.log(rows)
-    // res.json({ success: true, rows: rows });
+    if (rows1.length==0){
+    res
+      .status(400)
+      .json({ error: "User not found!", success: false });
+    }
+    //add skill to user table
+    skills = rows1[0]['skills']
+    if (skills.split(",").indexOf(skill) == -1) {
+      skills = skills + "," + skill
+    }
+    
+    sql2 = `UPDATE '${userType(userID)}' SET skills = ? WHERE user_id = ?`
+    db.all(sql2, [skills,userID], (err, rows2) => {
+      if (err) {
+        throw err;
+      }
+    });
+
   });
+
   
+  //add skill to user table
+  sql3 = `SELECT users FROM Skills WHERE skills = ?`;   
+  db.all(sql3, [skill], (err, rows3) => {
+    if (err) {
+      throw err;
+    }
+    if (rows3.length==0){
+      sql4 = `INSERT INTO Skills VALUES (?,?)`
+      db.all(sql4, [userID,skills], (err, rows4) => {
+        if (err) {
+          throw err;
+        }
+        res.json({ success: true, rows: "insert users into new skill" });
+      });
+    } else {
+      users = rows3[0]['users']
+      if (users.split(",").indexOf(userID) == -1) {
+        users = users + "," + userID
+      }
+      
+      sql5 = `UPDATE Skills SET users = ? WHERE skills = ?` 
+      db.all(sql5, [userID,skills], (err, rows5) => {
+        if (err) {
+          throw err;
+        }
+        res.json({ success: true, rows: "add user to existed users list" });
+      });
+    }
+    
+
+  });
+
+
+
+
+
 }
 
 module.exports.getProfilePic = (req, res) => {
