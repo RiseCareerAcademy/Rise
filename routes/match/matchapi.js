@@ -18,9 +18,7 @@ router.get('/userid/:id',controller.getMatchByUserId);
 
 //get a rating by match id 
 router.get('/rating/:matchid',controller.getRatingByMatchId);
-
 //get a rating by mentor id 
 router.get('/rating/userid/:userid',controller.getRatingByMentorId);
-
 //add a rating in a new match 
 router.put("/rating/:matchid/:rating",controller.addRating);
