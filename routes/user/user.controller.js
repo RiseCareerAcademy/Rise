@@ -682,13 +682,6 @@ module.exports.updateProfession = (req, res) => {
     
 
   });
-
-  
-
-
-
-
-  
   
   
   };//end of updatedProfession
@@ -805,6 +798,7 @@ module.exports.login = (req, res) => {
 
 module.exports.getMessages = (req, res) => {
   sql = `SELECT * FROM Messages;`
+  console.log("here")
   db.all(sql, [], (err, rows) => {
   if (err) {
     throw err;

@@ -4,10 +4,10 @@ const controller = require("./user.controller.js");
 const router = express.Router();
 module.exports.router = router;
 
-//CREATE all 5 tables
+//CREATE all 7 tables
 router.post('/tables',controller.createTables);
 
-//Delete all 5 tables
+//Delete all 7 tables
 router.delete('/tables',controller.deletetable);  
 
 //POST request API for /user
@@ -75,9 +75,9 @@ router.post("/login",controller.login);
 router.post('/message', controller.postMessage);
 
 //get all messages 
-router.get('/message', controller.getMessages);
+router.get('/message/all', controller.getMessages);
 
-//get message by message id 
+//get latest message by message id 
 router.get('/message/:matchid', controller.getLatestMessageById);
 
 //get all message by message id 
