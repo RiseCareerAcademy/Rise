@@ -35,8 +35,8 @@ jobs:
         
       # run tests!
       - run: 
-        name: Run Jest Tests
-        command: npm run test:coverage
+          name: Run Jest Tests
+          command: npm run test:coverage
 
       # send converage to coveralls
       - run: 
