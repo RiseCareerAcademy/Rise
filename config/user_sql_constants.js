@@ -70,6 +70,7 @@ module.exports.create_skills_table_sql = function()  {
     sql = `CREATE TABLE IF NOT EXISTS Skills (
         skills varchar(255) NOT NULL UNIQUE,
         users varchar(255) NOT NULL
+        
     );`
     return sql; 
 }

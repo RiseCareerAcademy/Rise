@@ -588,18 +588,78 @@ module.exports.getProfession = (req, res) => {
 }
 
 module.exports.updateProfession = (req, res) => {
-  userID = req.params.id;
-  prof = req.params.profession;
-  sql = `UPDATE '${userType(userID)}' SET profession = ? WHERE user_id = ?`;    //starts with 1
-  
-  db.all(sql, [prof,userID], (err, rows) => {
+  //get input
+  userID = req.params.id
+  if (req.body.profession === undefined) {
+    res
+      .status(500)
+      .json({ error: "Missing credentials", success: false });
+  }
+  //new profession 
+  profession = req.body.profession
+  old_profession =""
+  //get old profession to delete 
+  sql = `Select profession from '${userType(userID)}' WHERE user_id = ?`;
+  db.all(sql, [userID], (err, rows) => {
     if (err) {
       throw err;
     }
-    res.json({ success: true, rows: rows });
+    old_profession = rows[0]['profession']
+  });
+  console.log(old_profession)
+     
+    //add profession to user tbale 
+    sql1 = `UPDATE '${userType(userID)}' SET profession = ? WHERE user_id = ?`;
+    db.all(sql1, [profession,userID], (err, rows1) => {
+    if (err) {
+      throw err;
+    }
+  });
+
+     //remove user from old profession in profession table 
+     sql2 = `UPDATE Profession SET user_id = "" WHERE profession = ? `
+     db.all(sql2, [old_profession], (err, rows2) => {
+       if (err) {
+         throw err;
+       }
+     });  
+
+    //add user to profession table
+  sql3 = `SELECT users FROM Profession WHERE profession = ?`;   
+  db.all(sql3, [profession], (err, rows3) => {
+    if (err) {
+      throw err;
+    }
+    if (rows3.length==0){
+      sql4 = `INSERT INTO Profession VALUES (?,?)`
+      db.all(sql4, [profession,userID], (err, rows4) => {
+        if (err) {
+          throw err;
+        }
+        res.json({ success: true, rows: "insert users into new profession" });
+      });
+    } 
+    else {
+      users = rows3[0]['users']
+      if (users.split(",").indexOf(userID) == -1) {
+        users = users + "," + userID
+      }
+      
+      sql5 = `UPDATE Profession SET users = ? WHERE profession = ?` 
+      db.all(sql5, [userID,profession], (err, rows5) => {
+        if (err) {
+          throw err;
+        }
+        res.json({ success: true, rows: "updated new profession" });
+      });
+    }
   });
   
-}
+  
+  
+  };
+
+
 
 module.exports.getBio = (req, res) => {
   userID = req.params.id;
