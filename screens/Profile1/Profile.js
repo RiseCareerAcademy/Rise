@@ -178,6 +178,17 @@ class Contact extends Component {
       {
         text: "OK",
         onPress: aboutMe => console.log("OK Pressed, new about me: " + aboutMe)
+        //add bio to db
+        fetch('http://'+global.api+'/user/10101/bio/' + aboutMe, {
+        method: 'PUT',
+      })//fetch
+      .then((response) => response.json())
+      .then((responseJson) => {
+        console.log(JSON.stringify(responseJson));
+        })
+      .catch((error) => {
+        console.error("error is " + error);
+      });
       }
     ]);
   };
