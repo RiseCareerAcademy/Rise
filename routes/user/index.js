@@ -1,5 +1,19 @@
 const express = require("express");
 const controller = require("./user.controller.js");
+const multer = require("multer");
+const path = require('path');
+
+const storage = multer.diskStorage({
+	destination: path.resolve('./uploads/'),
+	filename: function(req, file, cb){
+	   cb(null, file.originalname);
+	}
+  });
+  
+const upload = multer({
+	storage: storage,
+	limits: { fileSize: 10000000 },
+});
 
 const router = express.Router();
 module.exports.router = router;
@@ -11,15 +25,17 @@ router.post('/tables',controller.createTables);
 router.delete('/tables',controller.deletetable);
 
 // POST request API for /user
-router.post('/mentor', controller.postMentors);
-router.post('/mentee', controller.postMentees);
-router.post('/password', controller.postPasswords);
+router.post('/mentor', controller.postMentor);
+router.post('/mentee', controller.postMentee);
+router.post('/password', controller.postPassword);
+router.post('/skill', controller.postSkill);
 
 
 // GET request API for /user 
-router.get('/mentor',controller.getAllMentors);
-router.get('/mentee',controller.getAllMentees);  
-router.get('/password',controller.getAllPasswords);  
+router.get('/mentors',controller.getAllMentors);
+router.get('/mentees',controller.getAllMentees);  
+router.get('/passwords',controller.getAllPasswords);  
+router.get('/skills',controller.getAllSkills);  
 
 
 
@@ -43,20 +59,23 @@ router.put("/:id/hobbies/:hobby", controller.updateHobbiesById);
 router.delete("/:id/hobbies", controller.deleteHobbiesById);
 
 
-//get skill by id 
+//get skill by user_id 
 router.get("/:id/skills", controller.getSkillbyId);
 
-//add skill by id 
-router.put("/:id/skills/:skill", controller.addSkill);
+//update skill by user_id 
+router.put("/:id/skills", controller.updateSkill);
 
-//delete skill by id 
-//router.delete("/:id/:skill", controller.deleteSkill);
+//get users by skill 
+router.get("/skill/:skill", controller.getUsersbySkill);
 
+//update users by skills 
+router.put("/skill/:skill", controller.updateUsersbySkill);
 
 //get profile pic by id 
 router.get("/:id/profilepic", controller.getProfilePic);
 //update profile pic by id 
-router.put("/:id/profilepic/:profilepic", controller.updateProfilePic);
+router.put("/:id/profilepic", controller.updateProfilePic);
+router.post("/:id/profilepic", upload.single('photo'), controller.postProfilePic);
 
 
 //get profession/area of study 

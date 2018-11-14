@@ -86,5 +86,5 @@ export default createBottomTabNavigator({
   ProfileStack,
   SuggestedMatchStack,
   MessageStack,
-  SettingStack
+  SettingStack,
 });

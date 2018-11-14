@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { ScrollView, StyleSheet, View, SectionList, Text } from "react-native";
-//import {NetworkInfo} from 'react-native-network-info';
+import Expo from "expo";
 
 export default class MatchesScreen extends Component {
   state = {
@@ -9,7 +9,7 @@ export default class MatchesScreen extends Component {
     //array of matches with respective scores
     matches: [],
     scores: [],
-    mentorsFromServer:[]
+    mentorsFromServer: []
   };
 
   constructor(props) {
@@ -30,35 +30,68 @@ export default class MatchesScreen extends Component {
 
     
 
-    
-    //replace 10.141.17.61 with your own ip address
-    //home ip: 192.168.0.107
-    fetch('http://192.168.0.107:8000/user/mentor', {
+    const { manifest } = Expo.Constants;
+    const api = (typeof manifest.packagerOpts === `object`) && manifest.packagerOpts.dev
+      ? manifest.debuggerHost.split(`:`).shift().concat(`:8000`)
+      : `api.example.com`;
+    console.log(api);
+    fetch('http://' + api + '/user/mentor', {
       method: 'GET'
     })
-    .then((response) => response.json())
-    .then((responseJson) => {
+      .then((response) => response.json())
+      .then((responseJson) => {
         //TO DO: add mentors name and skills in array
-        
-        for (var i = 0; i < responseJson.rows.length; i++){
-            var curr_row = responseJson.rows[i];
-            mentors.push([curr_row.first_name])
-            mentors.push([curr_row.occupation])
-            mentors.push( curr_row.skills);
-       }
-      //console.log(mentors.join('\n'))
-      const { desiredSkills, desiredProfessions } = this.state;
-      const { scores, matches } = this.match(desiredSkills, desiredProfessions, mentors);
-      this.setState({scores: scores});
-      this.setState({matches: matches});
-    })
-    .catch((error) => {
-      console.log("error is: " + error);
-    });
+
+        for (var i = 0; i < responseJson.rows.length; i++) {
+          var curr_row = responseJson.rows[i];
+          mentors.push([curr_row.first_name])
+          mentors.push([curr_row.occupation])
+          mentors.push(curr_row.skills);
+          console.log(curr_row.skills.split(','))
+        }
+        const { desiredSkills, desiredProfessions } = this.state;
+        const { scores, matches } = this.match(desiredSkills, desiredProfessions, mentors);
+        this.setState({ scores: scores });
+        this.setState({ matches: matches });
+      })
+      .catch((error) => {
+        console.log("error is: " + error);
+      });
+  }
+
+  //add skills to desiredSkills
+  addMenteeSkill = (desiredSkills, additionalSkill) => {
+    if (desiredSkills.split(",").indexOf(additionalSkill) == -1) {
+      desiredSkills = desiredSkills + "," + additionalSkill
+    }
+  }
+
+  //delete skills from desiredSkills
+  deleteMenteeSkill = (desiredSkills, skill) => {
+    if (desiredSkills.split(",").indexOf(skill) != -1) {
+      const firstHalf = desiredSkills.slice(0, desiredSkills.indexOf(skill))
+      const secondHalf = desiredSkills.slice(desiredSkills.indexOf(skill) + 1 + skill.length)
+      desiredSkills = firstHalf + secondHalf
+    }
   }
 
   //match function
   match = (desiredSkills, desiredProfessions, fakeData) => {
+    // if (! global.Buffer) {
+    //   global.Buffer = require("buffer").Buffer;
+    // }
+    // var findMatching = require("bipartite-matching")
+    // console.log(findMatching(5, 5, [
+    //   [0, 0],
+    //   [0, 1],
+    //   [1, 0],
+    //   [2, 1],
+    //   [2, 2],
+    //   [3, 2],
+    //   [3, 3],
+    //   [3, 4],
+    //   [4, 4]
+    // ]))
     const matches = [];
     const scores = [];
 
