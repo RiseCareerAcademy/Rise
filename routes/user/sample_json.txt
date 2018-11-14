@@ -49,7 +49,7 @@
     "from_id": 20101,
     "message_body": "this is a message",
     "timestamp": "2013-10-07 08:23:19.120",
-    "match_id": 342343
+    "match_eid": 342343
 }
 
 //SKILLS 

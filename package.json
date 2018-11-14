@@ -49,9 +49,6 @@
     "react-native-elements": "^0.19.1",
     "react-native-sqlite-storage": "^3.3.7",
     "react-navigation": "^2.18.0",
-<<<<<<< HEAD
-    "sqlite3": "^4.0.4"
-=======
     "react-redux": "^5.1.0",
     "redux": "^4.0.1",
     "redux-logger": "^3.0.6",
@@ -59,7 +56,6 @@
     "redux-saga": "^0.16.2",
     "sqlite3": "^4.0.3",
     "uuid": "^3.3.2"
->>>>>>> 4f083a6a7b5266bb17c301c799b1f7e9c66bcb55
   },
   "devDependencies": {
     "babel-eslint": "^10.0.1",

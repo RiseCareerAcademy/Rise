@@ -11,7 +11,11 @@ const Message = props => {
 
   return (
     <TouchableOpacity
-      onPress={() => navigate("Conversation")}
+      onPress={() => navigate("Conversation" , {
+        toUser: props.toUser,
+        matchId: props.match,
+        title: props.fromUser
+      }) }
       activeOpacity={0.7}
       style={style}
     >
@@ -27,7 +31,7 @@ const Message = props => {
         </View>
         <View style={styles.timeCol}>
           {/* <Text>{props.dateTime}</Text> */}
-          <Text style={styles.date}>{"Yesterday"}</Text>
+          <Text style={styles.date}>{props.dateTime}</Text>
         </View>
       </View>
       <View style={styles.bottomRow}>

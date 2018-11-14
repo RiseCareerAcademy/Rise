@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Text, TouchableOpacity, TextInput, StyleSheet } from "react-native";
+import { Alert, View, Text, TouchableOpacity, TextInput, StyleSheet, Button, ScrollView} from "react-native";
 import {Item,Input} from "native-base";
 import { MessageShort } from "../components/view";
 
@@ -7,29 +7,126 @@ class Conversation extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      messages: []
+      text: '',
+      messages: [],
+      matchId: props.navigation.state.params.matchId,
+      toUser: props.navigation.state.params.toUser,
+      fromUser: props.navigation.state.params.title
     };
+
+    console.log("matchId: " + this.state.matchId)
+    this.onPressButton = this.onPressButton.bind(this);
+    this.loadMessages()
   }
 
+  static navigationOptions = ({ navigation }) => ({
+    title: `${navigation.state.params.title}`,
+  });
+
+  sendMessages() {
+        console.log("messages")
+        var body = { 
+          message_id: Math.floor(Math.random()*(10000)),
+          to_id: this.state.toUser, 
+          from_id: this.state.fromUser,
+          message_body: this.state.text,
+          timestamp: "2014-10-07 08:23:19.120",
+          match_id: 1000,
+        }
+        console.log(JSON.stringify(body))
+        const { manifest } = Expo.Constants;
+        const api = (typeof manifest.packagerOpts === `object`) && manifest.packagerOpts.dev
+          ? manifest.debuggerHost.split(`:`).shift().concat(`:8000`)
+          : `api.example.com`;
+        console.log(api);
+        fetch('http://' + api + '/message', {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(body),
+          }).then((response) => response.json())
+            .then((responseJson) => {
+              console.log(responseJson)
+              this.loadMessages()
+              return responseJson.success;
+            })
+            .catch((error) => {
+              console.error(error);
+          });
+  }
+
+  loadMessages() {
+    var recieved = [];
+
+    const { manifest } = Expo.Constants;
+        const api = (typeof manifest.packagerOpts === `object`) && manifest.packagerOpts.dev
+          ? manifest.debuggerHost.split(`:`).shift().concat(`:8000`)
+          : `api.example.com`;
+        console.log(api);
+        fetch('http://' + api + '/message/all/' + this.state.matchId, {
+          method: 'GET'
+        })
+        .then((response) => response.json())
+        .then((responseJson) => {
+          //TO DO: add mentors name and skills in array
+          console.log(responseJson)
+  
+          for (var i = 0; i < responseJson.rows.length; i++) {
+            var curr_row = responseJson.rows[i];
+            recieved.push({fromUser: curr_row.from_id, toUser: curr_row.to_id, message: curr_row.message_body, dateTime: curr_row.timestamp, match: curr_row.match_id})
+           // console.log(curr_row.skills.split(','))
+          }
+  
+          console.log (recieved)
+          this.setState({messages: recieved})
+  
+        })
+        .catch((error) => {
+          console.log("error is: " + error);
+        });  
+  }
+
+  onPressButton() {
+    // Put message in database
+    console.log("pressed")
+    this.sendMessages()
+
+    // clear text input
+
+
+    //Alert.alert('You tapped the button!')
+  }
+
+
   render() {
-    const messages = [{"toUser":"Ryan2","fromUser":"Dan","message":"Varun is really nice.","dateTime":"2018-10-29T03:19:50.594Z"},
-        {"toUser":"Ryan3","fromUser":"Me","message":"I think we'll get an A","dateTime":"2018-10-29T03:19:50.594Z"},
-        {"toUser":"Ryan4","fromUser":"Rita","message":"The Milwaukee Bucks are undefeated through seven games, making them the only remaining unbeaten team in the NBA. Malcolm Brogdon, a former rookie of the year and a key part of the team's starting unit, is hitting his stride as one of the team's many dynamic, play- and shot-making options. Everything's going well in Milwaukee for the hometown team, which will look to continue its winning ways against the Boston Celtics at 7 p.m. Thursday at TD Garden.","dateTime":"2018-10-29T03:19:50.594Z"}];
-       
 
     return (
-      <View>
-        {messages.map((message, i) => {
-          return <MessageShort key={i} {...message} />;
-        })}
-        <View>
-          <TextInput style = {styles.input}
+      <View style={{flex: 1}}>
+        <ScrollView ref={ref => this.scrollView = ref} onContentSizeChange={(contentWidth, contentHeight)=>{this.scrollView.scrollToEnd({animated: false}); }}>>
+          {this.state.messages.map((message, i) => {
+            return <MessageShort key={i} {...message} />;
+          })}
+        </ScrollView>
+        <View style={{flexDirection:'row', width: window.width, marginBottom: 10, margin: 10, padding:4, alignItems:'center', justifyContent:'flex-end', borderWidth:4, borderColor:'#888', borderRadius:10, backgroundColor:'#FFF'}}>
+          <View style={{flex:4}}>
+          <TextInput ref={input => { this.textInput = input }} style = {styles.input}
           underlineColorAndroid = "transparent"
           placeholder = "Type here"
           placeholderTextColor = "#D3D3D3"
           autoCapitalize = "none"
           backgroundColor = '#F5FCFF'
-          onChangeText = {this.handleEmail}/>
+          onChangeText={(text) => this.setState({text})}/>
+          </View>
+          <View style={{flex:1}}>
+          <Button
+                onPress={() => this.onPressButton()}
+                title="Send"
+                color="#841584"
+                accessibilityLabel="Learn more about this purple button"
+              />
+          </View>
         </View>
       </View>
       
