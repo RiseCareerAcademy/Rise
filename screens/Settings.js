@@ -6,6 +6,9 @@ import {
   TextInput,
   StyleSheet
 } from "react-native";
+import { connect } from 'react-redux';
+
+import { logoutUser } from '../actions/user.actions';
 
 class Inputs extends Component {
   state = {
@@ -23,6 +26,11 @@ class Inputs extends Component {
   handleConfirmedPassword = text => {
     this.setState({ confirmedPassword: text });
   };
+
+  handleLogout = () => {
+    this.props.logoutUser();
+  }
+
   validate = (email, password, confirmedPassword) => {
     // we are going to store errors for all fields
     // in a signle array
@@ -64,7 +72,9 @@ class Inputs extends Component {
     }
   }
 
+
   render() {
+    const { navigate } = this.props.navigation;
     return (
       <View style={styles.container}>
         <TextInput
@@ -106,11 +116,23 @@ class Inputs extends Component {
         >
           <Text style={styles.submitButtonText}> Save </Text>
         </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.submitButton}
+          onPress={this.handleLogout}
+        >
+          <Text style={styles.submitButtonText}> Logout </Text>
+        </TouchableOpacity>
       </View>
     );
   }
 }
-export default Inputs;
+
+const mapStateToProps = () => ({});
+
+export default connect(mapStateToProps, {
+  logoutUser,
+})(Inputs);
 
 const styles = StyleSheet.create({
   container: {
