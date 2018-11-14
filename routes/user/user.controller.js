@@ -117,16 +117,29 @@ module.exports.postMentor = (req, res) => {
     }
     user[field] = req.body[field];
   });
-  
-  sql = `INSERT INTO Mentors VALUES ('10000000000000'+'${date.getTime()}', ? , ?, ?, ?, ?, ?, ?, ?, ?, ?) `
+  //unique_id = 10000000000000+date.getTime()
+  console.log(unique_id)
+  sql = `INSERT INTO Mentors VALUES (?, ? , ?, ?, ?, ?, ?, ?, ?, ?, ?) `
   console.log(sql); 
-  
-  db.all(sql, [user.first_name,user.last_name,user.email_address,user.biography,user.zipcode,user.date_of_birth,user.profession,user.skills,user.profile_pic_URL,user.hobbies], (err, rows) => {
+  db.all(sql, [unique_id, user.first_name,user.last_name,user.email_address,user.biography,user.zipcode,user.date_of_birth,user.profession,user.skills,user.profile_pic_URL,user.hobbies], (err, rows) => {
+  if (err) {
+    throw err;
+  }
+});
+//add to skill table
+//1. query skills table to see if skill exists
+//2. if exists, add user to it 
+//3. it doesnt exist, create new skill and add user to it
+/*sql = `INSERT INTO Skills VALUES (?, ?) `
+console.log(sql);
+db.all(sql, [user.skill,unique_id], (err, rows) => {
   if (err) {
     throw err;
   }
   res.json({ success: true, rows: rows });
-});
+});*/
+
+
 }
 //create new mentee
 module.exports.postMentee = (req, res) => {
@@ -798,7 +811,7 @@ module.exports.login = (req, res) => {
 
 module.exports.getMessages = (req, res) => {
   sql = `SELECT * FROM Messages;`
-  console.log("here")
+  console.log(here)
   db.all(sql, [], (err, rows) => {
   if (err) {
     throw err;
