@@ -178,6 +178,7 @@ class Contact extends Component {
       {
         text: "OK",
         onPress: aboutMe => console.log("OK Pressed, new about me: " + aboutMe)
+        
       }
     ]);
   };
