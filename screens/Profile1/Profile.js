@@ -178,7 +178,24 @@ class Contact extends Component {
       {
         text: "OK",
         onPress: aboutMe => console.log("OK Pressed, new about me: " + aboutMe)
-        
+        fetch('http://'+global.api+'/user/10101/profilepic/', {
+        method: 'PUT',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+                //create unique match id, can get number of row in db + 1
+                "profilepic": JSON.stringify(result.uri)
+          }),
+      })//fetch
+      .then((response) => response.json())
+      .then((responseJson) => {
+        console.log(JSON.stringify(responseJson));
+        })
+      .catch((error) => {
+        console.error("error is " + error);
+      });
       }
     ]);
   };
