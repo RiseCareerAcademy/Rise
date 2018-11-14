@@ -4,7 +4,7 @@ import { AppLoading, Asset, Font, Icon } from "expo";
 import { PersistGate } from 'redux-persist/integration/react';
 import { Provider } from 'react-redux';
 
-import AppNavigator from "./navigation/AppNavigator";
+import { Navigator } from './navigation';
 import configureStore from "./configureStore";
 
 
@@ -35,7 +35,7 @@ export default class App extends React.Component {
           {/* <PersistGate loading={loading} persistor={persistor}> */}
             <View style={styles.container}>
               {Platform.OS === "ios" && <StatusBar barStyle="default" />}
-              <AppNavigator />
+              <Navigator />
             </View>
           {/* </PersistGate> */}
         </Provider>

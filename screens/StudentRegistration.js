@@ -41,16 +41,6 @@ export class MentorRegistration extends React.Component {
     zipcode: ""
   };
 
-  componentDidUpdate = prevProps => {
-    if (!prevProps.loggedIn && this.props.loggedIn) {
-      const resetAction = StackActions.reset({
-        index: 0,
-        actions: [NavigationActions.navigate({ routeName: "Main" })]
-      });
-      this.props.navigation.dispatch(resetAction);
-    }
-  };
-
   handleImagePickerPress = async () => {
     const { status: cameraPerm } = await Permissions.askAsync(
       Permissions.CAMERA
@@ -163,7 +153,7 @@ export class MentorRegistration extends React.Component {
 
     const mentee = {
       first_name: this.state.name,
-      last_name: "Doe",
+      last_name: this.state.lastName,
       email_address: this.state.email,
       biography: "hi",
       zipcode: this.state.zipcode,
