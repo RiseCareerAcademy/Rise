@@ -16,26 +16,15 @@ export default class MatchesScreen extends Component {
     super(props);
     var mentors = [];
     
-    
-    // require module
-    //var NetworkInfo = require('react-native-network-info');
-
-    // Get Local IP
-    //DeviceInfo.getIPAddress().then(ip => {
-      // "92.168.32.44"
-     // console.log(ip);
-    //});
-    // require module
-    //var NetworkInfo = require('react-native-network-info');
-
+  
     
 
     const { manifest } = Expo.Constants;
-    const api = (typeof manifest.packagerOpts === `object`) && manifest.packagerOpts.dev
+    global.api = (typeof manifest.packagerOpts === `object`) && manifest.packagerOpts.dev
       ? manifest.debuggerHost.split(`:`).shift().concat(`:8000`)
       : `api.example.com`;
-    console.log(api);
-    fetch('http://' + api + '/user/mentor', {
+    
+    fetch('http://' + global.api + '/user/mentor', {
       method: 'GET'
     })
       .then((response) => response.json())
@@ -44,6 +33,8 @@ export default class MatchesScreen extends Component {
 
         for (var i = 0; i < responseJson.rows.length; i++) {
           var curr_row = responseJson.rows[i];
+          //we need to get user id of these mentors but 
+          //id is no longer a field
           mentors.push([curr_row.first_name])
           mentors.push([curr_row.occupation])
           mentors.push(curr_row.skills);
@@ -77,21 +68,6 @@ export default class MatchesScreen extends Component {
 
   //match function
   match = (desiredSkills, desiredProfessions, fakeData) => {
-    // if (! global.Buffer) {
-    //   global.Buffer = require("buffer").Buffer;
-    // }
-    // var findMatching = require("bipartite-matching")
-    // console.log(findMatching(5, 5, [
-    //   [0, 0],
-    //   [0, 1],
-    //   [1, 0],
-    //   [2, 1],
-    //   [2, 2],
-    //   [3, 2],
-    //   [3, 3],
-    //   [3, 4],
-    //   [4, 4]
-    // ]))
     const matches = [];
     const scores = [];
 
@@ -139,6 +115,30 @@ export default class MatchesScreen extends Component {
         }
       }
     }
+
+
+
+    fetch('http://' + global.api + '/match', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          //need to get match id , mentor, and mentee id
+          "match_id": 67844,
+          "mentor_id": 10101, 
+          "mentee_id": 20101
+              
+        }),
+    })
+      .then((response) => response.json())
+      .then((responseJson) => {
+        console.log(responseJson)
+      })
+      .catch((error) => {
+        console.log("error is: " + error);
+      });
 
     return { scores, matches };
   }
