@@ -18,83 +18,82 @@ const upload = multer({
 const router = express.Router();
 module.exports.router = router;
 
-//CREATE all five tables
+//CREATE all 7 tables
 router.post('/tables',controller.createTables);
 
-//delete table
-router.delete('/tables',controller.deletetable);
+//Delete all 7 tables
+router.delete('/tables',controller.deletetable);  
 
-// POST request API for /user
+//POST request API for /user
 router.post('/mentor', controller.postMentor);
 router.post('/mentee', controller.postMentee);
 router.post('/password', controller.postPassword);
 router.post('/skill', controller.postSkill);
+router.post('/profession', controller.postProfession);
 
-
-// GET request API for /user 
+//GET request API for /user 
 router.get('/mentors',controller.getAllMentors);
 router.get('/mentees',controller.getAllMentees);  
 router.get('/passwords',controller.getAllPasswords);  
 router.get('/skills',controller.getAllSkills);  
-
-
-
+router.get('/professions',controller.getAllProfessions);  
 //get user by id
 router.get("/:id", controller.getUserById);
-
-//login in to check if id = email for account 
-router.post('/:id/email/:email',controller.checkEmail);
-
 
 //get email by id
 router.get("/:id/email", controller.getEmailById);
 //update email by id
-router.put("/:id/email/:email", controller.updateEmailById);
+router.put("/:id/email", controller.updateEmailById);
 
 //get hobbies by id
 router.get("/:id/hobbies", controller.getHobbiesById);
 //update hobbies by id
-router.put("/:id/hobbies/:hobby", controller.updateHobbiesById);
-//delete hobbies by id
-router.delete("/:id/hobbies", controller.deleteHobbiesById);
-
+router.put("/:id/hobbies", controller.updateHobbiesById);
 
 //get skill by user_id 
 router.get("/:id/skills", controller.getSkillbyId);
-
-//update skill by user_id 
-router.put("/:id/skills", controller.updateSkill);
+//add a new skill
+router.put("/:id/addskill", controller.addSkill);
+//remove a new skill 
+router.put("/:id/removeskill", controller.removeSkill);
 
 //get users by skill 
 router.get("/skill/:skill", controller.getUsersbySkill);
-
-//update users by skills 
-router.put("/skill/:skill", controller.updateUsersbySkill);
 
 //get profile pic by id 
 router.get("/:id/profilepic", controller.getProfilePic);
 //update profile pic by id 
 router.put("/:id/profilepic", controller.updateProfilePic);
-router.post("/:id/profilepic", upload.single('photo'), controller.postProfilePic);
-
 
 //get profession/area of study 
 router.get("/:id/profession", controller.getProfession);
 //update profession or area of study 
-router.put("/:id/profession/:profession", controller.updateProfession);
+router.put("/:id/profession/", controller.updateProfession);
 
 //get bio of study 
 router.get("/:id/bio", controller.getBio);
 //update bio 
-router.put("/:id/bio/:bio", controller.updateBio);
+router.put("/:id/bio", controller.updateBio);
 //delete bio
 router.delete("/:id/bio", controller.deleteBio);
 
 //update zipcode
 router.put("/:id/zipcode/:zipcode",controller.updateZipcode);
 
-
 //login using email/password
 router.post("/login",controller.login);
 
+//MESSAGE API
+
+//create a new message 
+router.post('/message', controller.postMessage);
+
+//get all messages 
+router.get('/message/all', controller.getMessages);
+
+//get latest message by message id 
+router.get('/message/:matchid', controller.getLatestMessageById);
+
+//get all message by message id 
+router.get('/message/all/:matchid', controller.getMessageChain);
 
