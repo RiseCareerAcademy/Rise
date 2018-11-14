@@ -1,6 +1,5 @@
 //MENTOR
 {
-    "user_id": 10101,
     "first_name": "mayank", 
     "last_name": "katwal",
     "email_address": "katwal@wisc.edu", 
@@ -16,7 +15,6 @@
 
 //MENTEE
 {
-    "user_id": 20101,
     "first_name": "mike", 
     "last_name": "john",
     "email_address": "mike@wisc.edu", 
