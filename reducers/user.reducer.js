@@ -1,4 +1,4 @@
-import { SET_USER, REGISTER_MENTEE, FAILED_REGISTER_MENTEE } from "../actions/user.actions";
+import { SET_USER, REGISTER_MENTEE, FAILED_REGISTER_MENTEE, LOGOUT_USER } from "../actions/user.actions";
 
 export const initialState = {
 	loggedIn: false,
@@ -25,6 +25,8 @@ export default (state = initialState, action) => {
 				registering: false,
 				error: action.error,
 			}
+		case LOGOUT_USER:
+			return initialState;
 		default:
 			return state;
 	}
