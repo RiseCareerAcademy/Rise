@@ -1,6 +1,8 @@
 import React, { Component} from "react";
 import { Card, Icon, SearchBar} from "react-native-elements";
 import { ImagePicker, Permissions } from "expo";
+
+
 import {
   Image,
   ImageBackground,
@@ -132,6 +134,11 @@ const styles = StyleSheet.create({
 class Contact extends Component {
   constructor(props) {
     super(props);
+    const { manifest } = Expo.Constants;
+    global.api= (typeof manifest.packagerOpts === `object`) && manifest.packagerOpts.dev
+    ? manifest.debuggerHost.split(`:`).shift().concat(`:8000`)
+    : `api.example.com`;
+    
 
     this.state = {
       telDS: new ListView.DataSource({
@@ -142,7 +149,10 @@ class Contact extends Component {
       }).cloneWithRows(this.props.emails),
       image: process.env.NODE_ENV === 'development' ? `http://${DOMAIN}/user/${this.props.user_id}/profilepic` : this.props.profile_pic_URL,
       image: this.props.profile_pic_URL,
-      text: ""
+      text: "",
+      aboutMe:"",
+      visible:false
+      
     };
   }
 
@@ -169,7 +179,7 @@ class Contact extends Component {
 
   //allows one to edit their about me section
   handleEditAboutMePress = async () => {
-    AlertIOS.prompt("Edit About Me", null, [
+    AlertIOS.prompt("Edit Bio", null, [
       {
         text: "Cancel",
         onPress: () => console.log("Cancel Pressed"),
@@ -177,16 +187,22 @@ class Contact extends Component {
       },
       {
         text: "OK",
-        onPress: aboutMe => console.log("OK Pressed, new about me: " + aboutMe)
-        fetch('http://'+global.api+'/user/10101/profilepic/', {
+        onPress: (aboutMe) => this.setState({aboutMe: aboutMe})
+          //console.log("OK Pressed, new about me: " + bio);
+          
+      }
+    ]);
+    
+      //need to get user id
+      fetch( 'http://' + global.api+'/user/11542202874628/bio', {
         method: 'PUT',
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-                //create unique match id, can get number of row in db + 1
-                "profilepic": JSON.stringify(result.uri)
+                "biography": JSON.stringify(this.aboutMe)
+                
           }),
       })//fetch
       .then((response) => response.json())
@@ -195,14 +211,12 @@ class Contact extends Component {
         })
       .catch((error) => {
         console.error("error is " + error);
-      });
-      }
-    ]);
+      })
   };
 
   //allows one to edit desired profession
   handleEditProfessionPress = async () => {
-    AlertIOS.prompt("Edit Profession", null, [
+    prompt("Edit Profession", null, [
       {
         text: "Cancel",
         onPress: () => console.log("Cancel Pressed"),
@@ -218,7 +232,7 @@ class Contact extends Component {
 
   //allows one to edit desired skills
   handleEditSkillsPress = async () => {
-    AlertIOS.prompt("Edit Skills", null, [
+    prompt("Edit Skills", null, [
       {
         text: "Cancel",
         onPress: () => console.log("Cancel Pressed"),
