@@ -6,7 +6,6 @@ const db = require('../../db');
 var date = new Date();
 
 const os = require('os');
-const ip = require('ip');
 const { getRandomArbitrary } = require('../../utils/getRandomArbitrary');
 
 
