@@ -16,7 +16,6 @@ const config = require('./config/database');
 
 const app = express(); //creates an instance of express
 const server = http.createServer(app); //creates an HTTP server instance
-require('express-ws')(app, server);
 
 // const db = require('./db');
 
