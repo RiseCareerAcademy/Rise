@@ -288,21 +288,7 @@ class Contact extends Component {
   onPressPlace = () => {
     console.log("place");
   };
-  /*
-  onPressTel = number => {
-    Linking.openURL(`tel://${number}`).catch(err => console.log("Error:", err));
-  };
-
-  onPressSms = () => {
-    console.log("sms");
-  };
-
-  onPressEmail = email => {
-    Linking.openURL(`mailto://${email}?subject=subject&body=body`).catch(err =>
-      console.log("Error:", err)
-    );
-  };*/
-
+  
   renderHeader = () => {
     const {
       avatar,
@@ -409,43 +395,6 @@ class Contact extends Component {
     );
   };
 
-  /*
-  renderTel = () => (
-    <ListView
-      contentContainerStyle={styles.telContainer}
-      dataSource={this.state.telDS}
-      renderRow={({ id, name, number }, _, k) => {
-        return (
-          <Tel
-            key={`tel-${id}`}
-            index={k}
-            name={name}
-            number={number}
-            onPressSms={this.onPressSms}
-            onPressTel={this.onPressTel}
-          />
-        );
-      }}
-    />
-  );
-
-  renderEmail = () => (
-    <ListView
-      contentContainerStyle={styles.emailContainer}
-      dataSource={this.state.emailDS}
-      renderRow={({ email, id, name }, _, k) => {
-        return (
-          <Email
-            key={`email-${id}`}
-            index={k}
-            name={name}
-            email={email}
-            onPressEmail={this.onPressEmail}
-          />
-        );
-      }}
-    />
-  );*/
 
   render() {
     return (
