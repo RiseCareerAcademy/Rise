@@ -10,10 +10,22 @@ import {
 } from "native-base";
 import {
   StyleSheet,
-  TouchableOpacity
+  TouchableOpacity,
+  View,
+  Image,
+  Button,
+  ActivityIndicator
 } from "react-native";
+import { connect } from "react-redux";
+import { ImagePicker, Permissions } from "expo";
+import { StackActions, NavigationActions } from "react-navigation";
 
-export default class MentorRegistration extends React.Component {
+import { registerMentee } from "../actions/user.actions";
+import { DOMAIN } from "../config/url";
+
+const uuidv1 = require("uuid/v1");
+
+export class MentorRegistration extends React.Component {
   state = {
     email: "",
     password: "",
@@ -22,9 +34,35 @@ export default class MentorRegistration extends React.Component {
     skills: "",
     profession: "",
     name: "",
-    lastName:"",
-    zipcode:""
+    city: "",
+    state: "",
+    image: null,
+    lastName: "",
+    zipcode: ""
   };
+
+  handleImagePickerPress = async () => {
+    const { status: cameraPerm } = await Permissions.askAsync(
+      Permissions.CAMERA
+    );
+    const { status: cameraRollPerm } = await Permissions.askAsync(
+      Permissions.CAMERA_ROLL
+    );
+
+    if (cameraPerm === "granted" && cameraRollPerm === "granted") {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        allowsEditing: true, //Android editing only
+        aspect: [4, 3] //Aspect ratio to maintain if user allowed to edit image
+        // base64: true,
+      });
+      // this.base64 = result.base64;
+
+      if (!result.cancelled) {
+        this.setState({ image: result.uri });
+      }
+    }
+  };
+
   handleEmail = text => {
     this.setState({ email: text });
   };
@@ -67,84 +105,96 @@ export default class MentorRegistration extends React.Component {
       skills.length == 0 ||
       profession.length == 0 ||
       name.length == 0 ||
-      email.length == 0 || 
+      email.length == 0 ||
       password.length == 0 ||
       confirmedPassword.length == 0 ||
       lastName.length == 0 ||
       zipcode.length == 0
     ) {
       errors.push("All fields must be filled");
-    }
-    else if (email.length < 5) {
+    } else if (email.length < 5) {
       errors.push("Email should be at least 5 charcters long");
-    }
-    else if (email.split("").filter(x => x === "@").length !== 1) {
+    } else if (email.split("").filter(x => x === "@").length !== 1) {
       errors.push("Email should contain one @");
-    }
-    else if (email.indexOf(".") === -1) {
+    } else if (email.indexOf(".") === -1) {
       errors.push("Email should contain at least one dot");
-    }
-    else if (password.length < 6) {
+    } else if (password.length < 6) {
       errors.push("Password should be at least 6 characters long");
-    }
-    else if (password != confirmedPassword) {
+    } else if (password != confirmedPassword) {
       errors.push(
         "Password doesn't match" + password + " " + confirmedPassword
       );
-    }
-    else if (zipcode.length != 5 && /^\d+$/.test(zipcode)){
+    } else if (zipcode.length != 5 && /^\d+$/.test(zipcode)) {
       errors.push("zipcode must contain only numbers and be 5 characters long");
     }
-    const { manifest } = Expo.Constants;
-    const api = (typeof manifest.packagerOpts === `object`) && manifest.packagerOpts.dev
-    ? manifest.debuggerHost.split(`:`).shift().concat(`:8000`)
-    : `api.example.com`;
-    fetch('http://'+api+'/user/mentee', {
-      method: 'POST',
-      headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-            "user_id": 10002,
-            "first_name": this.state.name, 
-            "last_name": "john",
-            "email_address": this.state.email, 
-            "biography": "hi",
-            "zipcode": this.state.zipcode, 
-            "date_of_birth": "2/24/1996",
-            "area_of_study": "Computer Science", 
-            "skills": this.state.skills,
-            "profile_pic_URL": "bill.com",
-            "hobbies": "testiing hobbies",
-      }),
-    })//fetch
-    .then((response) => response.json())
-    .then((responseJson) => {
-      console.log(JSON.stringify(responseJson));
-      })
-    .catch((error) => {
-      console.error("error is " + error);
-    });
-    const { navigate } = this.props.navigation;
-    if (errors.length == 0 /* && process.env.NODE_ENV !== 'development' */) {
-      navigate('Main');
+    if (errors.length == 0) {
+      // alert(errors);
       return true;
     } else {
-      alert(errors);
       return false;
     }
     
   };
 
+  handleSubmit = () => {
+    const valid = this.validate(
+      this.state.email,
+      this.state.password,
+      this.state.confirmedPassword,
+      this.state.skills,
+      this.state.profession,
+      this.state.name,
+      this.state.lastName,
+      this.state.zipcode
+    );
+    if (!valid && process.env.NODE_ENV !== "development") {
+      return;
+    }
+
+    const mentee = {
+      first_name: this.state.name,
+      last_name: this.state.lastName,
+      email_address: this.state.email,
+      biography: "hi",
+      zipcode: this.state.zipcode,
+      date_of_birth: "12/24/1996",
+      skills: this.state.skills,
+      hobbies: "fake hobbies",
+      area_of_study: this.state.profession,
+      password: this.state.password,
+      city: this.state.city,
+      state: this.state.state,
+      image: this.state.image,
+      uri: this.state.image
+    };
+
+    this.props.registerMentee(mentee);
+  };
 
   render() {
     return (
       <Container style={styles.container}>
         <Content>
+          <Text style={styles.error}>{!this.props.registering && this.props.error}</Text>
           <Form>
+            {this.state.image !== null && (
+              <Image
+                style={styles.userImage}
+                source={{
+                  uri: this.state.image
+                }}
+              />
+            )}
+
+            <View style={styles.uploadBtnContainer}>
+              <Button
+                onPress={this.handleImagePickerPress}
+                style={styles.uploadBtn}
+                title="Select image from Camera Roll"
+              />
+            </View>
             <Item stackedLabel>
-              <Label>Username</Label>
+              <Label>Email</Label>
               <Input
                 placeholder="Enter your email"
                 onChangeText={this.handleEmail}
@@ -201,24 +251,16 @@ export default class MentorRegistration extends React.Component {
             </Item>
           </Form>
         </Content>
-        <TouchableOpacity
-          style={styles.submitButton}
-          onPress={() => {
-            this.validate(
-              this.state.email,
-              this.state.password,
-              this.state.confirmedPassword,
-              this.state.skills,
-              this.state.profession,
-              this.state.name,
-              this.state.lastName,
-              this.state.zipcode
-            )
-          }
-          }
-        >
-          <Text style={styles.submitButtonText}> Next </Text>
-        </TouchableOpacity>
+        {this.props.registering ? (
+          <ActivityIndicator animating size="large" />
+        ) : (
+          <TouchableOpacity
+            style={styles.submitButton}
+            onPress={this.handleSubmit}
+          >
+            <Text style={styles.submitButtonText}> Next </Text>
+          </TouchableOpacity>
+        )}
       </Container>
     );
   }
@@ -227,6 +269,13 @@ export default class MentorRegistration extends React.Component {
 const styles = StyleSheet.create({
   container: {
     paddingTop: 23
+  },
+  userImage: {
+    borderRadius: 85,
+    borderWidth: 3,
+    height: 170,
+    marginBottom: 15,
+    width: 170
   },
   input: {
     margin: 15,
@@ -265,5 +314,25 @@ const styles = StyleSheet.create({
   },
   container: {
     margin: 5
+  },
+  uploadBtnContainer: {
+    margin: "auto"
+  },
+  uploadBtn: {
+    margin: "auto"
+  },
+  error: {
+    color: "red"
   }
 });
+
+const mapStateToProps = state => ({
+  loggedIn: state.user.loggedIn,
+  registering: state.user.registering,
+  error: state.user.error,
+});
+
+export default connect(
+  mapStateToProps,
+  { registerMentee }
+)(MentorRegistration);
