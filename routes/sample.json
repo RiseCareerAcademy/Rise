@@ -1,13 +1,12 @@
 //MENTOR
 {
-    "user_id": 10101,
     "first_name": "mayank", 
     "last_name": "katwal",
     "email_address": "katwal@wisc.edu", 
     "biography": "hi",
     "zipcode": "57585", 
     "date_of_birth": "12/24/1996",
-    "occupation": "Software Engineering", 
+    "profession": "Software Engineering", 
     "skills": "JAVA",
     "profile_pic_URL": "katwal",
     "hobbies": "hi"
@@ -16,13 +15,13 @@
 
 //MENTEE
 {
-    "user_id": 20101,
     "first_name": "mike", 
     "last_name": "john",
     "email_address": "mike@wisc.edu", 
     "biography": "hi",
     "zipcode": "57585", 
     "date_of_birth": "2/24/1996",
+    "profession": "Software Engineering", 
     "skills": "JAVA",
     "profile_pic_URL": "bill.com",
     "hobbies": "testiing hobbies"
@@ -30,29 +29,33 @@
 
 //PASSWORD
 {
-    "user_id": 20101,
     "email_address": "mike@wisc.edu", 
     "password": "testiing hobbies"
 }
 
 //MATCHES
 {
-    "match_id": 67844,
     "mentor_id": 10101, 
-    "mentee_id": 20101
+    "mentee_id": 20101,
+    "ratings": 4
 }
 
 //MESSAGES
 {
-    "message_id": 67844,
+    "match_id": 67844,
     "to_id": 10101, 
     "from_id": 20101,
-    "message": "this is a message",
-    "timestamp": "2013-10-07 08:23:19.120"
+    "message_body": "this is a message"
 }
 
 //SKILLS 
 {
     "skill": "Java",
+    "users": "10101001"
+}
+
+//PROFESSION  
+{
+    "profession": "Disco Dancing",
     "users": "10101001"
 }
