@@ -151,7 +151,8 @@ class Contact extends Component {
       image: this.props.profile_pic_URL,
       text: "",
       aboutMe:"",
-      visible:false
+      profession:"",
+      skill:"",
       
     };
   }
@@ -187,36 +188,35 @@ class Contact extends Component {
       },
       {
         text: "OK",
-        onPress: (aboutMe) => this.setState({aboutMe: aboutMe})
-          //console.log("OK Pressed, new about me: " + bio);
+        onPress: (aboutMe) => 
+        fetch( 'http://' + global.api+'/user/11542202874628/bio', {
+      method: 'PUT',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+              "biography": aboutMe
+        }),
+    })//fetch
+    .then((response) => response.json())
+    .then((responseJson) => {
+      this.setState({aboutMe:aboutMe})
+      console.log(JSON.stringify(responseJson));
+      console.log("this is the state: "+JSON.stringify(this.state.aboutMe));
+      })
+    .catch((error) => {
+      console.error("error is " + error);
+    })
           
       }
-    ]);
-    
-      //need to get user id
-      fetch( 'http://' + global.api+'/user/11542202874628/bio', {
-        method: 'PUT',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-                "biography": JSON.stringify(this.aboutMe)
-                
-          }),
-      })//fetch
-      .then((response) => response.json())
-      .then((responseJson) => {
-        console.log(JSON.stringify(responseJson));
-        })
-      .catch((error) => {
-        console.error("error is " + error);
-      })
+      
+    ]);   
   };
 
   //allows one to edit desired profession
   handleEditProfessionPress = async () => {
-    prompt("Edit Profession", null, [
+    AlertIOS.prompt("Edit Profession", null, [
       {
         text: "Cancel",
         onPress: () => console.log("Cancel Pressed"),
@@ -224,15 +224,34 @@ class Contact extends Component {
       },
       {
         text: "OK",
-        onPress: profession =>
-          console.log("OK Pressed, new about me: " + profession)
+        onPress: (profession) =>
+        fetch( 'http://' + global.api+'/user/11542202874628/profession', {
+          method: 'PUT',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                  "profession": profession
+            }),
+        })//fetch
+        .then((response) => response.json())
+        .then((responseJson) => {
+          this.setState({profession:profession})
+          console.log(JSON.stringify(responseJson));
+          console.log("this is the state: "+JSON.stringify(this.state.profession));
+          })
+        .catch((error) => {
+          console.error("error is " + error);
+        })
       }
     ]);
+    
   };
 
   //allows one to edit desired skills
   handleEditSkillsPress = async () => {
-    prompt("Edit Skills", null, [
+    AlertIOS.prompt("Edit Skills", null, [
       {
         text: "Cancel",
         onPress: () => console.log("Cancel Pressed"),
@@ -240,7 +259,26 @@ class Contact extends Component {
       },
       {
         text: "OK",
-        onPress: skills => console.log("OK Pressed, new about me: " + skills)
+        onPress: (skill) =>
+        fetch( 'http://' + global.api+'/user/11542202874628/addSkill', {
+          method: 'PUT',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                  "skill": skill
+            }),
+        })//fetch
+        .then((response) => response.json())
+        .then((responseJson) => {
+          this.setState({skill:skill})
+          console.log(JSON.stringify(responseJson));
+          console.log("this is the state: "+JSON.stringify(this.state.skill));
+          })
+        .catch((error) => {
+          console.error("error is " + error);
+        })
       }
     ]);
   };
@@ -344,7 +382,7 @@ class Contact extends Component {
             title="Edit"
           />
         </View>
-        <Text style={styles.userBioText}>{bio}</Text>
+        <Text style={styles.userBioText}>{this.state.aboutMe}</Text>
 
         <View style={{ flexDirection: "row" }}>
           <Text style={styles.userTitleText}>Desired Profession</Text>
@@ -354,7 +392,7 @@ class Contact extends Component {
             title="Edit"
           />
         </View>
-        <Text style={styles.userBioText}>{desiredProfession}</Text>
+        <Text style={styles.userBioText}>{this.state.profession}</Text>
 
         <View style={{ flexDirection: "row" }}>
           <Text style={styles.userTitleText}>Desired Skills</Text>
@@ -364,7 +402,7 @@ class Contact extends Component {
             title="Edit"
           />
         </View>
-        <Text style={styles.userBioText}>{desiredSkills}</Text>
+        <Text style={styles.userBioText}>{this.state.skill}</Text>
       </View>
     );
   };
