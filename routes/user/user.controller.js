@@ -408,7 +408,9 @@ module.exports.getSkillbyId = (req, res) => {
 module.exports.getUsersbySkill = (req, res) => {
   
   skill = req.params.skill
-  sql = `SELECT users FROM Skills WHERE skills = ?`;    
+
+  // TODO: Remove me after skills table implemented.
+  sql = `SELECT user_id FROM Mentors WHERE skills= ?;`;    
   
   db.all(sql, [skill], (err, rows) => {
     if (err) {
