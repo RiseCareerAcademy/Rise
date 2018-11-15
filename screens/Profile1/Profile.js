@@ -1,6 +1,8 @@
 import React, { Component} from "react";
 import { Card, Icon, SearchBar} from "react-native-elements";
 import { ImagePicker, Permissions } from "expo";
+
+
 import {
   Image,
   ImageBackground,
@@ -136,6 +138,7 @@ class Contact extends Component {
     global.api= (typeof manifest.packagerOpts === `object`) && manifest.packagerOpts.dev
     ? manifest.debuggerHost.split(`:`).shift().concat(`:8000`)
     : `api.example.com`;
+    
 
     this.state = {
       telDS: new ListView.DataSource({
@@ -146,7 +149,11 @@ class Contact extends Component {
       }).cloneWithRows(this.props.emails),
       image: process.env.NODE_ENV === 'development' ? `http://${DOMAIN}/user/${this.props.user_id}/profilepic` : this.props.profile_pic_URL,
       image: this.props.profile_pic_URL,
-      text: ""
+      text: "",
+      aboutMe:"",
+      profession:"",
+      skill:"",
+      
     };
   }
 
@@ -167,31 +174,13 @@ class Contact extends Component {
       if (!result.cancelled) {
         this.props.uploadProfilePic(result.uri, this.props.user_id);
         this.setState({ image: result.uri });
-        fetch('http://'+global.api+'/user/10101/profilepic/', {
-        method: 'PUT',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-                //create unique match id, can get number of row in db + 1
-                "profilepic": JSON.stringify(result.uri)
-          }),
-      })//fetch
-      .then((response) => response.json())
-      .then((responseJson) => {
-        console.log(JSON.stringify(responseJson));
-        })
-      .catch((error) => {
-        console.error("error is " + error);
-      });
       }
     }
   };
 
   //allows one to edit their about me section
   handleEditAboutMePress = async () => {
-    AlertIOS.prompt("Edit About Me", null, [
+    AlertIOS.prompt("Edit Bio", null, [
       {
         text: "Cancel",
         onPress: () => console.log("Cancel Pressed"),
@@ -199,9 +188,30 @@ class Contact extends Component {
       },
       {
         text: "OK",
-        onPress: aboutMe => console.log("OK Pressed, new about me: " + aboutMe)
+        onPress: (aboutMe) => 
+        fetch( 'http://' + global.api+'/user/11542202874628/bio', {
+      method: 'PUT',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+              "biography": aboutMe
+        }),
+    })//fetch
+    .then((response) => response.json())
+    .then((responseJson) => {
+      this.setState({aboutMe:aboutMe})
+      console.log(JSON.stringify(responseJson));
+      console.log("this is the state: "+JSON.stringify(this.state.aboutMe));
+      })
+    .catch((error) => {
+      console.error("error is " + error);
+    })
+          
       }
-    ]);
+      
+    ]);   
   };
 
   //allows one to edit desired profession
@@ -214,12 +224,33 @@ class Contact extends Component {
       },
       {
         text: "OK",
-        onPress: profession =>
-          console.log("OK Pressed, new about me: " + profession)
+        onPress: (profession) =>
+        fetch( 'http://' + global.api+'/user/11542202874628/profession', {
+          method: 'PUT',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                  "profession": profession
+            }),
+        })//fetch
+        .then((response) => response.json())
+        .then((responseJson) => {
+          this.setState({profession:profession})
+          console.log(JSON.stringify(responseJson));
+          console.log("this is the state: "+JSON.stringify(this.state.profession));
+          })
+        .catch((error) => {
+          console.error("error is " + error);
+        })
       }
     ]);
+    
   };
 
+
+  
   //allows one to edit desired skills
   handleEditSkillsPress = async () => {
     AlertIOS.prompt("Edit Skills", null, [
@@ -230,7 +261,26 @@ class Contact extends Component {
       },
       {
         text: "OK",
-        onPress: skills => console.log("OK Pressed, new about me: " + skills)
+        onPress: (skill) =>
+        fetch( 'http://' + global.api+'/user/11542202874628/addSkill', {
+          method: 'PUT',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                  "skill": skill
+            }),
+        })//fetch
+        .then((response) => response.json())
+        .then((responseJson) => {
+          this.setState({skill:skill})
+          console.log(JSON.stringify(responseJson));
+          console.log("this is the state: "+JSON.stringify(this.state.skill));
+          })
+        .catch((error) => {
+          console.error("error is " + error);
+        })
       }
     ]);
   };
@@ -334,7 +384,7 @@ class Contact extends Component {
             title="Edit"
           />
         </View>
-        <Text style={styles.userBioText}>{bio}</Text>
+        <Text style={styles.userBioText}>{this.state.aboutMe}</Text>
 
         <View style={{ flexDirection: "row" }}>
           <Text style={styles.userTitleText}>Desired Profession</Text>
@@ -344,7 +394,7 @@ class Contact extends Component {
             title="Edit"
           />
         </View>
-        <Text style={styles.userBioText}>{desiredProfession}</Text>
+        <Text style={styles.userBioText}>{this.state.profession}</Text>
 
         <View style={{ flexDirection: "row" }}>
           <Text style={styles.userTitleText}>Desired Skills</Text>
@@ -354,7 +404,7 @@ class Contact extends Component {
             title="Edit"
           />
         </View>
-        <Text style={styles.userBioText}>{desiredSkills}</Text>
+        <Text style={styles.userBioText}>{this.state.skill}</Text>
       </View>
     );
   };
