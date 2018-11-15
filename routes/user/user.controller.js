@@ -1,7 +1,13 @@
 const jwt = require("jsonwebtoken");
+const path = require("path");
+const fs = require('fs');
 const config = require("../../config/database.js");
 const db = require('../../db');
 var date = new Date();
+const os = require('os');
+const ip = require('ip');
+const { getRandomArbitrary } = require('../../utils/getRandomArbitrary');
+
 
 var user_sql_constants = require("../../config/user_sql_constants.js");
 var hp = require("../../config/helper.js");
@@ -114,6 +120,7 @@ module.exports.postMentor = (req, res) => {
      res
         .status(500)
         .json({ error: "Missing credentials", success: false });
+      return true;
     }
     user[field] = req.body[field];
   });
@@ -150,7 +157,6 @@ module.exports.postMentee = (req, res) => {
   res.json({ success: true, rows: rows });
 });
 }
-1
 //create a new message
 module.exports.postMessage = (req, res) => {
   const fields = ['match_id','to_id','from_id', 'message_body'];
@@ -160,7 +166,7 @@ module.exports.postMessage = (req, res) => {
      res
         .status(500)
         .json({ error: "Missing credentials", success: false });
-        return true;
+      return true;
     }
     user[field] = req.body[field];
     return false;
@@ -548,7 +554,7 @@ module.exports.removeSkill = (req, res) => {
 
 }
 
-module.exports.getProfilePic = (req, res) => {
+module.exports.updateSkill = (req, res) => {
   userID = req.params.id;
   sql = `SELECT profile_pic_URL FROM '${userType(userID)}' where user_id = ?;`;   
   
@@ -559,6 +565,32 @@ module.exports.getProfilePic = (req, res) => {
     res.json({ success: true, rows: rows });
   });
   
+}
+
+module.exports.updateUsersbySkill = (req, res) => {
+  skill = req.params.skill;
+  user_list = req.body.users;
+  sql = user_sql_constants.update_users_by_skill(skill,user_list);
+  
+  db.all(sql, [], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+    res.json({ success: true, rows: rows });
+  });
+  
+}
+
+
+
+module.exports.getProfilePic = (req, res) => {
+  const userID = req.params.id;
+  const uploadsPath = path.join(__dirname, '../../uploads')
+  if (!fs.existsSync(uploadsPath)) {
+    fs.mkdirSync(uploadsPath);
+  }
+  const filepath = path.join(uploadsPath, `${userID}.jpg`);
+  res.sendFile(filepath);
 }
 
 module.exports.updateProfilePic = (req, res) => {
@@ -573,6 +605,10 @@ module.exports.updateProfilePic = (req, res) => {
     res.json({ success: true, rows: rows });
   });
   
+}
+
+module.exports.postProfilePic = (req, res) => {
+  res.json(req.file)
 }
 
 module.exports.getProfession = (req, res) => {

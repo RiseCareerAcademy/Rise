@@ -7,7 +7,6 @@ const logger =  require("morgan"); //used to log in console window all request
 const cookieParser = require("cookie-parser"); //Parse Cookie header and populate req.cookies
 const bodyParser = require("body-parser"); //allows the use of req.body in POST request
 const http = require('http');
-const mongoose = require("mongoose");
 const jwt = require('jsonwebtoken');
 
 const { router: api } = require("./routes/api/api.js"); //gets api logic from path
@@ -17,6 +16,7 @@ const config = require('./config/database');
 
 const app = express(); //creates an instance of express
 const server = http.createServer(app); //creates an HTTP server instance
+require('express-ws')(app, server);
 
 // const db = require('./db');
 
