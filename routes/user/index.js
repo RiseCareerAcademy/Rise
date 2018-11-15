@@ -76,7 +76,7 @@ router.put("/:id/profilepic", controller.updateProfilePic);
 //get profession/area of study 
 router.get("/:id/profession", controller.getProfession);
 //update profession or area of study 
-router.put("/:id/profession/", controller.updateProfession);
+router.put("/:id/profession", controller.updateProfession);
 
 //get bio of study 
 router.get("/:id/bio", controller.getBio);
