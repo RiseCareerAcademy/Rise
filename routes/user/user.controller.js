@@ -825,7 +825,6 @@ module.exports.updateProfession = (req, res) => {
   //THIS IS THE NEW PROFESSION VALUE USED
   profession = req.body.profession
   
-  old_profession = " "
   //get old profession to delete 
   sql = `Select profession from '${userType(userID)}' WHERE user_id = ?`;
   db.all(sql, [userID], (err, rows) => {
@@ -833,6 +832,31 @@ module.exports.updateProfession = (req, res) => {
       throw err;
     }
     old_profession = rows[0]['profession']
+      //REMOVE A USER FROM A PROFESSION IN A PROFESSION TABLE 
+  sql3 = `SELECT users FROM Profession WHERE profession = ?`;   
+  db.all(sql3, [old_profession], (err, rows3) => {
+    if (err) {
+      throw err;
+    }
+    
+    console.log("old", old_profession)
+    //seing if there was an old profession (there should always be)
+    if (rows3.length==0){
+      res.json({ success: true, rows: "Profession not found !" });
+    } 
+    else {
+      users = rows3[0]['users']
+      users = removeFromString(users,userID);
+      
+      sql5 = `UPDATE Profession SET users = ? WHERE profession = ?` 
+      db.all(sql5, [users,old_profession], (err, rows5) => {
+        if (err) {
+          throw err;
+        }
+        console.log("remove user successfully from old profession");
+      });
+    }    
+  });
   });
      
     //updates profession in a user table (works) 
@@ -874,32 +898,9 @@ module.exports.updateProfession = (req, res) => {
     }
   });
 
+  res.json({success:true});
 
 
-  //REMOVE A USER FROM A PROFESSION IN A PROFESSION TABLE 
-  sql3 = `SELECT users FROM Profession WHERE profession = ?`;   
-  db.all(sql3, [old_profession], (err, rows3) => {
-    if (err) {
-      throw err;
-    }
-    //seing if there was an old profession (there should always be)
-    if (rows3.length==0){
-      res.json({ success: true, rows: "Profession not found !" });
-    } 
-    else {
-      users = rows3[0]['users']
-      users = removeFromString(users,userID);
-      
-      console.log(old_profession)
-      sql5 = `UPDATE Profession SET users = ? WHERE profession = ?` 
-      db.all(sql5, [users,old_profession], (err, rows5) => {
-        if (err) {
-          throw err;
-        }
-        res.json({ success: true, rows: "remove user successfully from old profession" });
-      });
-    }    
-  });
 };//end of updatedProfession
 
 
