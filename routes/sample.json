@@ -51,13 +51,10 @@
 {
     "skill": "Java",
     "users": "10101001"
-<<<<<<< HEAD:routes/sample.json
 }
 
 //PROFESSION  
 {
     "profession": "Disco Dancing",
     "users": "10101001"
-=======
->>>>>>> 6f285da2a2b7a00b01f4925c39e960ee1f9c2fcc:routes/user/sample_json.txt
 }
