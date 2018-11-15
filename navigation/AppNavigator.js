@@ -9,10 +9,12 @@ import SignIn from '../screens/SignIn'
 import SearchScreen from '../screens/SearchScreen'
 import Profile from '../screens/Profile1/Profile'
 import Ratings from '../screens/RatingsScreen';
+import noMatch from '../screens/noMatch'
 
 const App = createStackNavigator({
-  // Ratings: { screen: Ratings },
   Home: { screen: HomeScreen },
+  noMatch: {screen: noMatch},
+  Ratings: { screen: Ratings },
   Mentor: { screen: MentorRegistration },
   Student: {screen: StudentRegistration},
   SignIn: {screen: SignIn},

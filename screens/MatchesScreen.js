@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { ScrollView, StyleSheet, View, SectionList, Text } from "react-native";
 import Expo from "expo";
+import { Graph } from 'react-d3-graph';
 
 export default class MatchesScreen extends Component {
   state = {
