@@ -204,7 +204,7 @@ module.exports.postPassword = (req, res) => {
     return;
   }
   var salt = hp.genRandomString(16)
-  var passwordData = hp.minh(user.password, salt)
+  var passwordData = hp.saltPassword(user.password, salt)
   sql = `INSERT INTO Passwords VALUES (?,'${passwordData.passwordHash}', '${passwordData.salt}') `
   console.log(sql);
   db.all(sql, [user.email_address], (err, rows) => {
@@ -807,7 +807,7 @@ module.exports.login = (req, res) => {
     }
     salt = rows1[0]['salt']
     sql2 = `SELECT * FROM Passwords WHERE email_address=? AND password=?;`;  
-    db.all(sql2, [user.email_address,hp.minh(user.password, salt)['passwordHash']], (err, rows2) => {
+    db.all(sql2, [user.email_address,hp.saltPassword(user.password, salt)['passwordHash']], (err, rows2) => {
       if (err) {
         throw err;
       }

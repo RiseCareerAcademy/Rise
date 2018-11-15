@@ -28,23 +28,6 @@ export default class MatchesScreen extends Component {
       .then((response) => response.json())
       .then((responseJson) => {
         //TO DO: add mentors name and skills in array
-<<<<<<< HEAD
-        
-        for (var i = 0; i < responseJson.rows.length; i++){
-            var curr_row = responseJson.rows[i];
-            mentors.push([curr_row.first_name])
-            mentors.push([curr_row.profession])
-            mentors.push( curr_row.skills);
-       }
-      const { desiredSkills, desiredProfessions } = this.state;
-      const { scores, matches } = this.match(desiredSkills, desiredProfessions, mentors);
-      this.setState({scores: scores});
-      this.setState({matches: matches});
-    })
-    .catch((error) => {
-      console.log("error is: " + error);
-    });
-=======
 
         for (var i = 0; i < responseJson.rows.length; i++) {
           var curr_row = responseJson.rows[i];
@@ -77,7 +60,6 @@ export default class MatchesScreen extends Component {
       const secondHalf = desiredSkills.slice(desiredSkills.indexOf(skill) + 1 + skill.length)
       desiredSkills = firstHalf + secondHalf
     }
->>>>>>> 6f285da2a2b7a00b01f4925c39e960ee1f9c2fcc
   }
 
   //match function
