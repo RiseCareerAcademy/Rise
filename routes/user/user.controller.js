@@ -110,32 +110,7 @@ module.exports.deletetable = (req, res) => {
   res.json({ success: true, rows: "delete all tables" });
 }
 
-function isUniqueEmail(email,table_name)
-{
-  var check = 0; 
-  sql = `Select * from '${table_name}' where email_address = ?  `
-  console.log(sql); 
-  
-  db.all(sql, [email], (err, rows) => {
-  if (err) {
-    Promise.reject
-  }
-  //res.json({ success: true, rows: rows });
-  //console.log('rows:'+ rows.length)
-  if(rows.length == 1)
-  {
-    //console.log("email exists")
-    check = 0; 
-    return Promise.resolve(check) //return false bc row = 1 meaning email exists
-  }  
-  else
-  {
-    //console.log("email doesnt exist")
-    check = 1; 
-    return Promise.resolve(check) 
-  }  
-});
-}
+
 
 //create new mentor
 module.exports.postMentor = (req, res) => {
@@ -152,23 +127,70 @@ module.exports.postMentor = (req, res) => {
     }
     user[field] = req.body[field];
   });
-  console.log((isUniqueEmail(user.email_address,"Mentors").then(err,check)))
-  if((isUniqueEmail(user.email_address,"Mentors").then(err,check)) == 0) 
-  {
-    sql = `INSERT INTO Mentors VALUES ('10000000000000'+'${date.getTime()}', ? , ?, ?, ?, ?, ?, ?, ?, ?, ?) `
-    console.log(sql); 
-    
-    db.all(sql, [user.first_name,user.last_name,user.email_address,user.biography,user.zipcode,user.date_of_birth,user.profession,user.skills,user.profile_pic_URL,user.hobbies], (err, rows) => {
+
+  sql_email = `Select * from Mentors where email_address = ?  `  
+  db.all(sql_email, [user.email_address], (err, rows_email) => {
     if (err) {
       throw err;
     }
-    res.json({ success: true, rows: rows });
+    //post mentor
+    if(rows_email.length != 0 )
+    {
+      res.json({ success: false, rows: "Email is not unique" });
+      return; 
+    } 
+      userID = parseInt(10000000000000+ new Date().getTime()); 
+      console.log(userID)
+      sql = `INSERT INTO Mentors VALUES (?, ? , ?, ?, ?, ?, ?, ?, ?, ?, ?) `
+      console.log(sql);      
+      db.all(sql, [userID,user.first_name,user.last_name,user.email_address,user.biography,user.zipcode,user.date_of_birth,user.profession,user.skills,user.profile_pic_URL,user.hobbies], (err, rows) => {
+      if (err) {
+        throw err;
+      }
+    });
+
+    //add to skills table 
+    //1. check if skill exists 
+    //2. add a new skill 
+
+    skill = user.skills;
+
+    sql3 = `SELECT users FROM Skills WHERE skills = ?`;   
+    db.all(sql3, [skill], (err, rows3) => {
+      if (err) {
+        throw err;
+      }
+      if (rows3.length==0){
+        sql4 = `INSERT INTO Skills VALUES (?,?)`
+        db.all(sql4, [skill,parseInt(userID)], (err, rows4) => {
+          if (err) {
+            throw err;
+          }
+          res.json({ success: true, rows: "insert users into new skill" });
+        });
+      } else {
+        users = rows3[0]['users']
+        if (users.split(",").indexOf(userID) == -1) {
+          users = users + "," + userID
+        }
+        
+        sql5 = `UPDATE Skills SET users = ? WHERE skills = ?` 
+        db.all(sql5, [users,skill], (err, rows5) => {
+          if (err) {
+            throw err;
+          }
+          res.json({ success: true, rows: "add user to existed users list" });
+        });
+      }
+    });
+
+    //add to profession table 
+     //1. check if skill exists 
+    //2. add a new skill 
+
+
   });
-  }
-  else
-  {
-    res.json({ success: false, rows: "Email is not unique" });
-  }
+ 
 }
 //create new mentee
 module.exports.postMentee = (req, res) => {
@@ -184,21 +206,28 @@ module.exports.postMentee = (req, res) => {
     user[field] = req.body[field];
   });
 
-  if(isUniqueEmail(user.email_address,"Mentors") == 0) 
-  {
-      sql = `INSERT INTO Mentees VALUES ('20000000000000'+'${date.getTime()}',?,?,?,?,?,?,?,?,?) `
-      console.log(sql);
-      db.all(sql, [user.first_name,user.last_name,user.email_address,user.biography,user.zipcode,user.date_of_birth,user.skills,user.profile_pic_URL,user.hobbies], (err, rows) => {
-      if (err) {
-        throw err;
-      }
-      res.json({ success: true, rows: rows });
-    }); 
-  }
-  else
-  {
-    res.json({ success: false, rows: "Email is not unique" });
-  }
+  sql_email = `Select * from Mentees where email_address = ?  `  
+  db.all(sql_email, [user.email_address], (err, rows_email) => {
+    if (err) {
+      throw err;
+    }
+    
+    if(rows_email.length != 0 )
+    {
+      res.json({ success: false, rows: "Email is not unique" });
+      return; 
+    } 
+        sql = `INSERT INTO Mentees VALUES ('20000000000000'+'${date.getTime()}',?,?,?,?,?,?,?,?,?) `
+        console.log(sql);
+        db.all(sql, [user.first_name,user.last_name,user.email_address,user.biography,user.zipcode,user.date_of_birth,user.skills,user.profile_pic_URL,user.hobbies], (err, rows) => {
+        if (err) {
+          throw err;
+        }
+        res.json({ success: true, rows: rows });
+      }); 
+  });
+
+
 }
 //create a new message
 module.exports.postMessage = (req, res) => {
@@ -243,9 +272,18 @@ module.exports.postPassword = (req, res) => {
     user[field] = req.body[field];
   });
 
-  if (missingFields) {
-    return;
-  }
+
+  sql_email = `Select * from Mentors where email_address = ?  `  
+  db.all(sql_email, [user.email_address], (err, rows_email) => {
+    if (err) {
+      throw err;
+    }
+    if(rows_email != 0)
+    {
+      res.json({ success: false, rows: "Email already exists" });
+      return;
+    }
+  });
   var salt = hp.genRandomString(16)
   var passwordData = hp.saltPassword(user.password, salt)
   sql = `INSERT INTO Passwords VALUES (?,'${passwordData.passwordHash}', '${passwordData.salt}') `
