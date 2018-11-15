@@ -110,6 +110,33 @@ module.exports.deletetable = (req, res) => {
   res.json({ success: true, rows: "delete all tables" });
 }
 
+function isUniqueEmail(email,table_name)
+{
+  var check = 0; 
+  sql = `Select * from '${table_name}' where email_address = ?  `
+  console.log(sql); 
+  
+  db.all(sql, [email], (err, rows) => {
+  if (err) {
+    Promise.reject
+  }
+  //res.json({ success: true, rows: rows });
+  //console.log('rows:'+ rows.length)
+  if(rows.length == 1)
+  {
+    //console.log("email exists")
+    check = 0; 
+    return Promise.resolve(check) //return false bc row = 1 meaning email exists
+  }  
+  else
+  {
+    //console.log("email doesnt exist")
+    check = 1; 
+    return Promise.resolve(check) 
+  }  
+});
+}
+
 //create new mentor
 module.exports.postMentor = (req, res) => {
   const fields = ['first_name', 'last_name', 'email_address' ,'biography','zipcode',
@@ -125,16 +152,23 @@ module.exports.postMentor = (req, res) => {
     }
     user[field] = req.body[field];
   });
-  
-  sql = `INSERT INTO Mentors VALUES ('10000000000000'+'${date.getTime()}', ? , ?, ?, ?, ?, ?, ?, ?, ?, ?) `
-  console.log(sql); 
-  
-  db.all(sql, [user.first_name,user.last_name,user.email_address,user.biography,user.zipcode,user.date_of_birth,user.profession,user.skills,user.profile_pic_URL,user.hobbies], (err, rows) => {
-  if (err) {
-    throw err;
+  console.log((isUniqueEmail(user.email_address,"Mentors").then(err,check)))
+  if((isUniqueEmail(user.email_address,"Mentors").then(err,check)) == 0) 
+  {
+    sql = `INSERT INTO Mentors VALUES ('10000000000000'+'${date.getTime()}', ? , ?, ?, ?, ?, ?, ?, ?, ?, ?) `
+    console.log(sql); 
+    
+    db.all(sql, [user.first_name,user.last_name,user.email_address,user.biography,user.zipcode,user.date_of_birth,user.profession,user.skills,user.profile_pic_URL,user.hobbies], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+    res.json({ success: true, rows: rows });
+  });
   }
-  res.json({ success: true, rows: rows });
-});
+  else
+  {
+    res.json({ success: false, rows: "Email is not unique" });
+  }
 }
 //create new mentee
 module.exports.postMentee = (req, res) => {
@@ -149,14 +183,22 @@ module.exports.postMentee = (req, res) => {
     }
     user[field] = req.body[field];
   });
-  sql = `INSERT INTO Mentees VALUES ('20000000000000'+'${date.getTime()}',?,?,?,?,?,?,?,?,?) `
-  console.log(sql);
-  db.all(sql, [user.first_name,user.last_name,user.email_address,user.biography,user.zipcode,user.date_of_birth,user.skills,user.profile_pic_URL,user.hobbies], (err, rows) => {
-  if (err) {
-    throw err;
+
+  if(isUniqueEmail(user.email_address,"Mentors") == 0) 
+  {
+      sql = `INSERT INTO Mentees VALUES ('20000000000000'+'${date.getTime()}',?,?,?,?,?,?,?,?,?) `
+      console.log(sql);
+      db.all(sql, [user.first_name,user.last_name,user.email_address,user.biography,user.zipcode,user.date_of_birth,user.skills,user.profile_pic_URL,user.hobbies], (err, rows) => {
+      if (err) {
+        throw err;
+      }
+      res.json({ success: true, rows: rows });
+    }); 
   }
-  res.json({ success: true, rows: rows });
-});
+  else
+  {
+    res.json({ success: false, rows: "Email is not unique" });
+  }
 }
 //create a new message
 module.exports.postMessage = (req, res) => {
