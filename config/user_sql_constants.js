@@ -1,23 +1,6 @@
 /*ALL SQL CONSTANTS FOR USER CONTROLLER */
 
 //create mentor, mentee and matchces table for testing 
-module.exports.create_mentee_table_sql = function()  {
-    sql = `    
-        CREATE TABLE IF NOT EXISTS Mentees (
-            user_id int NOT NULL UNIQUE,
-            first_name varchar(255) NOT NULL,
-            last_name varchar(255) NOT NULL,
-            email_address varchar(255) NOT NULL UNIQUE,
-            biography varchar(255),
-            zipcode varchar(5) NOT NULL,
-            date_of_birth DATE NOT NULL,
-            skills varchar(255) NOT NULL,
-            profile_pic_URL varchar(255) NOT NULL,
-            hobbies varchar(255)
-        );`
-    return sql; 
-}
-
 module.exports.create_mentor_table_sql = function()  {
     sql = `  
     CREATE TABLE IF NOT EXISTS Mentors ( 
@@ -35,6 +18,25 @@ module.exports.create_mentor_table_sql = function()  {
     );`
     return sql; 
 }
+
+module.exports.create_mentee_table_sql = function()  {
+    sql = `    
+        CREATE TABLE IF NOT EXISTS Mentees (
+            user_id int NOT NULL UNIQUE,
+            first_name varchar(255) NOT NULL,
+            last_name varchar(255) NOT NULL,
+            email_address varchar(255) NOT NULL UNIQUE,
+            biography varchar(255),
+            zipcode varchar(5) NOT NULL,
+            date_of_birth DATE NOT NULL,
+            profession varchar(255) NOT NULL,
+            skills varchar(255) NOT NULL,
+            profile_pic_URL varchar(255) NOT NULL,
+            hobbies varchar(255)
+        );`
+    return sql; 
+}
+
 module.exports.create_password_table_sql = function()  {
     sql = `  
     CREATE TABLE IF NOT EXISTS Passwords ( 

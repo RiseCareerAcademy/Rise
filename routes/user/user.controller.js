@@ -137,65 +137,91 @@ module.exports.postMentor = (req, res) => {
     if(rows_email.length != 0 )
     {
       res.json({ success: false, rows: "Email is not unique" });
-      return; 
+      return false; 
     } 
-      userID = parseInt(10000000000000+ new Date().getTime()); 
-      console.log(userID)
-      sql = `INSERT INTO Mentors VALUES (?, ? , ?, ?, ?, ?, ?, ?, ?, ?, ?) `
-      console.log(sql);      
-      db.all(sql, [userID,user.first_name,user.last_name,user.email_address,user.biography,user.zipcode,user.date_of_birth,user.profession,user.skills,user.profile_pic_URL,user.hobbies], (err, rows) => {
+
+  
+    date = new Date()
+    userID = parseInt(10000000000000+ date.getTime()); 
+    //console.log(userID)
+    sql = `INSERT INTO Mentors VALUES (?, ? , ?, ?, ?, ?, ?, ?, ?, ?, ?) `
+    console.log(sql);      
+    db.all(sql, [userID,user.first_name,user.last_name,user.email_address,
+      user.biography,user.zipcode,user.date_of_birth,user.profession,
+      user.skills,user.profile_pic_URL,user.hobbies], (err, rows) => {
       if (err) {
         throw err;
       }
     });
 
-    //add to skills table 
-    //1. check if skill exists 
-    //2. add a new skill 
-
+    //add user ID to skills table 
     skill = user.skills;
-
     sql3 = `SELECT users FROM Skills WHERE skills = ?`;   
     db.all(sql3, [skill], (err, rows3) => {
       if (err) {
         throw err;
       }
       if (rows3.length==0){
-        sql4 = `INSERT INTO Skills VALUES (?,?)`
+        sql4 = `INSERT INTO Skills VALUES (?,CAST(? AS int))`
         db.all(sql4, [skill,parseInt(userID)], (err, rows4) => {
           if (err) {
             throw err;
           }
-          res.json({ success: true, rows: "insert users into new skill" });
+          console.log("insert users into new skill")
         });
       } else {
         users = rows3[0]['users']
-        if (users.split(",").indexOf(userID) == -1) {
-          users = users + "," + userID
-        }
+        users = addToString(users,userID);
         
         sql5 = `UPDATE Skills SET users = ? WHERE skills = ?` 
         db.all(sql5, [users,skill], (err, rows5) => {
           if (err) {
             throw err;
           }
-          res.json({ success: true, rows: "add user to existed users list" });
+          console.log("add user to existed users list")
         });
       }
     });
 
-    //add to profession table 
-     //1. check if skill exists 
-    //2. add a new skill 
-
-
+    //add user ID to profession table 
+    profession=user.profession;
+    sql3 = `SELECT users FROM Profession WHERE profession = ?`;   
+    db.all(sql3, [profession], (err, rows3) => {
+      if (err) {
+        throw err;
+      }
+      //this means profession doesnt exist 
+      if (rows3.length==0){
+        sql4 = `INSERT INTO Profession VALUES (?,CAST(? AS int))`
+        db.all(sql4, [profession,userID], (err, rows4) => {
+          if (err) {
+            throw err;
+          }
+          console.log("new profession added, user attached");
+        });
+      }
+      //profession exists, append the user to list  
+      else {
+        users = rows3[0]['users']
+        users = addToString(users,userID)
+        //add the users to the profession 
+        sql5 = `UPDATE Profession SET users = ? WHERE profession = ?` 
+        db.all(sql5, [users,profession], (err, rows5) => {
+          if (err) {
+            throw err;
+          }
+          console.log("Appended a user to an existed users list" )
+        });
+      }
+    });
+    
+    res.json({ success: true, rows: "" });
   });
- 
 }
 //create new mentee
 module.exports.postMentee = (req, res) => {
   const fields = ['first_name', 'last_name', 'email_address' ,'biography','zipcode',
-  'date_of_birth','skills','profile_pic_URL','hobbies'];
+  'date_of_birth','skills','profession','profile_pic_URL','hobbies'];
   const user = {};
   fields.forEach(field => {
     if (req.body[field] === undefined) {
@@ -217,14 +243,79 @@ module.exports.postMentee = (req, res) => {
       res.json({ success: false, rows: "Email is not unique" });
       return; 
     } 
-        sql = `INSERT INTO Mentees VALUES ('20000000000000'+'${date.getTime()}',?,?,?,?,?,?,?,?,?) `
-        console.log(sql);
-        db.all(sql, [user.first_name,user.last_name,user.email_address,user.biography,user.zipcode,user.date_of_birth,user.skills,user.profile_pic_URL,user.hobbies], (err, rows) => {
-        if (err) {
-          throw err;
-        }
-        res.json({ success: true, rows: rows });
-      }); 
+    date = new Date()
+    userID = parseInt(20000000000000+ date.getTime()); 
+    sql = `INSERT INTO Mentees VALUES (?,?,?,?,?,?,?,?,?,?,?) `
+    console.log(sql);
+    db.all(sql, [userID,user.first_name,user.last_name,user.email_address,user.biography,
+      user.zipcode,user.date_of_birth,user.profession,user.skills,user.profile_pic_URL,user.hobbies], (err, rows) => {
+      if (err) {
+        throw err;
+      }
+      res.json({ success: true, rows: rows });
+    }); 
+    //add user ID to skills table 
+    skill = user.skills;
+    sql3 = `SELECT users FROM Skills WHERE skills = ?`;   
+    db.all(sql3, [skill], (err, rows3) => {
+      if (err) {
+        throw err;
+      }
+      if (rows3.length==0){
+        sql4 = `INSERT INTO Skills VALUES (?,CAST(? AS int))`
+        db.all(sql4, [skill,parseInt(userID)], (err, rows4) => {
+          if (err) {
+            throw err;
+          }
+          console.log("insert users into new skill")
+        });
+      } else {
+        users = rows3[0]['users']
+        users = addToString(users,userID);
+        
+        sql5 = `UPDATE Skills SET users = ? WHERE skills = ?` 
+        db.all(sql5, [users,skill], (err, rows5) => {
+          if (err) {
+            throw err;
+          }
+          console.log("add user to existed users list")
+        });
+      }
+    });
+
+    //add user ID to profession table 
+    profession=user.profession;
+    console.log(profession,userID)
+    sql3 = `SELECT users FROM Profession WHERE profession = ?`;   
+    db.all(sql3, [profession], (err, rows3) => {
+      if (err) {
+        throw err;
+      }
+      //this means profession doesnt exist 
+      if (rows3.length==0){
+        sql4 = `INSERT INTO Profession VALUES (?,CAST(? AS int))`
+        db.all(sql4, [profession,userID], (err, rows4) => {
+          if (err) {
+            throw err;
+          }
+          console.log("new profession added, user attached");
+        });
+      }
+      //profession exists, append the user to list  
+      else {
+        users = rows3[0]['users']
+        users = addToString(users,userID)
+        //add the users to the profession 
+        sql5 = `UPDATE Profession SET users = ? WHERE profession = ?` 
+        db.all(sql5, [users,profession], (err, rows5) => {
+          if (err) {
+            throw err;
+          }
+          console.log("Appended a user to an existed users list" )
+        });
+      }
+    });
+  
   });
 
 
@@ -549,9 +640,7 @@ module.exports.addSkill = (req, res) => {
     }
     
     skills = rows1[0]['skills']
-    if (skills.split(",").indexOf(skill) == -1) {
-      skills = skills + "," + skill
-    }
+    skills = addToString(skills,skill)
     
     sql2 = `UPDATE '${userType(userID)}' SET skills = ? WHERE user_id = ?`
     db.all(sql2, [skills,userID], (err, rows2) => {
@@ -563,15 +652,16 @@ module.exports.addSkill = (req, res) => {
   });
 
   
-  //add user to skill table
+ 
+  //add user to skills table
   sql3 = `SELECT users FROM Skills WHERE skills = ?`;   
   db.all(sql3, [skill], (err, rows3) => {
     if (err) {
       throw err;
     }
     if (rows3.length==0){
-      sql4 = `INSERT INTO Skills VALUES (?,?)`
-      db.all(sql4, [skill,userID], (err, rows4) => {
+      sql4 = `INSERT INTO Skills VALUES (?,CAST(? AS int))`
+      db.all(sql4, [skill,parseInt(userID)], (err, rows4) => {
         if (err) {
           throw err;
         }
@@ -579,20 +669,16 @@ module.exports.addSkill = (req, res) => {
       });
     } else {
       users = rows3[0]['users']
-      if (users.split(",").indexOf(userID) == -1) {
-        users = users + "," + userID
-      }
+      users = addToString(stringToArray(users),userID);
       
       sql5 = `UPDATE Skills SET users = ? WHERE skills = ?` 
-      db.all(sql5, [users,skills], (err, rows5) => {
+      db.all(sql5, [users,skill], (err, rows5) => {
         if (err) {
           throw err;
         }
         res.json({ success: true, rows: "add user to existed users list" });
       });
     }
-    
-
   });
 
 }
@@ -620,7 +706,7 @@ module.exports.removeSkill = (req, res) => {
     }
     
     skills = rows1[0]['skills']
-    skills = removeFromArray(stringToArray(skills),skill)
+    skills = removeFromString(skills,skill)
     
     sql2 = `UPDATE '${userType(userID)}' SET skills = ? WHERE user_id = ?`
     db.all(sql2, [skills,userID], (err, rows2) => {
@@ -642,10 +728,7 @@ module.exports.removeSkill = (req, res) => {
       res.json({ success: true, rows: "Skill not found !" });
     } else {
       users = rows3[0]['users']
-      console.log(users)  
-      console.log(userID)
-      console.log(removeFromArray(stringToArray(users),userID))
-      users = removeFromArray(stringToArray(users),userID)
+      users = removeFromString(users,userID)
       
       sql5 = `UPDATE Skills SET users = ? WHERE skills = ?` 
       db.all(sql5, [users,skill], (err, rows5) => {
@@ -745,58 +828,55 @@ module.exports.updateProfession = (req, res) => {
   old_profession = " "
   //get old profession to delete 
   sql = `Select profession from '${userType(userID)}' WHERE user_id = ?`;
-  console.log(sql)
   db.all(sql, [userID], (err, rows) => {
     if (err) {
       throw err;
     }
     old_profession = rows[0]['profession']
   });
-  console.log(old_profession)
      
     //updates profession in a user table (works) 
-    sql1 = `UPDATE '${userType(userID)}' SET profession = ? WHERE user_id = ?`;
-    db.all(sql1, [profession,userID], (err, rows1) => {
+  sql1 = `UPDATE '${userType(userID)}' SET profession = ? WHERE user_id = ?`;
+  db.all(sql1, [profession,userID], (err, rows1) => {
     if (err) {
       throw err;
     }
   });
 
   //ADD A USER TO A PROFESSSION IN PROFESSION TABLE (DONE)
-    sql3 = `SELECT users FROM Profession WHERE profession = ?`;   
-    db.all(sql3, [profession], (err, rows3) => {
-      if (err) {
-        throw err;
-      }
-      //this means profession doesnt exist 
-      if (rows3.length==0){
-        sql4 = `INSERT INTO Profession VALUES (?,?)`
-        db.all(sql4, [profession,userID], (err, rows4) => {
-          if (err) {
-            throw err;
-          }
-          res.json({ success: true, rows: "new profession added, user attached" });
-        });
-      }
-      //profession exists, append the user to list  
-      else {
-        users = rows3[0]['users']
-        if (users.split(",").indexOf(userID) == -1) {
-          users = users + "," + userID
+  sql3 = `SELECT users FROM Profession WHERE profession = ?`;   
+  db.all(sql3, [profession], (err, rows3) => {
+    if (err) {
+      throw err;
+    }
+    //this means profession doesnt exist 
+    if (rows3.length==0){
+      sql4 = `INSERT INTO Profession VALUES (?,CAST(? AS int))`
+      db.all(sql4, [profession,userID], (err, rows4) => {
+        if (err) {
+          throw err;
         }
-        //add the users to the profession 
-        sql5 = `UPDATE Profession SET users = ? WHERE profession = ?` 
-        db.all(sql5, [users,profession], (err, rows5) => {
-          if (err) {
-            throw err;
-          }
-          res.json({ success: true, rows: "Appended a user to an existed users list" });
-        });
-      }
-    });
+        console.log("new profession added, user attached");
+      });
+    }
+    //profession exists, append the user to list  
+    else {
+      users = rows3[0]['users']
+      users = addToString(users,userID)
+      //add the users to the profession 
+      sql5 = `UPDATE Profession SET users = ? WHERE profession = ?` 
+      db.all(sql5, [users,profession], (err, rows5) => {
+        if (err) {
+          throw err;
+        }
+        console.log("Appended a user to an existed users list" )
+      });
+    }
+  });
 
 
-  //REMOVE A USER FROM A PROFESSION IN A PROFESSION TABLE (not working) 
+
+  //REMOVE A USER FROM A PROFESSION IN A PROFESSION TABLE 
   sql3 = `SELECT users FROM Profession WHERE profession = ?`;   
   db.all(sql3, [old_profession], (err, rows3) => {
     if (err) {
@@ -808,10 +888,7 @@ module.exports.updateProfession = (req, res) => {
     } 
     else {
       users = rows3[0]['users']
-      console.log(users)  
-      console.log(userID)
-      console.log(removeFromArray(stringToArray(users),userID))
-      users = removeFromArray(stringToArray(users),userID)
+      users = removeFromString(users,userID);
       
       console.log(old_profession)
       sql5 = `UPDATE Profession SET users = ? WHERE profession = ?` 
@@ -821,13 +898,9 @@ module.exports.updateProfession = (req, res) => {
         }
         res.json({ success: true, rows: "remove user successfully from old profession" });
       });
-    }
-    
-
+    }    
   });
-  
-  
-  };//end of updatedProfession
+};//end of updatedProfession
 
 
 
@@ -984,11 +1057,17 @@ function userType(id){
   return "Mentees"
 }
 
-function stringToArray(string){
-  return string.split(",")
+
+function addToString(string,add){
+  array = string.split(",")
+  if(array.indexOf(add)==-1){
+    array.push(add);
+  }
+  return array.join(",")
 }
 
-function removeFromArray(array,rem){
+function removeFromString(string,rem){
+  array = string.split(",")
   string = ""
   for(i=0; i <array.length;i++){
     if(array[i]==rem){
