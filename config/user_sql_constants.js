@@ -87,7 +87,6 @@ module.exports.create_skills_table_sql = function()  {
     return sql; 
 }
 
-
 module.exports.create_professions_table_sql = function()  {
     sql = `CREATE TABLE IF NOT EXISTS Profession (
         profession varchar(255) NOT NULL UNIQUE,
