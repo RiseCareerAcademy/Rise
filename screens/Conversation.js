@@ -9,6 +9,7 @@ class Conversation extends Component {
     this.state = {
       text: '',
       messages: [],
+      currUser: false,
       matchId: props.navigation.state.params.matchId,
       toUser: props.navigation.state.params.toUser,
       fromUser: props.navigation.state.params.title
@@ -25,13 +26,17 @@ class Conversation extends Component {
 
   sendMessages() {
         console.log("messages")
+        var otherUser = this.state.fromUser
+        if (this.state.fromUser == "333") {
+          otherUser = this.state.toUser
+        }
         var body = { 
           message_id: Math.floor(Math.random()*(10000)),
-          to_id: this.state.toUser, 
-          from_id: this.state.fromUser,
+          to_id: otherUser, 
+          from_id: "333",
           message_body: this.state.text,
-          timestamp: "2014-10-07 08:23:19.120",
-          match_id: 1000,
+          timestamp: "2014-10-07 08:28:19.120",
+          match_id: this.state.matchId,
         }
         console.log(JSON.stringify(body))
         const { manifest } = Expo.Constants;
@@ -60,6 +65,7 @@ class Conversation extends Component {
   loadMessages() {
     var recieved = [];
 
+    console.log("load messages")
     const { manifest } = Expo.Constants;
         const api = (typeof manifest.packagerOpts === `object`) && manifest.packagerOpts.dev
           ? manifest.debuggerHost.split(`:`).shift().concat(`:8000`)
@@ -72,10 +78,16 @@ class Conversation extends Component {
         .then((responseJson) => {
           //TO DO: add mentors name and skills in array
           console.log(responseJson)
-  
+ 
           for (var i = 0; i < responseJson.rows.length; i++) {
             var curr_row = responseJson.rows[i];
-            recieved.push({fromUser: curr_row.from_id, toUser: curr_row.to_id, message: curr_row.message_body, dateTime: curr_row.timestamp, match: curr_row.match_id})
+
+            var sentMessage = false;
+            // switch to user id later
+            if (curr_row.from_id == "333") {
+              sentMessage = true;
+            }
+            recieved.push({fromUser: curr_row.from_id, toUser: curr_row.to_id, message: curr_row.message_body, dateTime: curr_row.timestamp, match: curr_row.match_id, sentMessage: sentMessage})
            // console.log(curr_row.skills.split(','))
           }
   
@@ -124,7 +136,6 @@ class Conversation extends Component {
                 onPress={() => this.onPressButton()}
                 title="Send"
                 color="#841584"
-                accessibilityLabel="Learn more about this purple button"
               />
           </View>
         </View>
