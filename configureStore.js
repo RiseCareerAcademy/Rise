@@ -6,10 +6,11 @@ import logger from 'redux-logger'
 import rootSaga from './sagas';
 
 import rootReducer from './reducers';
+import { navMiddleware } from './navigation';
 
 const sagaMiddleware = createSagaMiddleware({ });
 
-const middleware = [sagaMiddleware, logger];
+const middleware = [sagaMiddleware, logger, navMiddleware];
 
 const store = createStore(
   rootReducer,

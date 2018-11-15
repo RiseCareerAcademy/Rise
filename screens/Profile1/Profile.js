@@ -244,8 +244,7 @@ class Contact extends Component {
     const { first_name, last_name, user_id } = this.props;
     const name = `${first_name} ${last_name}`;
 
-    // const image = process.env.NODE_ENV === 'development' ? `http://${DOMAIN}/user/${user_id}/profilepic` : this.state.image;
-    const { image } = this.state;
+    const image = process.env.NODE_ENV === 'development' ? `http://${DOMAIN}/user/${user_id}/profilepic` : this.state.image;
 
     return (
       <View style={styles.headerContainer}>

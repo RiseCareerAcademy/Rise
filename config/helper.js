@@ -6,7 +6,7 @@ module.exports.genRandomString = function(length){
             .slice(0,length);  
 }
 
-module.exports.minh = function(password, salt){
+module.exports.saltPassword = function(password, salt){
     var hash = crypto.createHmac('sha256', salt); 
     hash.update(password);
     var value = hash.digest('hex');

@@ -30,21 +30,38 @@ export default class MatchesScreen extends Component {
       .then((response) => response.json())
       .then((responseJson) => {
         //TO DO: add mentors name and skills in array
-        
-        for (var i = 0; i < responseJson.rows.length; i++){
-            var curr_row = responseJson.rows[i];
-            mentors.push([curr_row.first_name])
-            mentors.push([curr_row.profession])
-            mentors.push( curr_row.skills);
-       }
-      const { desiredSkills, desiredProfessions } = this.state;
-      const { scores, matches } = this.match(desiredSkills, desiredProfessions, mentors);
-      this.setState({scores: scores});
-      this.setState({matches: matches});
-    })
-    .catch((error) => {
-      console.log("error is: " + error);
-    });
+
+        for (var i = 0; i < responseJson.rows.length; i++) {
+          var curr_row = responseJson.rows[i];
+          mentors.push([curr_row.first_name])
+          mentors.push([curr_row.occupation])
+          mentors.push(curr_row.skills);
+          console.log(curr_row.skills.split(','))
+        }
+        const { desiredSkills, desiredProfessions } = this.state;
+        const { scores, matches } = this.match(desiredSkills, desiredProfessions, mentors);
+        this.setState({ scores: scores });
+        this.setState({ matches: matches });
+      })
+      .catch((error) => {
+        console.log("error is: " + error);
+      });
+  }
+
+  //add skills to desiredSkills
+  addMenteeSkill = (desiredSkills, additionalSkill) => {
+    if (desiredSkills.split(",").indexOf(additionalSkill) == -1) {
+      desiredSkills = desiredSkills + "," + additionalSkill
+    }
+  }
+
+  //delete skills from desiredSkills
+  deleteMenteeSkill = (desiredSkills, skill) => {
+    if (desiredSkills.split(",").indexOf(skill) != -1) {
+      const firstHalf = desiredSkills.slice(0, desiredSkills.indexOf(skill))
+      const secondHalf = desiredSkills.slice(desiredSkills.indexOf(skill) + 1 + skill.length)
+      desiredSkills = firstHalf + secondHalf
+    }
   }
 
   //match function

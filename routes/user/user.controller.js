@@ -4,6 +4,10 @@ const fs = require('fs');
 const config = require("../../config/database.js");
 const db = require('../../db');
 var date = new Date();
+const os = require('os');
+const ip = require('ip');
+const { getRandomArbitrary } = require('../../utils/getRandomArbitrary');
+
 
 var user_sql_constants = require("../../config/user_sql_constants.js");
 var hp = require("../../config/helper.js");
@@ -116,6 +120,7 @@ module.exports.postMentor = (req, res) => {
      res
         .status(500)
         .json({ error: "Missing credentials", success: false });
+      return true;
     }
     user[field] = req.body[field];
   });
@@ -152,7 +157,6 @@ module.exports.postMentee = (req, res) => {
   res.json({ success: true, rows: rows });
 });
 }
-1
 //create a new message
 module.exports.postMessage = (req, res) => {
   const fields = ['match_id','to_id','from_id', 'message_body'];
@@ -200,7 +204,7 @@ module.exports.postPassword = (req, res) => {
     return;
   }
   var salt = hp.genRandomString(16)
-  var passwordData = hp.minh(user.password, salt)
+  var passwordData = hp.saltPassword(user.password, salt)
   sql = `INSERT INTO Passwords VALUES (?,'${passwordData.passwordHash}', '${passwordData.salt}') `
   console.log(sql);
   db.all(sql, [user.email_address], (err, rows) => {
@@ -803,7 +807,7 @@ module.exports.login = (req, res) => {
     }
     salt = rows1[0]['salt']
     sql2 = `SELECT * FROM Passwords WHERE email_address=? AND password=?;`;  
-    db.all(sql2, [user.email_address,hp.minh(user.password, salt)['passwordHash']], (err, rows2) => {
+    db.all(sql2, [user.email_address,hp.saltPassword(user.password, salt)['passwordHash']], (err, rows2) => {
       if (err) {
         throw err;
       }
