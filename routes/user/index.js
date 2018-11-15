@@ -15,6 +15,7 @@ const upload = multer({
 	limits: { fileSize: 10000000 },
 });
 
+
 const router = express.Router();
 module.exports.router = router;
 
@@ -59,6 +60,13 @@ router.put("/:id/removeskill", controller.removeSkill);
 
 //get users by skill 
 router.get("/skill/:skill", controller.getUsersbySkill);
+
+//get users by profession 
+router.get("/profession/:profession", controller.getUsersbyProfession);
+
+//get first name and last name from user id 
+router.get("/name/:id", controller.getFirstLastById);
+
 
 //get profile pic by id 
 router.get("/:id/profilepic", controller.getProfilePic);

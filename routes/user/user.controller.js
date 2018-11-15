@@ -4,6 +4,7 @@ const fs = require('fs');
 const config = require("../../config/database.js");
 const db = require('../../db');
 var date = new Date();
+
 const os = require('os');
 const ip = require('ip');
 const { getRandomArbitrary } = require('../../utils/getRandomArbitrary');
@@ -176,9 +177,9 @@ module.exports.postMessage = (req, res) => {
     return;
   }
   console.log(user)
-  sql = `INSERT INTO Messages VALUES ('${date.getTime()}',?,?,?,?)`  
+  sql = `INSERT INTO Messages VALUES ('${date.getTime()}',?,?,?,?,?)`  
   console.log(date.getTime())
-  db.all(sql, [user.match_id, user.to_id, user.from_id, user.message_body], (err, rows) => {
+  db.all(sql, [user.match_id, user.to_id, user.from_id, user.message_body,getFormattedDate()], (err, rows) => {
     if (err) {
     throw err;
   }
@@ -410,6 +411,32 @@ module.exports.getUsersbySkill = (req, res) => {
   sql = `SELECT users FROM Skills WHERE skills = ?`;    
   
   db.all(sql, [skill], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+    res.json({ success: true, rows: rows });
+  });
+  
+}
+
+module.exports.getUsersbyProfession = (req, res) => {
+  profession = req.params.profession
+  sql = `SELECT users FROM Profession WHERE profession = ?`;    
+  
+  db.all(sql, [profession], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+    res.json({ success: true, rows: rows });
+  });
+  
+}
+
+module.exports.getFirstLastById = (req, res) => {
+  userId = req.params.id
+  sql = `SELECT first_name,last_name FROM '${userType(userId)}' WHERE user_id = ?`;    
+  
+  db.all(sql, [userId], (err, rows) => {
     if (err) {
       throw err;
     }
@@ -893,4 +920,11 @@ function removeFromArray(array,rem){
     string=string.substring(0, string.length - 1)
   }
   return string
+}
+
+function getFormattedDate() {
+  var date = new Date();
+  var str = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " +  date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+
+  return str;
 }

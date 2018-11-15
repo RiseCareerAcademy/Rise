@@ -62,7 +62,8 @@ module.exports.create_messages_table_sql = function()  {
         match_id int NOT NULL,
         to_id int NOT NULL,
         from_id int NOT NULL,
-        message_body varchar(255)
+        message_body varchar(255),
+        timestamp datetime NOT NULL 
     );`
     return sql; 
 }
