@@ -164,7 +164,8 @@ export class StudentRegistration extends React.Component {
       city: this.state.city,
       state: this.state.state,
       image: this.state.image,
-      uri: this.state.image
+      uri: this.state.image,
+      password: this.state.password,
     };
 
     this.props.registerMentee(mentee);
@@ -195,6 +196,7 @@ export class StudentRegistration extends React.Component {
             <Item stackedLabel>
               <Label>Email</Label>
               <Input
+              autoCapitalize="none"
                 placeholder="Enter your email"
                 onChangeText={this.handleEmail}
               />
@@ -202,6 +204,7 @@ export class StudentRegistration extends React.Component {
             <Item stackedLabel>
               <Label>Password</Label>
               <Input
+              autoCapitalize="none"
                 placeholder="Enter your password"
                 onChangeText={this.handlePassword}
                 secureTextEntry={true}
@@ -210,6 +213,7 @@ export class StudentRegistration extends React.Component {
             <Item stackedLabel>
               <Label>Confirm Password</Label>
               <Input
+              autoCapitalize="none"
                 placeholder="Confirm Password Change"
                 onChangeText={this.handleConfirmedPassword}
                 secureTextEntry={true}
