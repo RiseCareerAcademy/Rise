@@ -32,7 +32,7 @@ export default class App extends React.Component {
     } else {
       return (
         <Provider store={store}>
-          <PersistGate loading={<View style={styles.loading}><ActivityIndicator animating size={10} /></View>} persistor={persistor}>
+          <PersistGate loading={<View style={styles.loading}><ActivityIndicator animating size="large" /></View>} persistor={persistor}>
             <View style={styles.container}>
               {Platform.OS === "ios" && <StatusBar barStyle="default" />}
               <Navigator />
