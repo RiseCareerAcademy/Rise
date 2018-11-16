@@ -13,6 +13,7 @@ export default class SearchScreen extends Component {
     checkedMentors: true,
     checkedMentees: true,
     checkedNames: true,
+    tempPostman: "",
     data: [{
       name: 'Amy Farha',
       avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
@@ -26,6 +27,13 @@ export default class SearchScreen extends Component {
   };
   //search function
   search = () => {
+    
+  }
+
+  constructor(props) {
+    super(props);
+    this.search();
+    this.toggleButtons(); this.makeListData();
     const { navigation } = this.props;
     var searchInput = navigation.getParam('text').toString();
     //searchInput = searchInput.toLowerCase();
@@ -43,19 +51,23 @@ export default class SearchScreen extends Component {
       .then((response) => response.json())
       .then((responseJson) => {
         tempPostman = responseJson.rows[0].users;
+        console.log(tempPostman)
+        this.state.tempPostman = tempPostman
       })
       .catch((error) => {
         console.log("error issfoskill: " + error);
         tempPostman = '';
       });
-    console.log('KEVIN');
-    console.log(tempPostman);
+
     //BY SKILL
     if (this.state.checkedSkills) {
       //tempPostman = "21542330576964,11542331557063,11542339784414";
-      if (tempPostman.includes(',')){
+      console.log(tempPostman)
+      if (tempPostman.includes(',')) {
+        console.log("hi")
         currArray = tempPostman.split(',');
-      }else{
+        console.log('MULTIPLE WITH THAT SKILL')
+      } else {
         currArray = [];
       }
       //for each ID with skill, add to results
@@ -69,6 +81,9 @@ export default class SearchScreen extends Component {
         }
       }
     }
+    console.log
+
+
     fetch('http://' + api + '/user/profession/' + searchInput, {
       method: 'GET'
     })
@@ -82,9 +97,10 @@ export default class SearchScreen extends Component {
       });
     //BY PROFESSIONS
     if (this.state.checkedProfessions) {
-      if (tempPostman.includes(',')){
+      if (tempPostman.includes(',')) {
         currArray = tempPostman.split(',');
-      }else{
+        console.log('MULTIPLE WITH THAT PROFESSION')
+      } else {
         currArray = [];
       }
       //for each ID with skill, add to results
@@ -99,12 +115,10 @@ export default class SearchScreen extends Component {
       }
     }
 
-    
+
 
     //BY NAMES
-
-    //TODO: this cannot be implemented without the getIDByName 
-
+    /*TODO: this cannot be implemented without the getIDByName 
     if (this.state.checkedNames) {
       tempPostman = ""
       currArray = tempPostman.split(',');
@@ -119,7 +133,7 @@ export default class SearchScreen extends Component {
         }
       }
     }
-
+    */
 
     //sort by score
     for (let i = 1; i < scores.length; i++) {
@@ -134,48 +148,69 @@ export default class SearchScreen extends Component {
         }
       }
     }
-    console.log("RESULT");
-    for (i = 0; i < results.length; i++) { console.log(results[i].toString()); }
+    console.log("RESULT OF SEARCH");
+    for (i = 0; i < results.length; i++) { console.log(results[i]); }
+
     this.state.results = results;
-    //this.makeListData(finalResults);
-    return;
+
   }
-  constructor(props) {
-    super(props);
-    this.search();
-  }
+
   toggleButtons() {
     //BY MENTOR/MENTEE
-    if (this.state.checkedMentors) {
-      for (var i = 0; i < this.state.results.length; i++) {
+    
+    for (var i = 0; i < this.state.results.length; i++){
+      if (this.state.checkedMentors) {
         if (this.state.results[i].charAt(0) == '1') {
           this.state.advancedResults[this.state.advancedResults.length] = this.state.results[i];
         }
       }
-    }
-    if (this.state.checkedMentees) {
-      for (i = 0; i < this.state.results.length; i++) {
+      if (this.state.checkedMentees) {
         if (this.state.results[i].charAt(0) == '2') {
           this.state.advancedResults[this.state.advancedResults.length] = this.state.results[i];
         }
       }
     }
+
+    console.log("ADVENCED SEARCH RESULTS");
+    console.log(this.state.advancedResults);
+
     return;
   }
+
   makeListData = () => {
-    //
     //Method populates data formatted to work with flatlist
-    this.state.data = [{
-      name: 'Mama Luigi',
-      avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
-      profession: 'Doctor'
-    },
-    {
-      name: 'Bitch Monster',
-      avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/adhamdannaway/128.jpg',
-      profession: 'Nurse'
-    }];
+    var currUser = [];
+
+    const { manifest } = Expo.Constants;
+    const api = (typeof manifest.packagerOpts === `object`) && manifest.packagerOpts.dev
+      ? manifest.debuggerHost.split(`:`).shift().concat(`:8000`)
+      : `api.example.com`;
+
+    for (var i = 0; i < this.state.advancedResults.length; i++) {
+      fetch('http://' + api + '/user/' + this.state.advancedResults[i], {
+        method: 'GET'
+      })
+        .then((response) => response.json())
+        .then((responseJson) => {
+          currUser = responseJson;
+        })
+        .catch((error) => {
+          console.log("THERE IS NO USER BY THIS ID: " + error);
+          currUser = { name: 'error', avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg', profession: "error" }
+        });
+      this.state.data[i] = {
+        name: currUser.first_name + currUser.lastName,
+        avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
+        profession: currUser.profession
+      };
+    }
+
+    return
   }
+
+
+  onPressHelper = () => { this.toggleButtons(); this.makeListData(); return }
+
   renderRow = ({ item }) => {
     return (
       <ListItem
@@ -186,8 +221,9 @@ export default class SearchScreen extends Component {
       />
     )
   }
+
   render() {
-    this.toggleButtons();
+
     return (
       <View style={styles.container}>
         <ScrollView
@@ -195,14 +231,17 @@ export default class SearchScreen extends Component {
           contentContainerStyle={styles.contentContainer}
         >
           <CheckBox title='Skills' checked={this.state.checkedSkills}
-            onPress={() => this.setState({ checkedSkills: !this.state.checkedSkills })}
+            onPress={() => { this.onPressHelper(); this.setState({ checkedSkills: !this.state.checkedSkills }); console.log(this.state.data[0].name); }}
           />
           <CheckBox title='Professions' checked={this.state.checkedProfessions}
-            onPress={() => this.setState({ checkedProfessions: !this.state.checkedProfessions })} />
+            onPress={() => { this.onPressHelper(); this.setState({ checkedProfessions: !this.state.checkedProfessions }); console.log(this.state.data[0].name); }}
+          />
           <CheckBox title='Mentors' checked={this.state.checkedMentors}
-            onPress={() => this.setState({ checkedMentors: !this.state.checkedMentors })} />
+            onPress={() => { this.onPressHelper(); this.setState({ checkedMentors: !this.state.checkedMentors }); console.log(this.state.data[0].name); }}
+          />
           <CheckBox title='Mentees' checked={this.state.checkedMentees}
-            onPress={() => this.setState({ checkedMentees: !this.state.checkedMentees })} />
+            onPress={() => { this.onPressHelper(); this.setState({ checkedMentees: !this.state.checkedMentees }); console.log(this.state.data[0].name); }}
+          />
         </ScrollView>
       </View>
     );
