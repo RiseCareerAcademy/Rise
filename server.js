@@ -49,7 +49,7 @@ app.use(cookieParser());
 app.use('/api', (req, res, next) => {
   // check header or url parameters or post parameters for token
   // console.log(req.headers)
-  const token = req.body.token || req.query.token || req.headers['x-access-token'];
+  const token = req.body.token || req.query.token || req.headers['x-access-token'] || req.body.passwordHash;
 
   if (!token)
     return res.status(401).send({ error: 'No token provided.', success: 'false' });
