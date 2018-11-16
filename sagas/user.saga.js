@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { GET_USER, setUser, REGISTER_MENTEE, UPLOAD_PROFILE_PIC, failedRegisterMentee, LOGOUT_USER, REGISTER_WITH_LINKEDIN, setUserFields, REGISTER_MENTOR, failedRegisterMentor } from "../actions/user.actions";
+import { GET_USER, setUser, REGISTER_MENTEE, UPLOAD_PROFILE_PIC, failedRegisterMentee, LOGOUT_USER, REGISTER_WITH_LINKEDIN, setUserFields, REGISTER_MENTOR, failedRegisterMentor, LOGIN, failedLogin } from "../actions/user.actions";
 import { takeLatest, put, all, call } from 'redux-saga/effects';
 import { DOMAIN } from "../config/url";
 import { NavigationActions } from 'react-navigation';
@@ -31,7 +31,12 @@ export function* uploadProfilePic({ user_id, uri }) {
 
 export function* registerMentee({ mentee }) {
     try {
-        const response = yield axios.post(`http://${DOMAIN}/user/mentee`, mentee);
+        const passwordResponse = yield axios.post(`http://${DOMAIN}/user/password`, { email_address: mentee.email_address, password: mentee.password });
+        const { passwordHash } = passwordResponse;
+        const response = yield axios.post(`http://${DOMAIN}/user/mentee`, { ...mentee, passwordHash: mentee.passwordHash });
+        if (response === undefined) {
+            throw Error('Response is empty. Is the server started and running properly?');
+        }
         const { data } = response;
         if (!data.success) {
             throw Error(data.error);
@@ -39,21 +44,31 @@ export function* registerMentee({ mentee }) {
         yield call(uploadProfilePic, { user_id: data.mentee.user_id, uri: mentee.uri });
         yield put(setUser(data.mentee));
         yield put(NavigationActions.navigate({ routeName: "Main" }));
-    } catch(e) { 
-        const error = typeof e.response.data === 'string' ? e.response.data : e.response.data.error;
-        yield put(failedRegisterMentee(error));
+    } catch(e) {
+        if (e.response !== undefined && e.response.data !== undefined) {
+            const error = typeof e.response.data === 'string' ? e.response.data : e.response.data.error;
+            yield put(failedRegisterMentee(error));
+        } else {
+            yield put(failedRegisterMentee(e.message));
+        }
     }
 }
 
 export function* registerMentor({ mentor }) {
     try {
-        const response = yield axios.post(`http://${DOMAIN}/user/mentor`, mentor);
+        const passwordResponse = yield axios.post(`http://${DOMAIN}/user/password`, { email_address: mentor.email_address, password: mentor.password });
+        const { passwordHash } = passwordResponse;
+        const response = yield axios.post(`http://${DOMAIN}/user/mentor`, { ...mentor, passwordHash, profile_pic_URL: mentor.image });
         const { data } = response;
         yield put(setUser(data.mentor));
         yield put(NavigationActions.navigate({ routeName: "Main" }));
     } catch(e) { 
-        const error = e.response.data.error;
-        yield put(failedRegisterMentor(error));
+        if (e.response !== undefined && e.response.data !== undefined) {
+            const error = typeof e.response.data === 'string' ? e.response.data : e.response.data.error;
+            yield put(failedRegisterMentor(error));
+        } else {
+            yield put(failedRegisterMentor(e.message));
+        }
     }
 }
 
@@ -74,6 +89,10 @@ export function* registerWithLinkedin() {
     // For more details: https://i.expo.io/versions/latest/sdk/auth-session
     const result = yield AuthSession.startAsync({ authUrl });
     console.log(result);    
+    if (result.type === 'cancel') {
+        return;
+    }
+
     const { params: { state: responseState, code } } = result;
     if (responseState !== state) {
         return;
@@ -88,15 +107,53 @@ export function* registerWithLinkedin() {
         yield put(setUserFields(fields));
         yield put(NavigationActions.navigate({ routeName: "Mentor" }));
     
-    } catch(error) {
-        console.error(error.response.data.error);
+    } catch(e) {
+        if (e.response !== undefined && e.response.data !== undefined) {
+            const error = typeof e.response.data === 'string' ? e.response.data : e.response.data.error;
+            yield put(failedLogin(error));
+        } else {
+            yield put(failedLogin(e.message));
+        }
+    }
+}
+
+export function* login({ email_address, password }) {
+    try {
+        const response = yield axios.post(`http://${DOMAIN}/user/login`, { email_address, password });
+        const { user_id } = response.data.rows[0];
+        const getUserResponse =  yield axios.get(`http://${DOMAIN}/user/${user_id}`);
+        const user = getUserResponse.data.rows[0];
+        yield put(setUser(user));
+        yield put(NavigationActions.navigate({ routeName: "Main" }));
+        return user;
+    } catch(e) {
+        if (e.response !== undefined && e.response.data !== undefined) {
+            const error = typeof e.response.data === 'string' ? e.response.data : e.response.data.error;
+            yield put(failedLogin(error));
+        } else {
+            yield put(failedLogin(e.message));
+        }
     }
 }
 
 export function* getUser({ userId }) {
-    const { rows } = yield axios.get(`http://${DOMAIN}/user/${userId}`);
-    yield put(setUser(rows[0]));
-    return rows;
+    try {
+        const response = yield axios.get(`http://${DOMAIN}/user/${userId}`);
+        if (response === undefined) {
+            throw Error('Response is empty. Is the server started and running properly?');
+        }
+        const user =response.data.rows[0];
+        yield put(setUser(user));
+        return user;
+
+    } catch(e) {
+        if (e.response !== undefined && e.response.data !== undefined) {
+            const error = typeof e.response.data === 'string' ? e.response.data : e.response.data.error;
+            console.error(error);
+        } else {
+            console.error(e.message);
+        }
+    }
 }
 
 export function* logoutUser() {
@@ -111,5 +168,6 @@ export default function* userSaga() {
         takeLatest(REGISTER_WITH_LINKEDIN, registerWithLinkedin),
         takeLatest(UPLOAD_PROFILE_PIC, uploadProfilePic),
         takeLatest(LOGOUT_USER, logoutUser),
+        takeLatest(LOGIN, login),
     ]);
 }

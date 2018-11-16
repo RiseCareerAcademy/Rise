@@ -418,7 +418,8 @@ class Contact extends Component {
 }
 
 const mapStateToProps = state => ({
-  ...state.user
+  ...state.user,
+  profile_pic_URL: state.user.image || state.user.profile_pic_URL,
 });
 
 export default connect(
