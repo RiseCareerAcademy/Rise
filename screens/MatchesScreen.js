@@ -5,8 +5,8 @@ import Expo from "expo";
 
 export default class MatchesScreen extends Component {
   state = {
-    desiredSkills: ["Agile Methodologies", "UX", "Prototyping", "JAVA", "123"], //temp
-    desiredProfession: ["PM"], //temp
+    desiredSkills: "",
+    desiredProfession: "",
     //array of matches with respective scores
     matches: [],
     mentorsFromServer: [],
@@ -15,9 +15,7 @@ export default class MatchesScreen extends Component {
 
   constructor(props) {
     super(props);
-    var mentors = [];
-    //populate array with data from database
-
+    
     //TODO: GET DESIRED SKILL AND PROFESSIN
     //CALL MACTH ALGO
     const { manifest } = Expo.Constants;
@@ -25,49 +23,45 @@ export default class MatchesScreen extends Component {
       ? manifest.debuggerHost.split(`:`).shift().concat(`:8000`)
       : `api.example.com`;
     console.log(this.api);
-    fetch('http://' + this.api + '/user/21542322931999/skills', {
+    fetch('http://' + this.api + '/user/21542353185381/skills', {
       method: 'GET'
     })
       .then((response) => response.json())
       .then((responseJson) => {
-        this.setState({ desiredSkills: responseJson.rows[0].skills })
-        console.log("state of skill: " + this.state.desiredSkills)
-
-        //const { desiredSkills, desiredProfession } = this.state;
-        // const { matches } = this.match(desiredSkills, desiredProfession, mentors);
-        //this.setState({ matches: matches });
+        this.state ={desiredSkills:responseJson.rows[0].skills  }
       })
       .catch((error) => {
         console.log("error is: " + error);
       });
 
-    //fetch professin
-    fetch('http://' + this.api + '/user/21542322931999/profession', {
+    //fetch profession
+    fetch('http://' + this.api + '/user/21542353185381/profession', {
       method: 'GET'
     })
       .then((response) => response.json())
       .then((responseJson) => {
-
-        this.setState({ desiredProfession: responseJson.rows[0].profession })
-        console.log("state of profession: " + this.state.desiredProfession)
-
-        //const { desiredSkills, desiredProfession } = this.state;
-        // const { matches } = this.match(desiredSkills, desiredProfession, mentors);
-        //this.setState({ matches: matches });
+        //this.setState({desiredProfession:responseJson.rows[0].profession})
+        //this.state ={desiredProfession:responseJson.rows[0].profession  }
+        this.desiredProfession = responseJson.rows[0].profession
+        console.log("in fetch the prof is: " + this.desiredProfession)
       })
       .catch((error) => {
         console.log("error is: " + error);
       });
 
+    console.log("state of profession: " + this.state.desiredProfession)
+    console.log("state of skill: " + this.state.desiredSkills)
     const { matches } = this.match(this.state.desiredSkills, this.state.desiredProfession);
-    this.setState({ matches: matches });
+    this.state ={matches:matches  }
+    console.log("matches: " + this.state.matches)
   }
 
   //match function
   match = async (desiredSkills, desiredProfession) => {
     var map = {}
 
-    // console.log(desiredSkills.length)
+    console.log("desired skills: " + desiredSkills)
+    console.log("desired profession: " + desiredProfession)
     //go through skills
     for (let i = 0; i < desiredSkills.length; i++) {
       try {
@@ -80,7 +74,7 @@ export default class MatchesScreen extends Component {
           },
         });
         const { rows: users } = await response.json();
-        // check if profession
+        // check if there is at least one person w/ matching profession
         if (users.length != 0) {
           var len;
           if (String(users[0].users).includes(",")) {
@@ -90,11 +84,10 @@ export default class MatchesScreen extends Component {
             len = 1
           }
 
-          //for lop to go through matches and find metors
+          //for lop to go through matching skills and find mentor
           for (let j = 0; j < len; j++) {
             //get user id at ith index
             var id = users[0].users.split(',')[j];
-
             //if mentor
             if (String(id).charAt(0) == "1") {
               //if id is not in the map
@@ -114,6 +107,9 @@ export default class MatchesScreen extends Component {
         console.error("error is " + error);
       }
     }
+
+
+    //for loop to go through profession
     try {
       const response = await fetch('http://' + this.api + '/user/profession/' + desiredProfession, {
         method: 'GET',
@@ -123,7 +119,6 @@ export default class MatchesScreen extends Component {
         },
       });
       const { rows: profession } = await response.json();
-      // console.log(profession[0].users)
       if (profession.length != 0) {
         var proflen;
         if (String(profession[0].users).includes(",")) {
@@ -137,17 +132,17 @@ export default class MatchesScreen extends Component {
         for (let k = 0; k < proflen; k++) {
           var profid = profession[0].users.split(',')[k];
           if (String(profid).charAt(0) == "1") {
+            //if user has no matching skills, but matching profession
             if (map[profid] == undefined) {
-              // console.log("prof id " + String(profid) +"is undefined")
-              map[profid] = 1;
-            } else {
-              // console.log("prof id " + String(profid) + "has value of: " + map[profid])
-              map[profid] += 2;
+              map[profid] = 2;
             }
+            //if user has matching profession and skills
+            else {
+              map[profid] = map[profid] + 2;
+            }
+
           }
         }
-        console.log(map)
-        // console.log(map)
       }
     } catch (error) {
       console.error("error is " + error);
@@ -159,22 +154,28 @@ export default class MatchesScreen extends Component {
         'value': map[key]
       });
     }
-    console.log("unsorted: ")
-    console.log(unsortedValues)
-    const list = unsortedValues.sort((a, b) => a.value > b.value)
-    console.log("sorted")
-console.log(list)
 
-    //put hashmap into matches array which has the user id's sorted
+    //sort array by score
+    unsortedValues.sort((a, b) => (a.value < b.value) ? 1 : ((b.value < a.value) ? -1 : 0));
 
+
+    var matches = []
+    for (let i = 0; i < unsortedValues.length; i++) {
+      matches.push(
+        parseInt(unsortedValues[i].name)
+      );
+    }
+
+    console.log(matches)
     return { matches };
   }
 
   render() {
 
     const { matches, scores } = this.state;
-
+    
     return (
+      
       <View style={styles.container}>
         <ScrollView
           style={styles.container}
@@ -182,11 +183,11 @@ console.log(list)
         >
           <View style={styles.container}>
             {
-              /*
+
               <SectionList
                 sections={[
-                  { title: "Suggested Matches", data: matches },
-                  { title: "Scores of Matches(temp)", data: scores }
+                  { title: "Suggested Matches", data: this.state.matches },
+                  { title: "Scores of Matches(temp)", data: this.state.scores }
                 ]}
                 renderItem={({ item }) => <Text style={styles.item}>{item}</Text>}
                 renderSectionHeader={({ section }) => (
@@ -194,7 +195,7 @@ console.log(list)
                 )}
                 keyExtractor={(item, index) => index}
               />
-              */
+
             }
           </View>
         </ScrollView>
