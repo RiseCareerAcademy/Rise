@@ -1,5 +1,6 @@
 import React, { Component } from "react";
-import { ScrollView, StyleSheet, View, SectionList, Text } from "react-native";
+import { List, ListItem } from 'react-native-elements';
+import { FlatList } from "react-native";
 import Expo from "expo";
 import { create_matches_table_sql } from "../config/user_sql_constants";
 // import { Graph } from 'react-d3-graph';
@@ -10,15 +11,15 @@ export default class MatchesScreen extends Component {
     desiredProfession: "",
     //array of matches with respective scores
     matches: [],
-    matchesName:[],
-    mentorsFromServer: [],
+    list: [],
     error: "hi"
   };
+  
 
   constructor(props) {
     super(props);
-    
-    //TODO: GET DESIRED SKILL AND PROFESSIN
+    var numMatches;
+    var tmpList = [];
     //CALL MACTH ALGO
     const { manifest } = Expo.Constants;
     this.api = (typeof manifest.packagerOpts === `object`) && manifest.packagerOpts.dev
@@ -52,16 +53,38 @@ export default class MatchesScreen extends Component {
        console.log(matches)
        matches.then(data => {
         this.setState({ matches: data });
+        //console.log("type" + typeof Number.parseInt(this.state.matches.length))
+        numMatches = Number.parseInt(this.state.matches.length)
+
+        
+        //loop through matches id and store into a list
+     
+        //console.log("match len: "+numMatches)
+        for (let i = 0; i < numMatches; i++){
+          //need to get name, profile id, and profession from match id using fetch
+          tmpList.push(
+            {
+              name: 'Rita',
+              avatar_url: 'test url',
+              profession: 'sample profession'
+            }
+          )
+        }
+      
+    
+        this.state.list = tmpList
+        console.log("state list "+ this.list)
         });
-        console.log("state: "+ this.state.matches)
-  
+
+
+       
       })
       .catch((error) => {
         console.log("error is: " + error);
       });
 
-    //console.log("state of profession: " + this.state.desiredProfession)
-    //console.log("state of skill: " + this.state.desiredSkills)
+      
+    
      
   }
 
@@ -180,63 +203,30 @@ export default class MatchesScreen extends Component {
     return matches
   }
 
-  render() {
-
-    //const { matches = this.state;
-    
+  renderRow =({ item }) =>{
     return (
-      
-      <View style={styles.container}>
-        <ScrollView
-          style={styles.container}
-          contentContainerStyle={styles.contentContainer}
-        >
-          <View style={styles.container}>
-            {
-
-              <SectionList
-                sections={[
-                  { title: "Suggested Matches", data: this.state.matches },
-                  //{ title: "Scores of Matches(temp)", data: this.state.scores }
-                ]}
-                renderItem={({ item }) => <Text style={styles.item}>{item}</Text>}
-                renderSectionHeader={({ section }) => (
-                  <Text style={styles.sectionHeader}>{section.title}</Text>
-                )}
-                keyExtractor={(item, index) => index}
-              />
-
-            }
-          </View>
-        </ScrollView>
-      </View>
-    );
+      <ListItem
+        roundAvatar
+        title={item.name}
+        subtitle={item.profession}
+        avatar={{uri:item.avatar_url}}
+      />
+    )
   }
+  
+  render =()=> {
+    return (
+      <List>
+        <FlatList
+          data={this.state.list}
+          renderItem={this.renderRow}
+          keyExtractor={item => item.name}
+
+        />
+      </List>
+    )
+  }
+
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff"
-  },
-  buttonContainer: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center"
-  },
-  center: {
-    flex: 1,
-    flexDirection: "row",
-    justifyContent: "center"
-  },
-  buttonStyle: {
-    margin: 10
-  },
-  greyText: {
-    color: "grey"
-  },
-  contentContainer: {
-    paddingTop: 30
-  }
-});
+
