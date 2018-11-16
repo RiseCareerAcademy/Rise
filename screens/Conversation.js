@@ -35,7 +35,7 @@ class Conversation extends Component {
           to_id: otherUser, 
           from_id: "333",
           message_body: this.state.text,
-          timestamp: "2014-10-07 08:28:19.120",
+          timestamp: "2014-10-07 08:29:19.120",
           match_id: this.state.matchId,
         }
         console.log(JSON.stringify(body))

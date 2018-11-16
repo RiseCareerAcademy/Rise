@@ -4,6 +4,9 @@ import { View, TouchableOpacity, StyleSheet, Image, Text } from "react-native";
 const Message = props => {
   const { navigate } = props.navigation;
   const style = [];
+  
+  styles.message.backgroundColor = props.back
+  console.log("Backkkkkkkk " + props.back)
   style.push(styles.message);
   const profileImg =
     "https://cdn.cnn.com/cnnnext/dam/assets/180923222528-tiger-woods-fedex-playoff-exlarge-169.jpg";
@@ -17,7 +20,16 @@ const Message = props => {
         title: props.fromUser
       }) }
       activeOpacity={0.7}
-      style={style}
+      style={{
+        borderWidth: StyleSheet.hairlineWidth,
+        borderColor: props.back,
+        backgroundColor: props.back,
+        marginHorizontal: 15,
+        marginTop: 5,
+        marginBottom: 10,
+        padding: 15,
+        borderRadius: 10
+      }}
     >
       <View style={styles.topRow}>
         <View style={styles.userCol}>
@@ -45,7 +57,7 @@ const styles = StyleSheet.create({
   message: {
     borderWidth: StyleSheet.hairlineWidth,
     borderColor: "rgb(225,225,225)",
-    backgroundColor: "rgb(255, 255, 255)",
+    backgroundColor: "rgb(225,225,225)",
     marginHorizontal: 15,
     marginTop: 5,
     marginBottom: 10,
