@@ -201,6 +201,8 @@ module.exports.postMentor = (req, res) => {
     date = new Date()
     userID = parseInt(10000000000000 + date.getTime());
     user.user_id = userID;
+    const ip_address = ip.address();
+    user.profile_pic_URL = `http://${ip_address}:8000/user/${user.user_id}/profilepic`;
     //console.log(userID)
     sql = `INSERT INTO Mentors VALUES (?, ? , ?, ?, ?, ?, ?, ?, ?, ?, ?) `
     console.log(sql);
