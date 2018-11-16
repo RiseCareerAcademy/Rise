@@ -1,7 +1,8 @@
 import React from "react";
 import { Button, Text } from "native-base";
 import { Platform, ScrollView, StyleSheet, Image, View } from "react-native";
-import { AuthSession, ImagePicker, Permissions } from "expo";
+import { AuthSession } from "expo";
+
 import { MonoText } from "../components/StyledText";
 import { connect } from 'react-redux';
 
@@ -64,7 +65,7 @@ export class HomeScreen extends React.Component {
           }>
             <Text>SIGN IN</Text>
           </Button>
-          {this.state.validi !== undefined ? (
+          {this.state.validState !== undefined ? (
           <Text>{JSON.stringify(this.state.validState) + '\nRequestState: ' + this.state.state + '\nResponseState: ' + this.state.responseState}</Text>
           ) : null}
           {this.state.authUrl ? (
