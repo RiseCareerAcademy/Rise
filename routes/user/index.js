@@ -26,6 +26,7 @@ router.delete('/tables',controller.deletetable);
 
 // POST request API for /user
 router.post('/mentor', controller.postMentor);
+router.post('/linkedin', controller.linkedin);
 router.post('/mentee', controller.postMentee);
 router.post('/password', controller.postPassword);
 router.post('/skill', controller.postSkill);
