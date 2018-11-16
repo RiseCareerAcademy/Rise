@@ -20,10 +20,10 @@ const router = express.Router();
 module.exports.router = router;
 
 //CREATE all 7 tables
-router.post('/tables', controller.createTables);
+router.post('/tables',controller.createTables);
 
 //Delete all 7 tables
-router.delete('/tables', controller.deleteTable);
+router.delete('/tables', controller.deletetable);
 
 //POST request API for /user
 router.post('/mentor', controller.postMentor);
@@ -33,11 +33,11 @@ router.post('/skill', controller.postSkill);
 router.post('/profession', controller.postProfession);
 
 //GET request API for /user 
-router.get('/mentors', controller.getAllMentors);
-router.get('/mentees', controller.getAllMentees);
-router.get('/passwords', controller.getAllPasswords);
-router.get('/skills', controller.getAllSkills);
-router.get('/professions', controller.getAllProfessions);
+router.get('/mentors',controller.getAllMentors);
+router.get('/mentees',controller.getAllMentees);  
+router.get('/passwords',controller.getAllPasswords);  
+router.get('/skills',controller.getAllSkills);  
+router.get('/professions',controller.getAllProfessions);  
 //get user by id
 router.get("/:id", controller.getUserById);
 
@@ -86,10 +86,21 @@ router.put("/:id/bio", controller.updateBio);
 router.delete("/:id/bio", controller.deleteBio);
 
 //update zipcode
-router.put("/:id/zipcode/:zipcode", controller.updateZipcode);
+router.put("/:id/zipcode/:zipcode",controller.updateZipcode);
 
 //login using email/password
 router.post("/login", controller.login);
+
+//MESSAGE API
+
+//create a new message 
+router.post('/message', controller.postMessage);
+
+//get all messages 
+router.get('/message/all', controller.getMessages);
+
+//get latest message by message id 
+router.get('/message/:matchid', controller.getLatestMessageById);
 
 //MESSAGE API
 
