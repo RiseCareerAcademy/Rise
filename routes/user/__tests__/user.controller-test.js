@@ -1,5 +1,5 @@
 const { createTables,
-    deleteTable,
+    deletetable,
     postMentor, postMentee, 
     postPasswords,
     getAllMentors, getAllMentees, getAllPasswords,
@@ -83,7 +83,7 @@ describe('createTables', () => {
 });
 
 
-describe('deleteTable', () => {
+describe('deletetable', () => {
     let res;
     let rows;
     let err;
@@ -105,7 +105,7 @@ describe('deleteTable', () => {
         const req = {
         };
 
-        deleteTable(req, res);
+        deletetable(req, res);
 
         expect(db.all.mock.calls[0][0]).toEqual('DROP TABLE IF EXISTS Mentors;');
         expect(db.all.mock.calls[1][0]).toEqual('DROP TABLE IF EXISTS Mentees;');
@@ -125,7 +125,7 @@ describe('deleteTable', () => {
 
         // NOTE: Create a new anonymous function that returns the function
         // that throws the error.
-        expect(() => deleteTable(req, res)).toThrowError(err);
+        expect(() => deletetable(req, res)).toThrowError(err);
     });
 });
 
