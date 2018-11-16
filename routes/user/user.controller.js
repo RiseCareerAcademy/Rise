@@ -279,16 +279,22 @@ module.exports.postMentor = (req, res) => {
 //create new mentee
 module.exports.postMentee = (req, res) => {
   const fields = ['first_name', 'last_name', 'email_address', 'biography', 'zipcode',
-    'date_of_birth', 'skills', 'profession', 'profile_pic_URL', 'hobbies'];
+    'date_of_birth', 'skills', 'profession', 'hobbies'];
   const user = {};
-  fields.forEach(field => {
+  const missingFields = fields.some(field => {
     if (req.body[field] === undefined) {
       res
         .status(500)
         .json({ error: "Missing credentials", success: false });
+      return true;
     }
     user[field] = req.body[field];
+    return false;
   });
+
+  if (missingFields) {
+    return;
+  }
 
   sql_email = `Select * from Mentees where email_address = ?  `
   db.all(sql_email, [user.email_address], (err, rows_email) => {
@@ -302,6 +308,10 @@ module.exports.postMentee = (req, res) => {
     }
     date = new Date()
     userID = parseInt(20000000000000 + date.getTime());
+    user.user_id = userID;
+    const ip_address = ip.address();
+    user.profile_pic_URL = `http://${ip_address}:8000/user/${user.user_id}/profilepic`;
+  
     sql = `INSERT INTO Mentees VALUES (?,?,?,?,?,?,?,?,?,?,?) `
     console.log(sql);
     db.all(sql, [userID, user.first_name, user.last_name, user.email_address, user.biography,
@@ -309,7 +319,7 @@ module.exports.postMentee = (req, res) => {
         if (err) {
           throw err;
         }
-        res.json({ success: true, rows: rows });
+        res.json({ success: true, mentee: user });
       });
     //add user ID to skills table 
     skill = user.skills;

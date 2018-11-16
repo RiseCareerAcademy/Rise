@@ -73,6 +73,7 @@ router.get("/name/:id", controller.getFirstLastById);
 router.get("/:id/profilepic", controller.getProfilePic);
 //update profile pic by id 
 router.put("/:id/profilepic", controller.updateProfilePic);
+router.post("/:id/profilepic", upload.single('photo'), controller.postProfilePic);
 
 //get profession/area of study 
 router.get("/:id/profession", controller.getProfession);

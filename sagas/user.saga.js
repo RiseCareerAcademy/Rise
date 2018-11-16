@@ -33,11 +33,14 @@ export function* registerMentee({ mentee }) {
     try {
         const response = yield axios.post(`http://${DOMAIN}/user/mentee`, mentee);
         const { data } = response;
+        if (!data.success) {
+            throw Error(data.error);
+        }
         yield call(uploadProfilePic, { user_id: data.mentee.user_id, uri: mentee.uri });
         yield put(setUser(data.mentee));
         yield put(NavigationActions.navigate({ routeName: "Main" }));
     } catch(e) { 
-        const error = e.response.data.error;
+        const error = typeof e.response.data === 'string' ? e.response.data : e.response.data.error;
         yield put(failedRegisterMentee(error));
     }
 }
