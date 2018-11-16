@@ -17,6 +17,13 @@ export class HomeScreen extends React.Component {
     }
   }
 
+  componentDidUpdate = prevProps => {
+    if (prevProps.loggedIn === false && this.props.loggedIn === true) {
+      const { navigate } = this.props.navigation;
+      navigate('Profile');
+    }
+  }
+
   goToMainScreen = () => {
     const { navigate } = this.props.navigation;
     navigate('Main');

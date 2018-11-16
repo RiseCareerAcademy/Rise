@@ -345,6 +345,7 @@ module.exports.postMessage = (req, res) => {
     }
     res.json({ success: true, rows: rows });
   });
+}
 
 //create new password (SQL INJ.)
 module.exports.postPassword = (req, res) => {
