@@ -7,17 +7,17 @@ const logger =  require("morgan"); //used to log in console window all request
 const cookieParser = require("cookie-parser"); //Parse Cookie header and populate req.cookies
 const bodyParser = require("body-parser"); //allows the use of req.body in POST request
 const http = require('http');
-const mongoose = require("mongoose");
 const jwt = require('jsonwebtoken');
 
 const { router: api } = require("./routes/api/api.js"); //gets api logic from path
 const { router: user } = require("./routes/user/index.js"); //gets user logic from path
 const { router: match } = require("./routes/match/matchapi.js"); //gets match logic from path 
-const { router: message } = require("./routes/message/messageapi.js"); //gets message logic from path 
 const config = require('./config/database');
+require('dotenv').config()
 
 const app = express(); //creates an instance of express
 const server = http.createServer(app); //creates an HTTP server instance
+require('express-ws')(app, server);
 
 // const db = require('./db');
 
@@ -64,7 +64,6 @@ app.use('/api', (req, res, next) => {
 }, api);
 app.use('/user', user);
 app.use('/match', match);
-app.use('/message', message);
 
 // so when people try to access it via browser
 app.get("/", function(req, res) {

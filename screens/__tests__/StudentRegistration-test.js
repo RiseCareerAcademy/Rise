@@ -1,6 +1,6 @@
 import 'react-native';
 import React from 'react';
-import Reg from '../StudentRegistration';
+import { StudentRegistration } from '../StudentRegistration';
 import renderer from 'react-test-renderer';
 alert = jest.fn();
 
@@ -10,7 +10,7 @@ it("returns true if email state is changed", () => {
             navigate: () => { }
         },
     };
-    const instance = renderer.create(<Reg {...props} />).getInstance();
+    const instance = renderer.create(<StudentRegistration {...props} />).getInstance();
     instance.handleEmail('user@email.com');
     expect(instance.state.email).toEqual('user@email.com')
 });
@@ -21,7 +21,7 @@ it("returns true if password state is changed", () => {
             navigate: () => { }
         },
     };
-    const instance = renderer.create(<Reg {...props} />).getInstance();
+    const instance = renderer.create(<StudentRegistration {...props} />).getInstance();
     instance.handlePassword('password');
     expect(instance.state.password).toEqual('password')
 });
@@ -32,7 +32,7 @@ it("returns true if confirmPassword state is changed", () => {
             navigate: () => { }
         },
     };
-    const instance = renderer.create(<Reg {...props} />).getInstance();
+    const instance = renderer.create(<StudentRegistration {...props} />).getInstance();
     instance.handleConfirmedPassword('password');
     expect(instance.state.confirmedPassword).toEqual('password')
 });
@@ -43,7 +43,7 @@ it("returns true if skill state is changed", () => {
             navigate: () => { }
         },
     };
-    const instance = renderer.create(<Reg {...props} />).getInstance();
+    const instance = renderer.create(<StudentRegistration {...props} />).getInstance();
     instance.handleSkills('skill');
     expect(instance.state.skills).toEqual('skill')
 });
@@ -54,7 +54,7 @@ it("returns true if profession state is changed", () => {
             navigate: () => { }
         },
     };
-    const instance = renderer.create(<Reg {...props} />).getInstance();
+    const instance = renderer.create(<StudentRegistration {...props} />).getInstance();
     instance.handleProfession('profession');
     expect(instance.state.profession).toEqual('profession')
 });
@@ -65,31 +65,9 @@ it("returns true if name state is changed", () => {
             navigate: () => { }
         },
     };
-    const instance = renderer.create(<Reg {...props} />).getInstance();
+    const instance = renderer.create(<StudentRegistration {...props} />).getInstance();
     instance.handleName('name');
     expect(instance.state.name).toEqual('name')
-});
-
-it("returns true if city state is changed", () => {
-    const props = {
-        navigation: {
-            navigate: () => { }
-        },
-    };
-    const instance = renderer.create(<Reg {...props} />).getInstance();
-    instance.handleCity('city');
-    expect(instance.state.city).toEqual('city')
-});
-
-it("returns true if state's state is changed", () => {
-    const props = {
-        navigation: {
-            navigate: () => { }
-        },
-    };
-    const instance = renderer.create(<Reg {...props} />).getInstance();
-    instance.handleState('state');
-    expect(instance.state.state).toEqual('state')
 });
 
 it('returns error if all fields are not filled', () => {
@@ -98,7 +76,7 @@ it('returns error if all fields are not filled', () => {
         navigate: () => { }
       },
     };
-    const instance = renderer.create(<Reg {...props} />).getInstance();
+    const instance = renderer.create(<StudentRegistration {...props} />).getInstance();
     expect(instance.validate('', 'password', 'password', 'skills', 'profession', 'name', 'city', 'state')).toEqual(false);
   });
 
@@ -108,7 +86,7 @@ it('returns error if all fields are not filled', () => {
         navigate: () => { }
       },
     };
-    const instance = renderer.create(<Reg {...props} />).getInstance();
+    const instance = renderer.create(<StudentRegistration {...props} />).getInstance();
     expect(instance.validate('user', 'password', 'password', 'skills', 'profession', 'name', 'city', 'state', )).toEqual(false);
   });
 
@@ -118,7 +96,7 @@ it('returns error if all fields are not filled', () => {
         navigate: () => { }
       },
     };
-    const instance = renderer.create(<Reg {...props} />).getInstance();
+    const instance = renderer.create(<StudentRegistration {...props} />).getInstance();
     expect(instance.validate('useremail', 'password', 'password', 'skills', 'profession', 'name', 'city', 'state', )).toEqual(false);
   });
 
@@ -128,7 +106,7 @@ it('returns error if all fields are not filled', () => {
         navigate: () => { }
       },
     };
-    const instance = renderer.create(<Reg {...props} />).getInstance();
+    const instance = renderer.create(<StudentRegistration {...props} />).getInstance();
     expect(instance.validate('user@emailcom', 'password', 'password', 'skills', 'profession', 'name', 'city', 'state', )).toEqual(false);
   });
 
@@ -138,7 +116,7 @@ it('returns error if all fields are not filled', () => {
         navigate: () => { }
       },
     };
-    const instance = renderer.create(<Reg {...props} />).getInstance();
+    const instance = renderer.create(<StudentRegistration {...props} />).getInstance();
     expect(instance.validate('user@email.com', 'pass', 'pass', 'skills', 'profession', 'name', 'city', 'state', )).toEqual(false);
   });
 
@@ -148,7 +126,7 @@ it('returns error if all fields are not filled', () => {
         navigate: () => { }
       },
     };
-    const instance = renderer.create(<Reg {...props} />).getInstance();
+    const instance = renderer.create(<StudentRegistration {...props} />).getInstance();
     expect(instance.validate('user@email.com', 'passwoord', 'password', 'skills', 'profession', 'name', 'city', 'state', )).toEqual(false);
   });
 
@@ -158,7 +136,7 @@ it('returns error if all fields are not filled', () => {
         navigate: () => { }
       },
     };
-    const instance = renderer.create(<Reg {...props} />).getInstance();
+    const instance = renderer.create(<StudentRegistration {...props} />).getInstance();
     expect(instance.validate('user@email.com', 'password', 'password', 'skills', 'profession', 'name', 'city', 'state', )).toEqual(true);
   });
 
@@ -168,6 +146,6 @@ it('renders correctly', () => {
             navigate: () => { }
         },
     };
-    const tree = renderer.create(<Reg {...props}>Snapshot test!</Reg>).toJSON();
+    const tree = renderer.create(<StudentRegistration {...props}>Snapshot test!</StudentRegistration>).toJSON();
     expect(tree).toMatchSnapshot();
 });

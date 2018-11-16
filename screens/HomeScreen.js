@@ -1,41 +1,32 @@
 import React from "react";
 import { Button, Text } from "native-base";
 import { Platform, ScrollView, StyleSheet, Image, View } from "react-native";
-import { AuthSession, ImagePicker, Permissions } from "expo";
-import { MonoText } from "../components/StyledText";
+import { AuthSession } from "expo";
 
-export default class HomeScreen extends React.Component {
+import { MonoText } from "../components/StyledText";
+import { connect } from 'react-redux';
+
+import { registerWithLinkedin } from '../actions/user.actions';
+
+export class HomeScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       result: null,
     };
+
+    if (this.props.loggedIn) {
+      this.goToMainScreen();
+    }
+  }
+
+  goToMainScreen = () => {
+    const { navigate } = this.props.navigation;
+    navigate('Main');
   }
 
   handleMentorPress = async () => {
-    // Setup params for Linkedin API
-    // For more details: https://developer.linkedin.com/docs/oauth2
-    const response_type = 'code';
-    const client_id = '7872jtsnbo9n7s';
-    const redirectUrl = AuthSession.getRedirectUrl();
-    const state =  Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-    const authUrl =
-    `https://www.linkedin.com/oauth/v2/authorization?response_type=${response_type}` +
-    `&client_id=${encodeURIComponent(client_id)}` +
-    `&redirect_uri=${encodeURIComponent(redirectUrl)}` +
-    `&state=${encodeURIComponent(state)}`;
-
-    // Use Expo's AuthSession to connect with the Linkedin API
-    // For more details: https://i.expo.io/versions/latest/sdk/auth-session
-    const result = await AuthSession.startAsync({ authUrl });
-    const { params: { state: responseState, code } } = result;
-    let validState = true;
-    if (responseState !== state) {
-      validState = false;
-    }
-
-    // This only displays the results to the screen
-    this.setState({ result, authUrl, validState, responseState, state });
+    this.props.registerWithLinkedin();
   }
 
   render() {
@@ -74,7 +65,7 @@ export default class HomeScreen extends React.Component {
           }>
             <Text>SIGN IN</Text>
           </Button>
-          {this.state.validi !== undefined ? (
+          {this.state.validState !== undefined ? (
           <Text>{JSON.stringify(this.state.validState) + '\nRequestState: ' + this.state.state + '\nResponseState: ' + this.state.responseState}</Text>
           ) : null}
           {this.state.authUrl ? (
@@ -116,3 +107,11 @@ const styles = StyleSheet.create({
     paddingTop: 30
   },
 });
+
+const mapStateToProps = state => ({
+  loggedIn: state.user.loggedIn,
+});
+
+export default connect(mapStateToProps, {
+  registerWithLinkedin,
+})(HomeScreen);

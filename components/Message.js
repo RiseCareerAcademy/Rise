@@ -11,7 +11,6 @@ const Message = props => {
 
   return (
     <TouchableOpacity
-      // onPress={() => alert('message')}
       onPress={() => navigate("Conversation")}
       activeOpacity={0.7}
       style={style}
