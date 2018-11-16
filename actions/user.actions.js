@@ -4,10 +4,12 @@ export const REGISTER_MENTEE = 'user/REGISTER_MENTEE';
 export const UPLOAD_PROFILE_PIC = 'user/UPLOAD_PROFILE_PIC';
 export const FAILED_REGISTER_MENTEE = 'user/FAILED_REGISTER_MENTEE';
 export const FAILED_REGISTER_MENTOR = 'user/FAILED_REGISTER_MENTOR';
+export const FAILED_LOGIN = 'user/FAILED_LOGIN';
 export const LOGOUT_USER = 'user/LOGOUT_USER';
 export const REGISTER_WITH_LINKEDIN = 'user/REGISTER_WITH_LINKEDIN';
 export const SET_USER_FIELDS = 'user/SET_USER_FIELDS';
 export const REGISTER_MENTOR = 'user/REGISTER_MENTOR';
+export const LOGIN = 'user/LOGIN';
 
 export const setUser = user => ({
 	type: SET_USER,
@@ -44,6 +46,11 @@ export const failedRegisterMentor = error => ({
 	error,
 });
 
+export const failedLogin = error => ({
+	type: FAILED_LOGIN,
+	error,
+});
+
 export const logoutUser = () => ({
 	type: LOGOUT_USER,
 });
@@ -56,4 +63,10 @@ export const setUserFields = fields => ({
 export const registerMentor = mentor => ({
 	type: REGISTER_MENTOR,
 	mentor,
+});
+
+export const login = (email_address, password) => ({
+	type: LOGIN,
+	email_address,
+	password,
 });

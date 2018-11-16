@@ -132,7 +132,7 @@ export class MentorRegistration extends React.Component {
       hobbies: "fake hobbies",
       profession: this.state.occupation || this.props.occupation,
       password: this.state.password,
-      image: this.props.profile_pic_URL
+      image: this.props.profile_pic_URL,
     };
 
     this.props.registerMentor(mentor);
@@ -156,11 +156,14 @@ export class MentorRegistration extends React.Component {
 
             <Item stackedLabel>
               <Label>Email</Label>
-              <Input placeholder={this.props.email_address} onChange={this.handleEmail} />
+              <Input 
+              autoCapitalize="none"
+              placeholder={this.props.email_address} onChange={this.handleEmail} />
             </Item>
             <Item stackedLabel>
               <Label>Password</Label>
               <Input
+              autoCapitalize="none"
                 onChangeText={this.handlePassword}
                 secureTextEntry={true}
               />
@@ -168,6 +171,7 @@ export class MentorRegistration extends React.Component {
             <Item stackedLabel>
               <Label>Confirm Password</Label>
               <Input
+              autoCapitalize="none"
                 onChangeText={this.handleConfirmedPassword}
                 secureTextEntry={true}
               />
@@ -287,7 +291,6 @@ const mapStateToProps = state => ({
   last_name: state.user.last_name,
   biography: state.user.biography,
   profile_pic_URL: state.user.profile_pic_URL,
-  error: state.user.error,
 });
 
 export default connect(
