@@ -1,180 +1,220 @@
 import React, { Component } from "react";
-import { ScrollView, StyleSheet, View, SectionList, Text } from "react-native";
+import { ScrollView, StyleSheet, View,  Text, Image } from "react-native";
+import { List, ListItem } from 'react-native-elements'
+import { CheckBox } from 'react-native-elements'
+import Expo from "expo";
+
 
 export default class SearchScreen extends Component {
   state = {
     //array of matches with respective scores
-    matches: [],
-    scores: []
+    results: [],
+    checkedSkills:true,
+    checkedProfessions:true,
+    checkedMentors:true,
+    checkedMentees:true,
+    checkedNames:true,
+    data: []
   };
 
   constructor(props) {
     super(props);
+    
+    //TODO: API call function 
+    //WILL THROW TYPEERROR ON THIS SYSTEM
 
-    //fakeData organized by iterations of (name, profession, skills);
-    const fakeData = [
-      ["Daniel Ng"],
-      ["Software Developer"],
-      ["JQuery", "Python", "UX"], //should be number 4
-      ["Tracy Lewis"],
-      [""],
-      ["UX", "Prototyping"], //should be number 3
-      ["Kevin Mui"],
-      ["Product Manager"],
-      [""], //should be number 2
-      ["Lewis Tracy"],
-      ["Product Manager"],
-      ["UX"], //should be number 1
-      ["Tone Yu"],
-      ["Nurse"],
-      ["Birthing", "Yelling", "Running"] //should not be in the results
-    ];
+    const { manifest } = Expo.Constants;
+    const api = (typeof manifest.packagerOpts === `object`) && manifest.packagerOpts.dev
+  ? manifest.debuggerHost.split(`:`).shift().concat(`:8000`)
+  : `api.example.com`;
 
-    const { scores, matches } = this.search(fakeData);
-    this.state.scores = scores;
-    this.state.matches = matches;
+    fetch('http://'+api+'/user/mentors',{
+      method: 'GET'
+    })
+    .then((response) => response.json())
+    .then((responseJson) => {
+      console.log("IT WORKED");
+
+    })
+    .catch((error) => {
+      console.log("error isss: " + error);
+    });
   }
 
   //search function
-  search = (fakeData) => {
+  search = () => {
+
     const { navigation } = this.props;
-    searchInput = navigation.getParam('text');
-    matches = [];
-    scores = [];
-    if (searchInput.length == 0 || fakeData.length == 0){
-      return {scores,matches}
+    var searchInput = navigation.getParam('text').toString();
+    searchInput = searchInput.toLowerCase();
+    
+    var results = [];
+    var scores = [];
+    var currArray = '';
+    var tempPostman = ''; 
+    
+    if (this.state.checkedSkills)
+    {
+      tempPostman = "21542330576964,11542331557063,11542339784414";
+      currArray = tempPostman.split(',');
+
+      //for each ID with skill, add to results
+      for (var i = 0; i < currArray.length; i++){
+        if (results.indexOf(currArray[i]) > -1){
+          //if id exists in results already
+          scores[results.indexOf(currArray[i])] += 1;
+        }else{
+          results[results.length] = currArray[i];
+          scores[scores.length] = 1;
+        }
+      }
     }
     
-      for (let j = 0; j < fakeData.length; j += 3) {
-        var parsedData = fakeData[j+2].toString().split(' ');
-        for(let k = 0; k < parsedData.length; k++){
-          if (parsedData[k].indexOf(searchInput) > -1) {
-            //if matching skill, add to match list, score ++
-            if (matches.indexOf(fakeData[j]) > -1)
-              //if already has points
-              scores[matches.indexOf(fakeData[j])] += 1;
-            else {
-              //else add to list of matches with new score
-              matches[matches.length] = fakeData[j];
-              scores[scores.length] = 1;
-            }
-          }
-        }
-        if (fakeData[j+2].indexOf(searchInput) > -1) {
-          //if matching skill, add to match list, score ++
-          if (matches.indexOf(fakeData[j]) > -1)
-            //if already has points
-            scores[matches.indexOf(fakeData[j])] += 1;
-          else {
-            //else add to list of matches with new score
-            matches[matches.length] = fakeData[j];
-            scores[scores.length] = 1;
-          }
+    //BY PROFESSIONS
+    if (this.state.checkedProfessions)
+    {
+      tempPostman = "21542330576964"
+      currArray = tempPostman.split(',');
+      //for each ID with skill, add to results
+      for (i = 0; i < currArray.length; i++){
+        if (results.indexOf(currArray[i]) > -1){
+          //if id exists in results already
+          scores[results.indexOf(currArray[i])] += 3;
+        }else{
+          results[results.length] = currArray[i];
+          scores[scores.length] = 3;
         }
       }
-    
-      for (let j = 0; j < fakeData.length; j += 3){
-        var parsedData = fakeData[j+1].toString().split(' ');
-        for(let k = 0; k < parsedData.length; k++){
-          if (parsedData[k].indexOf(searchInput) > -1) {
-            if (matches.indexOf(fakeData[j]) > -1)
-              //if matching skill, add to match list, score ++
-              //if already has points
-              scores[matches.indexOf(fakeData[j])] += 2;
-            else {
-              //else add to list of matches with new score
-              matches[matches.length] = fakeData[j];
-              scores[scores.length] = 3;
-            }
-          }
-        }
-        if (fakeData[j+1].indexOf(searchInput) > -1) {
-          //if matching skill, add to match list, score ++
-          if (matches.indexOf(fakeData[j]) > -1)
-            //if already has points
-            scores[matches.indexOf(fakeData[j])] += 2;
-          else {
-            //else add to list of matches with new score
-            matches[matches.length] = fakeData[j];
-            scores[scores.length] = 2;
-          }
+    }
+
+    //BY NAMES
+    if (this.state.checkedNames)
+    {
+      tempPostman = "21542330576964"
+      currArray = tempPostman.split(',');
+      //for each ID with skill, add to results
+      for (i = 0; i < currArray.length; i++){
+        if (results.indexOf(currArray[i]) > -1){
+          //if id exists in results already
+          scores[results.indexOf(currArray[i])] += 2;
+        }else{
+          results[results.length] = currArray[i];
+          scores[scores.length] = 2;
         }
       }
-    
-      for (let j = 0; j < fakeData.length; j += 3){
-        var parsedData = fakeData[j].toString().split(' ');
-        for(let k = 0; k < parsedData.length; k++){
-          if (parsedData[k].indexOf(searchInput) > -1) {
-            if (matches.indexOf(fakeData[j]) > -1)
-              //if matching skill, add to match list, score ++
-              //if already has points
-              scores[matches.indexOf(fakeData[j])] += 2;
-            else {
-              //else add to list of matches with new score
-              matches[matches.length] = fakeData[j];
-              scores[scores.length] = 2;
-            }
-          }
-        }
-        if (fakeData[j].indexOf(searchInput) > -1) {
-          //if matching skill, add to match list, score ++
-          if (matches.indexOf(fakeData[j]) > -1)
-            //if already has points
-            scores[matches.indexOf(fakeData[j])] += 2;
-          else {
-            //else add to list of matches with new score
-            matches[matches.length] = fakeData[j];
-            scores[scores.length] = 2;
-          }
+    }
+
+    var finalResults = [];
+    var finalScores = [];
+
+    //BY MENTOR/MENTEE
+    if (this.state.checkedMentors)
+    {
+      for(i = 0; i < results.length; i++){
+        if(results[i].charAt(0)=='1')
+        {
+          finalResults[finalResults.length] = results[i];
+          finalScores[finalScores.length] = scores[i];
         }
       }
-      
+    }
+    if (this.state.checkedMentees){
+      for(i = 0; i < results.length; i++){
+        if(results[i].charAt(0)=='2')
+        {
+          finalResults[finalResults.length] = results[i];
+          finalScores[finalScores.length] = scores[i];
+        }
+      }
+    }
 
     //sort by score
-    for (let i = 1; i < scores.length; i++) {
+    for (let i = 1; i < finalScores.length; i++) {
       for (let j = 0; j < i; j++) {
-        if (scores[i] > scores[j]) {
-          let x = scores[i];
-          scores[i] = scores[j];
-          scores[j] = x;
-          let y = matches[i];
-          matches[i] = matches[j];
-          matches[j] = y;
+        if (finalScores[i] > finalScores[j]) {
+          let x = finalScores[i];
+          finalScores[i] = finalScores[j];
+          finalScores[j] = x;
+          let y = finalResults[i];
+          finalResults[i] = finalResults[j];
+          finalResults[j] = y;
         }
       }
     }
 
-    return { scores, matches };
+
+    for(i = 0; i < finalResults.length;i++)
+    {console.log(finalResults[i].toString());}
+    
+    this.state.results = finalResults;
+
+    return;
   }
 
+  makeListData = (results) => {
+    this.state.data=[{"name": "Margie Hadjiev","skills":"Sleeping","profession":"god"},
+    {"name": "Margie Chan","skills":"CCAC","profession":"buddha"}];
+
+  }
+
+  
   render() {
 
-    const { matches, scores } = this.state;
+    this.search();
 
     return (
       <View style={styles.container}>
-        <ScrollView
+      <ScrollView
           style={styles.container}
           contentContainerStyle={styles.contentContainer}
         >
-          <View style={styles.container}>
-            <SectionList
-              sections={[
-                { title: "Search Results", data: matches },
-                { title: "Scores", data: scores }
-              ]}
-              renderItem={({ item }) => <Text style={styles.item}>{item}</Text>}
-              renderSectionHeader={({ section }) => (
-                <Text style={styles.sectionHeader}>{section.title}</Text>
-              )}
-              keyExtractor={(index) => index}
-            />
-          </View>
-        </ScrollView>
-      </View>
+      <CheckBox title='Skills' checked={this.state.checkedSkills}
+      onPress={() => this.setState({checkedSkills: !this.state.checkedSkills})}
+      />
+      <CheckBox title='Professions' checked={this.state.checkedProfessions}
+      onPress={() => this.setState({checkedProfessions: !this.state.checkedProfessions})}/>
+      
+      <CheckBox title='Mentors' checked={this.state.checkedMentors}
+      onPress={() => this.setState({checkedMentors: !this.state.checkedMentors})}/>
+      
+      <CheckBox title='Mentees' checked={this.state.checkedMentees}
+      onPress={() => this.setState({checkedMentees: !this.state.checkedMentees})}/>  
+    
+    <List>
+          <ListItem
+          roundAvatar
+          title='Margie Hadjiev'
+          subtitle={
+            <View style={styles.subtitleView}>
+              <Text style={styles.ratingText}>Sleeping, Smiling</Text>
+              <Text style={styles.ratingText}>Mechanical Engineer</Text>
+            </View>
+          }
+          //avatar={require('./avatar.jpg')}
+        />
+        <ListItem
+          roundAvatar
+          title='Margie Hadjiev'
+          subtitle={
+            <View style={styles.subtitleView}>
+              <Text style={styles.ratingText}>Mechanical Engineer</Text>
+              <Text style={styles.ratingText}>Sleeping, Smiling</Text>
+            </View>
+          }
+          //avatar={require('./avatar.jpg')}
+        />
+    </List>
+    
+    </ScrollView>
+    
+    </View>
+
+
     );
   }
+  
 }
+
 
 const styles = StyleSheet.create({
   container: {
@@ -200,5 +240,21 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     paddingTop: 30
+  },
+
+  subtitleView: {
+    flexDirection: 'row',
+    paddingLeft: 10,
+    paddingTop: 5
+  },
+  ratingImage: {
+    height: 19.21,
+    width: 100
+  },
+  ratingText: {
+    paddingLeft: 10,
+    color: 'grey'
   }
+  
+
 });
