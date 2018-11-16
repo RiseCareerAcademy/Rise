@@ -314,7 +314,12 @@ class Contact extends Component {
     const { first_name, last_name, user_id } = this.props;
     const name = `${first_name} ${last_name}`;
 
-    const image = process.env.NODE_ENV === 'development' ? `http://${DOMAIN}/user/${user_id}/profilepic` : this.state.image;
+    const fromLinkedin = this.state.image.includes('licdn');
+
+    let image = process.env.NODE_ENV === 'development' && !fromLinkedin ? `http://${DOMAIN}/user/${user_id}/profilepic` : this.state.image;
+    if (!fromLinkedin) {
+      image += `?${encodeURI(uuidv1())}`;
+    } 
 
     return (
       <View style={styles.headerContainer}>
@@ -337,7 +342,7 @@ class Contact extends Component {
             <Image
               style={styles.userImage}
               source={{
-                uri: `${image}?${encodeURI(uuidv1())}`
+                uri: image,
               }}
             />
 

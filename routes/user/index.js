@@ -15,6 +15,7 @@ const upload = multer({
 	limits: { fileSize: 10000000 },
 });
 
+
 const router = express.Router();
 module.exports.router = router;
 
@@ -22,10 +23,11 @@ module.exports.router = router;
 router.post('/tables',controller.createTables);
 
 //Delete all 7 tables
-router.delete('/tables',controller.deletetable);  
+router.delete('/tables', controller.deletetable);
 
 //POST request API for /user
 router.post('/mentor', controller.postMentor);
+router.post('/linkedin', controller.linkedin);
 router.post('/mentee', controller.postMentee);
 router.post('/password', controller.postPassword);
 router.post('/skill', controller.postSkill);
@@ -60,15 +62,23 @@ router.put("/:id/removeskill", controller.removeSkill);
 //get users by skill 
 router.get("/skill/:skill", controller.getUsersbySkill);
 
+//get users by profession 
+router.get("/profession/:profession", controller.getUsersbyProfession);
+
+//get first name and last name from user id 
+router.get("/name/:id", controller.getFirstLastById);
+
+
 //get profile pic by id 
 router.get("/:id/profilepic", controller.getProfilePic);
 //update profile pic by id 
 router.put("/:id/profilepic", controller.updateProfilePic);
+router.post("/:id/profilepic", upload.single('photo'), controller.postProfilePic);
 
 //get profession/area of study 
 router.get("/:id/profession", controller.getProfession);
 //update profession or area of study 
-router.put("/:id/profession/", controller.updateProfession);
+router.put("/:id/profession", controller.updateProfession);
 
 //get bio of study 
 router.get("/:id/bio", controller.getBio);
