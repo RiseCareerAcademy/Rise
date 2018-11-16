@@ -18,14 +18,13 @@ import {
 } from "react-native";
 import { connect } from "react-redux";
 import { ImagePicker, Permissions } from "expo";
-import { StackActions, NavigationActions } from "react-navigation";
 
 import { registerMentee } from "../actions/user.actions";
 import { DOMAIN } from "../config/url";
 
 const uuidv1 = require("uuid/v1");
 
-export class MentorRegistration extends React.Component {
+export class StudentRegistration extends React.Component {
   state = {
     email: "",
     password: "",
@@ -160,7 +159,7 @@ export class MentorRegistration extends React.Component {
       date_of_birth: "12/24/1996",
       skills: this.state.skills,
       hobbies: "fake hobbies",
-      area_of_study: this.state.profession,
+      profession: this.state.profession,
       password: this.state.password,
       city: this.state.city,
       state: this.state.state,
@@ -205,6 +204,7 @@ export class MentorRegistration extends React.Component {
               <Input
                 placeholder="Enter your password"
                 onChangeText={this.handlePassword}
+                secureTextEntry={true}
               />
             </Item>
             <Item stackedLabel>
@@ -212,6 +212,7 @@ export class MentorRegistration extends React.Component {
               <Input
                 placeholder="Confirm Password Change"
                 onChangeText={this.handleConfirmedPassword}
+                secureTextEntry={true}
               />
             </Item>
             <Item stackedLabel>
@@ -335,4 +336,4 @@ const mapStateToProps = state => ({
 export default connect(
   mapStateToProps,
   { registerMentee }
-)(MentorRegistration);
+)(StudentRegistration);

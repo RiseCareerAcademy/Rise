@@ -1,11 +1,12 @@
 import React from "react";
-import { Platform, StatusBar, StyleSheet, View } from "react-native";
+import { Platform, StatusBar, StyleSheet, View, ActivityIndicator } from "react-native";
 import { AppLoading, Asset, Font, Icon } from "expo";
 import { PersistGate } from 'redux-persist/integration/react';
 import { Provider } from 'react-redux';
 
 import { Navigator } from './navigation';
 import configureStore from "./configureStore";
+import { Text } from "native-base";
 
 
 export const { persistor, store } = configureStore();
@@ -29,15 +30,14 @@ export default class App extends React.Component {
         />
       );
     } else {
-      const loading = <View>Loading</View>;
       return (
         <Provider store={store}>
-          {/* <PersistGate loading={loading} persistor={persistor}> */}
+          <PersistGate loading={<View style={styles.loading}><ActivityIndicator animating size={10} /></View>} persistor={persistor}>
             <View style={styles.container}>
               {Platform.OS === "ios" && <StatusBar barStyle="default" />}
               <Navigator />
             </View>
-          {/* </PersistGate> */}
+          </PersistGate>
         </Provider>
       );
     }
@@ -76,6 +76,9 @@ export default class App extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff"
-  }
+    backgroundColor: "#fff",
+  },
+  loading: {
+    top: '50%',
+  },
 });
