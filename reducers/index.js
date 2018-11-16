@@ -11,7 +11,7 @@ import { navReducer } from '../navigation';
 const authPersistConfig = {
   key: 'user',
   storage,
-  blacklist: ['registering', 'error'],
+  blacklist: ['registering', 'error', 'loggingIn'],
 };
 
 export default combineReducers({

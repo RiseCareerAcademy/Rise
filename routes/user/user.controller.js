@@ -173,14 +173,14 @@ module.exports.linkedin = async (req, res) => {
 //create new mentor
 module.exports.postMentor = (req, res) => {
   const fields = ['first_name', 'last_name', 'email_address' ,'biography','zipcode',
-  'date_of_birth','profession','skills','hobbies'];
+  'date_of_birth','profession','skills','hobbies', 'profile_pic_URL'];
   const user = {};
 
   fields.forEach(field => {
     if (req.body[field] === undefined) {
       res
         .status(500)
-        .json({ error: "Missing credentials", success: false });
+        .json({ error: `Missing credential ${field}`, success: false });
       return true;
     }
     user[field] = req.body[field];
@@ -189,7 +189,8 @@ module.exports.postMentor = (req, res) => {
   sql_email = `Select * from Mentors where email_address = ?  `
   db.all(sql_email, [user.email_address], (err, rows_email) => {
     if (err) {
-      throw err;
+      res.json({ success: false, rows: "Email is not unique" });
+      return false;
     }
     //post mentor
     if (rows_email.length != 0) {
@@ -210,7 +211,10 @@ module.exports.postMentor = (req, res) => {
       user.biography, user.zipcode, user.date_of_birth, user.profession,
       user.skills, user.profile_pic_URL, user.hobbies], (err, rows) => {
         if (err) {
-          throw err;
+          res
+            .status(500)
+            .json({ error: err.message, success: false });
+          return;
         }
       });
 
@@ -426,11 +430,16 @@ module.exports.postPassword = (req, res) => {
     if (req.body[field] === undefined) {
       res
         .status(500)
-        .json({ error: "Missing credentials", success: false });
+        .json({ error: `Missing credential ${field}`, success: false });
       return true;
     }
     user[field] = req.body[field];
+    return false;
   });
+
+  if (missingFields) {
+    return;
+  }
 
 
   sql_email = `Select * from Mentors where email_address = ?  `
@@ -445,13 +454,17 @@ module.exports.postPassword = (req, res) => {
   });
   var salt = hp.genRandomString(16)
   var passwordData = hp.saltPassword(user.password, salt)
+
   sql = `INSERT INTO Passwords VALUES (?,'${passwordData.passwordHash}', '${passwordData.salt}') `
   console.log(sql);
   db.all(sql, [user.email_address], (err, rows) => {
     if (err) {
-      throw err;
+      res
+        .status(500)
+        .json({ error: err.message, success: false });
+        return;
     }
-    res.json({ success: true, rows: rows });
+    res.json({ success: true, passwordHash: passwordData.passwordHash });
   });
 
 }
@@ -1090,6 +1103,7 @@ module.exports.login = (req, res) => {
       res
         .status(400)
         .json({ error: "Email doesn't exist", success: false });
+        return;
     }
     salt = rows1[0]['salt']
     sql2 = `SELECT * FROM Passwords WHERE email_address=? AND password=?;`;
@@ -1101,6 +1115,7 @@ module.exports.login = (req, res) => {
         res
           .status(400)
           .json({ error: "Wrong password", success: false });
+          return;
       }
       console.log(rows2[0].email_address)
       sql3 = `SELECT user_id FROM Mentors WHERE email_address=? UNION SELECT user_id FROM Mentees WHERE email_address=?`
