@@ -19,7 +19,6 @@ import {
 import { connect } from "react-redux";
 
 import { registerMentor } from "../actions/user.actions";
-import { DOMAIN } from "../config/url";
 
 export class MentorRegistration extends React.Component {
   state = {
