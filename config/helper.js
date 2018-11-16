@@ -1,4 +1,4 @@
-var crypto = require('crypto');
+const crypto = require('crypto');
 
 module.exports.genRandomString = function (length) {
     return crypto.randomBytes(Math.ceil(length / 2))
