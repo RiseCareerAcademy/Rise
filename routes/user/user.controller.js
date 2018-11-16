@@ -518,6 +518,12 @@ module.exports.getEmailById = (req, res) => {
 module.exports.updateEmailById = (req, res) => {
 
   userID = req.params.id
+  if (req.body[email_address] === undefined) {
+    res
+      .status(500)
+      .json({ error: "Missing credentials", success: false });
+    return true;
+  }
   newEmail = req.body.email_address
 
   sql = `UPDATE '${userType(userID)}' SET email_address = ? WHERE user_id = ?`;    //starts with 1
@@ -547,6 +553,12 @@ module.exports.getHobbiesById = (req, res) => {
 
 module.exports.updateHobbiesById = (req, res) => {
   userID = req.params.id
+  if (req.body[hobbies] === undefined) {
+    res
+      .status(500)
+      .json({ error: "Missing credentials", success: false });
+    return true;
+  }
   hobbies = req.body.hobbies
   sql = `UPDATE '${userType(userID)}' SET hobbies = ? WHERE user_id = ?`;    //starts with 1
 
@@ -617,6 +629,12 @@ module.exports.getFirstLastById = (req, res) => {
 module.exports.addSkill = (req, res) => {
   //get input
   userID = req.params.id
+  if (req.body[skill] === undefined) {
+    res
+      .status(500)
+      .json({ error: "Missing credentials", success: false });
+    return true;
+  }
   if (req.body.skill === undefined) {
     res
       .status(500)
@@ -756,6 +774,12 @@ module.exports.updateSkill = (req, res) => {
 
 module.exports.updateUsersbySkill = (req, res) => {
   skill = req.params.skill;
+  if (req.body[users] === undefined) {
+    res
+      .status(500)
+      .json({ error: "Missing credentials", success: false });
+    return true;
+  }
   user_list = req.body.users;
   sql = user_sql_constants.update_users_by_skill(skill, user_list);
 
@@ -782,8 +806,15 @@ module.exports.getProfilePic = (req, res) => {
 
 module.exports.updateProfilePic = (req, res) => {
   userID = req.params.id;
+  if (req.body[profile_pic_URL] === undefined) {
+    res
+      .status(500)
+      .json({ error: "Missing credentials", success: false });
+    return true;
+  }
   profile_pic = req.body.profile_pic_URL;
-  sql = `UPDATE '${userType(userID)}' SET profile_pic_URL = ? WHERE user_id = ?`;    //starts with 1
+  sql = `UPDATE ${userType(userID)} SET profile_pic_URL = ? WHERE user_id = ?`;    //starts with 1
+  console.log(sql,profile_pic,userID)
 
   db.all(sql, [profile_pic, userID], (err, rows) => {
     if (err) {
@@ -917,6 +948,12 @@ module.exports.getBio = (req, res) => {
 
 module.exports.updateBio = (req, res) => {
   userID = req.params.id;
+  if (req.body[biography] === undefined) {
+    res
+      .status(500)
+      .json({ error: "Missing credentials", success: false });
+    return true;
+  }
   bio = req.body.biography;
   sql = `UPDATE '${userType(userID)}' SET biography = ? WHERE user_id = ?`;
 
@@ -932,7 +969,7 @@ module.exports.updateBio = (req, res) => {
 module.exports.deleteBio = (req, res) => {
 
   userID = req.params.id
-  sql = `UPDATE '${userType(userID)}' SET biography = ' ' WHERE user_id = ?`;
+  sql = `UPDATE '${userType(userID)}' SET biography = '' WHERE user_id = ?`;
 
   db.all(sql, [userID], (err, rows) => {
     if (err) {
