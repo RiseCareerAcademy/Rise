@@ -6,6 +6,7 @@ import { Provider } from 'react-redux';
 
 import { Navigator } from './navigation';
 import configureStore from "./configureStore";
+import { Text } from "native-base";
 
 
 export const { persistor, store } = configureStore();
@@ -29,15 +30,14 @@ export default class App extends React.Component {
         />
       );
     } else {
-      const loading = <View>Loading</View>;
       return (
         <Provider store={store}>
-          {/* <PersistGate loading={loading} persistor={persistor}> */}
+          <PersistGate loading={<View><Text>Loading...</Text></View>} persistor={persistor}>
             <View style={styles.container}>
               {Platform.OS === "ios" && <StatusBar barStyle="default" />}
               <Navigator />
             </View>
-          {/* </PersistGate> */}
+          </PersistGate>
         </Provider>
       );
     }

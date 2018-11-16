@@ -46,7 +46,7 @@ export function* registerMentor({ mentor }) {
     try {
         const response = yield axios.post(`http://${DOMAIN}/user/mentor`, mentor);
         const { data } = response;
-        yield put(setUser(data.mentee));
+        yield put(setUser(data.mentor));
         yield put(NavigationActions.navigate({ routeName: "Main" }));
     } catch(e) { 
         const error = e.response.data.error;
@@ -61,7 +61,6 @@ export function* registerWithLinkedin() {
     const client_id = LINKEDIN_CLIENT_ID;
     const redirectUrl = AuthSession.getRedirectUrl();
     const state =  uuidv1();
-    const scope = 'r_basicprofile r_emailaddress'
     const authUrl =
     `https://www.linkedin.com/oauth/v2/authorization?response_type=${response_type}` +
     `&client_id=${encodeURIComponent(client_id)}` +
@@ -73,9 +72,8 @@ export function* registerWithLinkedin() {
     const result = yield AuthSession.startAsync({ authUrl });
     console.log(result);    
     const { params: { state: responseState, code } } = result;
-    let validState = true;
     if (responseState !== state) {
-        validState = false;
+        return;
     }
 
     // // This only displays the results to the screen
