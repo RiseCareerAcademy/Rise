@@ -41,14 +41,14 @@ export default class SignIn extends React.Component {
       errors.push("Password should be at least 6 characters long");
     }
 
-    if (errors.length == 0) {
+    // if (errors.length == 0) {
       const { navigate } = this.props.navigation;
       navigate('Main')
       return true
-    } else {
-      alert(errors);
-      return false;
-    }
+    // } else {
+    //   alert(errors);
+    //   return false;
+    // }
   }
   render() {
     return (

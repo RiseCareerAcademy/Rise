@@ -112,7 +112,7 @@ export default class MatchesScreen extends Component {
           }
         }
     }
-
+console.log("hi")
     //sort by score
     for (let i = 1; i < scores.length; i++) {
       for (let j = 0; j < i; j++) {

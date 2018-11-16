@@ -1,134 +1,125 @@
 import React, { Component } from "react";
-import { ScrollView, StyleSheet, View, SectionList, Text } from "react-native";
-
+import { ScrollView, StyleSheet, View, SectionList, Text, Image } from "react-native";
+import { List, ListItem, FlatList } from 'react-native-elements'
+import { CheckBox } from 'react-native-elements'
+import Expo from "expo";
 export default class SearchScreen extends Component {
   state = {
     //array of matches with respective scores
-    matches: [],
-    scores: []
+    results: [],
+    advancedResults: [],
+    checkedSkills: true,
+    checkedProfessions: true,
+    checkedMentors: true,
+    checkedMentees: true,
+    checkedNames: true,
+    data: [{
+      name: 'Amy Farha',
+      avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
+      profession: 'Doctor'
+    },
+    {
+      name: 'Chris Jackson',
+      avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/adhamdannaway/128.jpg',
+      profession: 'Nurse'
+    }]
   };
-
-  constructor(props) {
-    super(props);
-
-    //fakeData organized by iterations of (name, profession, skills);
-    const fakeData = [
-      ["Daniel Ng"],
-      ["Software Developer"],
-      ["JQuery", "Python", "UX"], //should be number 4
-      ["Tracy Lewis"],
-      [""],
-      ["UX", "Prototyping"], //should be number 3
-      ["Kevin Mui"],
-      ["Product Manager"],
-      [""], //should be number 2
-      ["Lewis Tracy"],
-      ["Product Manager"],
-      ["UX"], //should be number 1
-      ["Tone Yu"],
-      ["Nurse"],
-      ["Birthing", "Yelling", "Running"] //should not be in the results
-    ];
-
-    const { scores, matches } = this.search(fakeData);
-    this.state.scores = scores;
-    this.state.matches = matches;
-  }
-
   //search function
-  search = (fakeData) => {
+  search = () => {
     const { navigation } = this.props;
-    searchInput = navigation.getParam('text');
-    matches = [];
-    scores = [];
-    if (searchInput.length == 0 || fakeData.length == 0){
-      return {scores,matches}
+    var searchInput = navigation.getParam('text').toString();
+    //searchInput = searchInput.toLowerCase();
+    var results = [];
+    var scores = [];
+    var currArray = [];
+    var tempPostman = '';
+    const { manifest } = Expo.Constants;
+    const api = (typeof manifest.packagerOpts === `object`) && manifest.packagerOpts.dev
+      ? manifest.debuggerHost.split(`:`).shift().concat(`:8000`)
+      : `api.example.com`;
+    fetch('http://' + api + '/user/skill/' + searchInput, {
+      method: 'GET'
+    })
+      .then((response) => response.json())
+      .then((responseJson) => {
+        tempPostman = responseJson.rows[0].users;
+      })
+      .catch((error) => {
+        console.log("error issfoskill: " + error);
+        tempPostman = '';
+      });
+    console.log('KEVIN');
+    console.log(tempPostman);
+    //BY SKILL
+    if (this.state.checkedSkills) {
+      //tempPostman = "21542330576964,11542331557063,11542339784414";
+      if (tempPostman.includes(',')){
+        currArray = tempPostman.split(',');
+      }else{
+        currArray = [];
+      }
+      //for each ID with skill, add to results
+      for (var i = 0; i < currArray.length; i++) {
+        if (results.indexOf(currArray[i]) > -1) {
+          //if id exists in results already
+          scores[results.indexOf(currArray[i])] += 1;
+        } else {
+          results[results.length] = currArray[i];
+          scores[scores.length] = 1;
+        }
+      }
     }
-    
-      for (let j = 0; j < fakeData.length; j += 3) {
-        var parsedData = fakeData[j+2].toString().split(' ');
-        for(let k = 0; k < parsedData.length; k++){
-          if (parsedData[k].indexOf(searchInput) > -1) {
-            //if matching skill, add to match list, score ++
-            if (matches.indexOf(fakeData[j]) > -1)
-              //if already has points
-              scores[matches.indexOf(fakeData[j])] += 1;
-            else {
-              //else add to list of matches with new score
-              matches[matches.length] = fakeData[j];
-              scores[scores.length] = 1;
-            }
-          }
-        }
-        if (fakeData[j+2].indexOf(searchInput) > -1) {
-          //if matching skill, add to match list, score ++
-          if (matches.indexOf(fakeData[j]) > -1)
-            //if already has points
-            scores[matches.indexOf(fakeData[j])] += 1;
-          else {
-            //else add to list of matches with new score
-            matches[matches.length] = fakeData[j];
-            scores[scores.length] = 1;
-          }
+    fetch('http://' + api + '/user/profession/' + searchInput, {
+      method: 'GET'
+    })
+      .then((response) => response.json())
+      .then((responseJson) => {
+        tempPostman = responseJson.rows[0].users;
+      })
+      .catch((error) => {
+        console.log("error isss: " + error);
+        tempPostman = '';
+      });
+    //BY PROFESSIONS
+    if (this.state.checkedProfessions) {
+      if (tempPostman.includes(',')){
+        currArray = tempPostman.split(',');
+      }else{
+        currArray = [];
+      }
+      //for each ID with skill, add to results
+      for (i = 0; i < currArray.length; i++) {
+        if (results.indexOf(currArray[i]) > -1) {
+          //if id exists in results already
+          scores[results.indexOf(currArray[i])] += 3;
+        } else {
+          results[results.length] = currArray[i];
+          scores[scores.length] = 3;
         }
       }
+    }
+
     
-      for (let j = 0; j < fakeData.length; j += 3){
-        var parsedData = fakeData[j+1].toString().split(' ');
-        for(let k = 0; k < parsedData.length; k++){
-          if (parsedData[k].indexOf(searchInput) > -1) {
-            if (matches.indexOf(fakeData[j]) > -1)
-              //if matching skill, add to match list, score ++
-              //if already has points
-              scores[matches.indexOf(fakeData[j])] += 2;
-            else {
-              //else add to list of matches with new score
-              matches[matches.length] = fakeData[j];
-              scores[scores.length] = 3;
-            }
-          }
-        }
-        if (fakeData[j+1].indexOf(searchInput) > -1) {
-          //if matching skill, add to match list, score ++
-          if (matches.indexOf(fakeData[j]) > -1)
-            //if already has points
-            scores[matches.indexOf(fakeData[j])] += 2;
-          else {
-            //else add to list of matches with new score
-            matches[matches.length] = fakeData[j];
-            scores[scores.length] = 2;
-          }
+
+    //BY NAMES
+
+    //TODO: this cannot be implemented without the getIDByName 
+
+    if (this.state.checkedNames) {
+      tempPostman = ""
+      currArray = tempPostman.split(',');
+      //for each ID with skill, add to results
+      for (i = 0; i < currArray.length; i++) {
+        if (results.indexOf(currArray[i]) > -1) {
+          //if id exists in results already
+          scores[results.indexOf(currArray[i])] += 2;
+        } else {
+          results[results.length] = currArray[i];
+          scores[scores.length] = 2;
         }
       }
-    
-      for (let j = 0; j < fakeData.length; j += 3){
-        var parsedData = fakeData[j].toString().split(' ');
-        for(let k = 0; k < parsedData.length; k++){
-          if (parsedData[k].indexOf(searchInput) > -1) {
-            if (matches.indexOf(fakeData[j]) > -1)
-              //if matching skill, add to match list, score ++
-              //if already has points
-              scores[matches.indexOf(fakeData[j])] += 2;
-            else {
-              //else add to list of matches with new score
-              matches[matches.length] = fakeData[j];
-              scores[scores.length] = 2;
-            }
-          }
-        }
-        if (fakeData[j].indexOf(searchInput) > -1) {
-          //if matching skill, add to match list, score ++
-          if (matches.indexOf(fakeData[j]) > -1)
-            //if already has points
-            scores[matches.indexOf(fakeData[j])] += 2;
-          else {
-            //else add to list of matches with new score
-            matches[matches.length] = fakeData[j];
-            scores[scores.length] = 2;
-          }
-        }
-      }
-      
+    }
+
 
     //sort by score
     for (let i = 1; i < scores.length; i++) {
@@ -137,45 +128,86 @@ export default class SearchScreen extends Component {
           let x = scores[i];
           scores[i] = scores[j];
           scores[j] = x;
-          let y = matches[i];
-          matches[i] = matches[j];
-          matches[j] = y;
+          let y = results[i];
+          results[i] = results[j];
+          results[j] = y;
         }
       }
     }
-
-    return { scores, matches };
+    console.log("RESULT");
+    for (i = 0; i < results.length; i++) { console.log(results[i].toString()); }
+    this.state.results = results;
+    //this.makeListData(finalResults);
+    return;
   }
-
+  constructor(props) {
+    super(props);
+    this.search();
+  }
+  toggleButtons() {
+    //BY MENTOR/MENTEE
+    if (this.state.checkedMentors) {
+      for (var i = 0; i < this.state.results.length; i++) {
+        if (this.state.results[i].charAt(0) == '1') {
+          this.state.advancedResults[this.state.advancedResults.length] = this.state.results[i];
+        }
+      }
+    }
+    if (this.state.checkedMentees) {
+      for (i = 0; i < this.state.results.length; i++) {
+        if (this.state.results[i].charAt(0) == '2') {
+          this.state.advancedResults[this.state.advancedResults.length] = this.state.results[i];
+        }
+      }
+    }
+    return;
+  }
+  makeListData = () => {
+    //
+    //Method populates data formatted to work with flatlist
+    this.state.data = [{
+      name: 'Mama Luigi',
+      avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
+      profession: 'Doctor'
+    },
+    {
+      name: 'Bitch Monster',
+      avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/adhamdannaway/128.jpg',
+      profession: 'Nurse'
+    }];
+  }
+  renderRow = ({ item }) => {
+    return (
+      <ListItem
+        roundAvatar
+        title={item.name}
+        subtitle={item.profession}
+        avatar={{ uri: item.avatar_url }}
+      />
+    )
+  }
   render() {
-
-    const { matches, scores } = this.state;
-
+    this.toggleButtons();
     return (
       <View style={styles.container}>
         <ScrollView
           style={styles.container}
           contentContainerStyle={styles.contentContainer}
         >
-          <View style={styles.container}>
-            <SectionList
-              sections={[
-                { title: "Search Results", data: matches },
-                { title: "Scores", data: scores }
-              ]}
-              renderItem={({ item }) => <Text style={styles.item}>{item}</Text>}
-              renderSectionHeader={({ section }) => (
-                <Text style={styles.sectionHeader}>{section.title}</Text>
-              )}
-              keyExtractor={(index) => index}
-            />
-          </View>
+          <CheckBox title='Skills' checked={this.state.checkedSkills}
+            onPress={() => this.setState({ checkedSkills: !this.state.checkedSkills })}
+          />
+          <CheckBox title='Professions' checked={this.state.checkedProfessions}
+            onPress={() => this.setState({ checkedProfessions: !this.state.checkedProfessions })} />
+          <CheckBox title='Mentors' checked={this.state.checkedMentors}
+            onPress={() => this.setState({ checkedMentors: !this.state.checkedMentors })} />
+          <CheckBox title='Mentees' checked={this.state.checkedMentees}
+            onPress={() => this.setState({ checkedMentees: !this.state.checkedMentees })} />
         </ScrollView>
       </View>
     );
   }
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -200,5 +232,18 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     paddingTop: 30
+  },
+  subtitleView: {
+    flexDirection: 'row',
+    paddingLeft: 10,
+    paddingTop: 5
+  },
+  ratingImage: {
+    height: 19.21,
+    width: 100
+  },
+  ratingText: {
+    paddingLeft: 10,
+    color: 'grey'
   }
 });
