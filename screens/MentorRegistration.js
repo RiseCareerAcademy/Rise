@@ -131,7 +131,7 @@ export class MentorRegistration extends React.Component {
       date_of_birth: "12/24/1996",
       skills: this.state.skills,
       hobbies: "fake hobbies",
-      occupation: this.state.occupation || this.props.occupation,
+      profession: this.state.occupation || this.props.occupation,
       password: this.state.password,
       image: this.props.profile_pic_URL
     };
