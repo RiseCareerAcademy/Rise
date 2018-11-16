@@ -28,7 +28,8 @@ export default class MatchesScreen extends Component {
     })
       .then((response) => response.json())
       .then((responseJson) => {
-        this.state ={desiredSkills:responseJson.rows[0].skills  }
+        var fetchedSkills = responseJson.rows[0].skills
+        this.state.desiredSkills = fetchedSkills
       })
       .catch((error) => {
         console.log("error is: " + error);
@@ -40,28 +41,36 @@ export default class MatchesScreen extends Component {
     })
       .then((response) => response.json())
       .then((responseJson) => {
-        //this.setState({desiredProfession:responseJson.rows[0].profession})
-        //this.state ={desiredProfession:responseJson.rows[0].profession  }
-        this.desiredProfession = responseJson.rows[0].profession
-        console.log("in fetch the prof is: " + this.desiredProfession)
+        var fetchedProfession = responseJson.rows[0].profession
+        this.state.desiredProfession = fetchedProfession
+        console.log("skills in prof fecth" + this.state.desiredSkills)
+        const matches  = this.match(this.state.desiredSkills, this.state.desiredProfession);
+        this.state.matches=matches
+        console.log( this.state.matches)
       })
       .catch((error) => {
         console.log("error is: " + error);
       });
 
-    console.log("state of profession: " + this.state.desiredProfession)
+   console.log("state of profession: " + this.state.desiredProfession)
     console.log("state of skill: " + this.state.desiredSkills)
-    const { matches } = this.match(this.state.desiredSkills, this.state.desiredProfession);
-    this.state ={matches:matches  }
-    console.log("matches: " + this.state.matches)
+    const  matches = this.match(this.state.desiredSkills, this.state.desiredProfession);
+    //this.state ={matches:matches  }
+    
+
+      matches.then(data => {
+      this.setState({ matches: data });
+      });
+
+      console.log("matches: " + this.state.matches)
   }
 
   //match function
   match = async (desiredSkills, desiredProfession) => {
     var map = {}
 
-    console.log("desired skills: " + desiredSkills)
-    console.log("desired profession: " + desiredProfession)
+    console.log("desired skills in match func: " + desiredSkills)
+    console.log("desired profession in desired prof fucn: " + desiredProfession)
     //go through skills
     for (let i = 0; i < desiredSkills.length; i++) {
       try {
@@ -162,17 +171,17 @@ export default class MatchesScreen extends Component {
     var matches = []
     for (let i = 0; i < unsortedValues.length; i++) {
       matches.push(
-        parseInt(unsortedValues[i].name)
+        unsortedValues[i].name
       );
     }
 
-    console.log(matches)
-    return { matches };
+    console.log("matches outcome in match func:" + matches)
+    return matches
   }
 
   render() {
 
-    const { matches, scores } = this.state;
+    //const { matches = this.state;
     
     return (
       
@@ -187,7 +196,7 @@ export default class MatchesScreen extends Component {
               <SectionList
                 sections={[
                   { title: "Suggested Matches", data: this.state.matches },
-                  { title: "Scores of Matches(temp)", data: this.state.scores }
+                  //{ title: "Scores of Matches(temp)", data: this.state.scores }
                 ]}
                 renderItem={({ item }) => <Text style={styles.item}>{item}</Text>}
                 renderSectionHeader={({ section }) => (
