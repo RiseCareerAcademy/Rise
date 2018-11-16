@@ -13,6 +13,7 @@ const { router: api } = require("./routes/api/api.js"); //gets api logic from pa
 const { router: user } = require("./routes/user/index.js"); //gets user logic from path
 const { router: match } = require("./routes/match/matchapi.js"); //gets match logic from path 
 const config = require('./config/database');
+require('dotenv').config()
 
 const app = express(); //creates an instance of express
 const server = http.createServer(app); //creates an HTTP server instance

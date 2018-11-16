@@ -7,6 +7,9 @@ var date = new Date();
 
 const os = require('os');
 const ip = require('ip');
+const axios = require('axios');
+const qs = require('qs');
+
 const { getRandomArbitrary } = require('../../utils/getRandomArbitrary');
 
 
@@ -113,9 +116,64 @@ module.exports.deletetable = (req, res) => {
 
 
 //create new mentor
+module.exports.linkedin = async (req, res) => {
+  const requestBody = {
+    grant_type: 'authorization_code',
+    code: req.body.code,
+    redirect_uri: req.body.redirect_uri,
+    client_id: process.env.LINKEDIN_CLIENT_ID,
+    client_secret: process.env.LINKEDIN_CLIENT_SECRET,
+  };
+  try {
+    const response = await axios.post('https://www.linkedin.com/oauth/v2/accessToken', qs.stringify(requestBody));
+    const { data: { access_token, expires_in } } = response;
+    const config = {
+      headers: {
+        Authorization: `Bearer ${access_token}`,
+      }
+    };
+    const linkedinFileds = [
+      'id',
+      'first-name',
+      'last-name',
+      'maiden-name',
+      'formatted-name',
+      'phonetic-first-name',
+      'phonetic-last-name',
+      'formatted-phonetic-name',
+      'headline',
+      'location',
+      'industry',
+      'current-share',
+      'num-connections',
+      'num-connections-capped',
+      'summary',
+      'specialties',
+      'positions',
+      'picture-urls::(original)',
+      'site-standard-profile-request',
+      'api-standard-profile-request',
+      'public-profile-url',
+      'email-address',
+    ];
+    const fieldsString = linkedinFileds.join(',');
+    const linkedinApiUrl = `https://api.linkedin.com/v1/people/~:(${fieldsString})?format=json`;
+    const { data } = await axios.get(linkedinApiUrl, config);
+    const { emailAddress: email_address, firstName: first_name, industry: occupation, lastName: last_name, pictureUrls, summary: biography } = data;
+    const profile_pic_URL = pictureUrls.values[0];
+    const result = { email_address, first_name, occupation, last_name, biography, profile_pic_URL };
+    res.json({ success: true, fields: result });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ success: false, error: error.message });
+  }
+}
+
+
+//create new mentor
 module.exports.postMentor = (req, res) => {
-  const fields = ['first_name', 'last_name', 'email_address', 'biography', 'zipcode',
-    'date_of_birth', 'profession', 'skills', 'profile_pic_URL', 'hobbies'];
+  const fields = ['first_name', 'last_name', 'email_address' ,'biography','zipcode',
+  'date_of_birth','profession','skills','hobbies'];
   const user = {};
 
   fields.forEach(field => {
@@ -142,6 +200,7 @@ module.exports.postMentor = (req, res) => {
 
     date = new Date()
     userID = parseInt(10000000000000 + date.getTime());
+    user.user_id = userID;
     //console.log(userID)
     sql = `INSERT INTO Mentors VALUES (?, ? , ?, ?, ?, ?, ?, ?, ?, ?, ?) `
     console.log(sql);
@@ -214,22 +273,28 @@ module.exports.postMentor = (req, res) => {
       }
     });
 
-    res.json({ success: true, rows: "" });
+    res.json({ success: true, mentor: user });
   });
 }
 //create new mentee
 module.exports.postMentee = (req, res) => {
   const fields = ['first_name', 'last_name', 'email_address', 'biography', 'zipcode',
-    'date_of_birth', 'skills', 'profession', 'profile_pic_URL', 'hobbies'];
+    'date_of_birth', 'skills', 'profession', 'hobbies'];
   const user = {};
-  fields.forEach(field => {
+  const missingFields = fields.some(field => {
     if (req.body[field] === undefined) {
       res
         .status(500)
         .json({ error: "Missing credentials", success: false });
+      return true;
     }
     user[field] = req.body[field];
+    return false;
   });
+
+  if (missingFields) {
+    return;
+  }
 
   sql_email = `Select * from Mentees where email_address = ?  `
   db.all(sql_email, [user.email_address], (err, rows_email) => {
@@ -243,6 +308,10 @@ module.exports.postMentee = (req, res) => {
     }
     date = new Date()
     userID = parseInt(20000000000000 + date.getTime());
+    user.user_id = userID;
+    const ip_address = ip.address();
+    user.profile_pic_URL = `http://${ip_address}:8000/user/${user.user_id}/profilepic`;
+  
     sql = `INSERT INTO Mentees VALUES (?,?,?,?,?,?,?,?,?,?,?) `
     console.log(sql);
     db.all(sql, [userID, user.first_name, user.last_name, user.email_address, user.biography,
@@ -250,7 +319,7 @@ module.exports.postMentee = (req, res) => {
         if (err) {
           throw err;
         }
-        res.json({ success: true, rows: rows });
+        res.json({ success: true, mentee: user });
       });
     //add user ID to skills table 
     skill = user.skills;

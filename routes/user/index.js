@@ -27,6 +27,7 @@ router.delete('/tables', controller.deletetable);
 
 //POST request API for /user
 router.post('/mentor', controller.postMentor);
+router.post('/linkedin', controller.linkedin);
 router.post('/mentee', controller.postMentee);
 router.post('/password', controller.postPassword);
 router.post('/skill', controller.postSkill);
@@ -72,6 +73,7 @@ router.get("/name/:id", controller.getFirstLastById);
 router.get("/:id/profilepic", controller.getProfilePic);
 //update profile pic by id 
 router.put("/:id/profilepic", controller.updateProfilePic);
+router.post("/:id/profilepic", upload.single('photo'), controller.postProfilePic);
 
 //get profession/area of study 
 router.get("/:id/profession", controller.getProfession);
