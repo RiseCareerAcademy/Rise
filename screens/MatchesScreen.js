@@ -68,11 +68,13 @@ export default class MatchesScreen extends Component {
               avatar_url: 'test url',
               profession: 'sample profession'
             }
+            
           )
         }
+
       
     
-        this.state.list = tmpList
+        
         console.log("state list "+ this.list)
         });
 
@@ -84,7 +86,8 @@ export default class MatchesScreen extends Component {
       });
 
       
-    
+    console.log("tmpList "+ tmpList)
+    this.setState({list:tmpList})
      
   }
 
