@@ -275,14 +275,6 @@ class Contact extends Component {
 
     return (
       <View style={styles.headerContainer}>
-        <SearchBar
-          showLoading
-          platform="ios"
-          cancelButtonTitle="Cancel"
-          placeholder="Search"
-          onChangeText={text => this.setState({ text })}
-          onSubmitEditing={() => navigate("Search", { text: this.state.text })}
-        />
         <ImageBackground
           style={styles.headerBackgroundImage}
           blurRadius={10}
