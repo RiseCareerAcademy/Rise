@@ -173,7 +173,7 @@ module.exports.linkedin = async (req, res) => {
 //create new mentor
 module.exports.postMentor = (req, res) => {
   const fields = ['first_name', 'last_name', 'email_address' ,'biography','zipcode',
-  'date_of_birth','profession','skills','hobbies', 'profile_pic_URL'];
+  'date_of_birth','profession','skills','hobbies'];
   const user = {};
 
   fields.forEach(field => {
@@ -202,6 +202,8 @@ module.exports.postMentor = (req, res) => {
     date = new Date()
     userID = parseInt(10000000000000 + date.getTime());
     user.user_id = userID;
+    const ip_address = ip.address();
+    user.profile_pic_URL = `http://${ip_address}:8000/user/${user.user_id}/profilepic`;
     //console.log(userID)
     sql = `INSERT INTO Mentors VALUES (?, ? , ?, ?, ?, ?, ?, ?, ?, ?, ?) `
     console.log(sql);
@@ -212,7 +214,7 @@ module.exports.postMentor = (req, res) => {
           res
             .status(500)
             .json({ error: err.message, success: false });
-          return;
+          return false;
         }
       });
 
@@ -411,6 +413,7 @@ module.exports.postMessage = (req, res) => {
   }
   console.log(user)
   sql = `INSERT INTO Messages VALUES ('${date.getTime()}',?,?,?,?,?)`
+  date = new Date()
   console.log(date.getTime())
   db.all(sql, [user.match_id, user.to_id, user.from_id, user.message_body, getFormattedDate()], (err, rows) => {
     if (err) {
@@ -454,7 +457,6 @@ module.exports.postPassword = (req, res) => {
   var passwordData = hp.saltPassword(user.password, salt)
 
   sql = `INSERT INTO Passwords VALUES (?,'${passwordData.passwordHash}', '${passwordData.salt}') `
-  console.log(sql);
   db.all(sql, [user.email_address], (err, rows) => {
     if (err) {
       res
@@ -573,7 +575,7 @@ module.exports.getAllProfessions = (req, res) => {
 
 //get user by ID
 module.exports.getUserById = (req, res) => {
-
+  console.log("get user by id")
   userID = req.params.id
   sql = `SELECT * FROM '${userType(userID)}'where user_id = ?;`;
   db.all(sql, [userID], (err, rows) => {
@@ -600,7 +602,7 @@ module.exports.getEmailById = (req, res) => {
 module.exports.updateEmailById = (req, res) => {
 
   userID = req.params.id
-  if (req.body[email_address] === undefined) {
+  if (req.body['email_address'] === undefined) {
     res
       .status(500)
       .json({ error: "Missing credentials", success: false });
@@ -635,7 +637,7 @@ module.exports.getHobbiesById = (req, res) => {
 
 module.exports.updateHobbiesById = (req, res) => {
   userID = req.params.id
-  if (req.body[hobbies] === undefined) {
+  if (req.body['hobbies'] === undefined) {
     res
       .status(500)
       .json({ error: "Missing credentials", success: false });
@@ -711,7 +713,7 @@ module.exports.getFirstLastById = (req, res) => {
 module.exports.addSkill = (req, res) => {
   //get input
   userID = req.params.id
-  if (req.body[skill] === undefined) {
+  if (req.body['skill'] === undefined) {
     res
       .status(500)
       .json({ error: "Missing credentials", success: false });
@@ -856,7 +858,7 @@ module.exports.updateSkill = (req, res) => {
 
 module.exports.updateUsersbySkill = (req, res) => {
   skill = req.params.skill;
-  if (req.body[users] === undefined) {
+  if (req.body['users'] === undefined) {
     res
       .status(500)
       .json({ error: "Missing credentials", success: false });
@@ -888,7 +890,7 @@ module.exports.getProfilePic = (req, res) => {
 
 module.exports.updateProfilePic = (req, res) => {
   userID = req.params.id;
-  if (req.body[profile_pic_URL] === undefined) {
+  if (req.body['profile_pic_URL'] === undefined) {
     res
       .status(500)
       .json({ error: "Missing credentials", success: false });
@@ -1030,7 +1032,7 @@ module.exports.getBio = (req, res) => {
 
 module.exports.updateBio = (req, res) => {
   userID = req.params.id;
-  if (req.body[biography] === undefined) {
+  if (req.body['biography'] === undefined) {
     res
       .status(500)
       .json({ error: "Missing credentials", success: false });
