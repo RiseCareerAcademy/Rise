@@ -18,9 +18,9 @@ import {
 } from "react-native";
 import { connect } from "react-redux";
 
-import { registerMentor } from "../actions/user.actions";
+import { registerMentor, updateUser } from "../actions/user.actions";
 
-export class MentorRegistration extends React.Component {
+export class EditProfileScreen extends React.Component {
   state = {
     email: "",
     password: "",
@@ -36,12 +36,6 @@ export class MentorRegistration extends React.Component {
     zipcode: ""
   };
 
-  handlePassword = text => {
-    this.setState({ password: text });
-  };
-  handleConfirmedPassword = text => {
-    this.setState({ confirmedPassword: text });
-  };
   handleSkills = text => {
     this.setState({ skills: text });
   };
@@ -72,7 +66,7 @@ export class MentorRegistration extends React.Component {
     this.setState({ biography: text });
   };
 
-  validate = (password, confirmedPassword, skills, profession, email, name, lastName, zipcode) => {
+  validate = (skills, profession, email, name, lastName, zipcode) => {
     // we are going to store errors for all fields
     // in a signle array
     const errors = [];
@@ -81,8 +75,6 @@ export class MentorRegistration extends React.Component {
       profession.length == 0 ||
       name.length == 0 ||
       email.length == 0 ||
-      password.length == 0 ||
-      confirmedPassword.length == 0 ||
       lastName.length == 0 ||
       zipcode.length == 0
     ) {
@@ -93,12 +85,6 @@ export class MentorRegistration extends React.Component {
       errors.push("Email should contain one @");
     } else if (email.indexOf(".") === -1) {
       errors.push("Email should contain at least one dot");
-    } else if (password.length < 6) {
-      errors.push("Password should be at least 6 characters long");
-    } else if (password != confirmedPassword) {
-      errors.push(
-        "Password doesn't match" + password + " " + confirmedPassword
-      );
     } else if (zipcode.length != 5 && /^\d+$/.test(zipcode)) {
       errors.push("zipcode must contain only numbers and be 5 characters long");
     }
@@ -112,30 +98,26 @@ export class MentorRegistration extends React.Component {
 
   handleSubmit = () => {
     const valid = this.validate(
-      this.state.password,
-      this.state.confirmedPassword,
-      this.state.skills,
-      this.state.zipcode
+	  this.state.skills,
+	  this.state.profession,
+	  this.state.email,
+	  this.state.first_name,
+	  this.state.last_name,
+      this.state.zipcode,
     );
     if (!valid && process.env.NODE_ENV !== "development") {
       return;
     }
 
-    const mentor = {
-      first_name: this.state.first_name || this.props.first_name,
-      last_name: this.state.last_name || this.props.last_name,
-      email_address: this.state.email_address || this.props.email_address,
+    const user = {
       biography: this.state.biography || this.props.biography,
       zipcode: this.state.zipcode,
-      date_of_birth: "12/24/1996",
       skills: this.state.skills,
       hobbies: "fake hobbies",
       profession: this.state.profession || this.props.profession,
-      password: this.state.password,
-      image: this.props.profile_pic_URL,
     };
 
-    this.props.registerMentor(mentor);
+    this.props.updateUser(user);
   };
 
   render() {
@@ -153,50 +135,22 @@ export class MentorRegistration extends React.Component {
                 uri: this.props.profile_pic_URL
               }}
             />
-
-            <Item stackedLabel>
-              <Label>Email</Label>
-              <Input 
-              autoCapitalize="none"
-              placeholder={this.props.email_address} onChange={this.handleEmail} />
-            </Item>
-            <Item stackedLabel>
-              <Label>Password</Label>
-              <Input
-              autoCapitalize="none"
-                onChangeText={this.handlePassword}
-                secureTextEntry={true}
-              />
-            </Item>
-            <Item stackedLabel>
-              <Label>Confirm Password</Label>
-              <Input
-              autoCapitalize="none"
-                onChangeText={this.handleConfirmedPassword}
-                secureTextEntry={true}
-              />
-            </Item>
             <Item stackedLabel>
               <Label>Skills</Label>
               <Input
+                placeholder={this.props.skills}
                 onChangeText={this.handleSkills}
               />
             </Item>
             <Item stackedLabel last>
               <Label>Profession</Label>
-              <Input placeholder={this.props.profession} onChange={this.handleProfession} />
-            </Item>
-            <Item stackedLabel last>
-              <Label>Name</Label>
-              <Input placeholder={this.props.first_name} onChange={this.handleFirstName} />
-            </Item>
-            <Item stackedLabel last>
-              <Label>lastName</Label>
-              <Input placeholder={this.props.last_name} onChange={this.handleLastName} />
+              <Input 
+                placeholder={this.props.profession} onChange={this.handleProfession} />
             </Item>
             <Item stackedLabel last>
               <Label>zipcode</Label>
               <Input
+                placeholder={this.props.zipcode}
                 onChangeText={this.handleZipCode}
               />
             </Item>
@@ -206,16 +160,12 @@ export class MentorRegistration extends React.Component {
             </Item>
           </Form>
         </Content>
-        {this.props.registering ? (
-          <ActivityIndicator animating size="large" />
-        ) : (
           <TouchableOpacity
             style={styles.submitButton}
             onPress={this.handleSubmit}
           >
-            <Text style={styles.submitButtonText}> Next </Text>
+            <Text style={styles.submitButtonText}> Save </Text>
           </TouchableOpacity>
-        )}
       </Container>
     );
   }
@@ -291,9 +241,11 @@ const mapStateToProps = state => ({
   last_name: state.user.last_name,
   biography: state.user.biography,
   profile_pic_URL: state.user.profile_pic_URL,
+  zipcode: state.user.zipcode,
+  skills: state.user.skills,
 });
 
 export default connect(
   mapStateToProps,
-  { registerMentor }
-)(MentorRegistration);
+  { registerMentor, updateUser }
+)(EditProfileScreen);

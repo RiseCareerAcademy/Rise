@@ -149,7 +149,7 @@ const mapStateToProps = state => ({
   error: state.user.error,
   email_address: state.user.email_address,
   first_name: state.user.first_name,
-  occupation: state.user.occupation,
+  profession: state.user.profession,
   last_name: state.user.last_name,
   biography: state.user.biography,
   profile_pic_URL: state.user.profile_pic_URL,

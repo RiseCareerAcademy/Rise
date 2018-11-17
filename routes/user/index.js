@@ -88,7 +88,7 @@ router.put("/:id/bio", controller.updateBio);
 router.delete("/:id/bio", controller.deleteBio);
 
 //update zipcode
-router.put("/:id/zipcode/:zipcode",controller.updateZipcode);
+router.put("/:id/zipcode",controller.updateZipcode);
 
 //login using email/password
 router.post("/login",controller.login);

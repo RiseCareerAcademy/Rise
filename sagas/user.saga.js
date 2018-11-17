@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { GET_USER, setUser, REGISTER_MENTEE, UPLOAD_PROFILE_PIC, failedRegisterMentee, LOGOUT_USER, REGISTER_WITH_LINKEDIN, setUserFields, REGISTER_MENTOR, failedRegisterMentor, LOGIN, failedLogin } from "../actions/user.actions";
-import { takeLatest, put, all, call } from 'redux-saga/effects';
+import { GET_USER, setUser, REGISTER_MENTEE, UPLOAD_PROFILE_PIC, failedRegisterMentee, LOGOUT_USER, REGISTER_WITH_LINKEDIN, setUserFields, REGISTER_MENTOR, failedRegisterMentor, LOGIN, failedLogin, UPDATE_USER } from "../actions/user.actions";
+import { takeLatest, put, all, call, select } from 'redux-saga/effects';
 import { DOMAIN } from "../config/url";
 import { NavigationActions } from 'react-navigation';
 import { LINKEDIN_CLIENT_ID } from 'react-native-dotenv';
@@ -156,6 +156,37 @@ export function* logoutUser() {
     yield put(NavigationActions.navigate({ routeName: 'Home' }));
 }
 
+export function* updateUser({ user }) {
+    const userApiMapping = {
+        email_address: 'email',
+        hobbies: 'hobbies',
+        profile_pic_URL: 'profilepic',
+        profession: 'profession',
+        biography: 'bio',
+        zipcode: 'zipcode',
+        skills: 'addskill',
+    };
+
+    const userId = yield select(state => state.user.user_id);
+
+    try {
+        yield all(Object.entries(user).map(([key, value]) => {
+            const apiUrl = `http://${DOMAIN}/user/${userId}/${userApiMapping[key]}`;
+            return axios.put(apiUrl, { [key]: value });
+
+        }))
+        yield getUser({ userId });
+        return user;
+    } catch(e) {
+        if (e.response !== undefined && e.response.data !== undefined) {
+            const error = typeof e.response.data === 'string' ? e.response.data : e.response.data.error;
+            console.error(error);
+        } else {
+            console.error(e.message);
+        }
+    }
+}
+
 export default function* userSaga() {
     yield all([
         takeLatest(GET_USER, getUser),
@@ -165,5 +196,6 @@ export default function* userSaga() {
         takeLatest(UPLOAD_PROFILE_PIC, uploadProfilePic),
         takeLatest(LOGOUT_USER, logoutUser),
         takeLatest(LOGIN, login),
+        takeLatest(UPDATE_USER, updateUser),
     ]);
 }
