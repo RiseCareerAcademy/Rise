@@ -1,187 +1,235 @@
 import React, { Component } from "react";
-import { ScrollView, StyleSheet, View, SectionList, Text } from "react-native";
+import { List, ListItem } from 'react-native-elements';
+import { FlatList } from "react-native";
 import Expo from "expo";
+import { create_matches_table_sql } from "../config/user_sql_constants";
+// import { Graph } from 'react-d3-graph';
 
 export default class MatchesScreen extends Component {
   state = {
-    desiredSkills: ["Agile Methodologies", "UX", "Prototyping"], //temp
-    desiredProfessions: ["Product Manager"], //temp
+    desiredSkills: "",
+    desiredProfession: "",
     //array of matches with respective scores
     matches: [],
-    scores: [],
-    mentorsFromServer: []
+    list: [],
+    error: "hi"
   };
+  
 
   constructor(props) {
     super(props);
-    var mentors = [];
-    //populate array with data from database
-
+    var numMatches;
+    var tmpList = [];
+    //CALL MACTH ALGO
     const { manifest } = Expo.Constants;
-    const api = (typeof manifest.packagerOpts === `object`) && manifest.packagerOpts.dev
+    this.api = (typeof manifest.packagerOpts === `object`) && manifest.packagerOpts.dev
       ? manifest.debuggerHost.split(`:`).shift().concat(`:8000`)
       : `api.example.com`;
-    console.log(api);
-    fetch('http://' + api + '/user/mentor', {
+    console.log(this.api);
+    fetch('http://' + this.api + '/user/21542353185381/skills', {
       method: 'GET'
     })
       .then((response) => response.json())
       .then((responseJson) => {
-        //TO DO: add mentors name and skills in array
-
-        for (var i = 0; i < responseJson.rows.length; i++) {
-          var curr_row = responseJson.rows[i];
-          mentors.push([curr_row.first_name])
-          mentors.push([curr_row.occupation])
-          mentors.push(curr_row.skills);
-          console.log(curr_row.skills.split(','))
-        }
-        const { desiredSkills, desiredProfessions } = this.state;
-        const { scores, matches } = this.match(desiredSkills, desiredProfessions, mentors);
-        this.setState({ scores: scores });
-        this.setState({ matches: matches });
+        var fetchedSkills = responseJson.rows[0].skills
+        this.state.desiredSkills = fetchedSkills
       })
       .catch((error) => {
         console.log("error is: " + error);
       });
-  }
 
-  //add skills to desiredSkills
-  addMenteeSkill = (desiredSkills, additionalSkill) => {
-    if (desiredSkills.split(",").indexOf(additionalSkill) == -1) {
-      desiredSkills = desiredSkills + "," + additionalSkill
-    }
-  }
+    //fetch profession
+    fetch('http://' + this.api + '/user/21542353185381/profession', {
+      method: 'GET'
+    })
+      .then((response) => response.json())
+      .then((responseJson) => {
+        var fetchedProfession = responseJson.rows[0].profession
+        this.state.desiredProfession = fetchedProfession
+        console.log("skills in prof fecth" + this.state.desiredSkills)
+        const matches  = this.match(this.state.desiredSkills, this.state.desiredProfession);
 
-  //delete skills from desiredSkills
-  deleteMenteeSkill = (desiredSkills, skill) => {
-    if (desiredSkills.split(",").indexOf(skill) != -1) {
-      const firstHalf = desiredSkills.slice(0, desiredSkills.indexOf(skill))
-      const secondHalf = desiredSkills.slice(desiredSkills.indexOf(skill) + 1 + skill.length)
-      desiredSkills = firstHalf + secondHalf
-    }
+        //matches store a promise
+       console.log(matches)
+       matches.then(data => {
+        this.setState({ matches: data });
+        //console.log("type" + typeof Number.parseInt(this.state.matches.length))
+        numMatches = Number.parseInt(this.state.matches.length)
+
+        
+        //loop through matches id and store into a list
+     
+        //console.log("match len: "+numMatches)
+        for (let i = 0; i < numMatches; i++){
+          //need to get name, profile id, and profession from match id using fetch
+          tmpList.push(
+            {
+              name: 'Rita',
+              avatar_url: 'test url',
+              profession: 'sample profession'
+            }
+            
+          )
+        }
+
+      
+    
+        
+        console.log("state list "+ this.list)
+        });
+
+
+       
+      })
+      .catch((error) => {
+        console.log("error is: " + error);
+      });
+
+      
+    console.log("tmpList "+ tmpList)
+    this.setState({list:tmpList})
+     
   }
 
   //match function
-  match = (desiredSkills, desiredProfessions, fakeData) => {
-    // if (! global.Buffer) {
-    //   global.Buffer = require("buffer").Buffer;
-    // }
-    // var findMatching = require("bipartite-matching")
-    // console.log(findMatching(5, 5, [
-    //   [0, 0],
-    //   [0, 1],
-    //   [1, 0],
-    //   [2, 1],
-    //   [2, 2],
-    //   [3, 2],
-    //   [3, 3],
-    //   [3, 4],
-    //   [4, 4]
-    // ]))
-    const matches = [];
-    const scores = [];
+  match = async (desiredSkills, desiredProfession) => {
+    var map = {}
 
+    console.log("desired skills in match func: " + desiredSkills)
+    console.log("desired profession in desired prof fucn: " + desiredProfession)
+    //go through skills
     for (let i = 0; i < desiredSkills.length; i++) {
-      for (let j = 0; j < fakeData.length; j += 3) {
-        if (fakeData[j + 2].indexOf(desiredSkills[i]) > -1) {
-          //if matching skill, add to match list, score ++
-          if (matches.indexOf(fakeData[j]) > -1)
-            //if already has points
-            scores[matches.indexOf(fakeData[j])] += 1;
-          else {
-            //else add to list of matches with new score
-            matches[matches.length] = fakeData[j];
-            scores[scores.length] = 1;
+      try {
+        //gets all user ids with the skill
+        const response = await fetch('http://' + this.api + '/user/skill/' + desiredSkills[i], {
+          method: 'GET',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+        });
+        const { rows: users } = await response.json();
+        // check if there is at least one person w/ matching profession
+        if (users.length != 0) {
+          var len;
+          if (String(users[0].users).includes(",")) {
+            //length of users with the appropriate skill
+            len = users[0].users.split(',').length
+          } else {
+            len = 1
           }
+
+          //for lop to go through matching skills and find mentor
+          for (let j = 0; j < len; j++) {
+            //get user id at ith index
+            var id = users[0].users.split(',')[j];
+            //if mentor
+            if (String(id).charAt(0) == "1") {
+              //if id is not in the map
+              if (map[id] == undefined) {
+                map[id] = 1;
+                // console.log(map[id])
+              } else {
+                map[id]++;
+              }
+            }
+          }
+          console.log(map)
         }
+
+        //get profession and add score
+      } catch (error) {
+        console.error("error is " + error);
       }
     }
 
-    for (let i = 0; i < desiredProfessions.length; i++) {
-      for (let j = 0; j < fakeData.length; j += 3)
-        if (fakeData[j + 1].indexOf(desiredProfessions[i]) > -1) {
-          if (matches.indexOf(fakeData[j]) > -1)
-            //if matching skill, add to match list, score ++
-            //if already has points
-            scores[matches.indexOf(fakeData[j])] += 3;
-          else {
-            //else add to list of matches with new score
-            matches[matches.length] = fakeData[j];
-            scores[scores.length] = 3;
+
+    //for loop to go through profession
+    try {
+      const response = await fetch('http://' + this.api + '/user/profession/' + desiredProfession, {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+      });
+      const { rows: profession } = await response.json();
+      if (profession.length != 0) {
+        var proflen;
+        if (String(profession[0].users).includes(",")) {
+          //length of users with the matched profession
+          proflen = profession[0].users.split(',').length
+        } else {
+          proflen = 1
+        }
+
+        //loop to check which profession belong to mentor
+        for (let k = 0; k < proflen; k++) {
+          var profid = profession[0].users.split(',')[k];
+          if (String(profid).charAt(0) == "1") {
+            //if user has no matching skills, but matching profession
+            if (map[profid] == undefined) {
+              map[profid] = 2;
+            }
+            //if user has matching profession and skills
+            else {
+              map[profid] = map[profid] + 2;
+            }
+
           }
         }
-    }
-
-    //sort by score
-    for (let i = 1; i < scores.length; i++) {
-      for (let j = 0; j < i; j++) {
-        if (scores[i] > scores[j]) {
-          let x = scores[i];
-          scores[i] = scores[j];
-          scores[j] = x;
-          let y = matches[i];
-          matches[i] = matches[j];
-          matches[j] = y;
-        }
       }
+    } catch (error) {
+      console.error("error is " + error);
+    }
+    var unsortedValues = [];
+    for (var key in map) {
+      unsortedValues.push({
+        'name': key,
+        'value': map[key]
+      });
     }
 
-    return { scores, matches };
+    //sort array by score
+    unsortedValues.sort((a, b) => (a.value < b.value) ? 1 : ((b.value < a.value) ? -1 : 0));
+
+
+    var matches = []
+    for (let i = 0; i < unsortedValues.length; i++) {
+      matches.push(
+        unsortedValues[i].name
+      );
+    }
+
+    console.log("matches outcome in match func:" + matches)
+    this.state.match = matches
+    return matches
   }
 
-  render() {
-
-    const { matches, scores } = this.state;
-
+  renderRow =({ item }) =>{
     return (
-      <View style={styles.container}>
-        <ScrollView
-          style={styles.container}
-          contentContainerStyle={styles.contentContainer}
-        >
-          <View style={styles.container}>
-            <SectionList
-              sections={[
-                { title: "Suggested Matches", data: matches },
-                { title: "Scores of Matches(temp)", data: scores }
-              ]}
-              renderItem={({ item }) => <Text style={styles.item}>{item}</Text>}
-              renderSectionHeader={({ section }) => (
-                <Text style={styles.sectionHeader}>{section.title}</Text>
-              )}
-              keyExtractor={(item, index) => index}
-            />
-          </View>
-        </ScrollView>
-      </View>
-    );
+      <ListItem
+        roundAvatar
+        title={item.name}
+        subtitle={item.profession}
+        avatar={{uri:item.avatar_url}}
+      />
+    )
   }
+  
+  render =()=> {
+    return (
+      <List>
+        <FlatList
+          data={this.state.list}
+          renderItem={this.renderRow}
+          keyExtractor={item => item.name}
+
+        />
+      </List>
+    )
+  }
+
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff"
-  },
-  buttonContainer: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center"
-  },
-  center: {
-    flex: 1,
-    flexDirection: "row",
-    justifyContent: "center"
-  },
-  buttonStyle: {
-    margin: 10
-  },
-  greyText: {
-    color: "grey"
-  },
-  contentContainer: {
-    paddingTop: 30
-  }
-});
+

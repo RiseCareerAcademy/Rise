@@ -1096,7 +1096,7 @@ module.exports.login = (req, res) => {
   }
   sql1 = `SELECT salt FROM Passwords WHERE email_address= ?;`
   a = db.all(sql1, [user.email_address], (err, rows1) => {
-    if (err) {
+    if (err) { 
       throw err;
     }
     if (rows1.length == 0) {

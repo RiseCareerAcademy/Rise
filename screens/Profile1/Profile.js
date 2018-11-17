@@ -21,7 +21,7 @@ import Email from "./Email";
 import Separator from "./Separator";
 import Tel from "./Tel";
 import { DOMAIN } from "../../config/url";
-import { uploadProfilePic } from '../../actions/user.actions';
+import { uploadProfilePic, login } from '../../actions/user.actions';
 
 const uuidv1 = require('uuid/v1');
 
@@ -132,6 +132,10 @@ const styles = StyleSheet.create({
 class Contact extends Component {
   constructor(props) {
     super(props);
+    const { manifest } = Expo.Constants;
+    global.api= (typeof manifest.packagerOpts === `object`) && manifest.packagerOpts.dev
+    ? manifest.debuggerHost.split(`:`).shift().concat(`:8000`)
+    : `api.example.com`;
 
     this.state = {
       telDS: new ListView.DataSource({
@@ -163,6 +167,24 @@ class Contact extends Component {
       if (!result.cancelled) {
         this.props.uploadProfilePic(result.uri, this.props.user_id);
         this.setState({ image: result.uri });
+        fetch('http://'+global.api+'/user/10101/profilepic/', {
+        method: 'PUT',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+                //create unique match id, can get number of row in db + 1
+                "profilepic": JSON.stringify(result.uri)
+          }),
+      })//fetch
+      .then((response) => response.json())
+      .then((responseJson) => {
+        console.log(JSON.stringify(responseJson));
+        })
+      .catch((error) => {
+        console.error("error is " + error);
+      });
       }
     }
   };
@@ -253,14 +275,6 @@ class Contact extends Component {
 
     return (
       <View style={styles.headerContainer}>
-        <SearchBar
-          showLoading
-          platform="ios"
-          cancelButtonTitle="Cancel"
-          placeholder="Search"
-          onChangeText={text => this.setState({ text })}
-          onSubmitEditing={() => navigate("Search", { text: this.state.text })}
-        />
         <ImageBackground
           style={styles.headerBackgroundImage}
           blurRadius={10}
@@ -402,5 +416,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { uploadProfilePic }
+  { uploadProfilePic, login }
 )(Contact);

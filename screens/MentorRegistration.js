@@ -28,11 +28,11 @@ export class MentorRegistration extends React.Component {
     errors: [],
     skills: "",
     profession: "",
-    name: "",
+    first_name: "",
     city: "",
     state: "",
     image: null,
-    lastName: "",
+    last_name: "",
     zipcode: ""
   };
 
@@ -72,7 +72,7 @@ export class MentorRegistration extends React.Component {
     this.setState({ biography: text });
   };
 
-  validate = (password, confirmedPassword, skills, zipcode) => {
+  validate = (password, confirmedPassword, skills, profession, email, name, lastName, zipcode) => {
     // we are going to store errors for all fields
     // in a signle array
     const errors = [];

@@ -6,7 +6,7 @@ import { AuthSession } from "expo";
 import { MonoText } from "../components/StyledText";
 import { connect } from 'react-redux';
 
-import { registerWithLinkedin } from '../actions/user.actions';
+import { registerWithLinkedin, login } from '../actions/user.actions';
 
 export class HomeScreen extends React.Component {
   constructor(props) {
@@ -114,4 +114,5 @@ const mapStateToProps = state => ({
 
 export default connect(mapStateToProps, {
   registerWithLinkedin,
+  login,
 })(HomeScreen);
