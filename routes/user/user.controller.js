@@ -173,7 +173,7 @@ module.exports.linkedin = async (req, res) => {
 //create new mentor
 module.exports.postMentor = (req, res) => {
   const fields = ['first_name', 'last_name', 'email_address' ,'biography','zipcode',
-  'date_of_birth','profession','skills','hobbies', 'profile_pic_URL'];
+  'date_of_birth','profession','skills','hobbies'];
   const user = {};
 
   fields.forEach(field => {
@@ -214,7 +214,7 @@ module.exports.postMentor = (req, res) => {
           res
             .status(500)
             .json({ error: err.message, success: false });
-          return;
+          return false;
         }
       });
 
