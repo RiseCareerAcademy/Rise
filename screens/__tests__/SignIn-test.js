@@ -1,6 +1,6 @@
 import 'react-native';
 import React from 'react';
-import SignIn from '../SignIn';
+import {SignIn} from '../SignIn';
 import renderer from 'react-test-renderer';
 alert = jest.fn();
 
@@ -59,6 +59,7 @@ it('returns error if all fields are not filled', () => {
       navigation: {
         navigate: () => { }
       },
+      login: () => {},
     };
     const instance = renderer.create(<SignIn {...props} />).getInstance();
     expect(instance.validate('user@email.com', 'abcdef')).toEqual(true);
