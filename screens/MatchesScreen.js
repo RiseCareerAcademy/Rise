@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { List, ListItem } from 'react-native-elements';
-import { FlatList } from "react-native";
+import { FlatList, AppRegistry, StyleSheet, Text, View  } from "react-native";
 import Expo from "expo";
 import { create_matches_table_sql } from "../config/user_sql_constants";
 // import { Graph } from 'react-d3-graph';
@@ -86,6 +86,7 @@ export default class MatchesScreen extends Component {
             }
             
           )
+          console.log(tmpList)
         }
 
       
@@ -225,6 +226,7 @@ export default class MatchesScreen extends Component {
     this.state.match = matches
     return matches
   }
+  
 
   renderRow =({ item }) =>{
     return (
@@ -238,16 +240,52 @@ export default class MatchesScreen extends Component {
   }
   
   render =()=> {
+    const list = [
+      {
+        name: 'Amy Farha',
+        avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
+        subtitle: 'Vice President'
+      },
+      {
+        name: 'Chris Jackson',
+        avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/adhamdannaway/128.jpg',
+        subtitle: 'Vice Chairman'
+      }
+    ]
     return (
-      <List>
-        <FlatList
-          data={this.state.list}
-          renderItem={this.renderRow}
-          keyExtractor={item => item.name}
+      <View>
+  {
+    list.map((l, i) => (
+      <ListItem
+        key={i}
+        leftAvatar={{ source: { uri: l.avatar_url } }}
+        title={l.name}
+        subtitle={l.subtitle}
+      />
+    ))
+  }
+</View>
 
-        />
-      </List>
+    //   <List>
+    //     <FlatList
+    //       data={this.state.list}
+    //       renderItem={this.renderRow}
+    //       keyExtractor={item => item.name}
+
+    //     />
+    //   </List>
     )
   }
 
 }
+const styles = StyleSheet.create({
+  container: {
+   flex: 1,
+   paddingTop: 22
+  },
+  item: {
+    padding: 10,
+    fontSize: 18,
+    height: 44,
+  },
+})
