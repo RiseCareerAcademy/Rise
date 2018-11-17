@@ -162,7 +162,7 @@ module.exports.linkedin = async (req, res) => {
     const {
       emailAddress: email_address,
       firstName: first_name,
-      industry: occupation,
+      industry: profession,
       lastName: last_name,
       pictureUrls,
       summary: biography
@@ -171,7 +171,7 @@ module.exports.linkedin = async (req, res) => {
     const result = {
       email_address,
       first_name,
-      occupation,
+      profession,
       last_name,
       biography,
       profile_pic_URL
@@ -769,14 +769,11 @@ module.exports.getFirstLastById = (req, res) => {
 module.exports.addSkill = (req, res) => {
   //get input
   userID = req.params.id;
-  if (req.body["skill"] === undefined) {
+  if (req.body.skill === undefined && req.body.skills === undefined) {
     res.status(500).json({ error: "Missing credentials", success: false });
     return true;
   }
-  if (req.body.skill === undefined) {
-    res.status(500).json({ error: "Missing credentials", success: false });
-  }
-  skill = req.body.skill;
+  skill = req.body.skill || req.body.skills;
 
   //add skill to user table
   sql1 = `SELECT skills FROM ${userType(userID)} WHERE user_id = ?`;
@@ -815,7 +812,7 @@ module.exports.addSkill = (req, res) => {
       });
     } else {
       users = rows3[0]["users"];
-      users = addToString(stringToArray(users), userID);
+      users = addToString(users, userID);
 
       sql5 = `UPDATE Skills SET users = ? WHERE skills = ?`;
       db.all(sql5, [users, skill], (err, rows5) => {
@@ -1080,7 +1077,7 @@ module.exports.deleteBio = (req, res) => {
 
 module.exports.updateZipcode = (req, res) => {
   userID = req.params.id;
-  zip = req.params.zipcode;
+  zip = req.body.zipcode;
   sql = `UPDATE '${userType(userID)}' SET zipcode = ? WHERE user_id = ?`;
 
   db.all(sql, [zip, userID], (err, rows) => {

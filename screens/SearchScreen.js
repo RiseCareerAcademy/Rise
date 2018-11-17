@@ -235,7 +235,7 @@ export class SearchScreen extends Component {
         <CheckBox title='Mentees' checked={this.state.checkedMentees}
         onPress={() => this.setState(prevState => ({checkedMentees: !prevState.checkedMentees}))}/>  
       
-      {
+    {
         this.state.checkedMentors && (
           <View>
             {this.state.mentors.length > 0 && <View><Text>Mentors:</Text></View>}
