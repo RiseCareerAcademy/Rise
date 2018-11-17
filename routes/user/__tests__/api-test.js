@@ -1,6 +1,17 @@
+const newman = require('newman'); // require newman in your project
 
-// const execSync = require('child_process').execSync;
-// output = execSync('newman run routes/user/__tests__/AddingMentee.postman_collection.json', { encoding: 'utf-8' });  
-// console.log('Output was:\n', output);
-// output = execSync('newman run routes/user/__tests__/AddingMentors.postman_collection.json', { encoding: 'utf-8' });  
-// console.log('Output was:\n', output);
+// call newman.run to pass `options` object and wait for callback
+newman.run({
+    collection: require('./AddingMentee.postman_collection.json'),
+    reporters: 'cli'
+}, function (err) {
+	if (err) { throw err; }
+	// call newman.run to pass `options` object and wait for callback
+	newman.run({
+		collection: require('./AddingMentors.postman_collection.json'),
+		reporters: 'cli'
+	}, function (err) {
+		if (err) { throw err; }
+		console.log('collection run complete!');
+	});
+});
