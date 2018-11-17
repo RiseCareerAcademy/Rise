@@ -23,6 +23,10 @@ export class SearchScreen extends Component {
     mentors: [],
     mentees: [],
   };
+  //search function
+  search = () => {
+    
+  }
 
   constructor(props) {
     super(props);
@@ -151,6 +155,10 @@ export class SearchScreen extends Component {
         }
       }
     }
+    console.log("RESULT OF SEARCH");
+    for (i = 0; i < results.length; i++) { console.log(results[i]); }
+
+    this.state.results = results;
 
     for (i = 0; i < finalResults.length; i++) {
       console.log(finalResults[i].toString());
@@ -279,7 +287,7 @@ export class SearchScreen extends Component {
                     title={`${mentee.first_name} ${mentee.last_name}`}
                     subtitle={`${mentee.profession} | ${mentee.skills}`}
                     avatar={{ uri: image }}
-                    key={i}
+                    key={mentee.user_id}
                   />
                 );
               })}
@@ -292,7 +300,6 @@ export class SearchScreen extends Component {
     );
   }
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,

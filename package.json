@@ -30,6 +30,7 @@
     "axios": "^0.18.0",
     "bcrypt": "^3.0.1",
     "bipartite-matching": "^1.0.0",
+    "bluebird": "^3.5.3",
     "body-parser": "^1.18.3",
     "buffer": "^5.2.1",
     "cookie-parser": "^1.4.3",
@@ -59,6 +60,8 @@
     "redux-logger": "^3.0.6",
     "redux-persist": "^5.10.0",
     "redux-saga": "^0.16.2",
+    "sql-template-strings": "^2.2.2",
+    "sqlite": "^3.0.0",
     "sqlite3": "^4.0.3",
     "uuid": "^3.3.2"
   },
