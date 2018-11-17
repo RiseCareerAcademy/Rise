@@ -1,6 +1,6 @@
 import 'react-native';
 import React from 'react';
-import Settings from '../Settings';
+import {Settings} from '../Settings';
 import renderer from 'react-test-renderer';
 alert = jest.fn();
 
@@ -107,11 +107,15 @@ it("returns true if confirmedPassword state is changed", () => {
   expect(instance.state.confirmedPassword).toEqual('confirmedPassword')
 });
 
+
+//render test
 it('renders correctly', () => {
   const props = {
+      navigation:{
+          naviagte: ()=> {},
+      }
   };
-  const tree = renderer.create(<Settings {...props}>Snapshot test!</Settings>).toJSON();
+const tree = renderer.create(<Settings {...props}>Snapshot test!</Settings>).toJSON();
 
-  expect(tree).toMatchSnapshot();
-
+expect(tree).toMatchSnapshot();
 });
