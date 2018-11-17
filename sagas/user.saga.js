@@ -139,13 +139,9 @@ export function* login({ email_address, password }) {
 export function* getUser({ userId }) {
     try {
         const response = yield axios.get(`http://${DOMAIN}/user/${userId}`);
-        if (response === undefined) {
-            throw Error('Response is empty. Is the server started and running properly?');
-        }
         const user =response.data.rows[0];
         yield put(setUser(user));
         return user;
-
     } catch(e) {
         if (e.response !== undefined && e.response.data !== undefined) {
             const error = typeof e.response.data === 'string' ? e.response.data : e.response.data.error;

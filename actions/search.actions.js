@@ -1,7 +1,7 @@
-export const GET_ALL_MENTORS = 'users-search/GET_ALL_MENTORS';
-export const GET_ALL_MENTEES = 'users-search/GET_ALL_MENTEES';
-export const SET_MENTORS = 'users-search/SET_MENTORS';
-export const SET_MENTEES = 'users-search/SET_MENTEES';
+export const GET_ALL_MENTORS = 'search/GET_ALL_MENTORS';
+export const GET_ALL_MENTEES = 'search/GET_ALL_MENTEES';
+export const SET_MENTORS = 'search/SET_MENTORS';
+export const SET_MENTEES = 'search/SET_MENTEES';
 
 export const getAllMentors = () => ({
 	type: GET_ALL_MENTORS,
@@ -19,4 +19,4 @@ export const setMentors = mentors => ({
 export const setMentees = mentees => ({
 	type: SET_MENTEES,
 	mentees,
-})
+});

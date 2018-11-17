@@ -21,7 +21,7 @@ import Email from "./Email";
 import Separator from "./Separator";
 import Tel from "./Tel";
 import { DOMAIN } from "../../config/url";
-import { uploadProfilePic } from '../../actions/user.actions';
+import { uploadProfilePic, login } from '../../actions/user.actions';
 
 const uuidv1 = require('uuid/v1');
 
@@ -424,5 +424,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { uploadProfilePic }
+  { uploadProfilePic, login }
 )(Contact);

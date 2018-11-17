@@ -4,9 +4,9 @@ import storage from 'redux-persist/lib/storage' // defaults to localStorage for 
 
 import messagesReducer from "./messages.reducer";
 import conversationReducer from "./conversation.reducer";
-import usersSearchReducer from "./users-search.reducer";
 import userReducer from "./user.reducer";
 import { navReducer } from '../navigation';
+import searchReducer from "./search.reducer";
 
 const authPersistConfig = {
   key: 'user',
@@ -17,7 +17,7 @@ const authPersistConfig = {
 export default combineReducers({
   messages: messagesReducer,
   conversation: conversationReducer,
-  usersSearch: usersSearchReducer,
   user: persistReducer(authPersistConfig, userReducer),
   nav: navReducer,
+  search: searchReducer,
 });
