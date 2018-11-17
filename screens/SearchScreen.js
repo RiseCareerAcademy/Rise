@@ -287,7 +287,7 @@ export class SearchScreen extends Component {
                     title={`${mentee.first_name} ${mentee.last_name}`}
                     subtitle={`${mentee.profession} | ${mentee.skills}`}
                     avatar={{ uri: image }}
-                    key={i}
+                    key={mentee.user_id}
                   />
                 );
               })}
