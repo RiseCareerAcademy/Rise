@@ -3,13 +3,13 @@ import { createStackNavigator, createBottomTabNavigator } from 'react-navigation
 
 import SettingsScreen from '../screens/Settings';
 import MatchesScreen from '../screens/MatchesScreen';
-// import SearchScreen from '../screens/SearchScreen'
+//import SearchScreen from '../screens/SearchScreen'
 import { Icon } from 'expo';
 import Colors from '../constants/Colors';
 import ProfileScreen from '../screens/Profile1';
 import Messages from '../screens/Messages';
 import Conversation from '../screens/Conversation';
-
+import SearchScreen from '../screens/SearchScreen';
 
 
 const ProfileStack = createStackNavigator({
@@ -81,10 +81,27 @@ SettingStack.navigationOptions = {
   ),
 };
 
+const SearchStack = createStackNavigator({
+  Search: SearchScreen,
+});
+
+SearchScreen.navigationOptions = {
+  tabBarLabel: 'Search',
+  tabBarIcon: ({ focused }) => (
+    <Icon.Feather
+      name="search"
+      size={26}
+      style={{ marginBottom: -3 }}
+      color={focused ? Colors.tabIconSelected : Colors.tabIconDefault}
+    />
+  ),
+}
+
 
 export default createBottomTabNavigator({
   ProfileStack,
   SuggestedMatchStack,
+  SearchStack,
   MessageStack,
   SettingStack,
 });

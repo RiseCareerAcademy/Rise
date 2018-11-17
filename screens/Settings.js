@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 
 import { logoutUser } from '../actions/user.actions';
 
-class Inputs extends Component {
+export class Settings extends Component {
   state = {
     email: "",
     password: "",
@@ -132,7 +132,7 @@ const mapStateToProps = () => ({});
 
 export default connect(mapStateToProps, {
   logoutUser,
-})(Inputs);
+})(Settings);
 
 const styles = StyleSheet.create({
   container: {

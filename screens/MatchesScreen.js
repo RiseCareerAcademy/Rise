@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { List, ListItem } from 'react-native-elements';
-import { FlatList, AppRegistry, StyleSheet, Text, View  } from "react-native";
+import { FlatList } from "react-native";
 import Expo from "expo";
 import { create_matches_table_sql } from "../config/user_sql_constants";
 // import { Graph } from 'react-d3-graph';
@@ -25,7 +25,8 @@ export default class MatchesScreen extends Component {
     this.api = (typeof manifest.packagerOpts === `object`) && manifest.packagerOpts.dev
       ? manifest.debuggerHost.split(`:`).shift().concat(`:8000`)
       : `api.example.com`;
-    fetch('http://' + this.api + '/user/21542417645825/skills', {
+    console.log(this.api);
+    fetch('http://' + this.api + '/user/21542353185381/skills', {
       method: 'GET'
     })
       .then((response) => response.json())
@@ -38,34 +39,43 @@ export default class MatchesScreen extends Component {
       });
 
     //fetch profession
-    fetch('http://' + this.api + '/user/21542417645825/profession', {
+    fetch('http://' + this.api + '/user/21542353185381/profession', {
       method: 'GET'
     })
       .then((response) => response.json())
       .then((responseJson) => {
         var fetchedProfession = responseJson.rows[0].profession
         this.state.desiredProfession = fetchedProfession
+        console.log("skills in prof fecth" + this.state.desiredSkills)
         const matches  = this.match(this.state.desiredSkills, this.state.desiredProfession);
 
         //matches store a promise
+       console.log(matches)
        matches.then(data => {
         this.setState({ matches: data });
+        //console.log("type" + typeof Number.parseInt(this.state.matches.length))
         numMatches = Number.parseInt(this.state.matches.length)
 
         
         //loop through matches id and store into a list
+     
+        //console.log("match len: "+numMatches)
         for (let i = 0; i < numMatches; i++){
-
           //need to get name, profile id, and profession from match id using fetch
           tmpList.push(
             {
-              name: 'Amy Farha',
-              avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
-              subtitle: 'Vice President'
+              name: 'Rita',
+              avatar_url: 'test url',
+              profession: 'sample profession'
             }
+            
           )
-          this.setState({list:tmpList})
         }
+
+      
+    
+        
+        console.log("state list "+ this.list)
         });
 
 
@@ -75,7 +85,9 @@ export default class MatchesScreen extends Component {
         console.log("error is: " + error);
       });
 
-      console.log(this.state.list)
+      
+    console.log("tmpList "+ tmpList)
+    this.setState({list:tmpList})
      
   }
 
@@ -83,11 +95,13 @@ export default class MatchesScreen extends Component {
   match = async (desiredSkills, desiredProfession) => {
     var map = {}
 
+    console.log("desired skills in match func: " + desiredSkills)
+    console.log("desired profession in desired prof fucn: " + desiredProfession)
     //go through skills
-console.log(desiredSkills)
+    for (let i = 0; i < desiredSkills.length; i++) {
       try {
         //gets all user ids with the skill
-        const response = await fetch('http://' + this.api + '/user/skill/' + desiredSkills, {
+        const response = await fetch('http://' + this.api + '/user/skill/' + desiredSkills[i], {
           method: 'GET',
           headers: {
             Accept: 'application/json',
@@ -95,42 +109,42 @@ console.log(desiredSkills)
           },
         });
         const { rows: users } = await response.json();
-        console.log(users)
         // check if there is at least one person w/ matching profession
         if (users.length != 0) {
-          var Skilllen;
+          var len;
           if (String(users[0].users).includes(",")) {
-            //length of users with the matched profession
-            Skilllen = users[0].users.split(',').length
+            //length of users with the appropriate skill
+            len = users[0].users.split(',').length
           } else {
-            Skilllen = 1
+            len = 1
           }
+
           //for lop to go through matching skills and find mentor
-          for (let j = 0; j < Skilllen; j++) {
+          for (let j = 0; j < len; j++) {
             //get user id at ith index
             var id = users[0].users.split(',')[j];
             //if mentor
             if (String(id).charAt(0) == "1") {
               //if id is not in the map
               if (map[id] == undefined) {
-                console.log(id)
                 map[id] = 1;
+                // console.log(map[id])
               } else {
-                console.log(id)
                 map[id]++;
               }
             }
           }
+          console.log(map)
         }
 
         //get profession and add score
       } catch (error) {
         console.error("error is " + error);
       }
-  
+    }
+
+
     //for loop to go through profession
-    console.log(desiredProfession)
-    console.log(desiredSkills)
     try {
       const response = await fetch('http://' + this.api + '/user/profession/' + desiredProfession, {
         method: 'GET',
@@ -155,14 +169,11 @@ console.log(desiredSkills)
           if (String(profid).charAt(0) == "1") {
             //if user has no matching skills, but matching profession
             if (map[profid] == undefined) {
-              console.log(profid)
               map[profid] = 2;
-              
             }
             //if user has matching profession and skills
             else {
-              console.log(profid)
-              map[profid] += 2;
+              map[profid] = map[profid] + 2;
             }
 
           }
@@ -190,10 +201,10 @@ console.log(desiredSkills)
       );
     }
 
+    console.log("matches outcome in match func:" + matches)
     this.state.match = matches
     return matches
   }
-  
 
   renderRow =({ item }) =>{
     return (
@@ -208,30 +219,17 @@ console.log(desiredSkills)
   
   render =()=> {
     return (
-      <View>
-  {
-    this.state.list.map((l, i) => (
-      <ListItem
-        key={i}
-        leftAvatar={{ source: { uri: l.avatar_url } }}
-        title={l.name}
-        subtitle={l.subtitle}
-      />
-    ))
-  }
-</View>
+      <List>
+        <FlatList
+          data={this.state.list}
+          renderItem={this.renderRow}
+          keyExtractor={item => item.name}
+
+        />
+      </List>
     )
   }
 
 }
-const styles = StyleSheet.create({
-  container: {
-   flex: 1,
-   paddingTop: 22
-  },
-  item: {
-    padding: 10,
-    fontSize: 18,
-    height: 44,
-  },
-})
+
+

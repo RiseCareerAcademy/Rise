@@ -66,11 +66,10 @@ it('opens linkedin', async () => {
         navigation: {
             navigate: () => {}
         },
+        registerWithLinkedin: jest.fn(),
     };
 
     const wrapper = shallow(<HomeScreen {...props} />);
     await wrapper.instance().handleMentorPress();
-    expect(wrapper.state('result')).toEqual({"params": {"code": "MyLinkedinCode", "state": "MyLinkedinState"}});
-    expect(wrapper.state('validState')).toBeDefined();
-    expect(wrapper.state('responseState')).toEqual('MyLinkedinState');
+    expect(props.registerWithLinkedin).toBeCalled();
 });
