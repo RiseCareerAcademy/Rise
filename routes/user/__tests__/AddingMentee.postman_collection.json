@@ -47,7 +47,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"skill\": \"a\",\r\n    \"users\": \"1\"\r\n}"
+					"raw": ""
 				},
 				"url": {
 					"raw": "http://localhost:8000/user/tables",
@@ -140,7 +140,7 @@
 							"    var jsonData = pm.response.json();",
 							"    pm.expect(jsonData['success']).to.eql(true);",
 							"});",
-							"pm.test(\"have 1 mente inside\", function () {",
+							"pm.test(\"have 0 mente inside\", function () {",
 							"    var jsonData = pm.response.json();",
 							"    pm.expect(jsonData['rows'].length).to.eql(0);",
 							"});",

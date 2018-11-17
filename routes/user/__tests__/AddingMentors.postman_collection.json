@@ -140,7 +140,7 @@
 							"    var jsonData = pm.response.json();",
 							"    pm.expect(jsonData['success']).to.eql(true);",
 							"});",
-							"pm.test(\"have 1 mentor inside\", function () {",
+							"pm.test(\"have 0 mentor inside\", function () {",
 							"    var jsonData = pm.response.json();",
 							"    pm.expect(jsonData['rows'].length).to.eql(0);",
 							"});",
@@ -271,6 +271,28 @@
 				}
 			},
 			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "76214f15-e8ea-4f4a-8cb9-2e57712a008a",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "eb730cb8-1798-4f2e-aa42-4eee36a0e819",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
 		}
 	]
 }
