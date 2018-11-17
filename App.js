@@ -10,6 +10,7 @@ import { Text } from "native-base";
 
 
 export const { persistor, store } = configureStore();
+console.disableYellowBox = true;
 
 export default class App extends React.Component {
   constructor(props) {

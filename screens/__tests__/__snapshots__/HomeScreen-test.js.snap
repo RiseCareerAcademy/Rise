@@ -381,11 +381,6 @@ exports[`renders with validi set 1`] = `
           SIGN IN
         </Styled(Text)>
       </Styled(Button)>
-      <Styled(Text)>
-        undefined
-RequestState: undefined
-ResponseState: undefined
-      </Styled(Text)>
     </Component>
   </ScrollViewMock>
 </Component>
