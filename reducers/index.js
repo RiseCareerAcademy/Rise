@@ -1,6 +1,6 @@
 import { combineReducers } from "redux";
-import { AsyncStorage } from "react-native";
 import { persistReducer } from 'redux-persist'
+import storage from 'redux-persist/lib/storage' // defaults to localStorage for web and AsyncStorage for react-native
 
 import messagesReducer from "./messages.reducer";
 import conversationReducer from "./conversation.reducer";
@@ -10,7 +10,8 @@ import { navReducer } from '../navigation';
 
 const authPersistConfig = {
   key: 'user',
-  storage: AsyncStorage,
+  storage,
+  blacklist: ['registering', 'error', 'loggingIn'],
 };
 
 export default combineReducers({
