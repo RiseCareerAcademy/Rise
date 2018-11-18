@@ -11,7 +11,7 @@ const jwt = require('jsonwebtoken');
 
 const { router: api } = require("./routes/api/api.js"); //gets api logic from path
 const { router: user } = require("./routes/user/index.js"); //gets user logic from path
-const { router: match } = require("./routes/match/matchapi.js"); //gets match logic from path 
+// const { router: match } = require("./routes/match/matchapi.js"); //gets match logic from path 
 const config = require('./config/database');
 require('dotenv').config()
 
@@ -63,7 +63,7 @@ app.use('/api', (req, res, next) => {
   });
 }, api);
 app.use('/user', user);
-app.use('/match', match);
+// app.use('/match', match);
 
 // so when people try to access it via browser
 app.get("/", function(req, res) {

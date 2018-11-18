@@ -1,113 +1,61 @@
-const jwt = require("jsonwebtoken");
-const path = require("path");
-const fs = require("fs");
-const config = require("../../config/database.js");
-const db = require("../../db");
-var date = new Date();
+const dbPromise = require("../../db");
+const sql = require("sql-template-strings");
 
-const os = require("os");
 const ip = require("ip");
 const axios = require("axios");
 const qs = require("qs");
+const date = new Date();
 
-const { getRandomArbitrary } = require("../../utils/getRandomArbitrary");
-
-var user_sql_constants = require("../../config/user_sql_constants.js");
-var hp = require("../../config/helper.js");
+const SQL = require("../../config/user_sql_constants.js");
+const hp = require("../../config/helper.js");
+const ip_address = ip.address();
 
 //create all tables
-module.exports.createTables = (req, res) => {
-  sql1 = user_sql_constants.create_mentor_table_sql();
-  sql2 = user_sql_constants.create_mentee_table_sql();
-  sql3 = user_sql_constants.create_password_table_sql();
-  sql4 = user_sql_constants.create_matches_table_sql();
-  sql5 = user_sql_constants.create_messages_table_sql();
-  sql6 = user_sql_constants.create_skills_table_sql();
-  sql7 = user_sql_constants.create_professions_table_sql();
-
-  db.all(sql1, [], (err, rows) => {
-    if (err) {
-      throw err;
-    }
-  });
-  db.all(sql2, [], (err, rows) => {
-    if (err) {
-      throw err;
-    }
-  });
-  db.all(sql3, [], (err, rows) => {
-    if (err) {
-      throw err;
-    }
-  });
-  db.all(sql4, [], (err, rows) => {
-    if (err) {
-      throw err;
-    }
-  });
-  db.all(sql5, [], (err, rows) => {
-    if (err) {
-      throw err;
-    }
-  });
-  db.all(sql6, [], (err, rows) => {
-    if (err) {
-      throw err;
-    }
-  });
-  db.all(sql7, [], (err, rows) => {
-    if (err) {
-      throw err;
-    }
-  });
-  res.json({ success: true, rows: "all tables created" });
+module.exports.createTables = async (req, res) => {
+  try {
+    const db = await dbPromise;
+    await Promise.all([
+      db.run(SQL.CREATE_MENTOR_TABLE),
+      db.run(SQL.CREATE_MENTEE_TABLE),
+      db.run(SQL.CREATE_PASSWORD_TABLE),
+      db.run(SQL.CREATE_MATCHES_TABLE),
+      db.run(SQL.CREATE_MESSAGES_TABLE),
+      db.run(SQL.CREATE_SKILLS_TABLE),
+      db.run(SQL.CREATE_PROFESSIONS_TABLE)
+    ]);
+    res.json({ success: true, rows: "all tables created" });
+  } catch (e) {
+    console.error(e.message);
+    res.json({ success: false, error: e.message });
+  }
 };
+
 //drop table
-module.exports.deletetable = (req, res) => {
-  sql1 = `DROP TABLE IF EXISTS Mentors;`;
-  sql2 = `DROP TABLE IF EXISTS Mentees;`;
-  sql3 = `DROP TABLE IF EXISTS Passwords;`;
-  sql4 = `DROP TABLE IF EXISTS Matches;`;
-  sql5 = `DROP TABLE IF EXISTS Messages;`;
-  sql6 = `DROP TABLE IF EXISTS Skills;`;
-  sql7 = `DROP TABLE IF EXISTS Profession;`;
-  
-  db.all(sql1, [], (err, rows) => {
-    if (err) {
-      throw err;
-    }
-  });
-  db.all(sql2, [], (err, rows) => {
-    if (err) {
-      throw err;
-    }
-  });
-  db.all(sql3, [], (err, rows) => {
-    if (err) {
-      throw err;
-    }
-  });
-  db.all(sql4, [], (err, rows) => {
-    if (err) {
-      throw err;
-    }
-  });
-  db.all(sql5, [], (err, rows) => {
-    if (err) {
-      throw err;
-    }
-  });
-  db.all(sql6, [], (err, rows) => {
-    if (err) {
-      throw err;
-    }
-  });
-  db.all(sql7, [], (err, rows) => {
-    if (err) {
-      throw err;
-    }
-  });
-  res.json({ success: true, rows: "delete all tables" });
+module.exports.deletetable = async (req, res) => {
+  const dropMentorsTableSql = sql`DROP TABLE IF EXISTS Mentors;`;
+  const dropMenteesTableSql = sql`DROP TABLE IF EXISTS Mentees;`;
+  const dropPasswordsTableSql = sql`DROP TABLE IF EXISTS Passwords;`;
+  const dropMatchesTableSql = sql`DROP TABLE IF EXISTS Matches;`;
+  const dropMessagesTableSql = sql`DROP TABLE IF EXISTS Messages;`;
+  const dropSkillsTableSql = sql`DROP TABLE IF EXISTS Skills;`;
+  const dropProfessionTableSql = sql`DROP TABLE IF EXISTS Profession;`;
+
+  try {
+    const db = await dbPromise;
+    await Promise.all([
+      db.run(dropMentorsTableSql),
+      db.run(dropMenteesTableSql),
+      db.run(dropPasswordsTableSql),
+      db.run(dropMatchesTableSql),
+      db.run(dropMessagesTableSql),
+      db.run(dropSkillsTableSql),
+      db.run(dropProfessionTableSql)
+    ]);
+    res.json({ success: true, rows: "delete all tables" });
+  } catch (e) {
+    console.error(e.message);
+    res.json({ success: false, error: e.message });
+  }
 };
 
 //create new mentor
@@ -125,7 +73,7 @@ module.exports.linkedin = async (req, res) => {
       qs.stringify(requestBody)
     );
     const {
-      data: { access_token, expires_in }
+      data: { access_token }
     } = response;
     const config = {
       headers: {
@@ -184,7 +132,7 @@ module.exports.linkedin = async (req, res) => {
 };
 
 //create new mentor
-module.exports.postMentor = (req, res) => {
+module.exports.postMentor = async (req, res) => {
   const fields = [
     "first_name",
     "last_name",
@@ -208,120 +156,79 @@ module.exports.postMentor = (req, res) => {
     user[field] = req.body[field];
   });
 
-  sql_email = `Select * from Mentors where email_address = ?  `;
-  db.all(sql_email, [user.email_address], (err, rows_email) => {
-    if (err) {
-      res.json({ success: false, rows: "Email is not unique" });
-      return false;
-    }
+  try {
+    const db = await dbPromise;
+    const getMentorsByEmailSql = sql`Select * from Mentors where email_address = ${user.email_address}`;
+    const emailRows = await db.all(getMentorsByEmailSql);
     //post mentor
-    if (rows_email.length != 0) {
+    if (emailRows.length != 0) {
       res.json({ success: false, rows: "Email is not unique" });
       return false;
     }
 
-    date = new Date();
-    userID = parseInt(10000000000000 + date.getTime());
-    user.user_id = userID;
-    const ip_address = ip.address();
-    user.profile_pic_URL = `http://${ip_address}:8000/user/${
-      user.user_id
-    }/profilepic`;
-    //console.log(userID)
-    sql = `INSERT INTO Mentors VALUES (?, ? , ?, ?, ?, ?, ?, ?, ?, ?, ?) `;
-    console.log(sql);
-    db.all(
-      sql,
-      [
-        userID,
-        user.first_name,
-        user.last_name,
-        user.email_address,
-        user.biography,
-        user.zipcode,
-        user.date_of_birth,
-        user.profession,
-        user.skills,
-        user.profile_pic_URL,
-        user.hobbies
-      ],
-      (err, rows) => {
-        if (err) {
-          res.status(500).json({ error: err.message, success: false });
-          return false;
-        }
-      }
-    );
+    user.user_id = parseInt(10000000000000 + date.getTime());
+    user.profile_pic_URL = `http://${ip_address}:8000/user/${user.user_id}/profilepic`;
+    const insertMentorSql = sql`INSERT INTO Mentors VALUES (
+        ${user.user_id},
+         ${user.first_name} ,
+         ${user.last_name},
+         ${user.email_address},
+         ${user.biography},
+         ${user.zipcode},
+         ${user.date_of_birth},
+         ${user.profession},
+         ${user.skills},
+         ${user.profile_pic_URL},
+         ${user.hobbies}
+      )`;
+    db.run(insertMentorSql);
 
-    //add user ID to skills table
-    skills = user.skills.split(",");
-    for (i in skills) {
-      skill = skills[i];
-      sql3 = `SELECT users FROM Skills WHERE skills = '${skills[i]}'`;
-      db.all(sql3, [], (err, rows3) => {
-        if (err) {
-          throw err;
-        }
-        if (rows3.length == 0) {
-          sql4 = `INSERT INTO Skills VALUES (?,CAST(? AS int))`;
-          db.all(sql4, [skill, parseInt(userID)], (err, rows4) => {
-            if (err) {
-              throw err;
-            }
-            console.log("insert users into new skill");
-          });
-        } else {
-          users = rows3[0]["users"];
-          users = addToString(users, userID);
+    // //add user ID to skills table
+    // const skills = user.skills.split(",");
+    // await Promise.all([
+    //   ...skills.map(async skill => {
+    //     const getUsersBySkillSql = sql`SELECT users FROM Skills WHERE skills = '${skill}'`;
+    //     const usersWithSkillObject = db.get(getUsersBySkillSql);
 
-          sql5 = `UPDATE Skills SET users = ? WHERE skills = ?`;
-          db.all(sql5, [users, skill], (err, rows5) => {
-            if (err) {
-              throw err;
-            }
-            console.log("add user to existed users list");
-          });
-        }
-      });
-    }
+    //     if (usersWithSkillObject === undefined) {
+    //       const insertSkillSql = sql`INSERT INTO Skills VALUES (${skill}, ${parseInt(user.user_id)})`;
+    //       await db.run(insertSkillSql);
+    //     } else {
+    //       let { users: usersWithSkill } = usersWithSkillObject;
+    //       usersWithSkill = addToString(usersWithSkill, user.user_id);
+    //       const updateSkillSql = sql`UPDATE Skills SET users = ${usersWithSkill} WHERE skills = ${skill}`;
+    //       await db.run(updateSkillSql);
+    //     }
+    //   }),
+    //   async () => {
+    //     const selectUsersByProfessionSql = sql`SELECT users FROM Profession WHERE profession = ${
+    //       user.profession
+    //     }`;
+    //     const usersWithProfessionObject = db.get(selectUsersByProfessionSql);
 
-    //add user ID to profession table
-    profession = user.profession;
-    sql3 = `SELECT users FROM Profession WHERE profession = ?`;
-    db.all(sql3, [profession], (err, rows3) => {
-      if (err) {
-        throw err;
-      }
-      //this means profession doesnt exist
-      if (rows3.length == 0) {
-        sql4 = `INSERT INTO Profession VALUES (?,CAST(? AS int))`;
-        db.all(sql4, [profession, userID], (err, rows4) => {
-          if (err) {
-            throw err;
-          }
-          console.log("new profession added, user attached");
-        });
-      }
-      //profession exists, append the user to list
-      else {
-        users = rows3[0]["users"];
-        users = addToString(users, userID);
-        //add the users to the profession
-        sql5 = `UPDATE Profession SET users = ? WHERE profession = ?`;
-        db.all(sql5, [users, profession], (err, rows5) => {
-          if (err) {
-            throw err;
-          }
-          console.log("Appended a user to an existed users list");
-        });
-      }
-    });
+    //     if (usersWithProfessionObject === undefined) {
+    //       const insertProfessionSql = sql`INSERT INTO Profession VALUES (${
+    //         user.profession
+    //       }, ${user.user_id})`;
+    //       await db.run(insertProfessionSql);
+    //     } else {
+    //       let { users: usersWithProfession } = usersWithProfessionObject;
+    //       usersWithProfession = addToString(usersWithProfession, user.user_id);
+    //       const updateProfessionSql = sql`UPDATE Profession SET users = ${usersWithProfession} WHERE profession = ${user.profile_pic_URL}`;
+    //       await db.run(updateProfessionSql);
+    //     }
+    //   }
+    // ]);
 
     res.json({ success: true, mentor: user });
-  });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ success: false, error: error.message });
+  }
 };
+
 //create new mentee
-module.exports.postMentee = (req, res) => {
+module.exports.postMentee = async (req, res) => {
   const fields = [
     "first_name",
     "last_name",
@@ -331,7 +238,7 @@ module.exports.postMentee = (req, res) => {
     "date_of_birth",
     "skills",
     "profession",
-    "hobbies"
+    "hobbies",
   ];
   const user = {};
   const missingFields = fields.some(field => {
@@ -347,113 +254,105 @@ module.exports.postMentee = (req, res) => {
     return;
   }
 
-  sql_email = `Select * from Mentees where email_address = ?  `;
-  db.all(sql_email, [user.email_address], (err, rows_email) => {
-    if (err) {
-      throw err;
-    }
+  try {
+    const db = await dbPromise;
+    const sql_email = sql`select * from Mentees where email_address = ${user.email_address}`;
+    const usersWithEmailObject = await db.get(sql_email);
 
-    if (rows_email.length != 0) {
-      res.json({ success: false, rows: "Email is not unique" });
-      return;
-    }
-    date = new Date();
-    userID = parseInt(20000000000000 + date.getTime());
-    user.user_id = userID;
-    const ip_address = ip.address();
-    user.profile_pic_URL = `http://${ip_address}:8000/user/${
-      user.user_id
-    }/profilepic`;
+      if (usersWithEmailObject !== undefined) {
+        res.json({ success: false, rows: "Email is not unique" });
+        return;
+      }
+      user.user_id = parseInt(20000000000000 + date.getTime());
+      user.profile_pic_URL = `http://${ip_address}:8000/user/${user.user_id}/profilepic`;
 
-    sql = `INSERT INTO Mentees VALUES (?,?,?,?,?,?,?,?,?,?,?) `;
-    console.log(sql);
-    db.all(
-      sql,
-      [
-        userID,
-        user.first_name,
-        user.last_name,
-        user.email_address,
-        user.biography,
-        user.zipcode,
-        user.date_of_birth,
-        user.profession,
-        user.skills,
-        user.profile_pic_URL,
-        user.hobbies
-      ],
-      (err, rows) => {
-        if (err) {
-          throw err;
-        }
-        res.json({ success: true, mentee: user });
-      }
-    );
-    //add user ID to skills table
-    skill = user.skills;
-    sql3 = `SELECT users FROM Skills WHERE skills = ?`;
-    db.all(sql3, [skill], (err, rows3) => {
-      if (err) {
-        throw err;
-      }
-      if (rows3.length == 0) {
-        sql4 = `INSERT INTO Skills VALUES (?,CAST(? AS int))`;
-        db.all(sql4, [skill, parseInt(userID)], (err, rows4) => {
-          if (err) {
-            throw err;
-          }
-          console.log("insert users into new skill");
-        });
-      } else {
-        users = rows3[0]["users"];
-        users = addToString(users, userID);
+      const insertMenteeSql = sql`INSERT INTO Mentees VALUES (
+        ${user.user_id},
+        ${user.first_name},
+        ${user.last_name},
+        ${user.email_address},
+        ${user.biography},
+        ${user.zipcode},
+        ${user.date_of_birth},
+        ${user.profession},
+        ${user.skills},
+        ${user.profile_pic_URL},
+        ${user.hobbies}
+      ) `;
+      await db.run(insertMenteeSql);
 
-        sql5 = `UPDATE Skills SET users = ? WHERE skills = ?`;
-        db.all(sql5, [users, skill], (err, rows5) => {
-          if (err) {
-            throw err;
-          }
-          console.log("add user to existed users list");
-        });
-      }
-    });
+      // //add user ID to skills table
+      // skill = user.skills;
+      // sql3 = `SELECT users FROM Skills WHERE skills = ?`;
+      // db.all(sql3, [skill], (err, rows3) => {
+      //   if (err) {
+      //     throw err;
+      //   }
+      //   if (rows3.length == 0) {
+      //     sql4 = `INSERT INTO Skills VALUES (?,CAST(? AS int))`;
+      //     db.all(sql4, [skill, parseInt(userID)], (err, rows4) => {
+      //       if (err) {
+      //         throw err;
+      //       }
+      //       console.log("insert users into new skill");
+      //     });
+      //   } else {
+      //     users = rows3[0]["users"];
+      //     users = addToString(users, userID);
 
-    //add user ID to profession table
-    profession = user.profession;
-    console.log(profession, userID);
-    sql3 = `SELECT users FROM Profession WHERE profession = ?`;
-    db.all(sql3, [profession], (err, rows3) => {
-      if (err) {
-        throw err;
-      }
-      //this means profession doesnt exist
-      if (rows3.length == 0) {
-        sql4 = `INSERT INTO Profession VALUES (?,CAST(? AS int))`;
-        db.all(sql4, [profession, userID], (err, rows4) => {
-          if (err) {
-            throw err;
-          }
-          console.log("new profession added, user attached");
-        });
-      }
-      //profession exists, append the user to list
-      else {
-        users = rows3[0]["users"];
-        users = addToString(users, userID);
-        //add the users to the profession
-        sql5 = `UPDATE Profession SET users = ? WHERE profession = ?`;
-        db.all(sql5, [users, profession], (err, rows5) => {
-          if (err) {
-            throw err;
-          }
-          console.log("Appended a user to an existed users list");
-        });
-      }
-    });
-  });
+      //     sql5 = `UPDATE Skills SET users = ? WHERE skills = ?`;
+      //     db.all(sql5, [users, skill], (err, rows5) => {
+      //       if (err) {
+      //         throw err;
+      //       }
+      //       console.log("add user to existed users list");
+      //     });
+      //   }
+      // });
+
+      // //add user ID to profession table
+      // profession = user.profession;
+      // console.log(profession, userID);
+      // sql3 = `SELECT users FROM Profession WHERE profession = ?`;
+      // db.all(sql3, [profession], (err, rows3) => {
+      //   if (err) {
+      //     throw err;
+      //   }
+      //   //this means profession doesnt exist
+      //   if (rows3.length == 0) {
+      //     sql4 = `INSERT INTO Profession VALUES (?,CAST(? AS int))`;
+      //     db.all(sql4, [profession, userID], (err, rows4) => {
+      //       if (err) {
+      //         throw err;
+      //       }
+      //       console.log("new profession added, user attached");
+      //     });
+      //   }
+      //   //profession exists, append the user to list
+      //   else {
+      //     users = rows3[0]["users"];
+      //     users = addToString(users, userID);
+      //     //add the users to the profession
+      //     sql5 = `UPDATE Profession SET users = ? WHERE profession = ?`;
+      //     db.all(sql5, [users, profession], (err, rows5) => {
+      //       if (err) {
+      //         throw err;
+      //       }
+      //       console.log("Appended a user to an existed users list");
+      //     });
+      //   }
+      // });
+
+      res.json({ success: true, mentee: user });
+    
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ success: false, error: error.message });
+  }
 };
+
 //create a new message
-module.exports.postMessage = (req, res) => {
+module.exports.postMessage = async (req, res) => {
   const fields = ["match_id", "to_id", "from_id", "message_body"];
   const user = {};
   const missingFields = fields.some(field => {
@@ -468,30 +367,27 @@ module.exports.postMessage = (req, res) => {
   if (missingFields) {
     return;
   }
-  console.log(user);
-  sql = `INSERT INTO Messages VALUES ('${date.getTime()}',?,?,?,?,?)`;
-  date = new Date();
-  console.log(date.getTime());
-  db.all(
-    sql,
-    [
-      user.match_id,
-      user.to_id,
-      user.from_id,
-      user.message_body,
-      getFormattedDate()
-    ],
-    (err, rows) => {
-      if (err) {
-        throw err;
-      }
-      res.json({ success: true, rows: rows });
-    }
-  );
+
+  try {
+    const db = await dbPromise;
+    const insertMessageSql = sql`INSERT INTO Messages VALUES (
+      '${date.getTime()}',
+      ${user.match_id},
+      ${user.to_id},
+      ${user.from_id},
+      ${user.message_body},
+      ${getFormattedDate()}
+    )`;
+    await db.run(insertMessageSql);
+    res.json({ success: true });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ success: false, error: error.message });
+  }
 };
 
 //create new password (SQL INJ.)
-module.exports.postPassword = (req, res) => {
+module.exports.postPassword = async (req, res) => {
   const fields = ["email_address", "password"];
   const user = {};
   const missingFields = fields.some(field => {
@@ -509,55 +405,34 @@ module.exports.postPassword = (req, res) => {
     return;
   }
 
-  sql_email = `Select * from Mentors where email_address = ?  `;
-  db.all(sql_email, [user.email_address], (err, rows_email) => {
-    if (err) {
-      throw err;
-    }
-    if (rows_email != 0) {
+  try {
+    const db = await dbPromise;
+    const getMentorsByEmailSql = sql`Select * from Mentors where email_address = ${user.email_address}`;
+    const mentorsWithEmailObject = await db.get(getMentorsByEmailSql);
+    if (mentorsWithEmailObject !== undefined) {
       res.json({ success: false, rows: "Email already exists" });
       return;
     }
-  });
-  var salt = hp.genRandomString(16);
-  var passwordData = hp.saltPassword(user.password, salt);
-
-  sql = `INSERT INTO Passwords VALUES (?,'${passwordData.passwordHash}', '${
-    passwordData.salt
-  }') `;
-  db.all(sql, [user.email_address], (err, rows) => {
-    if (err) {
-      res.status(500).json({ error: err.message, success: false });
-      return;
-    }
+  
+    const salt = hp.genRandomString(16);
+    const passwordData = hp.saltPassword(user.password, salt);
+  
+    const insertPasswordSql = sql`INSERT INTO Passwords VALUES (
+      ${user.email_address},
+      '${passwordData.passwordHash}', 
+      '${passwordData.salt}'
+    ) `;
+  
+    await db.run(insertPasswordSql);
     res.json({ success: true, passwordHash: passwordData.passwordHash });
-  });
-};
-
-//post a new skill
-module.exports.postSkill = (req, res) => {
-  const fields = ["skill", "users"];
-  const skill = {};
-  const missingFields = fields.some(field => {
-    if (req.body[field] === undefined) {
-      res.status(500).json({ error: "Missing credentials", success: false });
-      return true;
-    }
-    skill[field] = req.body[field];
-    return false;
-  });
-  sql = `INSERT INTO Skills VALUES (?, ?) `;
-  console.log(sql);
-  db.all(sql, [skill.skill, skill.users], (err, rows) => {
-    if (err) {
-      throw err;
-    }
-    res.json({ success: true, rows: rows });
-  });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ success: false, error: error.message });
+  }
 };
 
 //post a new profession
-module.exports.postProfession = (req, res) => {
+module.exports.postProfession = async (req, res) => {
   const fields = ["profession", "users"];
   const profession = {};
   const missingFields = fields.some(field => {
@@ -568,617 +443,628 @@ module.exports.postProfession = (req, res) => {
     profession[field] = req.body[field];
     return false;
   });
-  sql = `INSERT INTO Profession VALUES (?, ?) `;
-  console.log(sql);
-  db.all(sql, [profession.profession, profession.users], (err, rows) => {
-    if (err) {
-      throw err;
-    }
-    res.json({ success: true, rows: rows });
-  });
-};
-
-//get all mentors
-module.exports.getAllMentors = (req, res) => {
-  if (req.query.user_ids !== undefined) {
-    const user_ids = JSON.parse(req.query.user_ids)
-    const sql = `SELECT * FROM Mentors WHERE user_id IN (${user_ids.join(',')})`;
-    db.all(sql, [], (err, rows) => {
-      if (err) {
-        throw err;
-      }
-      res.json({ success: true, rows: rows });
-    })
-  } else {
-    sql = `SELECT * FROM Mentors;`;
-    db.all(sql, [], (err, rows) => {
-      if (err) {
-        throw err;
-      }
-      res.json({ success: true, rows: rows });
-    });
-  }
-};
-//get all mentees
-module.exports.getAllMentees = (req, res) => {
-  sql = `SELECT * FROM Mentees;`;
-
-  db.all(sql, [], (err, rows) => {
-    if (err) {
-      throw err;
-    }
-    res.json({ success: true, rows: rows });
-  });
-};
-//get all mentees
-module.exports.getAllPasswords = (req, res) => {
-  sql = `SELECT * FROM Passwords;`;
-
-  db.all(sql, [], (err, rows) => {
-    if (err) {
-      throw err;
-    }
-    res.json({ success: true, rows: rows });
-  });
-};
-
-//get all skills
-module.exports.getAllSkills = (req, res) => {
-  sql = `SELECT * FROM Skills`;
-  db.all(sql, [], (err, rows) => {
-    if (err) {
-      throw err;
-    }
-    res.json({ success: true, rows: rows });
-  });
-};
-
-//get all skills
-module.exports.getAllProfessions = (req, res) => {
-  sql = `SELECT * FROM Profession`;
-  db.all(sql, [], (err, rows) => {
-    if (err) {
-      throw err;
-    }
-    res.json({ success: true, rows: rows });
-  });
-};
-
-//get user by ID
-module.exports.getUserById = (req, res) => {
-  console.log("get user by id");
-  userID = req.params.id;
-  sql = `SELECT * FROM '${userType(userID)}'where user_id = ?;`;
-  db.all(sql, [userID], (err, rows) => {
-    if (err) {
-      throw err;
-    }
-    res.json({ success: true, rows: rows });
-  });
-};
-
-module.exports.getEmailById = (req, res) => {
-  userID = req.params.id;
-  sql = `SELECT email_address FROM '${userType(userID)}'where user_id = ?;`;
-  db.all(sql, [userID], (err, rows) => {
-    if (err) {
-      throw err;
-    }
-    res.json({ success: true, rows: rows });
-  });
-};
-
-module.exports.updateEmailById = (req, res) => {
-  userID = req.params.id;
-  if (req.body["email_address"] === undefined) {
-    res.status(500).json({ error: "Missing credentials", success: false });
-    return true;
-  }
-  newEmail = req.body.email_address;
-
-  sql = `UPDATE '${userType(userID)}' SET email_address = ? WHERE user_id = ?`; //starts with 1
-
-  db.all(sql, [newEmail, userID], (err, rows) => {
-    if (err) {
-      throw err;
-    }
-    res.json({ success: true, rows: rows });
-  });
-};
-
-module.exports.getHobbiesById = (req, res) => {
-  userID = req.params.id;
-  sql = `SELECT hobbies FROM '${userType(userID)}' where user_id = ?;`; //starts with 1
-
-  db.all(sql, [userID], (err, rows) => {
-    if (err) {
-      throw err;
-    }
-    res.json({ success: true, rows: rows });
-  });
-};
-
-module.exports.updateHobbiesById = (req, res) => {
-  userID = req.params.id;
-  if (req.body["hobbies"] === undefined) {
-    res.status(500).json({ error: "Missing credentials", success: false });
-    return true;
-  }
-  hobbies = req.body.hobbies;
-  sql = `UPDATE '${userType(userID)}' SET hobbies = ? WHERE user_id = ?`; //starts with 1
-
-  db.all(sql, [hobbies, userID], (err, rows) => {
-    if (err) {
-      throw err;
-    }
-    res.json({ success: true, rows: rows });
-  });
-};
-
-module.exports.getSkillbyId = (req, res) => {
-  userID = req.params.id;
-  sql = `SELECT skills FROM '${userType(userID)}' where user_id = ?;`;
-
-  db.all(sql, [userID], (err, rows) => {
-    if (err) {
-      throw err;
-    }
-    res.json({ success: true, rows: rows });
-  });
-};
-
-module.exports.getUsersbySkill = (req, res) => {
-  skill = req.params.skill;
-  sql = `SELECT users FROM Skills WHERE skills = ?`;
-
-  db.all(sql, [skill], (err, rows) => {
-    if (err) {
-      throw err;
-    }
-    res.json({ success: true, rows: rows });
-  });
-};
-
-module.exports.getUsersbyProfession = (req, res) => {
-  profession = req.params.profession;
-  sql = `SELECT users FROM Profession WHERE profession = ?`;
-
-  db.all(sql, [profession], (err, rows) => {
-    if (err) {
-      throw err;
-    }
-    res.json({ success: true, rows: rows });
-  });
-};
-
-module.exports.getFirstLastById = (req, res) => {
-  userId = req.params.id;
-  sql = `SELECT first_name,last_name FROM '${userType(
-    userId
-  )}' WHERE user_id = ?`;
-
-  db.all(sql, [userId], (err, rows) => {
-    if (err) {
-      throw err;
-    }
-    res.json({ success: true, rows: rows });
-  });
-};
-
-//LARGE SKILLS METHODS
-module.exports.addSkill = (req, res) => {
-  //get input
-  userID = req.params.id;
-  if (req.body.skill === undefined && req.body.skills === undefined) {
-    res.status(500).json({ error: "Missing credentials", success: false });
-    return true;
-  }
-  skill = req.body.skill || req.body.skills;
-
-  //add skill to user table
-  sql1 = `SELECT skills FROM ${userType(userID)} WHERE user_id = ?`;
-  db.all(sql1, [userID], (err, rows1) => {
-    if (err) {
-      throw err;
-    }
-    if (rows1.length == 0) {
-      res.status(400).json({ error: "User not found!", success: false });
-    }
-
-    skills = rows1[0]["skills"];
-    skills = addToString(skills, skill);
-
-    sql2 = `UPDATE '${userType(userID)}' SET skills = ? WHERE user_id = ?`;
-    db.all(sql2, [skills, userID], (err, rows2) => {
-      if (err) {
-        throw err;
-      }
-    });
-  });
-
-  //add user to skills table
-  sql3 = `SELECT users FROM Skills WHERE skills = ?`;
-  db.all(sql3, [skill], (err, rows3) => {
-    if (err) {
-      throw err;
-    }
-    if (rows3.length == 0) {
-      sql4 = `INSERT INTO Skills VALUES (?,CAST(? AS int))`;
-      db.all(sql4, [skill, parseInt(userID)], (err, rows4) => {
-        if (err) {
-          throw err;
-        }
-        res.json({ success: true, rows: "insert users into new skill" });
-      });
-    } else {
-      users = rows3[0]["users"];
-      users = addToString(users, userID);
-
-      sql5 = `UPDATE Skills SET users = ? WHERE skills = ?`;
-      db.all(sql5, [users, skill], (err, rows5) => {
-        if (err) {
-          throw err;
-        }
-        res.json({ success: true, rows: "add user to existed users list" });
-      });
-    }
-  });
-};
-
-module.exports.removeSkill = (req, res) => {
-  //get input
-  userID = req.params.id;
-  if (req.body.skill === undefined) {
-    res.status(500).json({ error: "Missing credentials", success: false });
-  }
-  skill = req.body.skill;
-
-  //remove skill to user table
-  sql1 = `SELECT skills FROM ${userType(userID)} WHERE user_id = ?`;
-  db.all(sql1, [userID], (err, rows1) => {
-    if (err) {
-      throw err;
-    }
-    if (rows1.length == 0) {
-      res.status(400).json({ error: "User not found!", success: false });
-    }
-
-    skills = rows1[0]["skills"];
-    skills = removeFromString(skills, skill);
-
-    sql2 = `UPDATE '${userType(userID)}' SET skills = ? WHERE user_id = ?`;
-    db.all(sql2, [skills, userID], (err, rows2) => {
-      if (err) {
-        throw err;
-      }
-    });
-  });
-
-  //remove user to skill table
-  sql3 = `SELECT users FROM Skills WHERE skills = ?`;
-  db.all(sql3, [skill], (err, rows3) => {
-    if (err) {
-      throw err;
-    }
-    if (rows3.length == 0) {
-      res.json({ success: true, rows: "Skill not found !" });
-    } else {
-      users = rows3[0]["users"];
-      users = removeFromString(users, userID);
-
-      sql5 = `UPDATE Skills SET users = ? WHERE skills = ?`;
-      db.all(sql5, [users, skill], (err, rows5) => {
-        if (err) {
-          throw err;
-        }
-        res.json({ success: true, rows: "remove user successfully" });
-      });
-    }
-  });
-};
-
-module.exports.updateSkill = (req, res) => {
-  userID = req.params.id;
-  sql = `SELECT profile_pic_URL FROM '${userType(userID)}' where user_id = ?;`;
-
-  db.all(sql, [userID], (err, rows) => {
-    if (err) {
-      throw err;
-    }
-    res.json({ success: true, rows: rows });
-  });
-};
-
-module.exports.updateUsersbySkill = (req, res) => {
-  skill = req.params.skill;
-  if (req.body["users"] === undefined) {
-    res.status(500).json({ error: "Missing credentials", success: false });
-    return true;
-  }
-  user_list = req.body.users;
-  sql = user_sql_constants.update_users_by_skill(skill, user_list);
-
-  db.all(sql, [], (err, rows) => {
-    if (err) {
-      throw err;
-    }
-    res.json({ success: true, rows: rows });
-  });
-};
-
-module.exports.getProfilePic = (req, res) => {
-  const userID = req.params.id;
-  const uploadsPath = path.join(__dirname, "../../uploads");
-  if (!fs.existsSync(uploadsPath)) {
-    fs.mkdirSync(uploadsPath);
-  }
-  const filepath = path.join(uploadsPath, `${userID}.jpg`);
-  res.sendFile(filepath);
-};
-
-module.exports.updateProfilePic = (req, res) => {
-  userID = req.params.id;
-  if (req.body["profile_pic_URL"] === undefined) {
-    res.status(500).json({ error: "Missing credentials", success: false });
-    return true;
-  }
-  profile_pic = req.body.profile_pic_URL;
-  sql = `UPDATE ${userType(userID)} SET profile_pic_URL = ? WHERE user_id = ?`; //starts with 1
-  console.log(sql, profile_pic, userID);
-
-  db.all(sql, [profile_pic, userID], (err, rows) => {
-    if (err) {
-      throw err;
-    }
-    res.json({ success: true, rows: rows });
-  });
-};
-
-module.exports.postProfilePic = (req, res) => {
-  res.json(req.file);
-};
-
-module.exports.getProfession = (req, res) => {
-  userID = req.params.id;
-  sql = `SELECT profession FROM '${userType(userID)}' where user_id = ?;`;
-
-  db.all(sql, [userID], (err, rows) => {
-    if (err) {
-      throw err;
-    }
-    res.json({ success: true, rows: rows });
-  });
-};
-
-module.exports.updateProfession = (req, res) => {
-  //get input
-  userID = req.params.id;
-  if (req.body.profession === undefined) {
-    res.status(500).json({ error: "Missing credentials", success: false });
-  }
-  //THIS IS THE NEW PROFESSION VALUE USED
-  profession = req.body.profession;
-
-  //get old profession to delete
-  sql = `Select profession from '${userType(userID)}' WHERE user_id = ?`;
-  db.all(sql, [userID], (err, rows) => {
-    if (err) {
-      throw err;
-    }
-    old_profession = rows[0]["profession"];
-    //REMOVE A USER FROM A PROFESSION IN A PROFESSION TABLE
-    sql3 = `SELECT users FROM Profession WHERE profession = ?`;
-    db.all(sql3, [old_profession], (err, rows3) => {
-      if (err) {
-        throw err;
-      }
-
-      console.log("old", old_profession);
-      //seing if there was an old profession (there should always be)
-      if (rows3.length == 0) {
-        res.json({ success: true, rows: "Profession not found !" });
-      } else {
-        users = rows3[0]["users"];
-        users = removeFromString(users, userID);
-
-        sql5 = `UPDATE Profession SET users = ? WHERE profession = ?`;
-        db.all(sql5, [users, old_profession], (err, rows5) => {
-          if (err) {
-            throw err;
-          }
-          console.log("remove user successfully from old profession");
-        });
-      }
-    });
-  });
-
-  //updates profession in a user table (works)
-  sql1 = `UPDATE '${userType(userID)}' SET profession = ? WHERE user_id = ?`;
-  db.all(sql1, [profession, userID], (err, rows1) => {
-    if (err) {
-      throw err;
-    }
-  });
-
-  //ADD A USER TO A PROFESSSION IN PROFESSION TABLE (DONE)
-  sql3 = `SELECT users FROM Profession WHERE profession = ?`;
-  db.all(sql3, [profession], (err, rows3) => {
-    if (err) {
-      throw err;
-    }
-    //this means profession doesnt exist
-    if (rows3.length == 0) {
-      sql4 = `INSERT INTO Profession VALUES (?,CAST(? AS int))`;
-      db.all(sql4, [profession, userID], (err, rows4) => {
-        if (err) {
-          throw err;
-        }
-        console.log("new profession added, user attached");
-      });
-    }
-    //profession exists, append the user to list
-    else {
-      users = rows3[0]["users"];
-      users = addToString(users, userID);
-      //add the users to the profession
-      sql5 = `UPDATE Profession SET users = ? WHERE profession = ?`;
-      db.all(sql5, [users, profession], (err, rows5) => {
-        if (err) {
-          throw err;
-        }
-        console.log("Appended a user to an existed users list");
-      });
-    }
-  });
-
-  res.json({ success: true });
-}; //end of updatedProfession
-
-module.exports.getBio = (req, res) => {
-  userID = req.params.id;
-  sql = `SELECT biography FROM '${userType(userID)}' where user_id = ?;`;
-
-  db.all(sql, [userID], (err, rows) => {
-    if (err) {
-      throw err;
-    }
-    res.json({ success: true, rows: rows });
-  });
-};
-
-module.exports.updateBio = (req, res) => {
-  userID = req.params.id;
-  if (req.body["biography"] === undefined) {
-    res.status(500).json({ error: "Missing credentials", success: false });
-    return true;
-  }
-  bio = req.body.biography;
-  sql = `UPDATE '${userType(userID)}' SET biography = ? WHERE user_id = ?`;
-
-  db.all(sql, [bio, userID], (err, rows) => {
-    if (err) {
-      throw err;
-    }
-    res.json({ success: true, rows: rows });
-  });
-};
-
-module.exports.deleteBio = (req, res) => {
-  userID = req.params.id;
-  sql = `UPDATE '${userType(userID)}' SET biography = '' WHERE user_id = ?`;
-
-  db.all(sql, [userID], (err, rows) => {
-    if (err) {
-      throw err;
-    }
-    res.json({ success: true, rows: rows });
-  });
-};
-
-module.exports.updateZipcode = (req, res) => {
-  userID = req.params.id;
-  zip = req.body.zipcode;
-  sql = `UPDATE '${userType(userID)}' SET zipcode = ? WHERE user_id = ?`;
-
-  db.all(sql, [zip, userID], (err, rows) => {
-    if (err) {
-      throw err;
-    }
-    res.json({ success: true, rows: rows });
-  });
-};
-
-module.exports.login = (req, res) => {
-  const fields = ["email_address", "password"];
-  const user = {};
-  const missingFields = fields.some(field => {
-    if (req.body[field] === undefined) {
-      res.status(500).json({ error: "Missing credentials", success: false });
-      return true;
-    }
-    user[field] = req.body[field];
-  });
 
   if (missingFields) {
     return;
   }
-  sql1 = `SELECT salt FROM Passwords WHERE email_address= ?;`;
-  a = db.all(sql1, [user.email_address], (err, rows1) => {
-    if (err) {
-      throw err;
+
+  try {
+    const db = await dbPromise;
+    const insertProfessionSql = sql`INSERT INTO Profession VALUES (${profession.profession}, ${profession.users}) `;
+    await db.run(insertProfessionSql);
+    res.json({ success: true });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+//get all mentors
+module.exports.getAllMentors = async (req, res) => {
+  try {
+    const db = await dbPromise;
+    if (req.query.user_ids !== undefined) {
+      // Get Specific User Ids
+      const user_ids = JSON.parse(req.query.user_ids);
+      const getMentorsByUserIdSql = sql`SELECT * FROM Mentors WHERE user_id IN (${user_ids.join(',')})`;
+      const mentorRows = await db.all(getMentorsByUserIdSql);
+      res.json({ success: true, rows: mentorRows });
+    } else {
+      const getAllMentorsSql = `SELECT * FROM Mentors;`;
+      const mentorRows = await db.all(getAllMentorsSql);
+      res.json({ success: true, rows: mentorRows });
     }
-    if (rows1.length == 0) {
-      res.status(400).json({ error: "Email doesn't exist", success: false });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+//get all mentees
+module.exports.getAllMentees = async (req, res) => {
+  try {
+    const db = await dbPromise;
+    const getAllMenteesSql = sql`SELECT * FROM Mentees;`;
+    const menteeRows = await db.all(getAllMenteesSql);
+    res.json({ success: true, rows: menteeRows });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+//get all mentees
+module.exports.getAllPasswords = async (req, res) => {
+  try {
+    const db = await dbPromise;
+    const getAllPasswordsSql = sql`SELECT * FROM Passwords;`;
+    const passwordRows = await db.all(getAllPasswordsSql);
+    res.json({ success: true, rows: passwordRows });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+//get all skills
+module.exports.getAllSkills = async (req, res) => {
+  try {
+    const db = await dbPromise;
+    const getAllSkillsSql = sql`SELECT * FROM Skills`;
+    const skillRows = await db.all(getAllSkillsSql)
+    res.json({ success: true, rows: skillRows });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+//get all skills
+module.exports.getAllProfessions = async (req, res) => {
+  try {
+    const db = await dbPromise;
+    const getAllProfessionsSql = sql`SELECT * FROM Profession`;
+    const professionRows = db.all(getAllProfessionsSql);
+    res.json({ success: true, rows: professionRows });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+//get user by ID
+module.exports.getUserById = async (req, res) => {
+  try {
+    const db = await dbPromise;
+    const userID = req.params.id;
+    const getAllUsersSql = sql`SELECT * FROM '${userType(userID)}'where user_id = ${user.user_id};`;
+    const userRows = await db.all(sql);
+    res.json({ success: true, rows: getAllUsersSql });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+module.exports.getEmailById = async (req, res) => {
+  try {
+    const db = await dbPromise;
+    const userID = req.params.id;
+    const getAllUsers = sql`SELECT email_address FROM '${userType(userID)}'where user_id = ${userID};`;
+    const emailRows = await db.all(getAllUsers)
+    res.json({ success: true, rows: emailRows });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+module.exports.updateEmailById = async (req, res) => {
+  const userID = req.params.id;
+  const newEmail = req.body.email_address;
+  if (newEmail === undefined) {
+    res.status(500).json({ error: "Missing credentials", success: false });
+    return;
+  }
+  try {
+    const db = await dbPromise;
+    const updateEmailSql = sql`UPDATE '${userType(userID)}' SET email_address = ${newEmail} WHERE user_id = ${userID}`; //starts with 1
+    await db.run(updateEmailSql)
+    res.json({ success: true });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+module.exports.getHobbiesById = async (req, res) => {
+  try {
+    const db = await dbPromise;
+    const userID = req.params.id;
+    const getEmailSql = sql`SELECT hobbies FROM '${userType(userID)}' where user_id = ${userID};`; //starts with 1
+    const hobbyRows = await db.all(getEmailSql)
+    res.json({ success: true, rows: hobbyRows });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+module.exports.updateHobbiesById = async (req, res) => {
+  const userID = req.params.id;
+  const hobbies = req.body.hobbies;
+
+  if (hobbies === undefined) {
+    res.status(500).json({ error: "Missing credentials", success: false });
+    return;
+  }
+
+  try {
+    const db = await dbPromise;
+    const updateHobbiesSql = sql`UPDATE '${userType(userID)}' SET hobbies = ${hobbies} WHERE user_id = ${userID}`; //starts with 1
+    const hobbieRows = await db.all(updateHobbiesSql);
+    res.json({ success: true, rows: hobbieRows });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+module.exports.getSkillbyId = async (req, res) => {
+  const userID = req.params.id;
+  try {
+    const db = await dbPromise;
+    const getSkillsSql = sql`SELECT skills FROM '${userType(userID)}' where user_id = ${userID};`;
+    const skillRows = await db.all(getSkillsSql);
+    res.json({ success: true, rows: skillRows });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+module.exports.getUsersbySkill = async (req, res) => {
+  const skill = req.params.skill;
+
+  try {
+    const db = await dbPromise;
+    const getUsersBySkillSql = sql`SELECT users FROM Skills WHERE skills = ${skill}`;
+    const userRows = await db.all(getUsersBySkillSql);
+    res.json({ success: true, rows: userRows });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+module.exports.getUsersbyProfession = async (req, res) => {
+  const profession = req.params.profession;
+
+  try {
+    const db = await dbPromise;
+    const getUserByProfessionSql = sql`SELECT users FROM Profession WHERE profession = ${profession}`;
+  
+    const professionRows = await db.all(getUserByProfessionSql);
+    res.json({ success: true, rows: professionRows });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+module.exports.getFirstLastById = async (req, res) => {
+  const userId = req.params.id;
+
+  try {
+    const db = await dbPromise;
+    const getFirstLastSql = sql`SELECT first_name,last_name FROM '${userType(userId)}' WHERE user_id = ${userId}`;
+    const firstLastRows = await db.all(getFirstLastSql)
+    res.json({ success: true, rows: firstLastRows });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+//LARGE SKILLS METHODS
+module.exports.addSkill = async (req, res) => {
+  //get input
+  const userID = req.params.id;
+  if (req.body.skill === undefined && req.body.skills === undefined) {
+    res.status(500).json({ error: "Missing credentials", success: false });
+    return;
+  }
+  const skill = req.body.skill || req.body.skills;
+
+  try {
+    const db = await dbPromise;
+    //add skill to user table
+    const getSkillsSql = sql`SELECT skills FROM ${userType(userID)} WHERE user_id = ${userID}`;
+    const userSkillsObject = await db.get(getSkillsSql);
+    if (userSkillsObject === undefined) {
+      res.status(400).json({ error: "User not found!", success: false });
       return;
     }
-    salt = rows1[0]["salt"];
-    sql2 = `SELECT * FROM Passwords WHERE email_address=? AND password=?;`;
-    db.all(
-      sql2,
-      [
-        user.email_address,
-        hp.saltPassword(user.password, salt)["passwordHash"]
-      ],
-      (err, rows2) => {
-        if (err) {
-          throw err;
-        }
-        if (rows2.length == 0) {
-          res.status(400).json({ error: "Wrong password", success: false });
-          return;
-        }
-        console.log(rows2[0].email_address);
-        sql3 = `SELECT user_id FROM Mentors WHERE email_address=? UNION SELECT user_id FROM Mentees WHERE email_address=?`;
-        db.all(sql3, [user.email_address, user.email_address], (err, rows3) => {
-          if (err) {
-            throw err;
-          }
-          console.log(rows3);
-          res.json({ success: true, rows: rows3 });
-        });
-      }
-    );
-  });
-};
+    let skills = userSkillObject.skills;
+    skills = addToString(skills, skill);
+    updateSkillsSql = sql`UPDATE '${userType(userID)}' SET skills = ${skills} WHERE user_id = ${userID}`;
+    await db.run(updateSkillsSql);
 
-//MESSAGE API
 
-module.exports.getMessages = (req, res) => {
-  sql = `SELECT * FROM Messages;`;
-  console.log("here");
-  db.all(sql, [], (err, rows) => {
-    if (err) {
-      throw err;
+    //add user to skills table
+    const getUsersBySkillSql = sql`SELECT users FROM Skills WHERE skills = ${skill}`;
+    const usersSkillsObject = await db.get(getUsersBySkillSql);
+    if (usersSkillsObject== undefined) {
+      const insertSkillsSql  = sql`INSERT INTO Skills VALUES (${skill},CAST(${parseInt(userID)} AS int))`;
+      await db.run(insertSkillsSql);
+      res.json({ success: true, rows: "insert users into new skill" });
+    } else {
+      let users = usersSkillsObject.users;
+      users = addToString(users, userID);
+      const updateSkillsSql = `UPDATE Skills SET users = ${users} WHERE skills = ${skill}`;
+      await db.run(updateSkillsSql);
+      res.json({ success: true });
     }
-    console.log(rows);
-    res.json({ success: true, rows: rows });
-  });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ success: false, error: error.message });
+  }
 };
 
-//get latest message by match id
-module.exports.getLatestMessageById = (req, res) => {
-  matchId = req.params.matchid;
-  sql = `SELECT * FROM Messages WHERE match_id = ? order by message_id LIMIT 1;`;
-  db.all(sql, [matchId], (err, rows) => {
-    if (err) {
-      throw err;
-    }
-    res.json({ success: true, rows: rows });
-  });
-};
+// module.exports.removeSkill = (req, res) => {
+//   //get input
+//   userID = req.params.id;
+//   if (req.body.skill === undefined) {
+//     res.status(500).json({ error: "Missing credentials", success: false });
+//   }
+//   skill = req.body.skill;
 
-//get message chain  by match id
-module.exports.getMessageChain = (req, res) => {
-  matchId = req.params.matchid;
-  sql = `SELECT * FROM Messages WHERE match_id = ? order by message_id;`;
+//   //remove skill to user table
+//   sql1 = `SELECT skills FROM ${userType(userID)} WHERE user_id = ?`;
+//   db.all(sql1, [userID], (err, rows1) => {
+//     if (err) {
+//       throw err;
+//     }
+//     if (rows1.length == 0) {
+//       res.status(400).json({ error: "User not found!", success: false });
+//     }
 
-  db.all(sql, [matchId], (err, rows) => {
-    if (err) {
-      throw err;
-    }
-    res.json({ success: true, rows: rows });
-  });
-};
+//     skills = rows1[0]["skills"];
+//     skills = removeFromString(skills, skill);
+
+//     sql2 = `UPDATE '${userType(userID)}' SET skills = ? WHERE user_id = ?`;
+//     db.all(sql2, [skills, userID], (err, rows2) => {
+//       if (err) {
+//         throw err;
+//       }
+//     });
+//   });
+
+//   //remove user to skill table
+//   sql3 = `SELECT users FROM Skills WHERE skills = ?`;
+//   db.all(sql3, [skill], (err, rows3) => {
+//     if (err) {
+//       throw err;
+//     }
+//     if (rows3.length == 0) {
+//       res.json({ success: true, rows: "Skill not found !" });
+//     } else {
+//       users = rows3[0]["users"];
+//       users = removeFromString(users, userID);
+
+//       sql5 = `UPDATE Skills SET users = ? WHERE skills = ?`;
+//       db.all(sql5, [users, skill], (err, rows5) => {
+//         if (err) {
+//           throw err;
+//         }
+//         res.json({ success: true, rows: "remove user successfully" });
+//       });
+//     }
+//   });
+// };
+
+// module.exports.updateSkill = (req, res) => {
+//   userID = req.params.id;
+//   sql = `SELECT profile_pic_URL FROM '${userType(userID)}' where user_id = ?;`;
+
+//   db.all(sql, [userID], (err, rows) => {
+//     if (err) {
+//       throw err;
+//     }
+//     res.json({ success: true, rows: rows });
+//   });
+// };
+
+// module.exports.updateUsersbySkill = (req, res) => {
+//   skill = req.params.skill;
+//   if (req.body["users"] === undefined) {
+//     res.status(500).json({ error: "Missing credentials", success: false });
+//     return true;
+//   }
+//   user_list = req.body.users;
+//   sql = user_sql_constants.update_users_by_skill(skill, user_list);
+
+//   db.all(sql, [], (err, rows) => {
+//     if (err) {
+//       throw err;
+//     }
+//     res.json({ success: true, rows: rows });
+//   });
+// };
+
+// module.exports.getProfilePic = (req, res) => {
+//   const userID = req.params.id;
+//   const uploadsPath = path.join(__dirname, "../../uploads");
+//   if (!fs.existsSync(uploadsPath)) {
+//     fs.mkdirSync(uploadsPath);
+//   }
+//   const filepath = path.join(uploadsPath, `${userID}.jpg`);
+//   res.sendFile(filepath);
+// };
+
+// module.exports.updateProfilePic = (req, res) => {
+//   userID = req.params.id;
+//   if (req.body["profile_pic_URL"] === undefined) {
+//     res.status(500).json({ error: "Missing credentials", success: false });
+//     return true;
+//   }
+//   profile_pic = req.body.profile_pic_URL;
+//   sql = `UPDATE ${userType(userID)} SET profile_pic_URL = ? WHERE user_id = ?`; //starts with 1
+//   console.log(sql, profile_pic, userID);
+
+//   db.all(sql, [profile_pic, userID], (err, rows) => {
+//     if (err) {
+//       throw err;
+//     }
+//     res.json({ success: true, rows: rows });
+//   });
+// };
+
+// module.exports.postProfilePic = (req, res) => {
+//   res.json(req.file);
+// };
+
+// module.exports.getProfession = (req, res) => {
+//   userID = req.params.id;
+//   sql = `SELECT profession FROM '${userType(userID)}' where user_id = ?;`;
+
+//   db.all(sql, [userID], (err, rows) => {
+//     if (err) {
+//       throw err;
+//     }
+//     res.json({ success: true, rows: rows });
+//   });
+// };
+
+// module.exports.updateProfession = (req, res) => {
+//   //get input
+//   userID = req.params.id;
+//   if (req.body.profession === undefined) {
+//     res.status(500).json({ error: "Missing credentials", success: false });
+//   }
+//   //THIS IS THE NEW PROFESSION VALUE USED
+//   profession = req.body.profession;
+
+//   //get old profession to delete
+//   sql = `Select profession from '${userType(userID)}' WHERE user_id = ?`;
+//   db.all(sql, [userID], (err, rows) => {
+//     if (err) {
+//       throw err;
+//     }
+//     old_profession = rows[0]["profession"];
+//     //REMOVE A USER FROM A PROFESSION IN A PROFESSION TABLE
+//     sql3 = `SELECT users FROM Profession WHERE profession = ?`;
+//     db.all(sql3, [old_profession], (err, rows3) => {
+//       if (err) {
+//         throw err;
+//       }
+
+//       console.log("old", old_profession);
+//       //seing if there was an old profession (there should always be)
+//       if (rows3.length == 0) {
+//         res.json({ success: true, rows: "Profession not found !" });
+//       } else {
+//         users = rows3[0]["users"];
+//         users = removeFromString(users, userID);
+
+//         sql5 = `UPDATE Profession SET users = ? WHERE profession = ?`;
+//         db.all(sql5, [users, old_profession], (err, rows5) => {
+//           if (err) {
+//             throw err;
+//           }
+//           console.log("remove user successfully from old profession");
+//         });
+//       }
+//     });
+//   });
+
+//   //updates profession in a user table (works)
+//   sql1 = `UPDATE '${userType(userID)}' SET profession = ? WHERE user_id = ?`;
+//   db.all(sql1, [profession, userID], (err, rows1) => {
+//     if (err) {
+//       throw err;
+//     }
+//   });
+
+//   //ADD A USER TO A PROFESSSION IN PROFESSION TABLE (DONE)
+//   sql3 = `SELECT users FROM Profession WHERE profession = ?`;
+//   db.all(sql3, [profession], (err, rows3) => {
+//     if (err) {
+//       throw err;
+//     }
+//     //this means profession doesnt exist
+//     if (rows3.length == 0) {
+//       sql4 = `INSERT INTO Profession VALUES (?,CAST(? AS int))`;
+//       db.all(sql4, [profession, userID], (err, rows4) => {
+//         if (err) {
+//           throw err;
+//         }
+//         console.log("new profession added, user attached");
+//       });
+//     }
+//     //profession exists, append the user to list
+//     else {
+//       users = rows3[0]["users"];
+//       users = addToString(users, userID);
+//       //add the users to the profession
+//       sql5 = `UPDATE Profession SET users = ? WHERE profession = ?`;
+//       db.all(sql5, [users, profession], (err, rows5) => {
+//         if (err) {
+//           throw err;
+//         }
+//         console.log("Appended a user to an existed users list");
+//       });
+//     }
+//   });
+
+//   res.json({ success: true });
+// }; //end of updatedProfession
+
+// module.exports.getBio = (req, res) => {
+//   userID = req.params.id;
+//   sql = `SELECT biography FROM '${userType(userID)}' where user_id = ?;`;
+
+//   db.all(sql, [userID], (err, rows) => {
+//     if (err) {
+//       throw err;
+//     }
+//     res.json({ success: true, rows: rows });
+//   });
+// };
+
+// module.exports.updateBio = (req, res) => {
+//   userID = req.params.id;
+//   if (req.body["biography"] === undefined) {
+//     res.status(500).json({ error: "Missing credentials", success: false });
+//     return true;
+//   }
+//   bio = req.body.biography;
+//   sql = `UPDATE '${userType(userID)}' SET biography = ? WHERE user_id = ?`;
+
+//   db.all(sql, [bio, userID], (err, rows) => {
+//     if (err) {
+//       throw err;
+//     }
+//     res.json({ success: true, rows: rows });
+//   });
+// };
+
+// module.exports.deleteBio = (req, res) => {
+//   userID = req.params.id;
+//   sql = `UPDATE '${userType(userID)}' SET biography = '' WHERE user_id = ?`;
+
+//   db.all(sql, [userID], (err, rows) => {
+//     if (err) {
+//       throw err;
+//     }
+//     res.json({ success: true, rows: rows });
+//   });
+// };
+
+// module.exports.updateZipcode = (req, res) => {
+//   userID = req.params.id;
+//   zip = req.body.zipcode;
+//   sql = `UPDATE '${userType(userID)}' SET zipcode = ? WHERE user_id = ?`;
+
+//   db.all(sql, [zip, userID], (err, rows) => {
+//     if (err) {
+//       throw err;
+//     }
+//     res.json({ success: true, rows: rows });
+//   });
+// };
+
+// module.exports.login = (req, res) => {
+//   const fields = ["email_address", "password"];
+//   const user = {};
+//   const missingFields = fields.some(field => {
+//     if (req.body[field] === undefined) {
+//       res.status(500).json({ error: "Missing credentials", success: false });
+//       return true;
+//     }
+//     user[field] = req.body[field];
+//   });
+
+//   if (missingFields) {
+//     return;
+//   }
+//   sql1 = `SELECT salt FROM Passwords WHERE email_address= ?;`;
+//   a = db.all(sql1, [user.email_address], (err, rows1) => {
+//     if (err) {
+//       throw err;
+//     }
+//     if (rows1.length == 0) {
+//       res.status(400).json({ error: "Email doesn't exist", success: false });
+//       return;
+//     }
+//     salt = rows1[0]["salt"];
+//     sql2 = `SELECT * FROM Passwords WHERE email_address=? AND password=?;`;
+//     db.all(
+//       sql2,
+//       [
+//         user.email_address,
+//         hp.saltPassword(user.password, salt)["passwordHash"]
+//       ],
+//       (err, rows2) => {
+//         if (err) {
+//           throw err;
+//         }
+//         if (rows2.length == 0) {
+//           res.status(400).json({ error: "Wrong password", success: false });
+//           return;
+//         }
+//         console.log(rows2[0].email_address);
+//         sql3 = `SELECT user_id FROM Mentors WHERE email_address=? UNION SELECT user_id FROM Mentees WHERE email_address=?`;
+//         db.all(sql3, [user.email_address, user.email_address], (err, rows3) => {
+//           if (err) {
+//             throw err;
+//           }
+//           console.log(rows3);
+//           res.json({ success: true, rows: rows3 });
+//         });
+//       }
+//     );
+//   });
+// };
+
+// //MESSAGE API
+
+// module.exports.getMessages = (req, res) => {
+//   sql = `SELECT * FROM Messages;`;
+//   console.log("here");
+//   db.all(sql, [], (err, rows) => {
+//     if (err) {
+//       throw err;
+//     }
+//     console.log(rows);
+//     res.json({ success: true, rows: rows });
+//   });
+// };
+
+// //get latest message by match id
+// module.exports.getLatestMessageById = (req, res) => {
+//   matchId = req.params.matchid;
+//   sql = `SELECT * FROM Messages WHERE match_id = ? order by message_id LIMIT 1;`;
+//   db.all(sql, [matchId], (err, rows) => {
+//     if (err) {
+//       throw err;
+//     }
+//     res.json({ success: true, rows: rows });
+//   });
+// };
+
+// //get message chain  by match id
+// module.exports.getMessageChain = (req, res) => {
+//   matchId = req.params.matchid;
+//   sql = `SELECT * FROM Messages WHERE match_id = ? order by message_id;`;
+
+//   db.all(sql, [matchId], (err, rows) => {
+//     if (err) {
+//       throw err;
+//     }
+//     res.json({ success: true, rows: rows });
+//   });
+// };
 
 //controller function to determine if mentee or mentor based on id, returns corresponding table name
 function userType(id) {
@@ -1188,7 +1074,7 @@ function userType(id) {
 }
 
 function addToString(string, add) {
-  array = string.split(",");
+  const array = string.split(",");
   if (array.indexOf(add) == -1) {
     array.push(add);
   }
@@ -1196,9 +1082,9 @@ function addToString(string, add) {
 }
 
 function removeFromString(string, rem) {
-  array = string.split(",");
+  const array = string.split(",");
   string = "";
-  for (i = 0; i < array.length; i++) {
+  for (let i = 0; i < array.length; i++) {
     if (array[i] == rem) {
       continue;
     }
@@ -1211,7 +1097,6 @@ function removeFromString(string, rem) {
 }
 
 function getFormattedDate() {
-  var date = new Date();
   var str =
     date.getFullYear() +
     "-" +
