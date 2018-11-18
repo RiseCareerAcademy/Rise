@@ -1,16 +1,16 @@
 import React, { Component } from "react";
 import {
   View,
-  Text,
   TouchableOpacity,
   TextInput,
   StyleSheet
 } from "react-native";
 import { connect } from 'react-redux';
+import { Container, Header, Content, List, ListItem, Text, Icon, Left, Body, Right, Switch, Button, Separator } from 'native-base';
 
 import { logoutUser } from '../actions/user.actions';
 
-class Inputs extends Component {
+export class Settings extends Component {
   state = {
     email: "",
     password: "",
@@ -72,59 +72,91 @@ class Inputs extends Component {
     }
   }
 
+  handleEditProfile = () => {
+    const { navigate } = this.props.navigation;
+    navigate('EditProfile');
+  }
+
+  handleChangePassword = () => {
+    const { navigate } = this.props.navigation;
+    navigate('Password');
+  }
 
   render() {
     const { navigate } = this.props.navigation;
     return (
-      <View style={styles.container}>
-        <TextInput
-          style={styles.input}
-          underlineColorAndroid="transparent"
-          placeholder="Change Email"
-          placeholderTextColor="#000000"
-          autoCapitalize="none"
-          onChangeText={this.handleEmail}
-        />
-
-        <TextInput
-          style={styles.input}
-          underlineColorAndroid="transparent"
-          placeholder="Change Password"
-          placeholderTextColor="#000000"
-          autoCapitalize="none"
-          onChangeText={this.handlePassword}
-        />
-
-        <TextInput
-          style={styles.input}
-          underlineColorAndroid="transparent"
-          placeholder="Confirm Password Change"
-          placeholderTextColor="#000000"
-          autoCapitalize="none"
-          onChangeText={this.handleConfirmedPassword}
-        />
-
-        <TouchableOpacity
-          style={styles.submitButton}
-          onPress={ () =>
-            this.validate(
-              this.state.email,
-              this.state.password,
-              this.state.confirmedPassword
-            )
-          }
-        >
-          <Text style={styles.submitButtonText}> Save </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.submitButton}
-          onPress={this.handleLogout}
-        >
-          <Text style={styles.submitButtonText}> Logout </Text>
-        </TouchableOpacity>
-      </View>
+      <Container>
+        <Content>
+          <ListItem icon onPress={this.handleEditProfile}>
+            <Left>
+              <Button style={{ backgroundColor: "#007AFF" }}>
+                <Icon active name="md-person" />
+              </Button>
+            </Left>
+            <Body>
+              <Text>Edit Profile</Text>
+            </Body>
+            <Right>
+              <Icon active name="arrow-forward" />
+            </Right>
+          </ListItem>
+          <ListItem icon onPress={this.handleChangePassword}>
+            <Left>
+              <Button style={{ backgroundColor: "#007AFF" }} >
+                <Icon active name="lock" />
+              </Button>
+            </Left>
+            <Body>
+              <Text>Change Password</Text>
+            </Body>
+            <Right>
+              <Icon active name="arrow-forward" />
+            </Right>
+          </ListItem>
+          <Separator bordered>
+            <Text></Text>
+          </Separator>
+          <ListItem icon onPress={this.handleLogout}>
+            <Left>
+              <Button style={{ backgroundColor: "grey" }} >
+                <Icon active name="log-out" />
+              </Button>
+            </Left>
+            <Body>
+              <Text>Logout</Text>
+            </Body>
+            <Right>
+              <Icon active name="arrow-forward" />
+            </Right>
+          </ListItem>
+        </Content>
+      </Container>
     );
+    // return (
+
+
+    //     <TouchableOpacity
+    //       style={styles.submitButton}
+    //       onPress={this.handleEditProfile}
+    //     >
+    //       <Text style={styles.submitButtonText}> Edit Profile </Text>
+    //     </TouchableOpacity>
+
+    //     <TouchableOpacity
+    //       style={styles.submitButton}
+    //       onPress={this.handleChangePassword}
+    //     >
+    //       <Text style={styles.submitButtonText}> Change Password </Text>
+    //     </TouchableOpacity>
+
+    //     <TouchableOpacity
+    //       style={styles.submitButton}
+    //       onPress={this.handleLogout}
+    //     >
+    //       <Text style={styles.submitButtonText}> Logout </Text>
+    //     </TouchableOpacity>
+    //   </View>
+    // );
   }
 }
 
@@ -132,7 +164,7 @@ const mapStateToProps = () => ({});
 
 export default connect(mapStateToProps, {
   logoutUser,
-})(Inputs);
+})(Settings);
 
 const styles = StyleSheet.create({
   container: {

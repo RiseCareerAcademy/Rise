@@ -10,6 +10,7 @@ export const REGISTER_WITH_LINKEDIN = 'user/REGISTER_WITH_LINKEDIN';
 export const SET_USER_FIELDS = 'user/SET_USER_FIELDS';
 export const REGISTER_MENTOR = 'user/REGISTER_MENTOR';
 export const LOGIN = 'user/LOGIN';
+export const UPDATE_USER = 'user/UPDATE_USER';
 
 export const setUser = user => ({
 	type: SET_USER,
@@ -70,3 +71,8 @@ export const login = (email_address, password) => ({
 	email_address,
 	password,
 });
+
+export const updateUser = user => ({
+	type: UPDATE_USER,
+	user,
+})

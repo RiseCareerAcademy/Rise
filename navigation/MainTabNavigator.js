@@ -3,13 +3,15 @@ import { createStackNavigator, createBottomTabNavigator } from 'react-navigation
 
 import SettingsScreen from '../screens/Settings';
 import MatchesScreen from '../screens/MatchesScreen';
-// import SearchScreen from '../screens/SearchScreen'
+//import SearchScreen from '../screens/SearchScreen'
 import { Icon } from 'expo';
 import Colors from '../constants/Colors';
 import ProfileScreen from '../screens/Profile1';
 import Messages from '../screens/Messages';
 import Conversation from '../screens/Conversation';
-
+import SearchScreen from '../screens/SearchScreen';
+import EditProfileScreen from '../screens/EditProfile';
+import PasswordScreen from '../screens/PasswordScreen';
 
 
 const ProfileStack = createStackNavigator({
@@ -67,6 +69,8 @@ MessageStack.navigationOptions = {
 
 const SettingStack = createStackNavigator({
   Settings: SettingsScreen,
+  EditProfile: EditProfileScreen,
+  Password: PasswordScreen,
 });
 
 SettingStack.navigationOptions = {
@@ -81,10 +85,27 @@ SettingStack.navigationOptions = {
   ),
 };
 
+const SearchStack = createStackNavigator({
+  Search: { screen: SearchScreen },
+});
+
+SearchScreen.navigationOptions = {
+  tabBarLabel: 'Search',
+  tabBarIcon: ({ focused }) => (
+    <Icon.Feather
+      name="search"
+      size={26}
+      style={{ marginBottom: -3 }}
+      color={focused ? Colors.tabIconSelected : Colors.tabIconDefault}
+    />
+  ),
+}
+
 
 export default createBottomTabNavigator({
   ProfileStack,
   SuggestedMatchStack,
+  SearchStack,
   MessageStack,
   SettingStack,
 });
