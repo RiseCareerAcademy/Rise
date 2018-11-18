@@ -130,15 +130,6 @@ it('returns error if all fields are not filled', () => {
     expect(instance.validate('user@email.com', 'passwoord', 'password', 'skills', 'profession', 'name', 'city', 'state', )).toEqual(false);
   });
 
-  it("returns error if password doesn't match confirmPassword", () => {
-    const props = {
-      navigation: {
-        navigate: () => { }
-      },
-    };
-    const instance = renderer.create(<StudentRegistration {...props} />).getInstance();
-    expect(instance.validate('user@email.com', 'password', 'password', 'skills', 'profession', 'name', 'city', 'state', )).toEqual(true);
-  });
 
 it('renders correctly', () => {
     const props = {

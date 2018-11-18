@@ -47,10 +47,10 @@ export class SignIn extends React.Component {
     if (errors.length == 0 || process.env.NODE_ENV === 'development') {
       this.props.login(email, password);
       return true
-    // } else {
-    //   alert(errors);
-    //   return false;
-    // }
+    } else {
+      alert(errors);
+      return false;
+    }
   }
   render() {
     return (
