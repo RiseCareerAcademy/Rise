@@ -71,7 +71,7 @@ module.exports.deletetable = (req, res) => {
   sql5 = `DROP TABLE IF EXISTS Messages;`;
   sql6 = `DROP TABLE IF EXISTS Skills;`;
   sql7 = `DROP TABLE IF EXISTS Profession;`;
-  
+
   db.all(sql1, [], (err, rows) => {
     if (err) {
       throw err;
@@ -224,11 +224,6 @@ module.exports.postMentor = (req, res) => {
     date = new Date();
     userID = parseInt(10000000000000 + date.getTime());
     user.user_id = userID;
-    // const ip_address = ip.address();
-    // user.profile_pic_URL = `http://${ip_address}:8000/user/${
-    //   user.user_id
-    // }/profilepic`;
-    //console.log(userID)
     sql = `INSERT INTO Mentors VALUES (?, ? , ?, ?, ?, ?, ?, ?, ?, ?, ?) `;
     console.log(sql);
     db.all(
@@ -497,32 +492,6 @@ module.exports.conversation = (ws, req) => {
   ws.on('message', message => {
     ws.send(message);
   });
-
-  // const fields = ['match_id', 'to_id', 'from_id', 'message_body'];
-  // const user = {};
-  // const missingFields = fields.some(field => {
-  //   if (req.body[field] === undefined) {
-  //     res
-  //       .status(500)
-  //       .json({ error: "Missing credentials", success: false });
-  //     return true;
-  //   }
-  //   user[field] = req.body[field];
-  //   return false;
-  // });
-
-  // if (missingFields) {
-  //   return;
-  // }
-  // console.log(user)
-  // sql = `INSERT INTO Messages VALUES ('${date.getTime()}',?,?,?,?,?)`
-  // console.log(date.getTime())
-  // db.all(sql, [user.match_id, user.to_id, user.from_id, user.message_body, getFormattedDate()], (err, rows) => {
-  //   if (err) {
-  //     throw err;
-  //   }
-  //   res.json({ success: true, rows: rows });
-  // });
 }
 
 
@@ -943,7 +912,6 @@ module.exports.updateUsersbySkill = (req, res) => {
 };
 
 module.exports.getProfilePic = (req, res) => {
-  // TODO: get profilepic url
   const userID = req.params.id;
   const uploadsPath = path.join(__dirname, "../../uploads");
   if (!fs.existsSync(uploadsPath)) {
@@ -951,21 +919,6 @@ module.exports.getProfilePic = (req, res) => {
   }
   const filepath = path.join(uploadsPath, `${userID}.jpg`);
   res.sendFile(filepath);
-};
-
-
-module.exports.getProfilePicUrl = (req, res) => {
-  userID = req.params.id;
-  profile_pic = req.body.profile_pic_URL;
-  sql = `SELECT profile_pic_URL FROM '${userType(userID)}' where user_id = ?;`;
-  console.log(sql, profile_pic, userID);
-
-  db.all(sql, [userID], (err, rows) => {
-    if (err) {
-      throw err;
-    }
-    res.json({ success: true, rows: rows });
-  });
 };
 
 module.exports.updateProfilePic = (req, res) => {
@@ -1232,14 +1185,7 @@ module.exports.getMessageChain = (req, res) => {
   });
 };
 
-// determines the user type
-module.exports.getType = (req, res) => {
-  const { user_id } = req.body;
-  const type = userType(user_id);
-  res.json({ type });
-}
-
-//controller function to determine if mentee or mentor based on id, returns corresponding table name 
+//controller function to determine if mentee or mentor based on id, returns corresponding table name
 function userType(id) {
   while (id > 10) id /= 10;
   if (Math.floor(id) == 1) return "Mentors";
