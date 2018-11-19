@@ -145,7 +145,7 @@ export class EditProfileScreen extends React.Component {
             <Item stackedLabel last>
               <Label>Profession</Label>
               <Input 
-                placeholder={this.props.profession} onChange={this.handleProfession} />
+                placeholder={this.props.profession} onChangeText={this.handleProfession} />
             </Item>
             <Item stackedLabel last>
               <Label>zipcode</Label>
@@ -156,7 +156,7 @@ export class EditProfileScreen extends React.Component {
             </Item>
             <Item stackedLabel last>
               <Label>Biography</Label>
-              <Input placeholder={this.props.biography} onChange={this.handleBiography} />
+              <Input placeholder={this.props.biography} onChangeText={this.handleBiography} />
             </Item>
           </Form>
         </Content>

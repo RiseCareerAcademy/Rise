@@ -6,8 +6,13 @@ import { create_matches_table_sql } from "../config/user_sql_constants";
 import { connect } from 'react-redux';
 
 import { getMatches } from '../actions/matches.actions';
+import { Header } from "native-base";
 
 export class MatchesScreen extends Component {
+  static navigationOptions = {
+    header: null,
+  }
+  
   state = {
     desiredSkills: "",
     desiredProfession: "",
@@ -26,6 +31,7 @@ export class MatchesScreen extends Component {
   render () {
     return (
       <View>
+          <Header />
           <List>
             {
               this.props.mentors.map((l, i) => (

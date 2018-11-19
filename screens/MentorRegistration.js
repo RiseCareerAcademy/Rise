@@ -72,27 +72,18 @@ export class MentorRegistration extends React.Component {
     this.setState({ biography: text });
   };
 
-  validate = (password, confirmedPassword, skills, profession, email, name, lastName, zipcode) => {
+  validate = (password, confirmedPassword, skills, zipcode) => {
     // we are going to store errors for all fields
     // in a signle array
     const errors = [];
     if (
       skills.length == 0 ||
-      profession.length == 0 ||
       name.length == 0 ||
-      email.length == 0 ||
       password.length == 0 ||
       confirmedPassword.length == 0 ||
-      lastName.length == 0 ||
       zipcode.length == 0
     ) {
       errors.push("All fields must be filled");
-    } else if (email.length < 5) {
-      errors.push("Email should be at least 5 charcters long");
-    } else if (email.split("").filter(x => x === "@").length !== 1) {
-      errors.push("Email should contain one @");
-    } else if (email.indexOf(".") === -1) {
-      errors.push("Email should contain at least one dot");
     } else if (password.length < 6) {
       errors.push("Password should be at least 6 characters long");
     } else if (password != confirmedPassword) {
@@ -158,7 +149,7 @@ export class MentorRegistration extends React.Component {
               <Label>Email</Label>
               <Input 
               autoCapitalize="none"
-              placeholder={this.props.email_address} onChange={this.handleEmail} />
+              placeholder={this.props.email_address} onChangeText={this.handleEmail} />
             </Item>
             <Item stackedLabel>
               <Label>Password</Label>
@@ -184,15 +175,15 @@ export class MentorRegistration extends React.Component {
             </Item>
             <Item stackedLabel last>
               <Label>Profession</Label>
-              <Input placeholder={this.props.profession} onChange={this.handleProfession} />
+              <Input placeholder={this.props.profession} onChangeText={this.handleProfession} />
             </Item>
             <Item stackedLabel last>
               <Label>Name</Label>
-              <Input placeholder={this.props.first_name} onChange={this.handleFirstName} />
+              <Input placeholder={this.props.first_name} onChangeText={this.handleFirstName} />
             </Item>
             <Item stackedLabel last>
               <Label>lastName</Label>
-              <Input placeholder={this.props.last_name} onChange={this.handleLastName} />
+              <Input placeholder={this.props.last_name} onChangeText={this.handleLastName} />
             </Item>
             <Item stackedLabel last>
               <Label>zipcode</Label>
@@ -202,7 +193,7 @@ export class MentorRegistration extends React.Component {
             </Item>
             <Item stackedLabel last>
               <Label>Biography</Label>
-              <Input placeholder={this.props.biography} onChange={this.handleBiography} />
+              <Input placeholder={this.props.biography} onChangeText={this.handleBiography} />
             </Item>
           </Form>
         </Content>

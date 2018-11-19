@@ -3,15 +3,17 @@ import { Platform, StatusBar, StyleSheet, View, ActivityIndicator } from "react-
 import { AppLoading, Asset, Font, Icon } from "expo";
 import { PersistGate } from 'redux-persist/integration/react';
 import { Provider } from 'react-redux';
+import { Text } from "native-base";
 
 import { Navigator } from './navigation';
 import configureStore from "./configureStore";
-import { Text } from "native-base";
+import LoadingScreen from './screens/LoadingScreen'; 
 
 
 export const { persistor, store } = configureStore();
 console.disableYellowBox = true;
 
+console.disableYellowBox = true;
 export default class App extends React.Component {
   constructor(props) {
     super(props);
@@ -33,7 +35,7 @@ export default class App extends React.Component {
     } else {
       return (
         <Provider store={store}>
-          <PersistGate loading={<View style={styles.loading}><ActivityIndicator animating size="large" /></View>} persistor={persistor}>
+          <PersistGate loading={<LoadingScreen />} persistor={persistor}>
             <View style={styles.container}>
               {Platform.OS === "ios" && <StatusBar barStyle="default" />}
               <Navigator />

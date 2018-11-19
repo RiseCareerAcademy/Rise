@@ -8,6 +8,9 @@ const cookieParser = require("cookie-parser"); //Parse Cookie header and populat
 const bodyParser = require("body-parser"); //allows the use of req.body in POST request
 const http = require('http');
 const jwt = require('jsonwebtoken');
+const app = express(); //creates an instance of express
+const server = http.createServer(app); //creates an HTTP server instance
+require('express-ws')(app);
 
 const { router: api } = require("./routes/api/api.js"); //gets api logic from path
 const { router: user } = require("./routes/user/index.js"); //gets user logic from path
@@ -15,9 +18,6 @@ const { router: match } = require("./routes/match/matchapi.js"); //gets match lo
 const config = require('./config/database');
 require('dotenv').config()
 
-const app = express(); //creates an instance of express
-const server = http.createServer(app); //creates an HTTP server instance
-require('express-ws')(app, server);
 
 // const db = require('./db');
 

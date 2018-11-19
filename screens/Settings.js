@@ -11,6 +11,10 @@ import { Container, Header, Content, List, ListItem, Text, Icon, Left, Body, Rig
 import { logoutUser } from '../actions/user.actions';
 
 export class Settings extends Component {
+  static navigationOptions = {
+    header: null,
+  }
+  
   state = {
     email: "",
     password: "",
@@ -86,6 +90,7 @@ export class Settings extends Component {
     const { navigate } = this.props.navigation;
     return (
       <Container>
+        <Header />
         <Content>
           <ListItem icon onPress={this.handleEditProfile}>
             <Left>

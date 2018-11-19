@@ -5,12 +5,16 @@ import { CheckBox } from "react-native-elements";
 import Expo from "expo";
 import { connect } from "react-redux";
 
-import { getAllMentees, getAllMentors } from "../actions/search.actions";
+import { getAllMentees, getAllMentors, getMentee, getMentor } from "../actions/search.actions";
 import { DOMAIN } from "../config/url";
 
 const uuidv1 = require('uuid/v1');
 
 export class SearchScreen extends Component {
+  static navigationOptions = {
+    header: null,
+  }
+
   state = {
     //array of matches with respective scores
     results: [],
@@ -211,9 +215,15 @@ export class SearchScreen extends Component {
     })
   }
 
-  render() {
-    // this.search();
+  handleMentorPress = user_id => () => {
+    this.props.getMentor(user_id);
+  }
 
+  handleMenteePress = user_id => () => {
+
+  }
+
+  render() {
     return (
       <View style={styles.container}>
         <SearchBar
@@ -222,7 +232,6 @@ export class SearchScreen extends Component {
           cancelButtonTitle="Cancel"
           placeholder="Search"
           onChangeText={this.handleSearch}
-          // onSubmitEditing={() => navigate("Search", { text: this.state.text })}
         />
         <ScrollView
           style={styles.container}
@@ -258,6 +267,7 @@ export class SearchScreen extends Component {
                     subtitle={`${mentor.profession} | ${mentor.skills}`}
                     avatar={{ uri: image }}
                     key={i}
+                    onPress={this.handleMentorPress(mentor.user_id)}
                   />
                 );
               })}
@@ -288,6 +298,7 @@ export class SearchScreen extends Component {
                     subtitle={`${mentee.profession} | ${mentee.skills}`}
                     avatar={{ uri: image }}
                     key={mentee.user_id}
+                    onPress={this.handleMenteePress(mentee.user_id)}
                   />
                 );
               })}
@@ -346,6 +357,8 @@ export default connect(
   mapStateToProps,
   {
     getAllMentors,
-    getAllMentees
+    getAllMentees,
+    getMentor,
+    getMentee,
   }
 )(SearchScreen);

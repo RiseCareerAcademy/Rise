@@ -1,27 +1,20 @@
 import React, { Component } from "react";
-import { Card, Icon, SearchBar } from "react-native-elements";
-import { ImagePicker, Permissions } from "expo";
+import { Card, Icon } from "react-native-elements";
 import {
   Image,
   ImageBackground,
-  ListView,
   Platform,
   ScrollView,
   StyleSheet,
   View,
   Text,
-  Button,
-  AlertIOS
+  Button
 } from "react-native";
 import { connect } from "react-redux";
 
-import mainColor from "./constants";
-
-import Email from "./Email";
-import Separator from "./Separator";
-import Tel from "./Tel";
-import { DOMAIN } from "../../config/url";
-import { uploadProfilePic, login } from "../../actions/user.actions";
+import Separator from "../components/Separator";
+import { DOMAIN } from "../config/url";
+import { createMatch } from "../actions/matches.actions";
 
 const uuidv1 = require("uuid/v1");
 
@@ -98,7 +91,7 @@ const styles = StyleSheet.create({
     fontWeight: "600"
   },
   userImage: {
-    borderColor: mainColor,
+    borderColor: "#01C89E",
     borderRadius: 85,
     borderWidth: 3,
     height: 170,
@@ -129,45 +122,18 @@ const styles = StyleSheet.create({
   }
 });
 
-class Contact extends Component {
-  constructor(props) {
-    super(props);
-    const { manifest } = Expo.Constants;
-    global.api =
-      typeof manifest.packagerOpts === `object` && manifest.packagerOpts.dev
-        ? manifest.debuggerHost
-            .split(`:`)
-            .shift()
-            .concat(`:8000`)
-        : `api.example.com`;
+class Profile extends Component {
+  state = {
+    image: this.props.profile_pic_URL,
+    text: ""
+  };
 
-    this.state = {
-      telDS: new ListView.DataSource({
-        rowHasChanged: (r1, r2) => r1 !== r2
-      }).cloneWithRows(this.props.tels),
-      emailDS: new ListView.DataSource({
-        rowHasChanged: (r1, r2) => r1 !== r2
-      }).cloneWithRows(this.props.emails),
-      image:
-        process.env.NODE_ENV === "development"
-          ? `http://${DOMAIN}/user/${this.props.user_id}/profilepic`
-          : this.props.profile_pic_URL,
-      image: this.props.profile_pic_URL,
-      text: ""
-    };
-  }
+  handleMatch = () => {
+    this.props.createMatch(this.props.user_id);
+  };
 
   renderHeader = () => {
-    const {
-      avatar,
-      avatarBackground,
-      // name,
-      address: { city, country },
-      navigation: { navigate }
-    } = this.props;
-
-    // let { image } = this.state;
-    const { first_name, last_name, user_id } = this.props;
+    const { first_name, last_name, user_id, zipcode, canMatch } = this.props;
     const name = `${first_name} ${last_name}`;
 
     const fromLinkedin = this.state.image.includes("licdn");
@@ -186,7 +152,8 @@ class Contact extends Component {
           style={styles.headerBackgroundImage}
           blurRadius={10}
           source={{
-            uri: avatarBackground
+            uri:
+              "https://orig00.deviantart.net/dcd7/f/2014/027/2/0/mountain_background_by_pukahuna-d73zlo5.png"
           }}
         >
           <View style={styles.headerColumn}>
@@ -208,11 +175,18 @@ class Contact extends Component {
                 />
               </View>
               <View style={styles.userCityRow}>
-                <Text style={styles.userCityText}>
-                  {city}, {country}
-                </Text>
+                <Text style={styles.userCityText}>{zipcode}</Text>
               </View>
             </View>
+            {canMatch && (
+              <View style={styles.uploadBtnContainer}>
+                <Button
+                  onPress={this.handleMatch}
+                  style={styles.uploadBtn}
+                  title="Match"
+                />
+              </View>
+            )}
           </View>
         </ImageBackground>
       </View>
@@ -220,67 +194,26 @@ class Contact extends Component {
   };
 
   renderBio = () => {
-    const { bio, desiredProfession, desiredSkills } = this.props;
+    const { biography, profession, skills } = this.props;
     return (
-      <ScrollView
-        style={styles.container}
-        contentContainerStyle={styles.contentContainer}
-      >
+      <View>
         <View style={{ flexDirection: "row" }}>
           <Text style={styles.userTitleText}>About Me</Text>
         </View>
-        <Text style={styles.userBioText}>{this.props.biography}</Text>
+        <Text style={styles.userBioText}>{biography}</Text>
 
         <View style={{ flexDirection: "row" }}>
           <Text style={styles.userTitleText}>Desired Profession</Text>
         </View>
-        <Text style={styles.userBioText}>{this.props.profession}</Text>
+        <Text style={styles.userBioText}>{profession}</Text>
 
         <View style={{ flexDirection: "row" }}>
           <Text style={styles.userTitleText}>Desired Skills</Text>
         </View>
-        <Text style={styles.userBioText}>{this.props.skills}</Text>
-      </ScrollView>
+        <Text style={styles.userBioText}>{skills}</Text>
+      </View>
     );
   };
-
-  /*
-  renderTel = () => (
-    <ListView
-      contentContainerStyle={styles.telContainer}
-      dataSource={this.state.telDS}
-      renderRow={({ id, name, number }, _, k) => {
-        return (
-          <Tel
-            key={`tel-${id}`}
-            index={k}
-            name={name}
-            number={number}
-            onPressSms={this.onPressSms}
-            onPressTel={this.onPressTel}
-          />
-        );
-      }}
-    />
-  );
-
-  renderEmail = () => (
-    <ListView
-      contentContainerStyle={styles.emailContainer}
-      dataSource={this.state.emailDS}
-      renderRow={({ email, id, name }, _, k) => {
-        return (
-          <Email
-            key={`email-${id}`}
-            index={k}
-            name={name}
-            email={email}
-            onPressEmail={this.onPressEmail}
-          />
-        );
-      }}
-    />
-  );*/
 
   render() {
     return (
@@ -297,13 +230,11 @@ class Contact extends Component {
   }
 }
 
-
-const mapStateToProps = state => ({
-  ...state.user,
-  profile_pic_URL: state.user.image || state.user.profile_pic_URL
-});
+const mapStateToProps = () => ({});
 
 export default connect(
   mapStateToProps,
-  { uploadProfilePic, login }
-)(Contact);
+  {
+    createMatch
+  }
+)(Profile);

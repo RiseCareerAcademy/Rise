@@ -2,7 +2,7 @@ import axios from 'axios';
 import { GET_USER, setUser, REGISTER_MENTEE, UPLOAD_PROFILE_PIC, failedRegisterMentee, LOGOUT_USER, REGISTER_WITH_LINKEDIN, setUserFields, REGISTER_MENTOR, failedRegisterMentor, LOGIN, failedLogin, UPDATE_USER } from "../actions/user.actions";
 import { takeLatest, put, all, call, select } from 'redux-saga/effects';
 import { DOMAIN } from "../config/url";
-import { NavigationActions } from 'react-navigation';
+import { NavigationActions, StackActions } from 'react-navigation';
 import { LINKEDIN_CLIENT_ID } from 'react-native-dotenv';
 import uuidv1 from 'uuid/v1';
 import { AuthSession } from "expo";
@@ -98,6 +98,7 @@ export function* registerWithLinkedin() {
         return;
     }
 
+    yield put(StackActions.push({ routeName: 'Loading' }));
     // // This only displays the results to the screen
     // this.setState({ result, authUrl, validState, responseState, state });
     try {
@@ -105,15 +106,19 @@ export function* registerWithLinkedin() {
         const { data: { fields } } =  response;
         console.log(fields);
         yield put(setUserFields(fields));
-        yield put(NavigationActions.navigate({ routeName: "Mentor" }));
-    
+        yield put(StackActions.pop());
+        yield put(StackActions.push({ routeName: "Mentor" }));
     } catch(e) {
         if (e.response !== undefined && e.response.data !== undefined) {
             const error = typeof e.response.data === 'string' ? e.response.data : e.response.data.error;
-            yield put(failedLogin(error));
+            // yield put(failedLogin(error));
+            alert(error);
         } else {
-            yield put(failedLogin(e.message));
+            // yield put(failedLogin(e.message));
+            alert(e.message);
         }
+        yield put(StackActions.pop());
+        yield put(StackActions.push({ routeName: 'Home' }));
     }
 }
 
@@ -145,9 +150,9 @@ export function* getUser({ userId }) {
     } catch(e) {
         if (e.response !== undefined && e.response.data !== undefined) {
             const error = typeof e.response.data === 'string' ? e.response.data : e.response.data.error;
-            console.error(error);
+            alert(error);
         } else {
-            console.error(e.message);
+            alert(e.message);
         }
     }
 }
@@ -176,13 +181,14 @@ export function* updateUser({ user }) {
 
         }))
         yield getUser({ userId });
+        alert('Successfully saved!');
         return user;
     } catch(e) {
         if (e.response !== undefined && e.response.data !== undefined) {
             const error = typeof e.response.data === 'string' ? e.response.data : e.response.data.error;
-            console.error(error);
+            alert(error);
         } else {
-            console.error(e.message);
+            alert(e.message);
         }
     }
 }

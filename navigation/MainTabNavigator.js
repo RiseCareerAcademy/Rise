@@ -6,12 +6,12 @@ import MatchesScreen from '../screens/MatchesScreen';
 //import SearchScreen from '../screens/SearchScreen'
 import { Icon } from 'expo';
 import Colors from '../constants/Colors';
-import ProfileScreen from '../screens/Profile1';
+import ProfileScreen from '../screens/Profile';
 import Messages from '../screens/Messages';
-import Conversation from '../screens/Conversation';
 import SearchScreen from '../screens/SearchScreen';
 import EditProfileScreen from '../screens/EditProfile';
 import PasswordScreen from '../screens/PasswordScreen';
+import MentorProfileScreen from '../screens/MentorProfileScreen';
 
 
 const ProfileStack = createStackNavigator({
@@ -19,7 +19,6 @@ const ProfileStack = createStackNavigator({
 });
 
 ProfileStack.navigationOptions = {
-  tabBarLabel: 'Profile',
   tabBarIcon: ({ focused }) => (
     <Icon.MaterialCommunityIcons
       name="face-profile"
@@ -50,7 +49,6 @@ SuggestedMatchStack.navigationOptions = {
 
 const MessageStack = createStackNavigator({
   Main: {screen: Messages},
-  Conversation: {screen: Conversation},
 });
 
 MessageStack.navigationOptions = {
@@ -86,10 +84,11 @@ SettingStack.navigationOptions = {
 };
 
 const SearchStack = createStackNavigator({
-  Search: { screen: SearchScreen },
+  Search: SearchScreen,
+  MentorProfile: MentorProfileScreen,
 });
 
-SearchScreen.navigationOptions = {
+SearchStack.navigationOptions = {
   tabBarLabel: 'Search',
   tabBarIcon: ({ focused }) => (
     <Icon.Feather
@@ -102,10 +101,16 @@ SearchScreen.navigationOptions = {
 }
 
 
-export default createBottomTabNavigator({
+const TabNavigator = createBottomTabNavigator({
   ProfileStack,
   SuggestedMatchStack,
   SearchStack,
   MessageStack,
   SettingStack,
 });
+
+TabNavigator.navigationOptions = {
+  header: null,
+}
+
+export default TabNavigator;

@@ -71,6 +71,8 @@ router.get("/name/:id", controller.getFirstLastById);
 
 //get profile pic by id 
 router.get("/:id/profilepic", controller.getProfilePic);
+//get profile pic url by id 
+router.get("/:id/profilepicurl", controller.getProfilePicUrl);
 //update profile pic by id 
 router.put("/:id/profilepic", controller.updateProfilePic);
 router.post("/:id/profilepic", upload.single('photo'), controller.postProfilePic);
@@ -106,4 +108,10 @@ router.get('/message/:matchid', controller.getLatestMessageById);
 
 //get all message by message id 
 router.get('/message/all/:matchid', controller.getMessageChain);
+
+// create a conversation ws connection
+router.ws('/conversation', controller.conversation);
+
+// get user type
+router.get('/type', controller.getType);
 

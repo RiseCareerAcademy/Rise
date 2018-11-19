@@ -9,6 +9,10 @@ import { connect } from 'react-redux';
 import { registerWithLinkedin, login } from '../actions/user.actions';
 
 export class HomeScreen extends React.Component {
+  static navigationOptions = {
+    header: null,
+  }
+
   constructor(props) {
     super(props);
     this.state = {

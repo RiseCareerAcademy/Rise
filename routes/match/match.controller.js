@@ -28,7 +28,8 @@ module.exports.postMatches = (req, res) => {
     match_id = user.mentor_id+""+user.mentee_id
     db.all(sql, [match_id,user.mentor_id,user.mentee_id,user.ratings], (err, rows) => {
     if (err) {
-      throw err;
+      res.json({ success: false, error: err.message });
+      return;
     }
     res.json({ success: true, rows: rows });
   });
