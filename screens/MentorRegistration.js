@@ -11,9 +11,7 @@ import {
 import {
   StyleSheet,
   TouchableOpacity,
-  View,
   Image,
-  Button,
   ActivityIndicator
 } from "react-native";
 import { connect } from "react-redux";
@@ -130,7 +128,6 @@ export class MentorRegistration extends React.Component {
   };
 
   render() {
-    const { navigate } = this.props.navigation;
     return (
       <Container style={styles.container}>
         <Content>
@@ -213,9 +210,6 @@ export class MentorRegistration extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    paddingTop: 23
-  },
   userImage: {
     borderRadius: 85,
     borderWidth: 3,

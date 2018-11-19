@@ -1,9 +1,7 @@
 import React from "react";
 import { Button, Text } from "native-base";
-import { Platform, ScrollView, StyleSheet, Image, View } from "react-native";
-import { AuthSession } from "expo";
+import { ScrollView, StyleSheet, Image, View } from "react-native";
 
-import { MonoText } from "../components/StyledText";
 import { connect } from 'react-redux';
 
 import { registerWithLinkedin, login } from '../actions/user.actions';

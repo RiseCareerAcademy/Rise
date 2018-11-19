@@ -1,15 +1,5 @@
 import React, { Component } from "react";
 import {
-  View,
-  FlatList,
-  ActivityIndicator,
-  StyleSheet,
-  TextInput,
-  Keyboard
-} from "react-native";
-import { Message } from "../components/view";
-import * as Animatable from "react-native-animatable";
-import {
   Container,
   Header,
   Content,
@@ -20,15 +10,10 @@ import {
   Body,
   Text,
   Right,
-  SwipeRow,
-  Button,
-  Icon
 } from "native-base";
 import { connect } from "react-redux";
 
 import { getMessages } from '../actions/messages.actions';
-
-const uuidv1 = require("uuid/v1");
 
 export class Messages extends Component {
   static navigationOptions = {
@@ -89,18 +74,6 @@ export class Messages extends Component {
     );
   }
 }
-
-const styles = {
-  container: {
-    width: 100 + "%",
-    height: 100 + "%",
-    display: "flex",
-    backgroundColor: "rgb(243, 243, 243)",
-    flex: 1,
-    justifyContent: "center",
-    alignContent: "center"
-  }
-};
 
 const mapStateToProps = state => ({
   messages: state.messages,

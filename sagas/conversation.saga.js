@@ -1,8 +1,7 @@
 import { eventChannel } from "redux-saga";
-import { take, call, all, race, put, select} from 'redux-saga/effects';
-import axios from 'axios';
+import { take, call, all, race, select} from 'redux-saga/effects';
 
-import { SET_RECEIVER_ID, SEND_MESSAGE, setMatchId } from "../actions/conversation.actions";
+import { SEND_MESSAGE } from "../actions/conversation.actions";
 import { DOMAIN } from "../config/url";
 import { SET_MATCH_ID } from "../actions/matches.actions";
 

@@ -1,8 +1,6 @@
 import React, { Component } from "react";
 import { List, ListItem } from 'react-native-elements';
-import { FlatList, ScrollView, View, StyleSheet } from "react-native";
-import Expo from "expo";
-import { create_matches_table_sql } from "../config/user_sql_constants";
+import { View } from "react-native";
 import { connect } from 'react-redux';
 
 import { getMatches } from '../actions/matches.actions';
@@ -34,7 +32,7 @@ export class MatchesScreen extends Component {
           <Header />
           <List>
             {
-              this.props.mentors.map((l, i) => (
+              this.props.mentors.map(l => (
                 <ListItem
                   roundAvatar
                   key={l.user_id}
@@ -49,47 +47,6 @@ export class MatchesScreen extends Component {
     )
   }
 }
-const styles = StyleSheet.create({
-  container: {
-   flex: 1,
-   paddingTop: 22
-  },
-  item: {
-    padding: 10,
-    fontSize: 18,
-    height: 44,
-  },
-  buttonContainer: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center"
-  },
-  center: {
-    flex: 1,
-    flexDirection: "row",
-    justifyContent: "center"
-  },
-  buttonStyle: {
-    margin: 10
-  },
-  greyText: {
-    color: "grey"
-  },
-  subtitleView: {
-    flexDirection: "row",
-    paddingLeft: 10,
-    paddingTop: 5
-  },
-  ratingImage: {
-    height: 19.21,
-    width: 100
-  },
-  ratingText: {
-    paddingLeft: 10,
-    color: "grey"
-  }
-})
 
 const mapStateToProps = state => ({
   mentors: state.matches.mentors,

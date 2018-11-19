@@ -31,8 +31,7 @@ export function* uploadProfilePic({ user_id, uri }) {
 
 export function* registerMentee({ mentee }) {
     try {
-        const passwordResponse = yield axios.post(`http://${DOMAIN}/user/password`, { email_address: mentee.email_address, password: mentee.password });
-        const { passwordHash } = passwordResponse;
+        yield axios.post(`http://${DOMAIN}/user/password`, { email_address: mentee.email_address, password: mentee.password });
         const response = yield axios.post(`http://${DOMAIN}/user/mentee`, { ...mentee, passwordHash: mentee.passwordHash });
         if (response === undefined) {
             throw Error('Response is empty. Is the server started and running properly?');

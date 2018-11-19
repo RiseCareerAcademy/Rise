@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { takeLatest, put, all, call } from 'redux-saga/effects';
-import { setMentors, GET_ALL_MENTORS, GET_ALL_MENTEES, setMentees, GET_MENTOR, GET_MENTEE } from '../actions/search.actions';
+import { takeLatest, put, all } from 'redux-saga/effects';
+import { setMentors, GET_ALL_MENTORS, GET_ALL_MENTEES, setMentees, GET_MENTOR } from '../actions/search.actions';
 import { DOMAIN } from '../config/url';
 import { NavigationActions } from 'react-navigation';
 
