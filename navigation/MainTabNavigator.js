@@ -10,6 +10,8 @@ import ProfileScreen from '../screens/Profile1';
 import Messages from '../screens/Messages';
 import Conversation from '../screens/Conversation';
 import SearchScreen from '../screens/SearchScreen';
+import EditProfileScreen from '../screens/EditProfile';
+import PasswordScreen from '../screens/PasswordScreen';
 
 
 const ProfileStack = createStackNavigator({
@@ -67,6 +69,8 @@ MessageStack.navigationOptions = {
 
 const SettingStack = createStackNavigator({
   Settings: SettingsScreen,
+  EditProfile: EditProfileScreen,
+  Password: PasswordScreen,
 });
 
 SettingStack.navigationOptions = {
@@ -82,7 +86,7 @@ SettingStack.navigationOptions = {
 };
 
 const SearchStack = createStackNavigator({
-  Search: SearchScreen,
+  Search: { screen: SearchScreen },
 });
 
 SearchScreen.navigationOptions = {

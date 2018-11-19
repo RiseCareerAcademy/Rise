@@ -1,7 +1,7 @@
 {
 	"info": {
-		"_postman_id": "5d49c66b-fb12-49e0-949b-a82b1ebd28a4",
-		"name": "Adding Mentee",
+		"_postman_id": "c7f117f3-e930-4316-ba32-39b39245bbd3",
+		"name": "AddingMatch",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -126,7 +126,7 @@
 			"response": []
 		},
 		{
-			"name": "Check number of mentee",
+			"name": "Check number of match",
 			"event": [
 				{
 					"listen": "test",
@@ -140,7 +140,7 @@
 							"    var jsonData = pm.response.json();",
 							"    pm.expect(jsonData['success']).to.eql(true);",
 							"});",
-							"pm.test(\"have 0 mente inside\", function () {",
+							"pm.test(\"have 0inside\", function () {",
 							"    var jsonData = pm.response.json();",
 							"    pm.expect(jsonData['rows'].length).to.eql(0);",
 							"});",
@@ -169,22 +169,21 @@
 					"raw": "{\r\n    \"first_name\": \"mike\", \r\n    \"last_name\": \"john\",\r\n    \"email_address\": \"mike@wisc.edu\", \r\n    \"biography\": \"hi\",\r\n    \"zipcode\": \"57585\", \r\n    \"date_of_birth\": \"2/24/1996\",\r\n    \"skills\": \"JAVA\",\r\n    \"profession\": \"Software Engineer\",\r\n    \"hobbies\": \"testiing hobbies\"\r\n}"
 				},
 				"url": {
-					"raw": "http://localhost:8000/user/mentees",
+					"raw": "http://localhost:8000/match",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "8000",
 					"path": [
-						"user",
-						"mentees"
+						"match"
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "Post 1 mentee",
+			"name": "Post 1 match",
 			"event": [
 				{
 					"listen": "test",
@@ -216,25 +215,24 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"first_name\": \"mike\", \r\n    \"last_name\": \"john\",\r\n    \"email_address\": \"mike@wisc.edu\", \r\n    \"biography\": \"hi\",\r\n    \"zipcode\": \"57585\", \r\n    \"date_of_birth\": \"2/24/1996\",\r\n    \"skills\": \"JAVA\",\r\n    \"profession\": \"Full Stack Developer\",\r\n    \"hobbies\": \"testiing hobbies\"\r\n}"
+					"raw": "{\r\n    \"mentor_id\": 1,\"mentee_id\": 2, \"ratings\" : 3\r\n}"
 				},
 				"url": {
-					"raw": "http://localhost:8000/user/mentee",
+					"raw": "http://localhost:8000/match",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "8000",
 					"path": [
-						"user",
-						"mentee"
+						"match"
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "Check number of mentee",
+			"name": "Check number of match",
 			"event": [
 				{
 					"listen": "test",
@@ -248,7 +246,65 @@
 							"    var jsonData = pm.response.json();",
 							"    pm.expect(jsonData['success']).to.eql(true);",
 							"});",
-							"pm.test(\"have 1 mente inside\", function () {",
+							"pm.test(\"have 1 inside\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData['rows'].length).to.eql(1);",
+							"    pm.globals.set(\"match_id\", jsonData['rows'][0]['match_id']);",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"first_name\": \"mike\", \r\n    \"last_name\": \"john\",\r\n    \"email_address\": \"mike@wisc.edu\", \r\n    \"biography\": \"hi\",\r\n    \"zipcode\": \"57585\", \r\n    \"date_of_birth\": \"2/24/1996\",\r\n    \"skills\": \"JAVA\",\r\n    \"profession\": \"Software Engineer\",\r\n    \"hobbies\": \"testiing hobbies\"\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8000/match",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"match"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Check number of match by match id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "ee1cce81-25e8-4ec8-85d8-850832c00635",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"success\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData['success']).to.eql(true);",
+							"});",
+							"pm.test(\"have 1 inside\", function () {",
 							"    var jsonData = pm.response.json();",
 							"    pm.expect(jsonData['rows'].length).to.eql(1);",
 							"});",
@@ -277,15 +333,75 @@
 					"raw": "{\r\n    \"first_name\": \"mike\", \r\n    \"last_name\": \"john\",\r\n    \"email_address\": \"mike@wisc.edu\", \r\n    \"biography\": \"hi\",\r\n    \"zipcode\": \"57585\", \r\n    \"date_of_birth\": \"2/24/1996\",\r\n    \"skills\": \"JAVA\",\r\n    \"profession\": \"Software Engineer\",\r\n    \"hobbies\": \"testiing hobbies\"\r\n}"
 				},
 				"url": {
-					"raw": "http://localhost:8000/user/mentees",
+					"raw": "http://localhost:8000/match/matchid/{{match_id}}",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "8000",
 					"path": [
-						"user",
-						"mentees"
+						"match",
+						"matchid",
+						"{{match_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Check number of match by user id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "ee1cce81-25e8-4ec8-85d8-850832c00635",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"success\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData['success']).to.eql(true);",
+							"});",
+							"pm.test(\"have 1 inside\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData['rows'].length).to.eql(1);",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"first_name\": \"mike\", \r\n    \"last_name\": \"john\",\r\n    \"email_address\": \"mike@wisc.edu\", \r\n    \"biography\": \"hi\",\r\n    \"zipcode\": \"57585\", \r\n    \"date_of_birth\": \"2/24/1996\",\r\n    \"skills\": \"JAVA\",\r\n    \"profession\": \"Software Engineer\",\r\n    \"hobbies\": \"testiing hobbies\"\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8000/match/userid/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"match",
+						"userid",
+						"1"
 					]
 				}
 			},
@@ -293,4 +409,3 @@
 		}
 	]
 }
-

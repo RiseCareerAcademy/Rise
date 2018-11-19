@@ -1,7 +1,7 @@
 {
 	"info": {
-		"_postman_id": "5d49c66b-fb12-49e0-949b-a82b1ebd28a4",
-		"name": "Adding Mentee",
+		"_postman_id": "a242a3e3-6457-4369-854a-667a1a02a33f",
+		"name": "Mentee work flow",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -290,7 +290,107 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Register",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "c11e598a-01ff-4b1c-8f5b-d4aa6fe4ea1a",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"success\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData['success']).to.eql(true);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email_address\": \"mike@wisc.edu\", \r\n    \"password\": \"testiing hobbies\"\r\n}\r\n"
+				},
+				"url": {
+					"raw": "http://localhost:8000/user/password",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"user",
+						"password"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "c11e598a-01ff-4b1c-8f5b-d4aa6fe4ea1a",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"success\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData['success']).to.eql(true);",
+							"    pm.globals.set(\"id\", jsonData['rows'][0]['user_id']);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email_address\": \"mike@wisc.edu\", \r\n    \"password\": \"testiing hobbies\"\r\n}\r\n"
+				},
+				"url": {
+					"raw": "http://localhost:8000/user/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"user",
+						"login"
+					]
+				}
+			},
+			"response": []
 		}
 	]
 }
-

@@ -1,5 +1,5 @@
-import React, { Component} from "react";
-import { Card, Icon, SearchBar} from "react-native-elements";
+import React, { Component } from "react";
+import { Card, Icon, SearchBar } from "react-native-elements";
 import { ImagePicker, Permissions } from "expo";
 import {
   Image,
@@ -21,9 +21,9 @@ import Email from "./Email";
 import Separator from "./Separator";
 import Tel from "./Tel";
 import { DOMAIN } from "../../config/url";
-import { uploadProfilePic, login } from '../../actions/user.actions';
+import { uploadProfilePic, login } from "../../actions/user.actions";
 
-const uuidv1 = require('uuid/v1');
+const uuidv1 = require("uuid/v1");
 
 const styles = StyleSheet.create({
   cardContainer: {
@@ -133,9 +133,13 @@ class Contact extends Component {
   constructor(props) {
     super(props);
     const { manifest } = Expo.Constants;
-    global.api= (typeof manifest.packagerOpts === `object`) && manifest.packagerOpts.dev
-    ? manifest.debuggerHost.split(`:`).shift().concat(`:8000`)
-    : `api.example.com`;
+    global.api =
+      typeof manifest.packagerOpts === `object` && manifest.packagerOpts.dev
+        ? manifest.debuggerHost
+            .split(`:`)
+            .shift()
+            .concat(`:8000`)
+        : `api.example.com`;
 
     this.state = {
       telDS: new ListView.DataSource({
@@ -144,114 +148,14 @@ class Contact extends Component {
       emailDS: new ListView.DataSource({
         rowHasChanged: (r1, r2) => r1 !== r2
       }).cloneWithRows(this.props.emails),
-      image: process.env.NODE_ENV === 'development' ? `http://${DOMAIN}/user/${this.props.user_id}/profilepic` : this.props.profile_pic_URL,
+      image:
+        process.env.NODE_ENV === "development"
+          ? `http://${DOMAIN}/user/${this.props.user_id}/profilepic`
+          : this.props.profile_pic_URL,
       image: this.props.profile_pic_URL,
       text: ""
     };
   }
-
-  handleImagePickerPress = async () => {
-    const { status: cameraPerm } = await Permissions.askAsync(
-      Permissions.CAMERA
-    );
-    const { status: cameraRollPerm } = await Permissions.askAsync(
-      Permissions.CAMERA_ROLL
-    );
-
-    if (cameraPerm === "granted" && cameraRollPerm === "granted") {
-      const result = await ImagePicker.launchImageLibraryAsync({
-        allowsEditing: true, //Android editing only
-        aspect: [4, 3] //Aspect ratio to maintain if user allowed to edit image
-      });
-      console.log(result); //check output
-      if (!result.cancelled) {
-        this.props.uploadProfilePic(result.uri, this.props.user_id);
-        this.setState({ image: result.uri });
-        fetch('http://'+global.api+'/user/10101/profilepic/', {
-        method: 'PUT',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-                //create unique match id, can get number of row in db + 1
-                "profilepic": JSON.stringify(result.uri)
-          }),
-      })//fetch
-      .then((response) => response.json())
-      .then((responseJson) => {
-        console.log(JSON.stringify(responseJson));
-        })
-      .catch((error) => {
-        console.error("error is " + error);
-      });
-      }
-    }
-  };
-
-  //allows one to edit their about me section
-  handleEditAboutMePress = async () => {
-    AlertIOS.prompt("Edit About Me", null, [
-      {
-        text: "Cancel",
-        onPress: () => console.log("Cancel Pressed"),
-        style: "cancel"
-      },
-      {
-        text: "OK",
-        onPress: aboutMe => console.log("OK Pressed, new about me: " + aboutMe)
-      }
-    ]);
-  };
-
-  //allows one to edit desired profession
-  handleEditProfessionPress = async () => {
-    AlertIOS.prompt("Edit Profession", null, [
-      {
-        text: "Cancel",
-        onPress: () => console.log("Cancel Pressed"),
-        style: "cancel"
-      },
-      {
-        text: "OK",
-        onPress: profession =>
-          console.log("OK Pressed, new about me: " + profession)
-      }
-    ]);
-  };
-
-  //allows one to edit desired skills
-  handleEditSkillsPress = async () => {
-    AlertIOS.prompt("Edit Skills", null, [
-      {
-        text: "Cancel",
-        onPress: () => console.log("Cancel Pressed"),
-        style: "cancel"
-      },
-      {
-        text: "OK",
-        onPress: skills => console.log("OK Pressed, new about me: " + skills)
-      }
-    ]);
-  };
-
-  onPressPlace = () => {
-    console.log("place");
-  };
-  /*
-  onPressTel = number => {
-    Linking.openURL(`tel://${number}`).catch(err => console.log("Error:", err));
-  };
-
-  onPressSms = () => {
-    console.log("sms");
-  };
-
-  onPressEmail = email => {
-    Linking.openURL(`mailto://${email}?subject=subject&body=body`).catch(err =>
-      console.log("Error:", err)
-    );
-  };*/
 
   renderHeader = () => {
     const {
@@ -266,12 +170,15 @@ class Contact extends Component {
     const { first_name, last_name, user_id } = this.props;
     const name = `${first_name} ${last_name}`;
 
-    const fromLinkedin = this.state.image.includes('licdn');
+    const fromLinkedin = this.state.image.includes("licdn");
 
-    let image = process.env.NODE_ENV === 'development' && !fromLinkedin ? `http://${DOMAIN}/user/${user_id}/profilepic` : this.state.image;
+    let image =
+      process.env.NODE_ENV === "development" && !fromLinkedin
+        ? `http://${DOMAIN}/user/${user_id}/profilepic`
+        : this.state.image;
     if (!fromLinkedin) {
       image += `?${encodeURI(uuidv1())}`;
-    } 
+    }
 
     return (
       <View style={styles.headerContainer}>
@@ -286,17 +193,10 @@ class Contact extends Component {
             <Image
               style={styles.userImage}
               source={{
-                uri: image,
+                uri: image
               }}
             />
 
-            <View style={styles.uploadBtnContainer}>
-              <Button
-                onPress={this.handleImagePickerPress}
-                style={styles.uploadBtn}
-                title="Select image from Camera Roll"
-              />
-            </View>
             <Text style={styles.userNameText}>{name}</Text>
             <View style={styles.userAddressRow}>
               <View>
@@ -322,37 +222,25 @@ class Contact extends Component {
   renderBio = () => {
     const { bio, desiredProfession, desiredSkills } = this.props;
     return (
-      <View>
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={styles.contentContainer}
+      >
         <View style={{ flexDirection: "row" }}>
           <Text style={styles.userTitleText}>About Me</Text>
-          <Button
-            onPress={this.handleEditAboutMePress}
-            style={styles.editBtn}
-            title="Edit"
-          />
         </View>
-        <Text style={styles.userBioText}>{bio}</Text>
+        <Text style={styles.userBioText}>{this.props.biography}</Text>
 
         <View style={{ flexDirection: "row" }}>
           <Text style={styles.userTitleText}>Desired Profession</Text>
-          <Button
-            onPress={this.handleEditProfessionPress}
-            style={styles.editBtn}
-            title="Edit"
-          />
         </View>
-        <Text style={styles.userBioText}>{desiredProfession}</Text>
+        <Text style={styles.userBioText}>{this.props.profession}</Text>
 
         <View style={{ flexDirection: "row" }}>
           <Text style={styles.userTitleText}>Desired Skills</Text>
-          <Button
-            onPress={this.handleEditSkillsPress}
-            style={styles.editBtn}
-            title="Edit"
-          />
         </View>
-        <Text style={styles.userBioText}>{desiredSkills}</Text>
-      </View>
+        <Text style={styles.userBioText}>{this.props.skills}</Text>
+      </ScrollView>
     );
   };
 
@@ -409,9 +297,10 @@ class Contact extends Component {
   }
 }
 
+
 const mapStateToProps = state => ({
   ...state.user,
-  profile_pic_URL: state.user.image || state.user.profile_pic_URL,
+  profile_pic_URL: state.user.image || state.user.profile_pic_URL
 });
 
 export default connect(
