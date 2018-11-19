@@ -6,7 +6,7 @@ import { Provider } from 'react-redux';
 
 import { Navigator } from './navigation';
 import configureStore from "./configureStore";
-import LoadingScreen from './screens/LoadingScreen'; 
+import LoadingScreen from './screens/LoadingScreen';
 
 
 export const { persistor, store } = configureStore();

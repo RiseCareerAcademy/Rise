@@ -133,18 +133,24 @@ class Profile extends Component {
   };
 
   renderHeader = () => {
-    const { first_name, last_name, user_id, zipcode, canMatch } = this.props;
+    const { first_name, last_name, user_id, zipcode, canMatch, preview, profile_pic_URL } = this.props;
     const name = `${first_name} ${last_name}`;
 
-    const fromLinkedin = this.state.image.includes("licdn");
 
-    let image =
+    let image = '';
+    if (preview) {
+      image += profile_pic_URL;
+    } else {
+      image +=
       process.env.NODE_ENV === "development" && !fromLinkedin
         ? `http://${DOMAIN}/user/${user_id}/profilepic`
         : this.state.image;
-    if (!fromLinkedin) {
-      image += `?${encodeURI(uuidv1())}`;
+        const fromLinkedin = this.state.image.includes("licdn");
+        if (!fromLinkedin) {
+          image += `?${encodeURI(uuidv1())}`;
+        }
     }
+
 
     return (
       <View style={styles.headerContainer}>

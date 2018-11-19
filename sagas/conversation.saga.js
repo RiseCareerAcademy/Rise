@@ -56,7 +56,7 @@ export default function* messagesWatcher() {
     try {
       const socket = new WebSocket(`ws://${DOMAIN}/user/conversation`);
       const socketChannel = yield call(createSocketChannel, socket, match_id);
-    
+
       yield race({
       listeners: all([
         call(receiveMessagesWatcher, socketChannel),
@@ -64,7 +64,7 @@ export default function* messagesWatcher() {
       ]),
       close: take(SET_MATCH_ID),
       });
-    
+
       yield socketChannel.close();
     } catch(e) {
       console.error(e.message);
