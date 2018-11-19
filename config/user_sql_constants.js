@@ -4,7 +4,7 @@
 module.exports.create_mentor_table_sql = function () {
     sql = `  
     CREATE TABLE IF NOT EXISTS Mentors ( 
-        user_id int NOT NULL UNIQUE,
+        user_id int varchar (255) NOT NULL,
         first_name varchar(255) NOT NULL,
         last_name varchar(255) NOT NULL,
         email_address varchar(255) NOT NULL UNIQUE,
@@ -22,7 +22,7 @@ module.exports.create_mentor_table_sql = function () {
 module.exports.create_mentee_table_sql = function () {
     sql = `    
         CREATE TABLE IF NOT EXISTS Mentees (
-            user_id int NOT NULL UNIQUE,
+            user_id varchar(255) NOT NULL UNIQUE,
             first_name varchar(255) NOT NULL,
             last_name varchar(255) NOT NULL,
             email_address varchar(255) NOT NULL UNIQUE,
