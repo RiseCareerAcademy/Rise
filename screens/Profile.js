@@ -7,7 +7,7 @@ import { Header, View } from "native-base";
 
 class ProfileScreen extends Component {
   static navigationOptions = {
-    header: null
+    header: null,
   };
 
   constructor(props) {
@@ -26,7 +26,7 @@ class ProfileScreen extends Component {
 
 const mapStateToProps = state => ({
   ...state.user,
-  profile_pic_URL: state.user.image || state.user.profile_pic_URL
+  profile_pic_URL: state.user.image || state.user.profile_pic_URL,
 });
 
 export default connect(

@@ -117,7 +117,7 @@ module.exports.linkedin = async (req, res) => {
     code: req.body.code,
     redirect_uri: req.body.redirect_uri,
     client_id: process.env.LINKEDIN_CLIENT_ID,
-    client_secret: process.env.LINKEDIN_CLIENT_SECRET
+    client_secret: process.env.LINKEDIN_CLIENT_SECRET,
   };
   try {
     const response = await axios.post(
@@ -125,12 +125,12 @@ module.exports.linkedin = async (req, res) => {
       qs.stringify(requestBody)
     );
     const {
-      data: { access_token, expires_in }
+      data: { access_token, expires_in },
     } = response;
     const config = {
       headers: {
-        Authorization: `Bearer ${access_token}`
-      }
+        Authorization: `Bearer ${access_token}`,
+      },
     };
     const linkedinFileds = [
       "id",
@@ -154,7 +154,7 @@ module.exports.linkedin = async (req, res) => {
       "site-standard-profile-request",
       "api-standard-profile-request",
       "public-profile-url",
-      "email-address"
+      "email-address",
     ];
     const fieldsString = linkedinFileds.join(",");
     const linkedinApiUrl = `https://api.linkedin.com/v1/people/~:(${fieldsString})?format=json`;
@@ -165,7 +165,7 @@ module.exports.linkedin = async (req, res) => {
       industry: profession,
       lastName: last_name,
       pictureUrls,
-      summary: biography
+      summary: biography,
     } = data;
     const profile_pic_URL = pictureUrls.values[0];
     const result = {
@@ -174,7 +174,7 @@ module.exports.linkedin = async (req, res) => {
       profession,
       last_name,
       biography,
-      profile_pic_URL
+      profile_pic_URL,
     };
     res.json({ success: true, fields: result });
   } catch (error) {
@@ -239,7 +239,7 @@ module.exports.postMentor = (req, res) => {
         user.profession,
         user.skills,
         user.profile_pic_URL,
-        user.hobbies
+        user.hobbies,
       ],
       (err, rows) => {
         if (err) {
@@ -327,7 +327,7 @@ module.exports.postMentee = (req, res) => {
     "date_of_birth",
     "skills",
     "profession",
-    "hobbies"
+    "hobbies",
   ];
   const user = {};
   const missingFields = fields.some(field => {
@@ -376,7 +376,7 @@ module.exports.postMentee = (req, res) => {
         user.profession,
         user.skills,
         user.profile_pic_URL,
-        user.hobbies
+        user.hobbies,
       ],
       (err, rows) => {
         if (err) {
@@ -475,7 +475,7 @@ module.exports.postMessage = (req, res) => {
       user.to_id,
       user.from_id,
       user.message_body,
-      getFormattedDate()
+      getFormattedDate(),
     ],
     (err, rows) => {
       if (err) {
@@ -486,12 +486,27 @@ module.exports.postMessage = (req, res) => {
   );
 };
 
+const sockets = {};
 
 //create a new message
 module.exports.conversation = (ws, req) => {
+  const { to_id, from_id } = req.query;
+  console.log(to_id);
+  console.log(from_id);
+  console.log('');
+  sockets[from_id] = ws;
   ws.on('message', message => {
-    ws.send(message);
+    console.log(`received ws message: ${JSON.stringify(message)}`);
+    if (Object.keys(sockets).includes(to_id)) {
+      const toWs = sockets[to_id];
+      toWs.send(message);
+    }
   });
+
+  ws.on('close', () => {
+    delete sockets[from_id];
+    console.log('closed!');
+  })
 }
 
 
@@ -1122,7 +1137,7 @@ module.exports.login = (req, res) => {
       sql2,
       [
         user.email_address,
-        hp.saltPassword(user.password, salt)["passwordHash"]
+        hp.saltPassword(user.password, salt)["passwordHash"],
       ],
       (err, rows2) => {
         if (err) {

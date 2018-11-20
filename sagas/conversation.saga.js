@@ -1,9 +1,9 @@
 import { eventChannel } from "redux-saga";
-import { take, call, all, race, select} from 'redux-saga/effects';
+import { take, call, all, race, select, put } from 'redux-saga/effects';
+// import io from 'socket.io-client';
 
-import { SEND_MESSAGE } from "../actions/conversation.actions";
+import { SEND_MESSAGE, SET_MATCH_ID, receiveMessage } from "../actions/conversation.actions";
 import { DOMAIN } from "../config/url";
-import { SET_MATCH_ID } from "../actions/matches.actions";
 
 export function createSocketChannel(socket, match_id) {
   return eventChannel(emit => {
@@ -30,31 +30,24 @@ export function createSocketChannel(socket, match_id) {
 export function* receiveMessagesWatcher(socketChannel) {
   while(true) {
     const message = yield take(socketChannel);
-    console.log(message);
+    yield put(receiveMessage(message));
   }
 }
 
 export function* sendMessagesWatcher(socket, match_id, to_id) {
   while(true) {
-    const { message: message_body } = yield take(SEND_MESSAGE);
-    const from_id = yield select(state => state.user.user_id);
-
-    const message = {
-      match_id,
-      to_id,
-      from_id,
-      message_body,
-    };
-
+    const { message } = yield take(SEND_MESSAGE);
     socket.send(JSON.stringify(message));
   }
 }
 
 export default function* messagesWatcher() {
+  const { match_id, to_id } = yield take(SET_MATCH_ID);
+  const from_id = yield select(state => state.user.user_id);
   while (true) {
-    const { match_id, to_id } = yield take(SET_MATCH_ID);
-    try {
-      const socket = new WebSocket(`ws://${DOMAIN}/user/conversation`);
+  try {
+      const socket = new WebSocket(`ws://${DOMAIN}/user/conversation?match_id=${match_id}&to_id=${to_id}&from_id=${from_id}`);
+      // const socket = io(`http://${DOMAIN}`);
       const socketChannel = yield call(createSocketChannel, socket, match_id);
 
       yield race({

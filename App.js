@@ -18,7 +18,7 @@ export default class App extends React.Component {
     super(props);
 
     this.state = {
-      isLoadingComplete: false
+      isLoadingComplete: false,
     };
   }
 
@@ -49,7 +49,7 @@ export default class App extends React.Component {
     return Promise.all([
       Asset.loadAsync([
         require("./assets/images/robot-dev.png"),
-        require("./assets/images/robot-prod.png")
+        require("./assets/images/robot-prod.png"),
       ]),
       Font.loadAsync({
         // This is the font that we are using for our tab bar
@@ -59,8 +59,8 @@ export default class App extends React.Component {
         "space-mono": require("./assets/fonts/SpaceMono-Regular.ttf"),
         Roboto: require("native-base/Fonts/Roboto.ttf"),
         Roboto_medium: require("native-base/Fonts/Roboto_medium.ttf"),
-        Ionicons: require("@expo/vector-icons/fonts/Ionicons.ttf")
-      })
+        Ionicons: require("@expo/vector-icons/fonts/Ionicons.ttf"),
+      }),
     ]);
   };
 

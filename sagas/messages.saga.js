@@ -25,7 +25,8 @@ export function* getMessages() {
         let message = {
           otherUser,
           otherUserId,
-          empty: true
+          empty: true,
+          match_id: match.match_id,
         };
         const messageResponse = await axios.get(`http://${DOMAIN}/user/message/${match.match_id}`);
         if (messageResponse.data.rows.length === 0) {

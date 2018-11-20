@@ -8,42 +8,42 @@ class Conversation extends Component {
   constructor(props) {
     super(props);
 
-    const { to_id, match_id } = this.props;
+    const { to_id, match_id } = this.props.navigation.state.params;
 
-    this.state = {
-      messages: [
-        {
-          _id: 1,
-          text: 'Hello developer',
-          createdAt: new Date(),
-          user: {
-            _id: to_id,
-            name: 'React Native',
-            avatar: 'https://placeimg.com/140/140/any',
-          },
-        },
-      ],
-    };
-
-    this.props.setMatchId(to_id, match_id);
+    this.props.setMatchId(match_id, to_id);
   }
 
-  onSend(messages = []) {
-    const { to_id, match_id, user_id } = this.props;
+  onSend = (messages) => {
+    const { user_id } = this.props;
+    const { to_id, match_id } = this.props.navigation.state.params;
     console.log(messages);
-    this.setState(previousState => ({
-      messages: GiftedChat.append(previousState.messages, messages),
-    }))
-    this.props.sendMessage({ match_id, from_id: user_id, to_id, message_body: messages[0].text });
+    const message = messages[0];
+    this.props.sendMessage({ match_id, from_id: user_id, to_id, message_body: message.text });
   }
 
   render() {
+    const { user_id, first_name, last_name, messages } = this.props;
+    const { otherUser } = this.props.navigation.state.params;
+    const currUserName = `${first_name} ${last_name}`;
+    const otherUserName = `${otherUser.first_name} ${otherUser.last_name}`;
+
+    const giftedChatMessages = messages.map(message => ({
+      _id: message.message_id,
+      text: message.message_body,
+      createdAt: message.timestamp,
+      user: {
+        _id: message.from_id,
+        name: message.from_id === user_id ? currUserName : otherUserName,
+        avatar: otherUser.profile_pic_URL,
+      },
+    }));
+
     return (
       <GiftedChat
-        messages={this.state.messages}
-        onSend={messages => this.onSend(messages)}
+        messages={giftedChatMessages}
+        onSend={this.onSend}
         user={{
-          _id: 1,
+          _id: user_id,
         }}
       />
     )
@@ -51,7 +51,8 @@ class Conversation extends Component {
 }
 
 const mapStateToProps = state => ({
-  user_id: state.user.user_id,
+  ...state.user,
+  messages: state.conversation.messages,
 });
 
 export default connect(mapStateToProps, {

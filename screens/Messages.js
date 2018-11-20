@@ -17,7 +17,7 @@ import { getMessages } from '../actions/messages.actions';
 
 export class Messages extends Component {
   static navigationOptions = {
-    header: null
+    header: null,
   };
 
   state = {
@@ -27,7 +27,7 @@ export class Messages extends Component {
     matches: [],
     text: "",
     lastChecked: "",
-    allMessages: []
+    allMessages: [],
   };
 
   constructor(props) {
@@ -36,8 +36,12 @@ export class Messages extends Component {
     this.props.getMessages();
   }
 
-  handleMessagePress = () => {
-    this.props.navigation.navigate('Conversation');
+  handleMessagePress = (match_id, to_id, otherUser) => () => {
+    this.props.navigation.navigate('Conversation', {
+      match_id,
+      to_id,
+      otherUser,
+    });
   }
 
   render() {
@@ -48,7 +52,7 @@ export class Messages extends Component {
         <Content>
           <List>
             {messages.map(message => (
-                <ListItem avatar key={message.otherUserId} onPress={this.handleMessagePress}>
+                <ListItem avatar key={message.otherUserId} onPress={this.handleMessagePress(message.match_id, message.otherUserId, message.otherUser)}>
                   <Left>
                     <Thumbnail
                       source={{
@@ -65,7 +69,7 @@ export class Messages extends Component {
                   <Right>
                     {!message.empty && <Text note>{message.timestamp}</Text>}
                   </Right>
-                </ListItem> 
+                </ListItem>
               )
             )}
           </List>

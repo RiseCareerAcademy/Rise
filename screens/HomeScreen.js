@@ -86,7 +86,7 @@ export class HomeScreen extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff"
+    backgroundColor: "#fff",
   },
   buttonContainer: {
     flex: 1,
@@ -97,16 +97,16 @@ const styles = StyleSheet.create({
   center: {
     flex: 1,
     flexDirection: "row",
-    justifyContent: "center"
+    justifyContent: "center",
   },
   buttonStyle: {
-    margin: 10
+    margin: 10,
   },
   greyText: {
-    color: "grey"
+    color: "grey",
   },
   contentContainer: {
-    paddingTop: 30
+    paddingTop: 30,
   },
 });
 
