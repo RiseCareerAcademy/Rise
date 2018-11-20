@@ -221,7 +221,7 @@ module.exports.postMentor = (req, res) => {
     }
 
     date = new Date();
-    userID = iid(parseInt(10000000000000 + date.getTime()));
+    userID = "1"+iid(parseInt(date.getTime()));
     user.user_id = userID;
     const ip_address = ip.address();
     user.profile_pic_URL = `http://${ip_address}:8000/user/${
@@ -358,7 +358,7 @@ module.exports.postMentee = (req, res) => {
       return;
     }
     date = new Date();
-    userID = iid(parseInt(20000000000000 + date.getTime()));
+    userID = "2"+iid(parseInt(date.getTime()));
     user.user_id = userID;
     const ip_address = ip.address();
     user.profile_pic_URL = `http://${ip_address}:8000/user/${
