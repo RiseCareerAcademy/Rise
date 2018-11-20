@@ -4,7 +4,7 @@
 module.exports.create_mentor_table_sql = function () {
     sql = `  
     CREATE TABLE IF NOT EXISTS Mentors ( 
-        user_id int NOT NULL UNIQUE,
+        user_id varchar(255)int varchar (255) NOT NULL,
         first_name varchar(255) NOT NULL,
         last_name varchar(255) NOT NULL,
         email_address varchar(255) NOT NULL UNIQUE,
@@ -22,7 +22,7 @@ module.exports.create_mentor_table_sql = function () {
 module.exports.create_mentee_table_sql = function () {
     sql = `    
         CREATE TABLE IF NOT EXISTS Mentees (
-            user_id int NOT NULL UNIQUE,
+            user_id varchar(255) NOT NULL UNIQUE,
             first_name varchar(255) NOT NULL,
             last_name varchar(255) NOT NULL,
             email_address varchar(255) NOT NULL UNIQUE,
@@ -50,9 +50,9 @@ module.exports.create_password_table_sql = function () {
 module.exports.create_matches_table_sql = function () {
     sql = `
     CREATE TABLE IF NOT EXISTS Matches (
-        match_id int NOT NULL UNIQUE,
-        mentor_id int NOT NULL,
-        mentee_id int NOT NULL,
+        match_id varchar(255) NOT NULL UNIQUE,
+        mentor_id varchar(255) NOT NULL,
+        mentee_id varchar(255) NOT NULL,
         ratings int
     );`
     return sql;
@@ -60,10 +60,10 @@ module.exports.create_matches_table_sql = function () {
 
 module.exports.create_messages_table_sql = function () {
     sql = `CREATE TABLE IF NOT EXISTS Messages (
-        message_id int NOT NULL UNIQUE,
-        match_id int NOT NULL,
-        to_id int NOT NULL,
-        from_id int NOT NULL,
+        message_id varchar(255) NOT NULL UNIQUE,
+        match_id varchar(255) NOT NULL,
+        to_id varchar(255) NOT NULL,
+        from_id varchar(255) NOT NULL,
         message_body varchar(255),
         timestamp datetime NOT NULL 
     );`

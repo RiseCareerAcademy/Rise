@@ -222,7 +222,7 @@ module.exports.postMentor = (req, res) => {
     }
 
     date = new Date();
-    userID = parseInt(10000000000000 + date.getTime());
+    userID = "1"+iid(parseInt(date.getTime()));
     user.user_id = userID;
     sql = `INSERT INTO Mentors VALUES (?, ? , ?, ?, ?, ?, ?, ?, ?, ?, ?) `;
     console.log(sql);
@@ -354,7 +354,7 @@ module.exports.postMentee = (req, res) => {
       return;
     }
     date = new Date();
-    userID = parseInt(20000000000000 + date.getTime());
+    userID = "2"+iid(parseInt(date.getTime()));
     user.user_id = userID;
     const ip_address = ip.address();
     user.profile_pic_URL = `http://${ip_address}:8000/user/${
@@ -1231,4 +1231,15 @@ function getFormattedDate() {
     date.getSeconds();
 
   return str;
+}
+
+function iid(i){
+  res =""
+  i = i.toString().split('').reverse().join('');
+  chars=['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','A','B','D','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','0','1','2','3','4','5','6','7','8','9']
+  while(i >0){
+    res+=chars[i%62]
+    i=(i-i%62)/62
+  }
+  return res
 }
