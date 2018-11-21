@@ -537,9 +537,9 @@ module.exports.getUserById = async (req, res) => {
   try {
     const db = await dbPromise;
     const userID = req.params.id;
-    const getAllUsersSql = sql`SELECT * FROM '${userType(userID)}'where user_id = ${user.user_id};`;
-    const userRows = await db.all(sql);
-    res.json({ success: true, rows: getAllUsersSql });
+    const getAllUsersSql = sql`SELECT * FROM '${userType(userID)}'where user_id = ${userID};`;
+    const userRows = await db.all(getAllUsersSql);
+    res.json({ success: true, rows: userRows });
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ success: false, error: error.message });
@@ -550,8 +550,8 @@ module.exports.getEmailById = async (req, res) => {
   try {
     const db = await dbPromise;
     const userID = req.params.id;
-    const getAllUsers = sql`SELECT email_address FROM '${userType(userID)}'where user_id = ${userID};`;
-    const emailRows = await db.all(getAllUsers)
+    const getAllUsersEmailSql = sql`SELECT email_address FROM '${userType(userID)}'where user_id = ${userID};`;
+    const emailRows = await db.all(getAllUsersEmailSql)
     res.json({ success: true, rows: emailRows });
   } catch (error) {
     console.error(error.message);
@@ -685,7 +685,7 @@ module.exports.addSkill = async (req, res) => {
       res.status(400).json({ error: "User not found!", success: false });
       return;
     }
-    let skills = userSkillObject.skills;
+    let skills = userSkillsObject.skills;
     skills = addToString(skills, skill);
     const updateSkillsSql = sql`UPDATE '${userType(userID)}' SET skills = ${skills} WHERE user_id = ${userID}`;
     await db.run(updateSkillsSql);
