@@ -57,6 +57,9 @@ export default function* messagesWatcher() {
         setMatchIdAction: take(SET_MATCH_ID),
         reconnectToWebSocketAction: take(RECONNECT_TO_WEB_SOCKET),
       });
+      if (setMatchIdAction) {
+        ({ match_id, to_id, otherUser } = setMatchIdAction);
+      }
       const socket = new WebSocket(`ws://${DOMAIN}/user/conversation?from_id=${from_id}`);
       // const socket = io(`http://${DOMAIN}`);
       const socketChannel = yield call(createSocketChannel, socket, match_id);
