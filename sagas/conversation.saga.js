@@ -7,13 +7,6 @@ import { DOMAIN } from "../config/url";
 
 export function createSocketChannel(socket, match_id) {
   return eventChannel(emit => {
-    socket.onopen = () => {
-      socket.send(JSON.stringify({
-        event: 'INIT',
-        match_id,
-      }));
-    }
-
     socket.onmessage = event => {
       const serverMessage = JSON.parse(event.data);
       emit(serverMessage);

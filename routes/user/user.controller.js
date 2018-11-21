@@ -495,12 +495,30 @@ module.exports.conversation = (ws, req) => {
   console.log(from_id);
   console.log('');
   sockets[from_id] = ws;
-  ws.on('message', message => {
-    console.log(`received ws message: ${JSON.stringify(message)}`);
+  ws.on('message', stringifiedMessage => {
+    console.log(`received ws message: ${JSON.stringify(stringifiedMessage)}`);
     if (Object.keys(sockets).includes(to_id)) {
       const toWs = sockets[to_id];
-      toWs.send(message);
+      toWs.send(stringifiedMessage);
     }
+
+    const message = JSON.parse(stringifiedMessage);
+
+    const req = {
+      body: {
+        match_id: message.match_id,
+        to_id: message.to_id,
+        from_id: message.from_id,
+        message_body: message.message_body,
+      },
+    };
+
+    const res = {
+      status: function() { return this; },
+      json: function() { return this; },
+    };
+
+    module.exports.postMessage(req, res);
   });
 
   ws.on('close', () => {
