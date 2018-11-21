@@ -165,8 +165,7 @@ module.exports.postMentor = async (req, res) => {
       res.json({ success: false, rows: "Email is not unique" });
       return false;
     }
-
-    user.user_id = parseInt(10000000000000 + date.getTime());
+    user.user_id = "1"+ iid(date.getTime());
     user.profile_pic_URL = `http://${ip_address}:8000/user/${user.user_id}/profilepic`;
     const insertMentorSql = sql`INSERT INTO Mentors VALUES (
         ${user.user_id},
@@ -263,7 +262,7 @@ module.exports.postMentee = async (req, res) => {
         res.json({ success: false, rows: "Email is not unique" });
         return;
       }
-      user.user_id = parseInt(20000000000000 + date.getTime());
+      user.user_id = "2"+ iid(date.getTime());
       user.profile_pic_URL = `http://${ip_address}:8000/user/${user.user_id}/profilepic`;
 
       const insertMenteeSql = sql`INSERT INTO Mentees VALUES (
@@ -1095,4 +1094,17 @@ function getFormattedDate() {
     date.getSeconds();
 
   return str;
+}
+function iid(num){
+  let res =""
+  let i = num.toString()//.split('').reverse().join('');
+  const chars=['a','b','c','d','e','f','g','h','i','j','k','l','m','n',
+              'o','p','q','r','s','t','u','v','w','x','y','z','A','B',
+              'D','D','E','F','G','H','I','J','K','L','M','N','O','P',
+              'Q','R','S','T','U','V','W','X','Y','Z','0','1','2','3','4','5','6','7','8','9']
+  while(i >0){
+    res+=chars[i%62]
+    i=(i-i%62)/62
+  }
+  return res
 }
