@@ -61,7 +61,7 @@ exports[`App snapshot renders the root without loading screen 1`] = `
               "bottom": 0,
               "left": 0,
               "opacity": 1,
-              "paddingTop": 64,
+              "paddingTop": 0,
               "position": "absolute",
               "right": 0,
               "shadowColor": "black",
@@ -111,7 +111,7 @@ exports[`App snapshot renders the root without loading screen 1`] = `
               "backgroundColor": "#FFF",
               "transform": Array [
                 Object {
-                  "translateX": 0,
+                  "translateX": -750,
                 },
               ],
             }
@@ -139,56 +139,7 @@ exports[`App snapshot renders the root without loading screen 1`] = `
                   "flex": 1,
                 }
               }
-            >
-              <View
-                style={
-                  Object {
-                    "bottom": 0,
-                    "flexDirection": "row",
-                    "left": 0,
-                    "position": "absolute",
-                    "right": 0,
-                    "top": 0,
-                  }
-                }
-              >
-                <View
-                  pointerEvents="box-none"
-                  style={
-                    Object {
-                      "alignItems": "center",
-                      "backgroundColor": "transparent",
-                      "bottom": 0,
-                      "flexDirection": "row",
-                      "justifyContent": "center",
-                      "left": 0,
-                      "opacity": 1,
-                      "position": "absolute",
-                      "right": 0,
-                      "top": 0,
-                    }
-                  }
-                >
-                  <Text
-                    accessibilityTraits="header"
-                    accessible={false}
-                    allowFontScaling={true}
-                    ellipsizeMode="tail"
-                    numberOfLines={1}
-                    onLayout={[Function]}
-                    style={
-                      Object {
-                        "color": "rgba(0, 0, 0, .9)",
-                        "fontSize": 17,
-                        "fontWeight": "600",
-                        "marginHorizontal": 16,
-                        "textAlign": "center",
-                      }
-                    }
-                  />
-                </View>
-              </View>
-            </View>
+            />
           </View>
         </View>
       </View>

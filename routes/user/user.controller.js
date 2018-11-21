@@ -71,7 +71,7 @@ module.exports.deletetable = (req, res) => {
   sql5 = `DROP TABLE IF EXISTS Messages;`;
   sql6 = `DROP TABLE IF EXISTS Skills;`;
   sql7 = `DROP TABLE IF EXISTS Profession;`;
-  
+
   db.all(sql1, [], (err, rows) => {
     if (err) {
       throw err;
@@ -117,7 +117,7 @@ module.exports.linkedin = async (req, res) => {
     code: req.body.code,
     redirect_uri: req.body.redirect_uri,
     client_id: process.env.LINKEDIN_CLIENT_ID,
-    client_secret: process.env.LINKEDIN_CLIENT_SECRET
+    client_secret: process.env.LINKEDIN_CLIENT_SECRET,
   };
   try {
     const response = await axios.post(
@@ -125,12 +125,12 @@ module.exports.linkedin = async (req, res) => {
       qs.stringify(requestBody)
     );
     const {
-      data: { access_token, expires_in }
+      data: { access_token, expires_in },
     } = response;
     const config = {
       headers: {
-        Authorization: `Bearer ${access_token}`
-      }
+        Authorization: `Bearer ${access_token}`,
+      },
     };
     const linkedinFileds = [
       "id",
@@ -154,7 +154,7 @@ module.exports.linkedin = async (req, res) => {
       "site-standard-profile-request",
       "api-standard-profile-request",
       "public-profile-url",
-      "email-address"
+      "email-address",
     ];
     const fieldsString = linkedinFileds.join(",");
     const linkedinApiUrl = `https://api.linkedin.com/v1/people/~:(${fieldsString})?format=json`;
@@ -165,7 +165,7 @@ module.exports.linkedin = async (req, res) => {
       industry: profession,
       lastName: last_name,
       pictureUrls,
-      summary: biography
+      summary: biography,
     } = data;
     const profile_pic_URL = pictureUrls.values[0];
     const result = {
@@ -174,7 +174,7 @@ module.exports.linkedin = async (req, res) => {
       profession,
       last_name,
       biography,
-      profile_pic_URL
+      profile_pic_URL,
     };
     res.json({ success: true, fields: result });
   } catch (error) {
@@ -194,7 +194,8 @@ module.exports.postMentor = (req, res) => {
     "date_of_birth",
     "profession",
     "skills",
-    "hobbies"
+    "hobbies",
+    "profile_pic_URL",
   ];
   const user = {};
 
@@ -223,11 +224,6 @@ module.exports.postMentor = (req, res) => {
     date = new Date();
     userID = "1"+iid(parseInt(date.getTime()));
     user.user_id = userID;
-    const ip_address = ip.address();
-    user.profile_pic_URL = `http://${ip_address}:8000/user/${
-      user.user_id
-    }/profilepic`;
-    //console.log(userID)
     sql = `INSERT INTO Mentors VALUES (?, ? , ?, ?, ?, ?, ?, ?, ?, ?, ?) `;
     console.log(sql);
     db.all(
@@ -243,7 +239,7 @@ module.exports.postMentor = (req, res) => {
         user.profession,
         user.skills,
         user.profile_pic_URL,
-        user.hobbies
+        user.hobbies,
       ],
       (err, rows) => {
         if (err) {
@@ -331,7 +327,7 @@ module.exports.postMentee = (req, res) => {
     "date_of_birth",
     "skills",
     "profession",
-    "hobbies"
+    "hobbies",
   ];
   const user = {};
   const missingFields = fields.some(field => {
@@ -380,7 +376,7 @@ module.exports.postMentee = (req, res) => {
         user.profession,
         user.skills,
         user.profile_pic_URL,
-        user.hobbies
+        user.hobbies,
       ],
       (err, rows) => {
         if (err) {
@@ -479,7 +475,7 @@ module.exports.postMessage = (req, res) => {
       user.to_id,
       user.from_id,
       user.message_body,
-      getFormattedDate()
+      getFormattedDate(),
     ],
     (err, rows) => {
       if (err) {
@@ -489,6 +485,47 @@ module.exports.postMessage = (req, res) => {
     }
   );
 };
+
+const sockets = {};
+
+//create a new message
+module.exports.conversation = (ws, req) => {
+  const { from_id } = req.query;
+  console.log('');
+  sockets[from_id] = ws;
+  ws.on('message', stringifiedMessage => {
+    console.log(`received ws message: ${stringifiedMessage}`);
+    const message = JSON.parse(stringifiedMessage);
+    const { to_id } = message;
+
+    if (Object.keys(sockets).includes(to_id)) {
+      const toWs = sockets[to_id];
+      toWs.send(stringifiedMessage);
+    }
+
+    const req = {
+      body: {
+        match_id: message.match_id,
+        to_id: message.to_id,
+        from_id: message.from_id,
+        message_body: message.message_body,
+      },
+    };
+
+    const res = {
+      status: function() { return this; },
+      json: function() { return this; },
+    };
+
+    module.exports.postMessage(req, res);
+  });
+
+  ws.on('close', () => {
+    delete sockets[from_id];
+    console.log('closed!');
+  })
+}
+
 
 //create new password (SQL INJ.)
 module.exports.postPassword = (req, res) => {
@@ -1117,7 +1154,7 @@ module.exports.login = (req, res) => {
       sql2,
       [
         user.email_address,
-        hp.saltPassword(user.password, salt)["passwordHash"]
+        hp.saltPassword(user.password, salt)["passwordHash"],
       ],
       (err, rows2) => {
         if (err) {
