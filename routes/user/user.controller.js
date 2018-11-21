@@ -490,19 +490,18 @@ const sockets = {};
 
 //create a new message
 module.exports.conversation = (ws, req) => {
-  const { to_id, from_id } = req.query;
-  console.log(to_id);
-  console.log(from_id);
+  const { from_id } = req.query;
   console.log('');
   sockets[from_id] = ws;
   ws.on('message', stringifiedMessage => {
-    console.log(`received ws message: ${JSON.stringify(stringifiedMessage)}`);
+    console.log(`received ws message: ${stringifiedMessage}`);
+    const message = JSON.parse(stringifiedMessage);
+    const { to_id } = message;
+
     if (Object.keys(sockets).includes(to_id)) {
       const toWs = sockets[to_id];
       toWs.send(stringifiedMessage);
     }
-
-    const message = JSON.parse(stringifiedMessage);
 
     const req = {
       body: {

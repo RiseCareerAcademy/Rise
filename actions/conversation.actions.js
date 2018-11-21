@@ -4,6 +4,10 @@ export const SET_RECEIVER_ID = "conversation/SET_RECEIVERID";
 export const SET_MATCH_ID = "conversation/SET_MATCH_ID";
 export const ADD_MESSAGE = 'conversation/ADD_MESSAGE';
 export const CLEAR_MESSAGES = 'conversation/CLEAR_MESSAGES';
+export const CLOSE_WEB_SOCKET = 'conversation/CLOSE_WEB_SOCKET';
+export const RECONNECT_TO_WEB_SOCKET = 'conversation/RECONNECT_TO_WEB_SOCKET';
+export const CONNECTED_TO_WEB_SOCKET = 'conversation/CONNECTED_TO_WEB_SOCKET';
+export const DISCONNECTED_FROM_WEB_SOCKET = 'conversation/DISCONNECTED_FROM_WEB_SOCKET';
 
 const uuidv1 = require('uuid/v1');
 
@@ -52,3 +56,19 @@ export const addMessage = message => ({
 export const clearMessages = () => ({
   type: CLEAR_MESSAGES,
 })
+
+export const closeWebSocket = () => ({
+  type: CLOSE_WEB_SOCKET,
+});
+
+export const reconnectToWebSocket = () => ({
+  type: RECONNECT_TO_WEB_SOCKET,
+});
+
+export const connectedToWebSocket = () => ({
+  type: CONNECTED_TO_WEB_SOCKET,
+});
+
+export const disconnectedFromWebSocket = () => ({
+  type: DISCONNECTED_FROM_WEB_SOCKET,
+});

@@ -1,28 +1,78 @@
 import React, { Component } from "react";
-import { connect } from 'react-redux';
-import { GiftedChat } from 'react-native-gifted-chat'
+import { connect } from "react-redux";
+import { GiftedChat } from "react-native-gifted-chat";
+import { StyleSheet } from "react-native";
+import Dialog from "react-native-dialog";
+import * as debounce from 'lodash.debounce';
 
-import { sendMessage, setMatchId } from '../actions/conversation.actions';
+import {
+  sendMessage,
+  setMatchId,
+  reconnectToWebSocket,
+} from "../actions/conversation.actions";
 
 class Conversation extends Component {
   constructor(props) {
     super(props);
 
     const { to_id, match_id } = this.props.navigation.state.params;
-
     this.props.setMatchId(match_id, to_id);
+
+    this.state = {
+      showDialog: false,
+    }
+
+    this.delayTimeout;
   }
 
-  onSend = (messages) => {
+  componentDidUpdate = prevProps => {
+    // Throttles the first show dialog so that the reconnect
+    // dialog doesn't suddenly appear and disappear (flash) on loading
+    // this screen.
+    const lastShowDialogRequest = !prevProps.connectedToWebSocket;
+    const showDialogRequest = !this.props.connectedToWebSocket;
+    if (!this.state.showDialog && showDialogRequest) {
+      this.delayTimeout = setTimeout(() => {
+        this.setState({
+          showDialog: true,
+        });
+      }, 3000);
+    } else if (lastShowDialogRequest && !showDialogRequest) {
+      clearTimeout(this.delayTimeout);
+      this.setState({
+        showDialog: false,
+      });
+    }
+  }
+
+  shouldShowDialog = () => {
+  }
+
+  onSend = messages => {
     const { user_id } = this.props;
     const { to_id, match_id } = this.props.navigation.state.params;
     console.log(messages);
     const message = messages[0];
-    this.props.sendMessage({ match_id, from_id: user_id, to_id, message_body: message.text });
-  }
+    this.props.sendMessage({
+      match_id,
+      from_id: user_id,
+      to_id,
+      message_body: message.text,
+    });
+  };
+
+  handleReconnect = () => {
+    this.props.reconnectToWebSocket();
+  };
 
   render() {
-    const { user_id, first_name, last_name, messages } = this.props;
+    const {
+      user_id,
+      first_name,
+      last_name,
+      messages,
+      connectedToWebSocket,
+    } = this.props;
     const { otherUser } = this.props.navigation.state.params;
     const currUserName = `${first_name} ${last_name}`;
     const otherUserName = `${otherUser.first_name} ${otherUser.last_name}`;
@@ -39,23 +89,40 @@ class Conversation extends Component {
     }));
 
     return (
-      <GiftedChat
-        messages={giftedChatMessages}
-        onSend={this.onSend}
-        user={{
-          _id: user_id,
-        }}
-      />
-    )
+      <React.Fragment>
+          <Dialog.Container visible={this.state.showDialog}>
+            <Dialog.Title>Disconnected</Dialog.Title>
+            <Dialog.Button label="Reconnect" onPress={this.handleReconnect} />
+          </Dialog.Container>
+        <GiftedChat
+          messages={giftedChatMessages}
+          onSend={this.onSend}
+          user={{
+            _id: user_id,
+          }}
+        />
+      </React.Fragment>
+    );
   }
 }
+
+const styles = StyleSheet.create({
+  reconnect: {
+    zIndex: 2001,
+  },
+});
 
 const mapStateToProps = state => ({
   ...state.user,
   messages: state.conversation.messages,
+  connectedToWebSocket: state.conversation.connectedToWebSocket,
 });
 
-export default connect(mapStateToProps, {
-  sendMessage,
-  setMatchId,
-})(Conversation);
+export default connect(
+  mapStateToProps,
+  {
+    sendMessage,
+    setMatchId,
+    reconnectToWebSocket,
+  }
+)(Conversation);

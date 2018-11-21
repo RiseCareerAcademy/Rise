@@ -45,7 +45,7 @@ export class Messages extends Component {
   }
 
   render() {
-    const { messages } = this.props;
+    const { messages = [] } = this.props;
     return (
       <Container>
         <Header />

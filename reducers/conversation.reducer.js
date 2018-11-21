@@ -4,6 +4,8 @@ import {
   SET_RECEIVER_ID,
   SET_MATCH_ID,
   CLEAR_MESSAGES,
+  CONNECTED_TO_WEB_SOCKET,
+  DISCONNECTED_FROM_WEB_SOCKET,
 } from "../actions/conversation.actions";
 
 const initialState = {
@@ -11,6 +13,7 @@ const initialState = {
   match_id: undefined,
   to_id: undefined,
   messages: [],
+  connectedToWebSocket: false,
 };
 
 export default (state = initialState, action) => {
@@ -45,6 +48,18 @@ export default (state = initialState, action) => {
         ...state,
         messages: [],
       };
+    }
+    case CONNECTED_TO_WEB_SOCKET: {
+      return {
+        ...state,
+        connectedToWebSocket: true,
+      }
+    }
+    case DISCONNECTED_FROM_WEB_SOCKET: {
+      return {
+        ...state,
+        connectedToWebSocket: false,
+      }
     }
     default:
       return state;

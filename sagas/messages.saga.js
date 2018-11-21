@@ -9,7 +9,7 @@ export function* getMessages() {
     const isMentor = String(user_id)[0] === 1;
     const response = yield axios.get(`http://${DOMAIN}/match/userid/${user_id}`);
     const {
-      data: { rows: matches }
+      data: { rows: matches },
     } = response;
     const messages = yield all(
       matches.map(async match => {
@@ -23,8 +23,6 @@ export function* getMessages() {
         const otherUserResponse = await axios.get(`http://${DOMAIN}/user/${otherUserId}`);
         const otherUser = otherUserResponse.data.rows[0];
         let message = {
-          otherUser,
-          otherUserId,
           empty: true,
           match_id: match.match_id,
         };
@@ -33,9 +31,11 @@ export function* getMessages() {
           return message;
         }
         message = {
-          message,
+          ...message,
           ...messageResponse.data.rows[0],
-          empty: false
+          empty: false,
+          otherUser,
+          otherUserId,
         };
 
         return message;

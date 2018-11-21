@@ -1,16 +1,22 @@
 import { eventChannel } from "redux-saga";
 import { take, call, all, race, select, put } from 'redux-saga/effects';
-// import io from 'socket.io-client';
 
-import { SEND_MESSAGE, SET_MATCH_ID, receiveMessage } from "../actions/conversation.actions";
+import { SEND_MESSAGE, SET_MATCH_ID, receiveMessage, closeWebSocket, CLOSE_WEB_SOCKET, RECONNECT_TO_WEB_SOCKET, connectedToWebSocket, disconnectedFromWebSocket } from "../actions/conversation.actions";
 import { DOMAIN } from "../config/url";
 
-export function createSocketChannel(socket, match_id) {
+export function createSocketChannel(socket) {
   return eventChannel(emit => {
+    socket.onopen = () => {
+      emit('open');
+    }
     socket.onmessage = event => {
       const serverMessage = JSON.parse(event.data);
       emit(serverMessage);
     };
+
+    socket.onclose = () => {
+      emit('close');
+    }
 
     const unsubscribe = () => {
       socket.close();
@@ -23,7 +29,14 @@ export function createSocketChannel(socket, match_id) {
 export function* receiveMessagesWatcher(socketChannel) {
   while(true) {
     const message = yield take(socketChannel);
-    yield put(receiveMessage(message));
+    if (message === 'close') {
+      yield put(disconnectedFromWebSocket());
+      yield put(closeWebSocket());
+    } else if (message === 'open') {
+      yield put(connectedToWebSocket());
+    } else {
+      yield put(receiveMessage(message));
+    }
   }
 }
 
@@ -35,11 +48,16 @@ export function* sendMessagesWatcher(socket, match_id, to_id) {
 }
 
 export default function* messagesWatcher() {
-  const { match_id, to_id } = yield take(SET_MATCH_ID);
-  const from_id = yield select(state => state.user.user_id);
+
+  let match_id, to_id, otherUser;
   while (true) {
   try {
-      const socket = new WebSocket(`ws://${DOMAIN}/user/conversation?match_id=${match_id}&to_id=${to_id}&from_id=${from_id}`);
+      const from_id = yield select(state => state.user.user_id);
+      const { setMatchIdAction } = yield race({
+        setMatchIdAction: take(SET_MATCH_ID),
+        reconnectToWebSocketAction: take(RECONNECT_TO_WEB_SOCKET),
+      });
+      const socket = new WebSocket(`ws://${DOMAIN}/user/conversation?from_id=${from_id}`);
       // const socket = io(`http://${DOMAIN}`);
       const socketChannel = yield call(createSocketChannel, socket, match_id);
 
@@ -48,7 +66,7 @@ export default function* messagesWatcher() {
         call(receiveMessagesWatcher, socketChannel),
         call(sendMessagesWatcher, socket, match_id, to_id),
       ]),
-      close: take(SET_MATCH_ID),
+      close: take(CLOSE_WEB_SOCKET),
       });
 
       yield socketChannel.close();
