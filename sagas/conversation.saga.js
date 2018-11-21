@@ -1,8 +1,8 @@
 import { eventChannel } from "redux-saga";
-import { take, call, all, race } from 'redux-saga/effects';
+import { take, call, all, race } from "redux-saga/effects";
 import { SET_RECEIVER } from "../actions/conversation.actions";
 
-const wsUrl = '/conversation';
+const wsUrl = "/conversation";
 
 export function createSocketChannel(socket) {
   return eventChannel(emit => {
@@ -21,20 +21,32 @@ export function createSocketChannel(socket) {
 
 export default function* messagesWatcher() {
   while (true) {
-    yield take(SET_RECEIVER);
-    // FIXME: Need to gracefully handle WS not connected errors.
-    const socket = new WebSocket(wsUrl);
-    const socketChannel = yield call(createSocketChannel, socket);
-  
-    yield race({
-    listeners: all([
-      call(receiveMessagesWatcher, socketChannel),
-      call(sendMessagesWatcher, socket),
-    ]),
-    close: take(SET_RECEIVER),
-    });
-  
-    yield socketChannel.close();
-    yield put(disconnectedFromWs());
+    try {
+      const from_id = yield select(state => state.user.user_id);
+      const { setMatchIdAction } = yield race({
+        setMatchIdAction: take(SET_MATCH_ID),
+        reconnectToWebSocketAction: take(RECONNECT_TO_WEB_SOCKET)
+      });
+      if (setMatchIdAction) {
+        ({ match_id, to_id, otherUser } = setMatchIdAction);
+      }
+      const socket = new WebSocket(
+        `ws://${DOMAIN}/user/conversation?from_id=${from_id}`
+      );
+      // const socket = io(`http://${DOMAIN}`);
+      const socketChannel = yield call(createSocketChannel, socket, match_id);
+
+      yield race({
+        listeners: all([
+          call(receiveMessagesWatcher, socketChannel),
+          call(sendMessagesWatcher, socket, match_id, to_id)
+        ]),
+        close: take(CLOSE_WEB_SOCKET)
+      });
+
+      yield socketChannel.close();
+    } catch (e) {
+      console.error(e.message);
+    }
   }
-  }
+}
