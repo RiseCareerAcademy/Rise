@@ -687,7 +687,7 @@ module.exports.addSkill = async (req, res) => {
     }
     let skills = userSkillObject.skills;
     skills = addToString(skills, skill);
-    updateSkillsSql = sql`UPDATE '${userType(userID)}' SET skills = ${skills} WHERE user_id = ${userID}`;
+    const updateSkillsSql = sql`UPDATE '${userType(userID)}' SET skills = ${skills} WHERE user_id = ${userID}`;
     await db.run(updateSkillsSql);
 
 
@@ -711,57 +711,41 @@ module.exports.addSkill = async (req, res) => {
   }
 };
 
-// module.exports.removeSkill = (req, res) => {
-//   //get input
-//   userID = req.params.id;
-//   if (req.body.skill === undefined) {
-//     res.status(500).json({ error: "Missing credentials", success: false });
-//   }
-//   skill = req.body.skill;
+module.exports.removeSkill = async(req, res) => {
+  //get input
+  const userID = req.params.id;
+  if (req.body.skill === undefined  && req.body.skills === undefined) {
+    res.status(500).json({ error: "Missing credentials", success: false });
+  }
+  const skill = req.body.skill || req.body.skill ;
 
-//   //remove skill to user table
-//   sql1 = `SELECT skills FROM ${userType(userID)} WHERE user_id = ?`;
-//   db.all(sql1, [userID], (err, rows1) => {
-//     if (err) {
-//       throw err;
-//     }
-//     if (rows1.length == 0) {
-//       res.status(400).json({ error: "User not found!", success: false });
-//     }
+  try{
+    const db = await dbPromise;
+    //remove skill from user table
+    const getSkillSql = sql`SELECT skills FROM ${userType(userID)} WHERE user_id = ${userID}`
+    let skills = await db.get(getSkillSql)
+    if(skills.length==0){
+      res.status(400).json({ error: "User not found!", success: false });
+    }
+    skills = removeFromString(skills, skill);
+    const removeSkillSql = `UPDATE '${userType(userID)}' SET skills = ? WHERE user_id = ${userID}`;
+    await db.run(removeSkillSql);
 
-//     skills = rows1[0]["skills"];
-//     skills = removeFromString(skills, skill);
-
-//     sql2 = `UPDATE '${userType(userID)}' SET skills = ? WHERE user_id = ?`;
-//     db.all(sql2, [skills, userID], (err, rows2) => {
-//       if (err) {
-//         throw err;
-//       }
-//     });
-//   });
-
-//   //remove user to skill table
-//   sql3 = `SELECT users FROM Skills WHERE skills = ?`;
-//   db.all(sql3, [skill], (err, rows3) => {
-//     if (err) {
-//       throw err;
-//     }
-//     if (rows3.length == 0) {
-//       res.json({ success: true, rows: "Skill not found !" });
-//     } else {
-//       users = rows3[0]["users"];
-//       users = removeFromString(users, userID);
-
-//       sql5 = `UPDATE Skills SET users = ? WHERE skills = ?`;
-//       db.all(sql5, [users, skill], (err, rows5) => {
-//         if (err) {
-//           throw err;
-//         }
-//         res.json({ success: true, rows: "remove user successfully" });
-//       });
-//     }
-//   });
-// };
+      //remove user to skill table
+    const getUsersSql = `SELECT users FROM Skills WHERE skills = ${skill}`
+    let users = await db.get(getUsersSql);
+    if(users.length==0){
+      res.status(400).json({ error: "Skill not found!", success: false });
+    }
+    users = removeFromString(users, userID);
+    const removeUserSql =  `UPDATE Skills SET users = ${userID} WHERE skills = ${skill}`;
+    await db.run(removeUserSql);
+    res.json({ success: true });
+  }catch(error){
+    res.status(500).json({ success: false, error: error.message });
+  }
+ 
+};
 
 // module.exports.updateSkill = (req, res) => {
 //   userID = req.params.id;
@@ -1068,8 +1052,8 @@ module.exports.addSkill = async (req, res) => {
 
 //controller function to determine if mentee or mentor based on id, returns corresponding table name
 function userType(id) {
-  while (id > 10) id /= 10;
-  if (Math.floor(id) == 1) return "Mentors";
+  if (id[0] == '1') 
+    return "Mentors";
   return "Mentees";
 }
 
