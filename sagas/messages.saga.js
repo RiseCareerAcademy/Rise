@@ -25,6 +25,8 @@ export function* getMessages() {
         let message = {
           empty: true,
           match_id: match.match_id,
+          otherUser,
+          otherUserId,
         };
         const messageResponse = await axios.get(`http://${DOMAIN}/user/message/${match.match_id}`);
         if (messageResponse.data.rows.length === 0) {
@@ -34,8 +36,6 @@ export function* getMessages() {
           ...message,
           ...messageResponse.data.rows[0],
           empty: false,
-          otherUser,
-          otherUserId,
         };
 
         return message;
