@@ -1,17 +1,27 @@
 import React, { Component } from "react";
-import { ScrollView, StyleSheet, View, Text } from "react-native";
-import { List, ListItem, SearchBar, CheckBox } from "react-native-elements";
+import {
+  ScrollView,
+  StyleSheet,
+  View,
+  Text,
+  RefreshControl,
+} from "react-native";
+import { SearchBar, CheckBox } from "react-native-elements";
 import { connect } from "react-redux";
 
-import { getAllMentees, getAllMentors, getMentee, getMentor } from "../actions/search.actions";
-import { DOMAIN } from "../config/url";
-
-const uuidv1 = require('uuid/v1');
+import {
+  getAllMentees,
+  getAllMentors,
+  getMentee,
+  getMentor,
+} from "../actions/search.actions";
+import { Content } from "native-base";
+import UsersList from "../components/UsersList";
 
 export class SearchScreen extends Component {
   static navigationOptions = {
     header: null,
-  }
+  };
 
   state = {
     //array of matches with respective scores
@@ -24,11 +34,12 @@ export class SearchScreen extends Component {
     data: [],
     mentors: [],
     mentees: [],
+    mentorsLoaded: false,
+    menteesLoaded: false,
+    refreshing: false,
   };
   //search function
-  search = () => {
-
-  }
+  search = () => {};
 
   constructor(props) {
     super(props);
@@ -55,16 +66,26 @@ export class SearchScreen extends Component {
 
     this.props.getAllMentors();
     this.props.getAllMentees();
+    this.menteesLoaded = false;
+    this.mentorsLoaded = false;
   }
 
   componentDidUpdate = prevProps => {
     if (prevProps.mentors !== this.props.mentors) {
-      this.setState({ mentors: this.props.mentors });
+      this.setState({ mentors: this.props.mentors, mentorsLoaded: true });
+      this.mentorsLoaded = true;
+      if (this.mentorsLoaded && this.menteesLoaded) {
+        this.setState({ refreshing: false });
+      }
     }
     if (prevProps.mentees !== this.props.mentees) {
-      this.setState({ mentees: this.props.mentees });
+      this.setState({ mentees: this.props.mentees, menteesLoaded: true });
+      this.menteesLoaded = true;
+      if (this.mentorsLoaded && this.menteesLoaded) {
+        this.setState({ refreshing: false });
+      }
     }
-  }
+  };
 
   /**
    * Searches for
@@ -73,41 +94,55 @@ export class SearchScreen extends Component {
     console.log(this.props);
     this.setState({
       mentees: this.props.mentees.filter(mentee => {
-        return Object.entries(mentee).filter(([key]) => ['first_name', 'last_name', 'skills', 'profession'].includes(key))
-        .some(([, entry]) => {
-          if (typeof entry === 'string') {
-            return entry.split(' ').some(word => {
-              return searchText.split(' ').some(searchTextWord => {
-                return word.indexOf(searchTextWord) === 0;
-              })
-            });
-          }
-          return false;
-        });
+        return Object.entries(mentee)
+          .filter(([key]) =>
+            ["first_name", "last_name", "skills", "profession"].includes(key)
+          )
+          .some(([, entry]) => {
+            if (typeof entry === "string") {
+              return entry.split(" ").some(word => {
+                return searchText.split(" ").some(searchTextWord => {
+                  return word.indexOf(searchTextWord) === 0;
+                });
+              });
+            }
+            return false;
+          });
       }),
       mentors: this.props.mentors.filter(mentor => {
-        return Object.entries(mentor).filter(([key]) => ['first_name', 'last_name', 'skills', 'profession'].includes(key))
-         .some(([, entry]) => {
-          if (typeof entry === 'string') {
-            return entry.split(' ').some(word => {
-              return searchText.split(' ').some(searchTextWord => {
-                return word.indexOf(searchTextWord) === 0;
-              })
-            });
-          }
-          return false;
-        });
+        return Object.entries(mentor)
+          .filter(([key]) =>
+            ["first_name", "last_name", "skills", "profession"].includes(key)
+          )
+          .some(([, entry]) => {
+            if (typeof entry === "string") {
+              return entry.split(" ").some(word => {
+                return searchText.split(" ").some(searchTextWord => {
+                  return word.indexOf(searchTextWord) === 0;
+                });
+              });
+            }
+            return false;
+          });
       }),
-    })
-  }
+    });
+  };
 
-  handleMentorPress = user_id => () => {
+  handleMentorPress = user_id => {
     this.props.getMentor(user_id);
-  }
+  };
 
-  handleMenteePress = () => () => {
+  handleMenteePress = user_id => {
+    this.props.getMentee(user_id);
+  };
 
-  }
+  onRefresh = () => {
+    this.setState({ refreshing: true });
+    this.menteesLoaded = false;
+    this.mentorsLoaded = false;
+    this.props.getAllMentors();
+    this.props.getAllMentees();
+  };
 
   render() {
     return (
@@ -123,71 +158,56 @@ export class SearchScreen extends Component {
           style={styles.container}
           contentContainerStyle={styles.contentContainer}
         >
+          <CheckBox
+            title="Mentors"
+            checked={this.state.checkedMentors}
+            onPress={() =>
+              this.setState(prevState => ({
+                checkedMentors: !prevState.checkedMentors,
+              }))
+            }
+          />
 
-        <CheckBox title='Mentors' checked={this.state.checkedMentors}
-        onPress={() => this.setState(prevState => ({checkedMentors: !prevState.checkedMentors}))}/>
-
-        <CheckBox title='Mentees' checked={this.state.checkedMentees}
-        onPress={() => this.setState(prevState => ({checkedMentees: !prevState.checkedMentees}))}/>
-
-    {
-        this.state.checkedMentors && (
-          <View>
-            {this.state.mentors.length > 0 && <View><Text>Mentors:</Text></View>}
-              {this.state.mentors.map((mentor, i) => {
-                const fromLinkedin = mentor.profile_pic_URL.includes("licdn");
-
-                let image =
-                  process.env.NODE_ENV === "development" && !fromLinkedin
-                    ? `http://${DOMAIN}/user/${mentor.user_id}/profilepic`
-                    : mentor.profile_pic_URL;
-                if (!fromLinkedin) {
-                  image += `?${encodeURI(uuidv1())}`;
-                }
-
-                return (
-                  <ListItem
-                    roundAvatar
-                    title={`${mentor.first_name} ${mentor.last_name}`}
-                    subtitle={`${mentor.profession} | ${mentor.skills}`}
-                    leftAvatar={{ source: { uri: image } }}
-                    key={i}
-                    onPress={this.handleMentorPress(mentor.user_id)}
-                  />
-                );
-              })}
-          </View>
-        )
-      }
-      {
-        this.state.checkedMentees && (
-          <View>
-            {this.state.mentees.length > 0 && <View><Text>Mentees:</Text></View>}
-              {this.state.mentees.map(mentee => {
-                const fromLinkedin = mentee.profile_pic_URL.includes("licdn");
-
-                let image =
-                  process.env.NODE_ENV === "development" && !fromLinkedin
-                    ? `http://${DOMAIN}/user/${mentee.user_id}/profilepic`
-                    : mentee.profile_pic_URL;
-                if (!fromLinkedin) {
-                  image += `?${encodeURI(uuidv1())}`;
-                }
-
-                return (
-                  <ListItem
-                    roundAvatar
-                    title={`${mentee.first_name} ${mentee.last_name}`}
-                    subtitle={`${mentee.profession} | ${mentee.skills}`}
-                    leftAvatar={{ source: { uri: image } }}
-                    key={mentee.user_id}
-                    onPress={this.handleMenteePress(mentee.user_id)}
-                  />
-                );
-              })}
-          </View>
-        )
-      }
+          <CheckBox
+            title="Mentees"
+            checked={this.state.checkedMentees}
+            onPress={() =>
+              this.setState(prevState => ({
+                checkedMentees: !prevState.checkedMentees,
+              }))
+            }
+          />
+          <Content
+            refreshControl={
+              <RefreshControl
+                refreshing={this.state.refreshing}
+                onRefresh={this.onRefresh}
+              />
+            }
+          >
+            {this.state.mentees.length > 0 && (
+              <View>
+                <Text>Mentors:</Text>
+              </View>
+            )}
+            {this.state.checkedMentors && (
+              <UsersList
+                users={this.state.mentors}
+                onUserPress={this.handleMentorPress}
+              />
+            )}
+            {this.state.mentees.length > 0 && (
+              <View>
+                <Text>Mentees:</Text>
+              </View>
+            )}
+            {this.state.checkedMentees && (
+              <UsersList
+                users={this.state.mentees}
+                onUserPress={this.handleMenteePress}
+              />
+            )}
+          </Content>
         </ScrollView>
       </View>
     );

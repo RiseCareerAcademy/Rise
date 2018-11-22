@@ -1,18 +1,21 @@
-import React from 'react';
-import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
+import React from "react";
+import {
+  createStackNavigator,
+  createBottomTabNavigator,
+} from "react-navigation";
 
-import SettingsScreen from '../screens/Settings';
-import MatchesScreen from '../screens/MatchesScreen';
+import SettingsScreen from "../screens/Settings";
+import MatchesScreen from "../screens/MatchesScreen";
 //import SearchScreen from '../screens/SearchScreen'
-import { Icon } from 'expo';
-import Colors from '../constants/Colors';
-import ProfileScreen from '../screens/Profile';
-import Messages from '../screens/Messages';
-import SearchScreen from '../screens/SearchScreen';
-import EditProfileScreen from '../screens/EditProfile';
-import PasswordScreen from '../screens/PasswordScreen';
-import MentorProfileScreen from '../screens/MentorProfileScreen';
-
+import { Icon } from "expo";
+import Colors from "../constants/Colors";
+import ProfileScreen from "../screens/Profile";
+import Messages from "../screens/Messages";
+import SearchScreen from "../screens/SearchScreen";
+import EditProfileScreen from "../screens/EditProfile";
+import PasswordScreen from "../screens/PasswordScreen";
+import MentorProfileScreen from "../screens/MentorProfileScreen";
+import MenteeProfileScreen from "../screens/MenteeProfileScreen";
 
 const ProfileStack = createStackNavigator({
   Profile: ProfileScreen,
@@ -29,14 +32,12 @@ ProfileStack.navigationOptions = {
   ),
 };
 
-
-
 const SuggestedMatchStack = createStackNavigator({
   Links: MatchesScreen,
 });
 
 SuggestedMatchStack.navigationOptions = {
-  tabBarLabel: 'Suggested Matches',
+  tabBarLabel: "Suggested Matches",
   tabBarIcon: ({ focused }) => (
     <Icon.Feather
       name="users"
@@ -48,12 +49,12 @@ SuggestedMatchStack.navigationOptions = {
 };
 
 const MessageStack = createStackNavigator({
-  Main: {screen: Messages},
+  Main: { screen: Messages },
 });
 
 MessageStack.navigationOptions = {
   headerTintColor: "rgb(212, 21, 2)",
-  tabBarLabel: 'Messages',
+  tabBarLabel: "Messages",
   tabBarIcon: ({ focused }) => (
     <Icon.Feather
       name="message-circle"
@@ -64,7 +65,6 @@ MessageStack.navigationOptions = {
   ),
 };
 
-
 const SettingStack = createStackNavigator({
   Settings: SettingsScreen,
   EditProfile: EditProfileScreen,
@@ -72,7 +72,7 @@ const SettingStack = createStackNavigator({
 });
 
 SettingStack.navigationOptions = {
-  tabBarLabel: 'Settings',
+  tabBarLabel: "Settings",
   tabBarIcon: ({ focused }) => (
     <Icon.Feather
       name="settings"
@@ -86,10 +86,11 @@ SettingStack.navigationOptions = {
 const SearchStack = createStackNavigator({
   Search: SearchScreen,
   MentorProfile: MentorProfileScreen,
+  MenteeProfile: MenteeProfileScreen,
 });
 
 SearchStack.navigationOptions = {
-  tabBarLabel: 'Search',
+  tabBarLabel: "Search",
   tabBarIcon: ({ focused }) => (
     <Icon.Feather
       name="search"
@@ -98,8 +99,7 @@ SearchStack.navigationOptions = {
       color={focused ? Colors.tabIconSelected : Colors.tabIconDefault}
     />
   ),
-}
-
+};
 
 const TabNavigator = createBottomTabNavigator({
   ProfileStack,
@@ -111,6 +111,6 @@ const TabNavigator = createBottomTabNavigator({
 
 TabNavigator.navigationOptions = {
   header: null,
-}
+};
 
 export default TabNavigator;

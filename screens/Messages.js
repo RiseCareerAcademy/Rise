@@ -12,8 +12,9 @@ import {
   Right,
 } from "native-base";
 import { connect } from "react-redux";
+import { RefreshControl } from "react-native";
 
-import { getMessages } from '../actions/messages.actions';
+import { getMessages } from "../actions/messages.actions";
 
 export class Messages extends Component {
   static navigationOptions = {
@@ -28,6 +29,7 @@ export class Messages extends Component {
     text: "",
     lastChecked: "",
     allMessages: [],
+    refreshing: false,
   };
 
   constructor(props) {
@@ -36,42 +38,69 @@ export class Messages extends Component {
     this.props.getMessages();
   }
 
+  componentDidUpdate = prevProps => {
+    if (prevProps.messages !== this.props.messages) {
+      this.setState({ refreshing: false });
+    }
+  };
+
   handleMessagePress = (match_id, to_id, otherUser) => () => {
-    this.props.navigation.navigate('Conversation', {
+    this.props.navigation.navigate("Conversation", {
       match_id,
       to_id,
       otherUser,
     });
-  }
+  };
+
+  onRefresh = () => {
+    this.props.getMessages();
+    this.setState({ refreshing: true });
+  };
 
   render() {
     const { messages = [] } = this.props;
     return (
       <Container>
         <Header />
-        <Content>
+        <Content
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.refreshing}
+              onRefresh={this._onRefresh}
+            />
+          }
+        >
           <List>
             {messages.map(message => (
-                <ListItem avatar key={message.otherUserId} onPress={this.handleMessagePress(message.match_id, message.otherUserId, message.otherUser)}>
-                  <Left>
-                    <Thumbnail
-                      source={{
-                        uri: message.otherUser.profile_pic_URL,
-                      }}
-                    />
-                  </Left>
-                  <Body>
-                    <Text>{`${message.otherUser.first_name} ${message.otherUser.last_name}`}</Text>
-                    <Text note>
-                      {!message.empty ? message.message_body : 'No messages...'}
-                    </Text>
-                  </Body>
-                  <Right>
-                    {!message.empty && <Text note>{message.timestamp}</Text>}
-                  </Right>
-                </ListItem>
-              )
-            )}
+              <ListItem
+                avatar
+                key={message.otherUserId}
+                onPress={this.handleMessagePress(
+                  message.match_id,
+                  message.otherUserId,
+                  message.otherUser
+                )}
+              >
+                <Left>
+                  <Thumbnail
+                    source={{
+                      uri: message.otherUser.profile_pic_URL,
+                    }}
+                  />
+                </Left>
+                <Body>
+                  <Text>{`${message.otherUser.first_name} ${
+                    message.otherUser.last_name
+                  }`}</Text>
+                  <Text note>
+                    {!message.empty ? message.message_body : "No messages..."}
+                  </Text>
+                </Body>
+                <Right>
+                  {!message.empty && <Text note>{message.timestamp}</Text>}
+                </Right>
+              </ListItem>
+            ))}
           </List>
         </Content>
       </Container>

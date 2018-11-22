@@ -8,7 +8,7 @@ import {
   StyleSheet,
   View,
   Text,
-  Button
+  Button,
 } from "react-native";
 import { connect } from "react-redux";
 
@@ -24,19 +24,19 @@ const styles = StyleSheet.create({
     borderWidth: 0,
     flex: 1,
     margin: 0,
-    padding: 0
+    padding: 0,
   },
   container: {
-    flex: 1
+    flex: 1,
   },
   emailContainer: {
     backgroundColor: "#FFF",
     flex: 1,
-    paddingTop: 30
+    paddingTop: 30,
   },
   headerBackgroundImage: {
     paddingBottom: 20,
-    paddingTop: 35
+    paddingTop: 35,
   },
   headerContainer: {},
   headerColumn: {
@@ -45,50 +45,50 @@ const styles = StyleSheet.create({
       ios: {
         alignItems: "center",
         elevation: 1,
-        marginTop: -1
+        marginTop: -1,
       },
       android: {
-        alignItems: "center"
-      }
-    })
+        alignItems: "center",
+      },
+    }),
   },
   placeIcon: {
     color: "white",
-    fontSize: 26
+    fontSize: 26,
   },
   scroll: {
-    backgroundColor: "#FFF"
+    backgroundColor: "#FFF",
   },
   telContainer: {
     backgroundColor: "#FFF",
     flex: 1,
-    paddingTop: 30
+    paddingTop: 30,
   },
   userAddressRow: {
     alignItems: "center",
-    flexDirection: "row"
+    flexDirection: "row",
   },
   userCityRow: {
-    backgroundColor: "transparent"
+    backgroundColor: "transparent",
   },
   userCityText: {
     color: "#A5A5A5",
     fontSize: 15,
     fontWeight: "600",
-    textAlign: "center"
+    textAlign: "center",
   },
   userBioText: {
     paddingLeft: 15,
     color: "#000000",
     fontSize: 15,
-    fontWeight: "300"
+    fontWeight: "300",
   },
   userTitleText: {
     paddingLeft: 15,
     paddingTop: 15,
     color: "#000000",
     fontSize: 15,
-    fontWeight: "600"
+    fontWeight: "600",
   },
   userImage: {
     borderColor: "#01C89E",
@@ -96,20 +96,20 @@ const styles = StyleSheet.create({
     borderWidth: 3,
     height: 170,
     marginBottom: 15,
-    width: 170
+    width: 170,
   },
   userNameText: {
     color: "#FFF",
     fontSize: 22,
     fontWeight: "bold",
     paddingBottom: 8,
-    textAlign: "center"
+    textAlign: "center",
   },
   uploadBtnContainer: {
-    margin: "auto"
+    margin: "auto",
   },
   uploadBtn: {
-    margin: "auto"
+    margin: "auto",
   },
   editBtn: {
     backgroundColor: "rgba(92, 99,216, 1)",
@@ -118,14 +118,14 @@ const styles = StyleSheet.create({
     marginHorizontal: 300,
     borderColor: "transparent",
     borderWidth: 0,
-    borderRadius: 5
-  }
+    borderRadius: 5,
+  },
 });
 
 class Profile extends Component {
   state = {
     image: this.props.profile_pic_URL,
-    text: ""
+    text: "",
   };
 
   handleMatch = () => {
@@ -133,7 +133,7 @@ class Profile extends Component {
   };
 
   renderHeader = () => {
-    const { first_name, last_name, user_id, zipcode, canMatch, preview, profile_pic_URL } = this.props;
+    const { first_name, last_name, user_id, zipcode, mentor, preview, profile_pic_URL } = this.props;
     const name = `${first_name} ${last_name}`;
 
 
@@ -159,14 +159,14 @@ class Profile extends Component {
           blurRadius={10}
           source={{
             uri:
-              "https://orig00.deviantart.net/dcd7/f/2014/027/2/0/mountain_background_by_pukahuna-d73zlo5.png"
+              "https://orig00.deviantart.net/dcd7/f/2014/027/2/0/mountain_background_by_pukahuna-d73zlo5.png",
           }}
         >
           <View style={styles.headerColumn}>
             <Image
               style={styles.userImage}
               source={{
-                uri: image
+                uri: image,
               }}
             />
 
@@ -184,7 +184,7 @@ class Profile extends Component {
                 <Text style={styles.userCityText}>{zipcode}</Text>
               </View>
             </View>
-            {canMatch && (
+            {mentor && (
               <View style={styles.uploadBtnContainer}>
                 <Button
                   onPress={this.handleMatch}
@@ -241,6 +241,6 @@ const mapStateToProps = () => ({});
 export default connect(
   mapStateToProps,
   {
-    createMatch
+    createMatch,
   }
 )(Profile);

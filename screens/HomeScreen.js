@@ -20,6 +20,9 @@ export class HomeScreen extends React.Component {
     if (this.props.loggedIn) {
       this.goToMainScreen();
     }
+
+    // TODO: remove me
+    this.props.login('kmui2@wisc.edu', '');
   }
 
   goToMainScreen = () => {

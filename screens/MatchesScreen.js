@@ -1,25 +1,21 @@
 import React, { Component } from "react";
-import { View, RefreshControl } from "react-native";
+import { RefreshControl } from "react-native";
 import { connect } from "react-redux";
-
-import { getMatches } from "../actions/matches.actions";
 import {
   Header,
   Content,
   List,
-  ListItem,
   Left,
   Thumbnail,
   Body,
   Text,
-  Right,
   Button,
   Container,
   Card,
   CardItem,
-  Image,
-  Icon,
 } from "native-base";
+
+import { getMatches } from "../actions/matches.actions";
 
 export class MatchesScreen extends Component {
   static navigationOptions = {
@@ -46,11 +42,6 @@ export class MatchesScreen extends Component {
     if (prevProps.mentors !== this.props.mentors) {
       this.setState({ refreshing: false });
     }
-  };
-
-  onRefresh = () => {
-    this.props.getMessages();
-    this.setState({ refreshing: true });
   };
 
   render() {

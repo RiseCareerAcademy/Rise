@@ -2,16 +2,16 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 
 import Profile from "../components/Profile";
-import { Header, Container, Content, Body, Title, Left, Button, Icon } from "native-base";
+import { Container, Header, Body, Title, Content, Button, Left, Icon } from "native-base";
 
-class MentorProfileScreen extends Component {
+class MenteeProfileScreen extends Component {
   static navigationOptions = {
     header: null,
   };
 
   handleBackPress = () => {
     this.props.navigation.goBack();
-  };
+  }
 
   render() {
     return (
@@ -23,11 +23,11 @@ class MentorProfileScreen extends Component {
             </Button>
           </Left>
           <Body>
-            <Title>Mentor</Title>
+            <Title>Mentee</Title>
           </Body>
         </Header>
         <Content>
-          <Profile {...this.props.navigation.state.params} mentor />
+          <Profile {...this.props.navigation.state.params} />
         </Content>
       </Container>
     );
@@ -39,4 +39,4 @@ const mapStateToProps = () => ({});
 export default connect(
   mapStateToProps,
   {}
-)(MentorProfileScreen);
+)(MenteeProfileScreen);
