@@ -23,7 +23,8 @@ module.exports.router = router;
 router.post('/tables',controller.createTables);
 
 // Delete all 7 tables
-router.delete('/tables', controller.deletetable);
+router.delete('/tables', controller.resetTable);
+
 
 //POST request API for /user
 router.post('/mentor', controller.postMentor);
