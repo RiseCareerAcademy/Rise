@@ -30,7 +30,7 @@ module.exports.createTables = async (req, res) => {
 };
 
 //drop table
-module.exports.deletetable = async (req, res) => {
+module.exports.resetTable = async (req, res) => {
   const dropUsersTableSql = sql`DROP TABLE IF EXISTS Users;`;
   const dropPasswordsTableSql = sql`DROP TABLE IF EXISTS Passwords;`;
   const dropMatchesTableSql = sql`DROP TABLE IF EXISTS Matches;`;
@@ -46,9 +46,16 @@ module.exports.deletetable = async (req, res) => {
       db.run(dropMatchesTableSql),
       db.run(dropMessagesTableSql),
       db.run(dropSkillsTableSql),
-      db.run(dropProfessionTableSql)
+      db.run(dropProfessionTableSql),
+      db.run(SQL.CREATE_USERS_TABLE),
+      db.run(SQL.CREATE_PASSWORD_TABLE),
+      db.run(SQL.CREATE_MATCHES_TABLE),
+      db.run(SQL.CREATE_MESSAGES_TABLE),
+      db.run(SQL.CREATE_SKILLS_TABLE),
+      db.run(SQL.CREATE_PROFESSIONS_TABLE)
     ]);
-    res.json({ success: true, rows: "delete all tables" });
+    
+    res.json({ success: true, rows: "reset all tables" });
   } catch (e) {
     console.error(e.message);
     res.json({ success: false, error: e.message });
