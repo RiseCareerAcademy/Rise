@@ -247,18 +247,13 @@ module.exports.postMentee = async (req, res) => {
     "hobbies",
   ];
   const user = {};
-  const missingFields = fields.some(field => {
+  fields.some(field => {
     if (req.body[field] === undefined) {
       res.status(500).json({ error: "Missing credentials", success: false });
-      return true;
+      return;
     }
     user[field] = req.body[field];
-    return false;
   });
-
-  if (missingFields) {
-    return;
-  }
 
   try {
     const db = await dbPromise;
@@ -523,7 +518,7 @@ module.exports.conversation = (ws, req) => {
 module.exports.postPassword = async (req, res) => {
   const fields = ["email_address", "password"];
   const user = {};
-  const missingFields = fields.some(field => {
+  fields.some(field => {
     if (req.body[field] === undefined) {
       res
         .status(500)
@@ -531,12 +526,8 @@ module.exports.postPassword = async (req, res) => {
       return true;
     }
     user[field] = req.body[field];
-    return false;
   });
 
-  if (missingFields) {
-    return;
-  }
 
   try {
     const db = await dbPromise;
