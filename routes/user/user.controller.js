@@ -703,6 +703,46 @@ module.exports.getHobbiesById = async (req, res) => {
   }
 };
 
+module.exports.updateFirstNameById = async (req, res) => {
+  const userID = req.params.id;
+  const newFirstName = req.body.first_name;
+
+  if (newFirstName === undefined) {
+    res.status(500).json({ error: "Missing credentials", success: false });
+    return;
+  }
+
+  try {
+    const db = await dbPromise;
+    const updatenewFirstNameSql = sql`UPDATE Users SET first_name = ${newFirstName} WHERE user_id = ${userID}`;
+    const firstNameRows = await db.all(updatenewFirstNameSql);
+    res.json({ success: true, rows: firstNameRows });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+module.exports.updateLastNameById = async (req, res) => {
+  const userID = req.params.id;
+  const newLastName = req.body.last_name;
+
+  if (newLastName === undefined) {
+    res.status(500).json({ error: "Missing credentials", success: false });
+    return;
+  }
+
+  try {
+    const db = await dbPromise;
+    const updatenewLastNameSql = sql`UPDATE Users SET last_name = ${newLastName} WHERE user_id = ${userID}`;
+    const lastNameRows = await db.all(updatenewLastNameSql);
+    res.json({ success: true, rows: lastNameRows });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
 module.exports.updateHobbiesById = async (req, res) => {
   const userID = req.params.id;
   const newHobbies = req.body.hobbies;
