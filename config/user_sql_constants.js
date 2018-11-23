@@ -29,9 +29,9 @@ module.exports.CREATE_PASSWORD_TABLE = sql`
 
 module.exports.CREATE_MATCHES_TABLE = sql`
     CREATE TABLE IF NOT EXISTS Matches (
-        match_id int NOT NULL UNIQUE,
-        mentor_id int NOT NULL,
-        mentee_id int NOT NULL,
+        match_id varchar(255) NOT NULL UNIQUE,
+        mentor_id varchar(255) NOT NULL,
+        mentee_id varchar(255) NOT NULL,
         ratings int
     );
 `

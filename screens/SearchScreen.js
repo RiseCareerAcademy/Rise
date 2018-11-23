@@ -1,16 +1,28 @@
 import React, { Component } from "react";
-import { ScrollView, StyleSheet, View, Text, Image } from "react-native";
-import { List, ListItem, SearchBar } from "react-native-elements";
-import { CheckBox } from "react-native-elements";
-import Expo from "expo";
+import {
+  ScrollView,
+  StyleSheet,
+  View,
+  Text,
+  RefreshControl,
+} from "react-native";
+import { SearchBar, CheckBox } from "react-native-elements";
 import { connect } from "react-redux";
 
-import { getAllMentees, getAllMentors } from "../actions/search.actions";
-import { DOMAIN } from "../config/url";
-
-const uuidv1 = require('uuid/v1');
+import {
+  getAllMentees,
+  getAllMentors,
+  getMentee,
+  getMentor,
+} from "../actions/search.actions";
+import { Content } from "native-base";
+import UsersList from "../components/UsersList";
 
 export class SearchScreen extends Component {
+  static navigationOptions = {
+    header: null,
+  };
+
   state = {
     //array of matches with respective scores
     results: [],
@@ -22,11 +34,12 @@ export class SearchScreen extends Component {
     data: [],
     mentors: [],
     mentees: [],
+    mentorsLoaded: false,
+    menteesLoaded: false,
+    refreshing: false,
   };
   //search function
-  search = () => {
-    
-  }
+  search = () => {};
 
   constructor(props) {
     super(props);
@@ -53,167 +66,85 @@ export class SearchScreen extends Component {
 
     this.props.getAllMentors();
     this.props.getAllMentees();
+    this.menteesLoaded = false;
+    this.mentorsLoaded = false;
   }
 
   componentDidUpdate = prevProps => {
     if (prevProps.mentors !== this.props.mentors) {
-      this.setState({ mentors: this.props.mentors });
+      this.setState({ mentors: this.props.mentors, mentorsLoaded: true });
+      this.mentorsLoaded = true;
+      if (this.mentorsLoaded && this.menteesLoaded) {
+        this.setState({ refreshing: false });
+      }
     }
     if (prevProps.mentees !== this.props.mentees) {
-      this.setState({ mentees: this.props.mentees });
-    }
-  }
-
-  //search function
-  search = () => {
-    const { navigation } = this.props;
-    var searchInput = navigation.getParam("text").toString();
-    searchInput = searchInput.toLowerCase();
-
-    var results = [];
-    var scores = [];
-    var currArray = "";
-    var tempPostman = "";
-
-    tempPostman = "21542330576964,11542331557063,11542339784414";
-    currArray = tempPostman.split(",");
-
-    //for each ID with skill, add to results
-    for (var i = 0; i < currArray.length; i++) {
-      if (results.indexOf(currArray[i]) > -1) {
-        //if id exists in results already
-        scores[results.indexOf(currArray[i])] += 1;
-      } else {
-        results[results.length] = currArray[i];
-        scores[scores.length] = 1;
+      this.setState({ mentees: this.props.mentees, menteesLoaded: true });
+      this.menteesLoaded = true;
+      if (this.mentorsLoaded && this.menteesLoaded) {
+        this.setState({ refreshing: false });
       }
     }
-
-    //BY PROFESSIONS
-    if (this.state.checkedProfessions) {
-      tempPostman = "21542330576964";
-      currArray = tempPostman.split(",");
-      //for each ID with skill, add to results
-      for (i = 0; i < currArray.length; i++) {
-        if (results.indexOf(currArray[i]) > -1) {
-          //if id exists in results already
-          scores[results.indexOf(currArray[i])] += 3;
-        } else {
-          results[results.length] = currArray[i];
-          scores[scores.length] = 3;
-        }
-      }
-    }
-
-    //BY NAMES
-    if (this.state.checkedNames) {
-      tempPostman = "21542330576964";
-      currArray = tempPostman.split(",");
-      //for each ID with skill, add to results
-      for (i = 0; i < currArray.length; i++) {
-        if (results.indexOf(currArray[i]) > -1) {
-          //if id exists in results already
-          scores[results.indexOf(currArray[i])] += 2;
-        } else {
-          results[results.length] = currArray[i];
-          scores[scores.length] = 2;
-        }
-      }
-    }
-
-    var finalResults = [];
-    var finalScores = [];
-
-    //BY MENTOR/MENTEE
-    if (this.state.checkedMentors) {
-      for (i = 0; i < results.length; i++) {
-        if (results[i].charAt(0) == "1") {
-          finalResults[finalResults.length] = results[i];
-          finalScores[finalScores.length] = scores[i];
-        }
-      }
-    }
-    if (this.state.checkedMentees) {
-      for (i = 0; i < results.length; i++) {
-        if (results[i].charAt(0) == "2") {
-          finalResults[finalResults.length] = results[i];
-          finalScores[finalScores.length] = scores[i];
-        }
-      }
-    }
-
-    //sort by score
-    for (let i = 1; i < finalScores.length; i++) {
-      for (let j = 0; j < i; j++) {
-        if (finalScores[i] > finalScores[j]) {
-          let x = finalScores[i];
-          finalScores[i] = finalScores[j];
-          finalScores[j] = x;
-          let y = finalResults[i];
-          finalResults[i] = finalResults[j];
-          finalResults[j] = y;
-        }
-      }
-    }
-    console.log("RESULT OF SEARCH");
-    for (i = 0; i < results.length; i++) { console.log(results[i]); }
-
-    this.state.results = results;
-
-    for (i = 0; i < finalResults.length; i++) {
-      console.log(finalResults[i].toString());
-    }
-
-    this.state.results = finalResults;
-
-    return;
-  };
-
-  makeListData = results => {
-    this.state.data = [
-      { name: "Margie Hadjiev", skills: "Sleeping", profession: "god" },
-      { name: "Margie Chan", skills: "CCAC", profession: "buddha" }
-    ];
   };
 
   /**
-   * Searches for 
+   * Searches for
    */
   handleSearch = searchText => {
     console.log(this.props);
     this.setState({
       mentees: this.props.mentees.filter(mentee => {
-        return Object.entries(mentee).filter(([key]) => ['first_name', 'last_name', 'skills', 'profession'].includes(key))
-        .some(([key, entry]) => {
-          if (typeof entry === 'string') {
-            return entry.split(' ').some(word => {
-              return searchText.split(' ').some(searchTextWord => {
-                return word.indexOf(searchTextWord) === 0;
-              })
-            });
-          }
-          return false;
-        });
+        return Object.entries(mentee)
+          .filter(([key]) =>
+            ["first_name", "last_name", "skills", "profession"].includes(key)
+          )
+          .some(([, entry]) => {
+            if (typeof entry === "string") {
+              return entry.split(" ").some(word => {
+                return searchText.split(" ").some(searchTextWord => {
+                  return word.indexOf(searchTextWord) === 0;
+                });
+              });
+            }
+            return false;
+          });
       }),
       mentors: this.props.mentors.filter(mentor => {
-        return Object.entries(mentor).filter(([key]) => ['first_name', 'last_name', 'skills', 'profession'].includes(key))
-         .some(([key, entry]) => {
-          if (typeof entry === 'string') {
-            return entry.split(' ').some(word => {
-              return searchText.split(' ').some(searchTextWord => {
-                return word.indexOf(searchTextWord) === 0;
-              })
-            });
-          }
-          return false;
-        });
+        return Object.entries(mentor)
+          .filter(([key]) =>
+            ["first_name", "last_name", "skills", "profession"].includes(key)
+          )
+          .some(([, entry]) => {
+            if (typeof entry === "string") {
+              return entry.split(" ").some(word => {
+                return searchText.split(" ").some(searchTextWord => {
+                  return word.indexOf(searchTextWord) === 0;
+                });
+              });
+            }
+            return false;
+          });
       }),
-    })
-  }
+    });
+  };
+
+  handleMentorPress = user_id => {
+    this.props.getMentor(user_id);
+  };
+
+  handleMenteePress = user_id => {
+    this.props.getMentee(user_id);
+  };
+
+  onRefresh = () => {
+    this.setState({ refreshing: true });
+    this.menteesLoaded = false;
+    this.mentorsLoaded = false;
+    this.props.getAllMentors();
+    this.props.getAllMentees();
+  };
 
   render() {
-    // this.search();
-
     return (
       <View style={styles.container}>
         <SearchBar
@@ -222,79 +153,61 @@ export class SearchScreen extends Component {
           cancelButtonTitle="Cancel"
           placeholder="Search"
           onChangeText={this.handleSearch}
-          // onSubmitEditing={() => navigate("Search", { text: this.state.text })}
         />
         <ScrollView
           style={styles.container}
           contentContainerStyle={styles.contentContainer}
         >
-        
-        <CheckBox title='Mentors' checked={this.state.checkedMentors}
-        onPress={() => this.setState(prevState => ({checkedMentors: !prevState.checkedMentors}))}/>
-        
-        <CheckBox title='Mentees' checked={this.state.checkedMentees}
-        onPress={() => this.setState(prevState => ({checkedMentees: !prevState.checkedMentees}))}/>  
-      
-    {
-        this.state.checkedMentors && (
-          <View>
-            {this.state.mentors.length > 0 && <View><Text>Mentors:</Text></View>}
-            <List>
-              {this.state.mentors.map((mentor, i) => {
-                const fromLinkedin = mentor.profile_pic_URL.includes("licdn");
+          <CheckBox
+            title="Mentors"
+            checked={this.state.checkedMentors}
+            onPress={() =>
+              this.setState(prevState => ({
+                checkedMentors: !prevState.checkedMentors,
+              }))
+            }
+          />
 
-                let image =
-                  process.env.NODE_ENV === "development" && !fromLinkedin
-                    ? `http://${DOMAIN}/user/${mentor.user_id}/profilepic`
-                    : mentor.profile_pic_URL;
-                if (!fromLinkedin) {
-                  image += `?${encodeURI(uuidv1())}`;
-                }
-
-                return (
-                  <ListItem
-                    roundAvatar
-                    title={`${mentor.first_name} ${mentor.last_name}`}
-                    subtitle={`${mentor.profession} | ${mentor.skills}`}
-                    avatar={{ uri: image }}
-                    key={i}
-                  />
-                );
-              })}
-            </List>
-          </View>
-        )
-      }
-      {
-        this.state.checkedMentees && (
-          <View>
-            {this.state.mentees.length > 0 && <View><Text>Mentees:</Text></View>}
-            <List>
-              {this.state.mentees.map((mentee, i) => {
-                const fromLinkedin = mentee.profile_pic_URL.includes("licdn");
-
-                let image =
-                  process.env.NODE_ENV === "development" && !fromLinkedin
-                    ? `http://${DOMAIN}/user/${mentee.user_id}/profilepic`
-                    : mentee.profile_pic_URL;
-                if (!fromLinkedin) {
-                  image += `?${encodeURI(uuidv1())}`;
-                }
-
-                return (
-                  <ListItem
-                    roundAvatar
-                    title={`${mentee.first_name} ${mentee.last_name}`}
-                    subtitle={`${mentee.profession} | ${mentee.skills}`}
-                    avatar={{ uri: image }}
-                    key={mentee.user_id}
-                  />
-                );
-              })}
-          </List>
-          </View>
-        )
-      }
+          <CheckBox
+            title="Mentees"
+            checked={this.state.checkedMentees}
+            onPress={() =>
+              this.setState(prevState => ({
+                checkedMentees: !prevState.checkedMentees,
+              }))
+            }
+          />
+          <Content
+            refreshControl={
+              <RefreshControl
+                refreshing={this.state.refreshing}
+                onRefresh={this.onRefresh}
+              />
+            }
+          >
+            {this.state.mentees.length > 0 && (
+              <View>
+                <Text>Mentors:</Text>
+              </View>
+            )}
+            {this.state.checkedMentors && (
+              <UsersList
+                users={this.state.mentors}
+                onUserPress={this.handleMentorPress}
+              />
+            )}
+            {this.state.mentees.length > 0 && (
+              <View>
+                <Text>Mentees:</Text>
+              </View>
+            )}
+            {this.state.checkedMentees && (
+              <UsersList
+                users={this.state.mentees}
+                onUserPress={this.handleMenteePress}
+              />
+            )}
+          </Content>
         </ScrollView>
       </View>
     );
@@ -303,49 +216,51 @@ export class SearchScreen extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff"
+    backgroundColor: "#fff",
   },
   buttonContainer: {
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
   },
   center: {
     flex: 1,
     flexDirection: "row",
-    justifyContent: "center"
+    justifyContent: "center",
   },
   buttonStyle: {
-    margin: 10
+    margin: 10,
   },
   greyText: {
-    color: "grey"
+    color: "grey",
   },
   subtitleView: {
     flexDirection: "row",
     paddingLeft: 10,
-    paddingTop: 5
+    paddingTop: 5,
   },
   ratingImage: {
     height: 19.21,
-    width: 100
+    width: 100,
   },
   ratingText: {
     paddingLeft: 10,
-    color: "grey"
-  }
+    color: "grey",
+  },
 });
 
 const mapStateToProps = state => ({
   mentors: state.search.mentors,
-  mentees: state.search.mentees
+  mentees: state.search.mentees,
 });
 
 export default connect(
   mapStateToProps,
   {
     getAllMentors,
-    getAllMentees
+    getAllMentees,
+    getMentor,
+    getMentee,
   }
 )(SearchScreen);

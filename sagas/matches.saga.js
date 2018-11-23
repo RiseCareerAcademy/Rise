@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { takeLatest, put, all, select } from 'redux-saga/effects';
 
-import { GET_MATCHES, setMatches } from "../actions/matches.actions";
+import { GET_MATCHES, setMatches, CREATE_MATCH } from "../actions/matches.actions";
 import { DOMAIN } from '../config/url';
 
 export function* getMatches() {
@@ -39,7 +39,34 @@ export function* getMatches() {
 	} catch(e) {
         if (e.response !== undefined && e.response.data !== undefined) {
             const error = typeof e.response.data === 'string' ? e.response.data : e.response.data.error;
-            console.error(error);
+			console.error(error);
+        } else {
+            console.error(e.message);
+        }
+    }
+}
+
+
+export function* createMatch({ user_id }) {
+	try {
+		const mentee_id = yield select(state => state.user.user_id);
+		const reqBody = {
+			mentor_id: user_id,
+			mentee_id,
+			ratings: 0,
+		}
+		const matchApiUrl = `http://${DOMAIN}/match`;
+		yield axios.post(matchApiUrl, reqBody);
+		// const matchResponse = yield axios.get(`${matchApiUrl}/userid/${mentee_id}`);
+		// const { data: { rows } } = matchResponse;
+		// const matchObject = rows[0];
+
+		alert('Successfully matched!');
+	} catch(e) {
+        if (e.response !== undefined && e.response.data !== undefined) {
+            const error = typeof e.response.data === 'string' ? e.response.data : e.response.data.error;
+            // console.error(error);
+			alert(error);
         } else {
             console.error(e.message);
         }
@@ -48,6 +75,7 @@ export function* getMatches() {
 
 export default function* userSaga() {
     yield all([
-        takeLatest(GET_MATCHES, getMatches),
+		takeLatest(GET_MATCHES, getMatches),
+		takeLatest(CREATE_MATCH, createMatch),
     ]);
 }

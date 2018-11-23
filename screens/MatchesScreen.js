@@ -1,20 +1,35 @@
 import React, { Component } from "react";
-import { List, ListItem } from 'react-native-elements';
-import { FlatList, ScrollView, View, StyleSheet } from "react-native";
-import Expo from "expo";
-import { create_matches_table_sql } from "../config/user_sql_constants";
-import { connect } from 'react-redux';
+import { RefreshControl } from "react-native";
+import { connect } from "react-redux";
+import {
+  Header,
+  Content,
+  List,
+  Left,
+  Thumbnail,
+  Body,
+  Text,
+  Button,
+  Container,
+  Card,
+  CardItem,
+} from "native-base";
 
-import { getMatches } from '../actions/matches.actions';
+import { getMatches } from "../actions/matches.actions";
 
 export class MatchesScreen extends Component {
+  static navigationOptions = {
+    header: null,
+  };
+
   state = {
     desiredSkills: "",
     desiredProfession: "",
     //array of matches with respective scores
     matches: [],
     list: [],
-    error: "hi"
+    error: "hi",
+    refreshing: false,
   };
 
   constructor(props) {
@@ -22,73 +37,66 @@ export class MatchesScreen extends Component {
 
     this.props.getMatches();
   }
-  
-  render () {
+
+  componentDidUpdate = prevProps => {
+    if (prevProps.mentors !== this.props.mentors) {
+      this.setState({ refreshing: false });
+    }
+  };
+
+  render() {
     return (
-      <View>
+      <Container>
+        <Header />
+        <Content
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.refreshing}
+              onRefresh={this._onRefresh}
+            />
+          }
+        >
           <List>
-            {
-              this.props.mentors.map((l, i) => (
-                <ListItem
-                  roundAvatar
-                  key={l.user_id}
-                  avatar={{ uri: l.profile_pic_URL }}
-                  title={`${l.first_name} ${l.last_name}`}
-                  subtitle={`${l.profession} | ${l.skills} | Score: ${l.score}`}
-                />
-              ))
-            }
+            {this.props.mentors.map(l => (
+              <Card style={{ flex: 0 }} key={l.user_id}>
+                <CardItem>
+                  <Left>
+                    <Thumbnail source={{ uri: l.profile_pic_URL }} />
+                    <Body>
+                      <Text>{`${l.first_name} ${l.last_name}`}</Text>
+                      <Text note>{l.profession}</Text>
+                    </Body>
+                  </Left>
+                </CardItem>
+                <CardItem>
+                  <Body>
+                    <Text>{l.biography}</Text>
+                    <Text>{l.skills}</Text>
+                  </Body>
+                </CardItem>
+                <CardItem>
+                  <Left>
+                    <Button transparent textStyle={{ color: "#87838B" }}>
+                      <Text>{`Score: ${l.score}`}</Text>
+                    </Button>
+                  </Left>
+                </CardItem>
+              </Card>
+            ))}
           </List>
-      </View>
-    )
+        </Content>
+      </Container>
+    );
   }
 }
-const styles = StyleSheet.create({
-  container: {
-   flex: 1,
-   paddingTop: 22
-  },
-  item: {
-    padding: 10,
-    fontSize: 18,
-    height: 44,
-  },
-  buttonContainer: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center"
-  },
-  center: {
-    flex: 1,
-    flexDirection: "row",
-    justifyContent: "center"
-  },
-  buttonStyle: {
-    margin: 10
-  },
-  greyText: {
-    color: "grey"
-  },
-  subtitleView: {
-    flexDirection: "row",
-    paddingLeft: 10,
-    paddingTop: 5
-  },
-  ratingImage: {
-    height: 19.21,
-    width: 100
-  },
-  ratingText: {
-    paddingLeft: 10,
-    color: "grey"
-  }
-})
 
 const mapStateToProps = state => ({
   mentors: state.matches.mentors,
-})
+});
 
-export default connect(mapStateToProps, {
-  getMatches,
-})(MatchesScreen);
+export default connect(
+  mapStateToProps,
+  {
+    getMatches,
+  }
+)(MatchesScreen);

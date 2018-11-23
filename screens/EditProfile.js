@@ -11,10 +11,7 @@ import {
 import {
   StyleSheet,
   TouchableOpacity,
-  View,
   Image,
-  Button,
-  ActivityIndicator
 } from "react-native";
 import { connect } from "react-redux";
 
@@ -98,11 +95,11 @@ export class EditProfileScreen extends React.Component {
 
   handleSubmit = () => {
     const valid = this.validate(
-	  this.state.skills,
-	  this.state.profession,
-	  this.state.email,
-	  this.state.first_name,
-	  this.state.last_name,
+    this.state.skills,
+    this.state.profession,
+    this.state.email,
+    this.state.first_name,
+    this.state.last_name,
       this.state.zipcode,
     );
     if (!valid && process.env.NODE_ENV !== "development") {
@@ -121,7 +118,6 @@ export class EditProfileScreen extends React.Component {
   };
 
   render() {
-    const { navigate } = this.props.navigation;
     return (
       <Container style={styles.container}>
         <Content>
@@ -145,7 +141,7 @@ export class EditProfileScreen extends React.Component {
             <Item stackedLabel last>
               <Label>Profession</Label>
               <Input 
-                placeholder={this.props.profession} onChange={this.handleProfession} />
+                placeholder={this.props.profession} onChangeText={this.handleProfession} />
             </Item>
             <Item stackedLabel last>
               <Label>zipcode</Label>
@@ -156,7 +152,7 @@ export class EditProfileScreen extends React.Component {
             </Item>
             <Item stackedLabel last>
               <Label>Biography</Label>
-              <Input placeholder={this.props.biography} onChange={this.handleBiography} />
+              <Input placeholder={this.props.biography} onChangeText={this.handleBiography} />
             </Item>
           </Form>
         </Content>
@@ -172,9 +168,6 @@ export class EditProfileScreen extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    paddingTop: 23
-  },
   userImage: {
     borderRadius: 85,
     borderWidth: 3,
