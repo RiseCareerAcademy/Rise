@@ -1,23 +1,24 @@
 import React from "react";
-import { Platform, StatusBar, StyleSheet, View, ActivityIndicator } from "react-native";
+import { Platform, StatusBar, StyleSheet, View } from "react-native";
 import { AppLoading, Asset, Font, Icon } from "expo";
 import { PersistGate } from 'redux-persist/integration/react';
 import { Provider } from 'react-redux';
 
 import { Navigator } from './navigation';
 import configureStore from "./configureStore";
-import { Text } from "native-base";
+import LoadingScreen from './screens/LoadingScreen';
 
 
 export const { persistor, store } = configureStore();
 console.disableYellowBox = true;
 
+console.disableYellowBox = true;
 export default class App extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      isLoadingComplete: false
+      isLoadingComplete: false,
     };
   }
 
@@ -33,7 +34,7 @@ export default class App extends React.Component {
     } else {
       return (
         <Provider store={store}>
-          <PersistGate loading={<View style={styles.loading}><ActivityIndicator animating size="large" /></View>} persistor={persistor}>
+          <PersistGate loading={<LoadingScreen />} persistor={persistor}>
             <View style={styles.container}>
               {Platform.OS === "ios" && <StatusBar barStyle="default" />}
               <Navigator />
@@ -48,7 +49,7 @@ export default class App extends React.Component {
     return Promise.all([
       Asset.loadAsync([
         require("./assets/images/robot-dev.png"),
-        require("./assets/images/robot-prod.png")
+        require("./assets/images/robot-prod.png"),
       ]),
       Font.loadAsync({
         // This is the font that we are using for our tab bar
@@ -58,8 +59,8 @@ export default class App extends React.Component {
         "space-mono": require("./assets/fonts/SpaceMono-Regular.ttf"),
         Roboto: require("native-base/Fonts/Roboto.ttf"),
         Roboto_medium: require("native-base/Fonts/Roboto_medium.ttf"),
-        Ionicons: require("@expo/vector-icons/fonts/Ionicons.ttf")
-      })
+        Ionicons: require("@expo/vector-icons/fonts/Ionicons.ttf"),
+      }),
     ]);
   };
 
