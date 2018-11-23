@@ -3,7 +3,6 @@ const fs = require("fs");
 const { Expo } = require('expo-server-sdk');
 const dbPromise = require("../../db");
 const sql = require("sql-template-strings");
-var date = new Date();
 
 const ip = require("ip");
 const axios = require("axios");
@@ -58,7 +57,7 @@ module.exports.resetTable = async (req, res) => {
       db.run(SQL.CREATE_MATCHES_TABLE),
       db.run(SQL.CREATE_MESSAGES_TABLE),
       db.run(SQL.CREATE_SKILLS_TABLE),
-      db.run(SQL.CREATE_PROFESSIONS_TABLE)
+      db.run(SQL.CREATE_PROFESSIONS_TABLE),
     ]);
 
     res.json({ success: true, rows: "reset all tables" });
@@ -176,7 +175,7 @@ module.exports.postMentor = async (req, res) => {
       res.json({ success: false, rows: "Email is not unique" });
       return false;
     }
-    date = new Date();
+    const date = new Date();
     user.user_id = "1" + iid(date.getTime());
     user.profile_pic_URL = `http://${ip_address}:8000/user/${user.user_id}/profilepic`;
     const insertMentorsSql = sql`INSERT INTO Users VALUES (
@@ -200,12 +199,13 @@ module.exports.postMentor = async (req, res) => {
     for (let i in skills) {
       const skill = skills[i]
       const getUsersBySkillSql = sql`SELECT users FROM Skills WHERE skills = ${skill}`;
-      let usersWithSkillObject = await db.all(getUsersBySkillSql);
+      const usersWithSkillObject = await db.all(getUsersBySkillSql);
       if (usersWithSkillObject === undefined || usersWithSkillObject.length == 0) {
         const insertSkillSql = sql`INSERT INTO Skills VALUES (${skill}, ${user.user_id})`;
         await db.run(insertSkillSql);
       } else {
-        usersWithSkillObject = addToString(usersWithSkillObject, user.user_id);
+        let usersWithSkill = usersWithSkillObject[0]["users"];
+        usersWithSkill = addToString(usersWithSkill, user.user_id);
         const updateSkillSql = sql`UPDATE Skills SET users = ${usersWithSkillObject} WHERE skills = ${skill}`;
         await db.run(updateSkillSql);
       }
@@ -269,7 +269,11 @@ module.exports.postMentee = async (req, res) => {
       res.json({ success: false, rows: "Email is not unique" });
       return;
     }
+    user.skills = user.skills || '';
+    user.profession = user.profession || '';
+    const date = new Date();
     user.user_id = "2" + iid(date.getTime());
+    console.log(user.user_id)
     user.profile_pic_URL = `http://${ip_address}:8000/user/${user.user_id}/profilepic`;
 
     const insertMenteeSql = sql`INSERT INTO Users VALUES (
@@ -292,12 +296,13 @@ module.exports.postMentee = async (req, res) => {
     for (let i in skills) {
       const skill = skills[i]
       const getUsersBySkillSql = sql`SELECT users FROM Skills WHERE skills = ${skill}`;
-      let usersWithSkillObject = await db.all(getUsersBySkillSql);
+      const usersWithSkillObject = await db.all(getUsersBySkillSql);
       if (usersWithSkillObject === undefined || usersWithSkillObject.length == 0) {
         const insertSkillSql = sql`INSERT INTO Skills VALUES (${skill}, ${user.user_id})`;
         await db.run(insertSkillSql);
       } else {
-        usersWithSkillObject = addToString(usersWithSkillObject, user.user_id);
+        let usersWithSkill = usersWithSkillObject[0]["users"];
+        usersWithSkill = addToString(usersWithSkill, user.user_id);
         const updateSkillSql = sql`UPDATE Skills SET users = ${usersWithSkillObject} WHERE skills = ${skill}`;
         await db.run(updateSkillSql);
       }
@@ -338,7 +343,7 @@ module.exports.postMessage = async (req, res) => {
     user[field] = req.body[field];
     return false;
   });
-  date = new Date();
+  const date = new Date();
   try {
     const db = await dbPromise;
     const insertMessageSql = sql`INSERT INTO Messages VALUES (
@@ -1044,7 +1049,7 @@ module.exports.register = async (req, res) => {
       res.json({ success: false, rows: "Email is not unique" });
       return;
     }
-    console.log(emailRows)
+    // console.log(emailRows)
     const salt = hp.genRandomString(16)
     const passwordData = hp.saltPassword(user.password, salt)
     const postPasswordSql = `INSERT INTO Passwords VALUES ("${user.email_address}","${passwordData.passwordHash}", "${passwordData.salt}")`;
@@ -1104,7 +1109,6 @@ module.exports.getMessages = async (req, res) => {
 
 //get latest message by match id
 module.exports.getLatestMessagesById = async (req, res) => {
-  date = new Date();
   req.body.limit = req.body.limit || 1
   req.body.timestamp = req.body.timestamp || getFormattedDate();
   console.log(req.body.timestamp)
@@ -1164,6 +1168,7 @@ function removeFromString(string, rem) {
 }
 
 function getFormattedDate() {
+  const date = new Date();
   var str =
     date.getFullYear() +
     "-" +
