@@ -1,93 +1,86 @@
-const config = require("../../config/database.js");
-const db = require('../../db');
-
-var user_sql_constants = require("../../config/user_sql_constants.js");
+const dbPromise = require("../../db");
+const sql = require("sql-template-strings");
 
 //create new match 
-module.exports.postMatches = (req, res) => {
-  
-    const fields = ['mentor_id', 'mentee_id','ratings'];
-    const user = {};
-    const missingCredentials = fields.some(field => {
-      if (req.body[field] === undefined) {
-       res
-          .status(500)
-          .json({ error: "Missing credentials", success: false });
-          return true;
-      }
-      user[field] = req.body[field];
-      return false;
-    });
+module.exports.postMatches = async (req, res) => {
 
-    if (missingCredentials) {
-      return;
+  const fields = ['mentor_id', 'mentee_id', 'ratings'];
+  const match = {};
+  fields.some(field => {
+    if (req.body[field] === undefined) {
+      res
+        .status(500)
+        .json({ error: `Missing credential ${field}`, success: false });
+      return true;
     }
-    sql = `INSERT INTO Matches VALUES (?,?,?,?)`
-  
-    console.log(sql);
-    match_id = user.mentor_id+""+user.mentee_id
-    db.all(sql, [match_id,user.mentor_id,user.mentee_id,user.ratings], (err, rows) => {
-    if (err) {
-      res.json({ success: false, error: err.message });
-      return;
-    }
-    res.json({ success: true, rows: rows });
+    match[field] = req.body[field];
+    return false;
   });
+  try {
+    const db = await dbPromise;
+    const match_id = match.mentor_id + match.mentee_id
+    const insertMatchesSql = sql`INSERT INTO Matches VALUES (${match_id},${match.mentor_id},${match.mentee_id},${match.rating});`;
+    await db.run(insertMatchesSql);
+    res.json({ success: true, rows: match_id });
+
+  } catch (error) {
+
+    console.error(error.message);
+    res.status(500).json({ success: false, error: error.message });
   }
+
+}
 
 
 //get all matches 
-  module.exports.getAllMatches = (req, res) => {
-    sql = `SELECT * FROM Matches;`;    
-  
-  db.all(sql, [], (err, rows) => {
-    if (err) {
-      throw err;
-    }
-    res.json({ success: true, rows: rows });
-  });
-}
-
-//get match by match id
-module.exports.getMatchById = (req, res) => {
-    matchId = req.params.id;
-    sql = `SELECT * FROM Matches where match_id = ?;` ;  
-    
-    db.all(sql, [matchId], (err, rows) => {
-      if (err) {
-        throw err;
-      }
-      res.json({ success: true, rows: rows });
-    });
-    
+module.exports.getAllMatches = async (req, res) => {
+  try {
+    const db = await dbPromise;
+    const getAllMatchesSql = sql`SELECT * FROM Matches;`;
+    const MatchesRows = await db.all(getAllMatchesSql);
+    res.json({ success: true, rows: MatchesRows });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ success: false, error: error.message });
   }
+};
+//get match by match id
+module.exports.getMatchById = async (req, res) => {
+  try {
+    const db = await dbPromise;
+    const matchID = req.params.id;
+    console.log(matchID)
+    const getAllMatchesSql = sql`SELECT * FROM Matches WHERE match_id = ${matchID};`;
+    const matchRows = await db.all(getAllMatchesSql);
+    res.json({ success: true, rows: matchRows });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
 
-  //get match by user id
-module.exports.getMatchByUserId = (req, res) => {
-  userId = req.params.id;
-  sql = `SELECT * FROM Matches WHERE ${userIDType(userId)} = ?;`;    
-  
-  db.all(sql, [userId], (err, rows) => {
-    if (err) {
-      throw err;
-    }
-    console.log(rows)
-    res.json({ success: true, rows: rows });
-  });
-  
-}
 
-function userIDType(id){
-  while(id>10)
-      id/=10
-  if(Math.floor(id)==1) return "mentor_id"
-  return "mentee_id"
-}
+//get match by user id
+module.exports.getMatchByUserId = async (req, res) => {
+  try {
+    const db = await dbPromise;
+    const userID = req.params.id;
+    const getAllMatchesSql = sql`SELECT * FROM Matches WHERE mentor_id = ${userID} 
+    UNION SELECT * FROM Matches WHERE mentee_id = ${userID};`;
+    const matchRows = await db.all(getAllMatchesSql);
+    res.json({ success: true, rows: matchRows });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+
 
 module.exports.getRatingByMatchId = (req, res) => {
   matchid = req.params.matchid;
   console.log(matchid)
-  sql = `SELECT ratings FROM Matches WHERE match_id = ?;`;    
+  sql = `SELECT ratings FROM Matches WHERE match_id = ?;`;
   db.all(sql, [matchid], (err, rows) => {
     if (err) {
       throw err;
@@ -95,13 +88,13 @@ module.exports.getRatingByMatchId = (req, res) => {
     console.log(rows)
     res.json({ success: true, rows: rows });
   });
-  
+
 }
 
 //average rating
 module.exports.getRatingByMentorId = (req, res) => {
   userid = req.params.userid;
-  sql = `SELECT avg(ratings) FROM Matches WHERE mentor_id = ?;`;    
+  sql = `SELECT avg(ratings) FROM Matches WHERE mentor_id = ?;`;
   db.all(sql, [userid], (err, rows) => {
     if (err) {
       throw err;
@@ -110,7 +103,7 @@ module.exports.getRatingByMentorId = (req, res) => {
     //console.log(ratings)  
     res.json({ success: true, rows: rows });
   });
-  
+
 }
 
 //add a rating
@@ -118,11 +111,11 @@ module.exports.addRating = (req, res) => {
   matchid = req.params.matchid;
   rating = req.params.rating;
   sql = `UPDATE Matches SET ratings = ? WHERE match_id = ?`
-  db.all(sql, [rating,matchid], (err, rows) => {
+  db.all(sql, [rating, matchid], (err, rows) => {
     if (err) {
       throw err;
     }
     res.json({ success: true, rows: rows });
   });
-  
+
 }
