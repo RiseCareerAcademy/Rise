@@ -9,7 +9,7 @@ const storage = multer.diskStorage({
        cb(null, file.originalname);
     }
   });
-  
+
 const upload = multer({
     storage: storage,
     limits: { fileSize: 10000000 },
@@ -19,91 +19,93 @@ const upload = multer({
 const router = express.Router();
 module.exports.router = router;
 
-//CREATE all 7 tables
+// CREATE all 7 tables
 router.post('/tables',controller.createTables);
 
-//Delete all 7 tables
+// Delete all 7 tables
 router.delete('/tables', controller.deletetable);
 
 //POST request API for /user
 router.post('/mentor', controller.postMentor);
 router.post('/linkedin', controller.linkedin);
 router.post('/mentee', controller.postMentee);
-router.post('/password', controller.postPassword);
-router.post('/skill', controller.postSkill);
-router.post('/profession', controller.postProfession);
 
-//GET request API for /user 
+//GET request API for /user
 router.get('/mentors',controller.getAllMentors);
 router.get('/mentees',controller.getAllMentees);  
 router.get('/passwords',controller.getAllPasswords);  
 router.get('/skills',controller.getAllSkills);  
 router.get('/professions',controller.getAllProfessions);  
-//get user by id
 router.get("/:id", controller.getUserById);
 
-//get email by id
+// //get email by id
 router.get("/:id/email", controller.getEmailById);
 //update email by id
 router.put("/:id/email", controller.updateEmailById);
 
-//get hobbies by id
+// //get hobbies by id
 router.get("/:id/hobbies", controller.getHobbiesById);
 //update hobbies by id
 router.put("/:id/hobbies", controller.updateHobbiesById);
 
-//get skill by user_id 
+//get skill by user_id
 router.get("/:id/skills", controller.getSkillbyId);
-//add a new skill
+// //add a new skill
 router.put("/:id/addskill", controller.addSkill);
-//remove a new skill 
+//remove a new skill
 router.put("/:id/removeskill", controller.removeSkill);
 
-//get users by skill 
+//get users by skill
 router.get("/skill/:skill", controller.getUsersbySkill);
 
-//get users by profession 
+//get users by profession
 router.get("/profession/:profession", controller.getUsersbyProfession);
 
-//get first name and last name from user id 
+//get first name and last name from user id
 router.get("/name/:id", controller.getFirstLastById);
 
 
-//get profile pic by id 
+//get profile pic by id
 router.get("/:id/profilepic", controller.getProfilePic);
-//update profile pic by id 
+//update profile pic by id
 router.put("/:id/profilepic", controller.updateProfilePic);
 router.post("/:id/profilepic", upload.single('photo'), controller.postProfilePic);
 
-//get profession/area of study 
-router.get("/:id/profession", controller.getProfession);
-//update profession or area of study 
+//get profession/area of study
+router.get("/:id/profession", controller.getProfessionById);
+//update profession or area of study
 router.put("/:id/profession", controller.updateProfession);
 
-//get bio of study 
+//get bio of study
 router.get("/:id/bio", controller.getBio);
-//update bio 
+//update bio
 router.put("/:id/bio", controller.updateBio);
-//delete bio
+// //delete bio
 router.delete("/:id/bio", controller.deleteBio);
 
-//update zipcode
+// //update zipcode
 router.put("/:id/zipcode",controller.updateZipcode);
 
-//login using email/password
+// //login using email/password
+router.post("/password",controller.register);
+
 router.post("/login",controller.login);
 
-//MESSAGE API
 
-//create a new message 
+// //MESSAGE API
+
+//create a new message
 router.post('/message', controller.postMessage);
 
-//get all messages 
+//get all messages
 router.get('/message/all', controller.getMessages);
 
-//get latest message by message id 
-router.get('/message/:matchid', controller.getLatestMessageById);
+//get latest message by message id
+router.get('/message/:matchid', controller.getLatestMessagesById);
 
-//get all message by message id 
+//get all message by message id
+
 router.get('/message/all/:matchid', controller.getMessageChain);
 
+// create a conversation ws connection
+router.ws('/conversation', controller.conversation);

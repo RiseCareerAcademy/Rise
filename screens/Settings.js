@@ -1,16 +1,14 @@
 import React, { Component } from "react";
-import {
-  View,
-  TouchableOpacity,
-  TextInput,
-  StyleSheet
-} from "react-native";
 import { connect } from 'react-redux';
-import { Container, Header, Content, List, ListItem, Text, Icon, Left, Body, Right, Switch, Button, Separator } from 'native-base';
+import { Container, Header, Content, ListItem, Text, Icon, Left, Body, Right, Button, Separator } from 'native-base';
 
 import { logoutUser } from '../actions/user.actions';
 
 export class Settings extends Component {
+  static navigationOptions = {
+    header: null,
+  }
+  
   state = {
     email: "",
     password: "",
@@ -83,9 +81,9 @@ export class Settings extends Component {
   }
 
   render() {
-    const { navigate } = this.props.navigation;
     return (
       <Container>
+        <Header />
         <Content>
           <ListItem icon onPress={this.handleEditProfile}>
             <Left>
@@ -132,31 +130,6 @@ export class Settings extends Component {
         </Content>
       </Container>
     );
-    // return (
-
-
-    //     <TouchableOpacity
-    //       style={styles.submitButton}
-    //       onPress={this.handleEditProfile}
-    //     >
-    //       <Text style={styles.submitButtonText}> Edit Profile </Text>
-    //     </TouchableOpacity>
-
-    //     <TouchableOpacity
-    //       style={styles.submitButton}
-    //       onPress={this.handleChangePassword}
-    //     >
-    //       <Text style={styles.submitButtonText}> Change Password </Text>
-    //     </TouchableOpacity>
-
-    //     <TouchableOpacity
-    //       style={styles.submitButton}
-    //       onPress={this.handleLogout}
-    //     >
-    //       <Text style={styles.submitButtonText}> Logout </Text>
-    //     </TouchableOpacity>
-    //   </View>
-    // );
   }
 }
 
@@ -165,24 +138,3 @@ const mapStateToProps = () => ({});
 export default connect(mapStateToProps, {
   logoutUser,
 })(Settings);
-
-const styles = StyleSheet.create({
-  container: {
-    paddingTop: 23
-  },
-  input: {
-    margin: 15,
-    height: 40,
-    borderColor: "#000000",
-    borderWidth: 1
-  },
-  submitButton: {
-    backgroundColor: "#000000",
-    padding: 10,
-    margin: 15,
-    height: 40
-  },
-  submitButtonText: {
-    color: "white"
-  }
-});

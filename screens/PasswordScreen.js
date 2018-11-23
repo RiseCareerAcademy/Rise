@@ -11,10 +11,6 @@ import {
 import {
   StyleSheet,
   TouchableOpacity,
-  View,
-  Image,
-  Button,
-  ActivityIndicator
 } from "react-native";
 import { connect } from "react-redux";
 
@@ -37,11 +33,11 @@ export class Password extends React.Component {
   };
 
   handlePassword = text => {
-	  this.setState({ password: text });
+    this.setState({ password: text });
   }
 
   handleConfirmPassword = text => {
-	  this.setState({ confirmedPassword: text });
+    this.setState({ confirmedPassword: text });
   }
 
   validate = (password, confirmedPassword) => {
@@ -49,13 +45,13 @@ export class Password extends React.Component {
     // in a signle array
     const errors = [];
     if (
-		password.length === 0 ||
-		confirmedPassword.length === 0
+    password.length === 0 ||
+    confirmedPassword.length === 0
     ) {
       errors.push("All fields must be filled");
     } else if (password.length < 5) {
-	  errors.push("Email should be at least 5 charcters long");
-	}
+    errors.push("Email should be at least 5 charcters long");
+  }
     if (errors.length == 0) {
       // alert(errors);
       return true;
@@ -66,8 +62,8 @@ export class Password extends React.Component {
 
   handleSubmit = () => {
     const valid = this.validate(
-		this.state.password,
-		this.state.confirmedPassword,
+    this.state.password,
+    this.state.confirmedPassword,
     );
     if (!valid && process.env.NODE_ENV !== "development") {
       return;
@@ -75,7 +71,6 @@ export class Password extends React.Component {
   };
 
   render() {
-    const { navigate } = this.props.navigation;
     return (
       <Container style={styles.container}>
         <Content>
@@ -86,14 +81,14 @@ export class Password extends React.Component {
             <Item stackedLabel>
               <Label>Password</Label>
               <Input
-				onChange={this.handlePassword}
-				secureTextEntry
+        onChange={this.handlePassword}
+        secureTextEntry
               />
             </Item>
             <Item stackedLabel last>
               <Label>Confirm Password</Label>
               <Input 
-				secureTextEntry
+        secureTextEntry
                 onChange={this.handleConfirmPassowrd} />
             </Item>
           </Form>
@@ -110,9 +105,6 @@ export class Password extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    paddingTop: 23
-  },
   userImage: {
     borderRadius: 85,
     borderWidth: 3,

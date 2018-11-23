@@ -1,14 +1,16 @@
 import React from "react";
 import { Button, Text } from "native-base";
-import { Platform, ScrollView, StyleSheet, Image, View } from "react-native";
-import { AuthSession } from "expo";
+import { ScrollView, StyleSheet, Image, View } from "react-native";
 
-import { MonoText } from "../components/StyledText";
 import { connect } from 'react-redux';
 
 import { registerWithLinkedin, login } from '../actions/user.actions';
 
 export class HomeScreen extends React.Component {
+  static navigationOptions = {
+    header: null,
+  }
+
   constructor(props) {
     super(props);
     this.state = {
@@ -18,6 +20,9 @@ export class HomeScreen extends React.Component {
     if (this.props.loggedIn) {
       this.goToMainScreen();
     }
+
+    // TODO: remove me
+    this.props.login('kmui2@wisc.edu', '');
   }
 
   goToMainScreen = () => {
@@ -84,7 +89,7 @@ export class HomeScreen extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff"
+    backgroundColor: "#fff",
   },
   buttonContainer: {
     flex: 1,
@@ -95,16 +100,16 @@ const styles = StyleSheet.create({
   center: {
     flex: 1,
     flexDirection: "row",
-    justifyContent: "center"
+    justifyContent: "center",
   },
   buttonStyle: {
-    margin: 10
+    margin: 10,
   },
   greyText: {
-    color: "grey"
+    color: "grey",
   },
   contentContainer: {
-    paddingTop: 30
+    paddingTop: 30,
   },
 });
 

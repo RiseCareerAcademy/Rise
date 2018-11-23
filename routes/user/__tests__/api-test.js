@@ -1,5 +1,29 @@
 const newman = require('newman'); // require newman in your project
 
+// const n = { ...newman };
+// newman.run = (options) => new Promise((resolve, reject) =>
+//   n.run(options, err => {
+//     if (err) {
+//       reject(err);
+//     } else {
+//       resolve();
+//     }
+//   })
+// );
+
+// (async function() {
+//   await newman.run({
+//     collection: require('./AddingMatch.postman_collection.json'),
+//     delayRequest: 200,
+//     reporters: 'cli'
+//   })
+//   await newman.run({
+//       collection: require('./AddingMatch.postman_collection.json'),
+//       delayRequest: 200,
+//       reporters: 'cli'
+//   });
+// })();
+
 // call newman.run to pass options object and wait for callback
 newman.run({
     collection: require('./AddingMatch.postman_collection.json'),
@@ -98,20 +122,20 @@ newman.run({
                                                                 reporters: 'cli'
                                                             }, function (err) {
                                                                 if (err) { throw err; }
-                                                                
-                                                            }); 
-                                                        }); 
-                                                    }); 
-                                                }); 
-                                            }); 
-                                        }); 
-                                    }); 
-                                }); 
-                            }); 
-                        }); 
-                    }); 
-                }); 
-            }); 
+
+                                                            });
+                                                        });
+                                                    });
+                                                });
+                                            });
+                                        });
+                                    });
+                                });
+                            });
+                        });
+                    });
+                });
+            });
         });
     });
 });
