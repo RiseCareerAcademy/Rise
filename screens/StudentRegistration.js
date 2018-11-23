@@ -6,14 +6,20 @@ import {
   Form,
   Item,
   Label,
-  Input
+  Input,
+  Header,
+  Right,
+  Icon,
+  Button,
+  Body,
+  Left,
+  Title
 } from "native-base";
 import {
   StyleSheet,
   TouchableOpacity,
   View,
   Image,
-  Button,
   ActivityIndicator
 } from "react-native";
 import { connect } from "react-redux";
@@ -25,6 +31,10 @@ import { DOMAIN } from "../config/url";
 const uuidv1 = require("uuid/v1");
 
 export class StudentRegistration extends React.Component {
+  static navigationOptions = {
+    header: null,
+  }
+
   state = {
     email: "",
     password: "",
@@ -87,6 +97,10 @@ export class StudentRegistration extends React.Component {
     this.setState({ zipcode: text });
   };
 
+  handleBiography = text => {
+    this.setState({ biography: text });
+  }
+
   validate = (
     email,
     password,
@@ -95,7 +109,8 @@ export class StudentRegistration extends React.Component {
     profession,
     name,
     lastName,
-    zipcode
+    zipcode,
+    biography,
   ) => {
     // we are going to store errors for all fields
     // in a signle array
@@ -108,7 +123,8 @@ export class StudentRegistration extends React.Component {
       password.length == 0 ||
       confirmedPassword.length == 0 ||
       lastName.length == 0 ||
-      zipcode.length == 0
+      zipcode.length == 0 ||
+      biography.length == 0
     ) {
       errors.push("All fields must be filled");
     } else if (email.length < 5) {
@@ -132,7 +148,6 @@ export class StudentRegistration extends React.Component {
     } else {
       return false;
     }
-    
   };
 
   handleSubmit = () => {
@@ -144,7 +159,8 @@ export class StudentRegistration extends React.Component {
       this.state.profession,
       this.state.name,
       this.state.lastName,
-      this.state.zipcode
+      this.state.zipcode,
+      this.state.biography,
     );
     if (!valid && process.env.NODE_ENV !== "development") {
       return;
@@ -164,18 +180,51 @@ export class StudentRegistration extends React.Component {
       city: this.state.city,
       state: this.state.state,
       image: this.state.image,
-      uri: this.state.image,
-      password: this.state.password,
+      uri: this.state.image
     };
 
     this.props.registerMentee(mentee);
   };
 
+  handlePreviewPress = () => {
+    this.props.navigation.navigate("Preview", {
+      profile_pic_URL: this.state.image,
+      first_name: this.state.name,
+      last_name: this.state.lastName,
+      zipcode: this.state.zipcode,
+      biography: this.state.biography,
+      profession: this.state.profession,
+      skills: this.state.skills,
+      preview: true
+    });
+  };
+
+  handleBackPress = () => {
+    this.props.navigation.goBack();
+  }
+
   render() {
     return (
-      <Container style={styles.container}>
+      <Container >
+        <Header>
+          <Left>
+            <Button transparent onPress={this.handleBackPress}>
+              <Icon name="md-arrow-round-back" />
+            </Button>
+          </Left>
+          <Body>
+            <Title>Student Registration</Title>
+          </Body>
+          <Right>
+            <Button transparent onPress={this.handlePreviewPress}>
+              <Icon name="eye" />
+            </Button>
+          </Right>
+        </Header>
         <Content>
-          <Text style={styles.error}>{!this.props.registering && this.props.error}</Text>
+          <Text style={styles.error}>
+            {!this.props.registering && this.props.error}
+          </Text>
           <Form>
             {this.state.image !== null && (
               <Image
@@ -190,13 +239,14 @@ export class StudentRegistration extends React.Component {
               <Button
                 onPress={this.handleImagePickerPress}
                 style={styles.uploadBtn}
-                title="Select image from Camera Roll"
-              />
+              >
+                <Text>Select image from Camera Roll</Text>
+              </Button>
             </View>
             <Item stackedLabel>
               <Label>Email</Label>
               <Input
-              autoCapitalize="none"
+                autoCapitalize="none"
                 placeholder="Enter your email"
                 onChangeText={this.handleEmail}
               />
@@ -204,7 +254,7 @@ export class StudentRegistration extends React.Component {
             <Item stackedLabel>
               <Label>Password</Label>
               <Input
-              autoCapitalize="none"
+                autoCapitalize="none"
                 placeholder="Enter your password"
                 onChangeText={this.handlePassword}
                 secureTextEntry={true}
@@ -213,10 +263,24 @@ export class StudentRegistration extends React.Component {
             <Item stackedLabel>
               <Label>Confirm Password</Label>
               <Input
-              autoCapitalize="none"
+                autoCapitalize="none"
                 placeholder="Confirm Password Change"
                 onChangeText={this.handleConfirmedPassword}
                 secureTextEntry={true}
+              />
+            </Item>
+            <Item stackedLabel last>
+              <Label>Name</Label>
+              <Input
+                placeholder="Enter your name"
+                onChangeText={this.handleName}
+              />
+            </Item>
+            <Item stackedLabel last>
+              <Label>lastName</Label>
+              <Input
+                placeholder="Enter your last name"
+                onChangeText={this.handleLastName}
               />
             </Item>
             <Item stackedLabel>
@@ -234,24 +298,17 @@ export class StudentRegistration extends React.Component {
               />
             </Item>
             <Item stackedLabel last>
-              <Label>Name</Label>
-              <Input
-                placeholder="Enter your name"
-                onChangeText={this.handleName}
-              />
-            </Item>
-            <Item stackedLabel last>
-              <Label>lastName</Label>
-              <Input
-                placeholder="Enter your last name"
-                onChangeText={this.handleLastName}
-              />
-            </Item>
-            <Item stackedLabel last>
               <Label>zipcode</Label>
               <Input
                 placeholder="Enter your zipcode"
                 onChangeText={this.handleZipCode}
+              />
+            </Item>
+            <Item stackedLabel>
+              <Label>Biography</Label>
+              <Input
+                placeholder="Enter your bio"
+                onChangeText={this.handleBiography}
               />
             </Item>
           </Form>
@@ -334,7 +391,7 @@ const styles = StyleSheet.create({
 const mapStateToProps = state => ({
   loggedIn: state.user.loggedIn,
   registering: state.user.registering,
-  error: state.user.error,
+  error: state.user.error
 });
 
 export default connect(

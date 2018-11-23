@@ -11,9 +11,7 @@ import {
 import {
   StyleSheet,
   TouchableOpacity,
-  View,
   Image,
-  Button,
   ActivityIndicator
 } from "react-native";
 import { connect } from "react-redux";
@@ -56,7 +54,7 @@ export class MentorRegistration extends React.Component {
     this.setState({ email: text });
   };
 
-  handleOccupation = text => {
+  handleProfession = text => {
     this.setState({ profession: text });
   };
 
@@ -78,21 +76,12 @@ export class MentorRegistration extends React.Component {
     const errors = [];
     if (
       skills.length == 0 ||
-      profession.length == 0 ||
       name.length == 0 ||
-      email.length == 0 ||
       password.length == 0 ||
       confirmedPassword.length == 0 ||
-      lastName.length == 0 ||
       zipcode.length == 0
     ) {
       errors.push("All fields must be filled");
-    } else if (email.length < 5) {
-      errors.push("Email should be at least 5 charcters long");
-    } else if (email.split("").filter(x => x === "@").length !== 1) {
-      errors.push("Email should contain one @");
-    } else if (email.indexOf(".") === -1) {
-      errors.push("Email should contain at least one dot");
     } else if (password.length < 6) {
       errors.push("Password should be at least 6 characters long");
     } else if (password != confirmedPassword) {
@@ -130,7 +119,7 @@ export class MentorRegistration extends React.Component {
       date_of_birth: "12/24/1996",
       skills: this.state.skills,
       hobbies: "fake hobbies",
-      profession: this.state.occupation || this.props.occupation,
+      profession: this.state.profession || this.props.profession,
       password: this.state.password,
       image: this.props.profile_pic_URL,
     };
@@ -139,7 +128,6 @@ export class MentorRegistration extends React.Component {
   };
 
   render() {
-    const { navigate } = this.props.navigation;
     return (
       <Container style={styles.container}>
         <Content>
@@ -156,9 +144,9 @@ export class MentorRegistration extends React.Component {
 
             <Item stackedLabel>
               <Label>Email</Label>
-              <Input 
+              <Input
               autoCapitalize="none"
-              placeholder={this.props.email_address} onChange={this.handleEmail} />
+              placeholder={this.props.email_address} onChangeText={this.handleEmail} />
             </Item>
             <Item stackedLabel>
               <Label>Password</Label>
@@ -184,15 +172,15 @@ export class MentorRegistration extends React.Component {
             </Item>
             <Item stackedLabel last>
               <Label>Profession</Label>
-              <Input placeholder={this.props.occupation} onChange={this.handleOccupation} />
+              <Input placeholder={this.props.profession} onChangeText={this.handleProfession} />
             </Item>
             <Item stackedLabel last>
               <Label>Name</Label>
-              <Input placeholder={this.props.first_name} onChange={this.handleFirstName} />
+              <Input placeholder={this.props.first_name} onChangeText={this.handleFirstName} />
             </Item>
             <Item stackedLabel last>
               <Label>lastName</Label>
-              <Input placeholder={this.props.last_name} onChange={this.handleLastName} />
+              <Input placeholder={this.props.last_name} onChangeText={this.handleLastName} />
             </Item>
             <Item stackedLabel last>
               <Label>zipcode</Label>
@@ -202,7 +190,7 @@ export class MentorRegistration extends React.Component {
             </Item>
             <Item stackedLabel last>
               <Label>Biography</Label>
-              <Input placeholder={this.props.biography} onChange={this.handleBiography} />
+              <Input placeholder={this.props.biography} onChangeText={this.handleBiography} />
             </Item>
           </Form>
         </Content>
@@ -222,9 +210,6 @@ export class MentorRegistration extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    paddingTop: 23
-  },
   userImage: {
     borderRadius: 85,
     borderWidth: 3,
@@ -287,7 +272,7 @@ const mapStateToProps = state => ({
   error: state.user.error,
   email_address: state.user.email_address,
   first_name: state.user.first_name,
-  occupation: state.user.occupation,
+  profession: state.user.profession,
   last_name: state.user.last_name,
   biography: state.user.biography,
   profile_pic_URL: state.user.profile_pic_URL,
