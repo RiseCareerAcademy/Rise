@@ -6,21 +6,21 @@ const sql = require('sql-template-strings');
  * MATCHING ALGORITHM FUNCTION
  */
 module.exports = (mentee, mentorsWithSameProfession, mentorsWithSameSkills) => {
-  const mentorsScores = {};
+  const mentorScores = {};
 
   // Add 2 for mentors with same profession.
   mentorsWithSameProfession.forEach(mentor => {
-    mentorsScores[mentor] = 2;
+    mentorScores[mentor] = 2;
   });
 
   // Add 1 for mentors with same skills.
   mentorsWithSameSkills.forEach(mentor => {
-    mentorsScores[mentor] =
-      mentorsScores[mentor] === undefined ? 1 : mentorsScores[mentor] + 1;
+    mentorScores[mentor] =
+      mentorScores[mentor] === undefined ? 1 : mentorScores[mentor] + 1;
   });
 
-  // Sore the mentors by score.
-  const sortedMentors = Object.entries(mentorsScores)
+  // Sort the mentors by score.
+  const sortedMentors = Object.entries(mentorScores)
     .sort((mentorA, mentorB) => {
       const [, mentorAScore] = mentorA;
       const [, mentorBScore] = mentorB;
