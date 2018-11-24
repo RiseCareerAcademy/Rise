@@ -1,8 +1,8 @@
 /*ALL SQL CONSTANTS FOR USER CONTROLLER */
 const sql = require('sql-template-strings');
-//create mentor, mentee and matchces table for testing 
-module.exports.CREATE_USERS_TABLE = sql`  
-    CREATE TABLE IF NOT EXISTS Users ( 
+//create mentor, mentee and matchces table for testing
+module.exports.CREATE_USERS_TABLE = sql`
+    CREATE TABLE IF NOT EXISTS Users (
         user_id int NOT NULL UNIQUE,
         first_name varchar(255) NOT NULL,
         last_name varchar(255) NOT NULL,
@@ -19,8 +19,8 @@ module.exports.CREATE_USERS_TABLE = sql`
 `
 
 
-module.exports.CREATE_PASSWORD_TABLE = sql`  
-    CREATE TABLE IF NOT EXISTS Passwords ( 
+module.exports.CREATE_PASSWORD_TABLE = sql`
+    CREATE TABLE IF NOT EXISTS Passwords (
         email_address varchar(255) NOT NULL UNIQUE,
         password varchar(255),
         salt varchar(255)
@@ -43,7 +43,7 @@ module.exports.CREATE_MESSAGES_TABLE = sql`
         to_id int NOT NULL,
         from_id int NOT NULL,
         message_body varchar(255),
-        timestamp datetime NOT NULL 
+        timestamp datetime NOT NULL
     );
 `
 
@@ -66,5 +66,12 @@ module.exports.CREATE_PROFESSIONS_TABLE = sql`
     CREATE TABLE IF NOT EXISTS Profession (
         profession varchar(255) NOT NULL UNIQUE,
         users varchar(255) NOT NULL
+    );
+`
+
+module.exports.CREATE_PUSH_TOKENS_TABLE = sql`
+    CREATE TABLE IF NOT EXISTS Push_Tokens (
+        user_id varchar(255) NOT NULL,
+        push_token varchar(255) NOT NULL
     );
 `

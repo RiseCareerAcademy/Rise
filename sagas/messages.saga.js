@@ -6,7 +6,7 @@ import { DOMAIN } from "../config/url";
 export function* getMessages() {
   try {
     const user_id = yield select(state => state.user.user_id);
-    const isMentor = String(user_id)[0] === 1;
+    const isMentor = user_id[0] === '1';
     const response = yield axios.get(`http://${DOMAIN}/match/userid/${user_id}`);
     const {
       data: { rows: matches },

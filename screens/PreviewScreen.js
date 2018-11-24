@@ -11,7 +11,6 @@ import {
   Icon,
   Body,
   Title,
-  Right
 } from "native-base";
 
 class PreviewScreen extends Component {
@@ -48,7 +47,7 @@ class PreviewScreen extends Component {
 
 const mapStateToProps = state => ({
   ...state.user,
-  profile_pic_URL: state.user.image || state.user.profile_pic_URL
+  profile_pic_URL: state.user.image || state.user.profile_pic_URL,
 });
 
 export default connect(

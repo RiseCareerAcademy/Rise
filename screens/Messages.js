@@ -66,7 +66,7 @@ export class Messages extends Component {
           refreshControl={
             <RefreshControl
               refreshing={this.state.refreshing}
-              onRefresh={this._onRefresh}
+              onRefresh={this.onRefresh}
             />
           }
         >

@@ -13,22 +13,19 @@ import {
   Button,
   Body,
   Left,
-  Title
+  Title,
 } from "native-base";
 import {
   StyleSheet,
   TouchableOpacity,
   View,
   Image,
-  ActivityIndicator
+  ActivityIndicator,
 } from "react-native";
 import { connect } from "react-redux";
 import { ImagePicker, Permissions } from "expo";
 
 import { registerMentee } from "../actions/user.actions";
-import { DOMAIN } from "../config/url";
-
-const uuidv1 = require("uuid/v1");
 
 export class StudentRegistration extends React.Component {
   static navigationOptions = {
@@ -47,7 +44,7 @@ export class StudentRegistration extends React.Component {
     state: "",
     image: null,
     lastName: "",
-    zipcode: ""
+    zipcode: "",
   };
 
   handleImagePickerPress = async () => {
@@ -61,7 +58,7 @@ export class StudentRegistration extends React.Component {
     if (cameraPerm === "granted" && cameraRollPerm === "granted") {
       const result = await ImagePicker.launchImageLibraryAsync({
         allowsEditing: true, //Android editing only
-        aspect: [4, 3] //Aspect ratio to maintain if user allowed to edit image
+        aspect: [4, 3], //Aspect ratio to maintain if user allowed to edit image
         // base64: true,
       });
       // this.base64 = result.base64;
@@ -170,7 +167,7 @@ export class StudentRegistration extends React.Component {
       first_name: this.state.name,
       last_name: this.state.lastName,
       email_address: this.state.email,
-      biography: "hi",
+      biography: this.state.biography,
       zipcode: this.state.zipcode,
       date_of_birth: "12/24/1996",
       skills: this.state.skills,
@@ -180,7 +177,7 @@ export class StudentRegistration extends React.Component {
       city: this.state.city,
       state: this.state.state,
       image: this.state.image,
-      uri: this.state.image
+      uri: this.state.image,
     };
 
     this.props.registerMentee(mentee);
@@ -195,7 +192,7 @@ export class StudentRegistration extends React.Component {
       biography: this.state.biography,
       profession: this.state.profession,
       skills: this.state.skills,
-      preview: true
+      preview: true,
     });
   };
 
@@ -230,7 +227,7 @@ export class StudentRegistration extends React.Component {
               <Image
                 style={styles.userImage}
                 source={{
-                  uri: this.state.image
+                  uri: this.state.image,
                 }}
               />
             )}
@@ -329,69 +326,66 @@ export class StudentRegistration extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    paddingTop: 23
-  },
   userImage: {
     borderRadius: 85,
     borderWidth: 3,
     height: 170,
     marginBottom: 15,
-    width: 170
+    width: 170,
   },
   input: {
     margin: 15,
     height: 40,
     borderColor: "#000000",
-    borderWidth: 1
+    borderWidth: 1,
   },
   submitButton: {
     backgroundColor: "#000000",
     padding: 10,
     margin: 15,
-    height: 40
+    height: 40,
   },
   submitButtonText: {
-    color: "white"
+    color: "white",
   },
   buttonContainer: {
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
   },
   center: {
     flex: 1,
     flexDirection: "row",
-    justifyContent: "center"
+    justifyContent: "center",
   },
   buttonStyle: {
-    margin: 10
+    margin: 10,
   },
   greyText: {
-    color: "grey"
+    color: "grey",
   },
   contentContainer: {
-    paddingTop: 30
+    paddingTop: 30,
   },
   container: {
-    margin: 5
+    margin: 5,
   },
   uploadBtnContainer: {
-    margin: "auto"
+    margin: "auto",
   },
   uploadBtn: {
-    margin: "auto"
+    margin: "auto",
   },
   error: {
-    color: "red"
-  }
+    color: "red",
+  },
 });
 
 const mapStateToProps = state => ({
   loggedIn: state.user.loggedIn,
   registering: state.user.registering,
-  error: state.user.error
+  error: state.user.error,
 });
 
 export default connect(

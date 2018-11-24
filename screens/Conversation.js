@@ -1,9 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { GiftedChat } from "react-native-gifted-chat";
-import { StyleSheet } from "react-native";
 import Dialog from "react-native-dialog";
-import * as debounce from 'lodash.debounce';
 
 import {
   sendMessage,
@@ -15,8 +13,8 @@ class Conversation extends Component {
   constructor(props) {
     super(props);
 
-    const { to_id, match_id } = this.props.navigation.state.params;
-    this.props.setMatchId(match_id, to_id);
+    const { match_id } = this.props.navigation.state.params;
+    this.props.setMatchId(match_id);
 
     this.state = {
       showDialog: false,
@@ -71,7 +69,6 @@ class Conversation extends Component {
       first_name,
       last_name,
       messages,
-      connectedToWebSocket,
     } = this.props;
     const { otherUser } = this.props.navigation.state.params;
     const currUserName = `${first_name} ${last_name}`;
@@ -105,12 +102,6 @@ class Conversation extends Component {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  reconnect: {
-    zIndex: 2001,
-  },
-});
 
 const mapStateToProps = state => ({
   ...state.user,
