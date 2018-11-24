@@ -7,7 +7,7 @@ const storage = multer.diskStorage({
     destination: path.resolve('./uploads/'),
     filename: function(req, file, cb){
        cb(null, file.originalname);
-    }
+    },
   });
 
 const upload = multer({
@@ -33,10 +33,10 @@ router.post('/mentee', controller.postMentee);
 
 //GET request API for /user
 router.get('/mentors',controller.getAllMentors);
-router.get('/mentees',controller.getAllMentees);  
-router.get('/passwords',controller.getAllPasswords);  
-router.get('/skills',controller.getAllSkills);  
-router.get('/professions',controller.getAllProfessions);  
+router.get('/mentees',controller.getAllMentees);
+router.get('/passwords',controller.getAllPasswords);
+router.get('/skills',controller.getAllSkills);
+router.get('/professions',controller.getAllProfessions);
 
 //GET by UserID
 router.get("/:id", controller.getUserById);
@@ -84,3 +84,5 @@ router.get('/message/:matchid', controller.getLatestMessagesById);
 router.get('/message/all/:matchid', controller.getMessageChain);
 // create a conversation ws connection
 router.ws('/conversation', controller.conversation);
+// setup push notification
+router.post('/:id/push-token', controller.registerPushToken);

@@ -23,11 +23,12 @@ module.exports.createTables = async (req, res) => {
       db.run(SQL.CREATE_MESSAGES_TABLE),
       db.run(SQL.CREATE_SKILLS_TABLE),
       db.run(SQL.CREATE_PROFESSIONS_TABLE),
+      db.run(SQL.CREATE_PUSH_TOKENS_TABLE),
     ]);
     res.json({ success: true, rows: "all tables created" });
   } catch (e) {
     console.error(e.message);
-    res.json({ success: false, error: e.message });
+    res.status(500).json({ success: false, error: e.message });
   }
 };
 
@@ -39,6 +40,7 @@ module.exports.resetTable = async (req, res) => {
   const dropMessagesTableSql = sql`DROP TABLE IF EXISTS Messages;`;
   const dropSkillsTableSql = sql`DROP TABLE IF EXISTS Skills;`;
   const dropProfessionTableSql = sql`DROP TABLE IF EXISTS Profession;`;
+  const dropPushTokensTableSql = sql`DROP TABLE IF EXISTS Push_Tokens;`;
 
   try {
     const db = await dbPromise;
@@ -49,6 +51,7 @@ module.exports.resetTable = async (req, res) => {
       db.run(dropMessagesTableSql),
       db.run(dropSkillsTableSql),
       db.run(dropProfessionTableSql),
+      db.run(dropPushTokensTableSql),
     ]);
 
     await Promise.all([
@@ -58,12 +61,13 @@ module.exports.resetTable = async (req, res) => {
       db.run(SQL.CREATE_MESSAGES_TABLE),
       db.run(SQL.CREATE_SKILLS_TABLE),
       db.run(SQL.CREATE_PROFESSIONS_TABLE),
+      db.run(SQL.CREATE_PUSH_TOKENS_TABLE),
     ]);
 
     res.json({ success: true, rows: "reset all tables" });
   } catch (e) {
     console.error(e.message);
-    res.json({ success: false, error: e.message });
+    res.status(500).json({ success: false, error: e.message });
   }
 };
 
@@ -156,7 +160,7 @@ module.exports.postMentor = async (req, res) => {
   ];
   const user = {};
 
-  fields.forEach(field => {
+  const missingFields = fields.forEach(field => {
     if (req.body[field] === undefined) {
       res
         .status(500)
@@ -164,7 +168,12 @@ module.exports.postMentor = async (req, res) => {
       return true;
     }
     user[field] = req.body[field];
+    return false;
   });
+
+  if (missingFields) {
+    return;
+  }
 
   try {
     const db = await dbPromise;
@@ -172,7 +181,7 @@ module.exports.postMentor = async (req, res) => {
     const emailRows = await db.all(getMentorsByEmailSql);
     //post mentor
     if (emailRows.length != 0) {
-      res.json({ success: false, rows: "Email is not unique" });
+      res.status(500).json({ success: false, error: "Email is not unique" });
       return false;
     }
     const date = new Date();
@@ -206,7 +215,7 @@ module.exports.postMentor = async (req, res) => {
       } else {
         let usersWithSkill = usersWithSkillObject[0]["users"];
         usersWithSkill = addToString(usersWithSkill, user.user_id);
-        const updateSkillSql = sql`UPDATE Skills SET users = ${usersWithSkillObject} WHERE skills = ${skill}`;
+        const updateSkillSql = sql`UPDATE Skills SET users = ${usersWithSkill} WHERE skills = ${skill}`;
         await db.run(updateSkillSql);
       }
     }
@@ -247,13 +256,18 @@ module.exports.postMentee = async (req, res) => {
     "hobbies",
   ];
   const user = {};
-  fields.some(field => {
+  const missingFields = fields.some(field => {
     if (req.body[field] === undefined) {
-      res.status(500).json({ error: "Missing credentials", success: false });
-      return;
+      res.status(500).json({ error: `Missing credential ${field}`, success: false });
+      return true;
     }
     user[field] = req.body[field];
+    return false;
   });
+
+  if (missingFields) {
+    return;
+  }
 
   try {
     const db = await dbPromise;
@@ -261,7 +275,7 @@ module.exports.postMentee = async (req, res) => {
     const usersWithEmailObject = await db.get(sql_email);
 
     if (usersWithEmailObject !== undefined) {
-      res.json({ success: false, rows: "Email is not unique" });
+      res.status(500).json({ success: false, error: "Email is not unique" });
       return;
     }
     user.skills = user.skills || '';
@@ -298,7 +312,7 @@ module.exports.postMentee = async (req, res) => {
       } else {
         let usersWithSkill = usersWithSkillObject[0]["users"];
         usersWithSkill = addToString(usersWithSkill, user.user_id);
-        const updateSkillSql = sql`UPDATE Skills SET users = ${usersWithSkillObject} WHERE skills = ${skill}`;
+        const updateSkillSql = sql`UPDATE Skills SET users = ${usersWithSkill} WHERE skills = ${skill}`;
         await db.run(updateSkillSql);
       }
     }
@@ -330,7 +344,7 @@ module.exports.postMentee = async (req, res) => {
 module.exports.postMessage = async (req, res) => {
   const fields = ["match_id", "to_id", "from_id", "message_body"];
   const user = {};
-  fields.some(field => {
+  const missingFields = fields.some(field => {
     if (req.body[field] === undefined) {
       res.status(500).json({ error: "Missing credentials", success: false });
       return true;
@@ -338,6 +352,11 @@ module.exports.postMessage = async (req, res) => {
     user[field] = req.body[field];
     return false;
   });
+
+  if (missingFields) {
+    return;
+  }
+
   const date = new Date();
   try {
     const db = await dbPromise;
@@ -357,119 +376,25 @@ module.exports.postMessage = async (req, res) => {
   }
 };
 
-module.exports.registerPushToken = (req, res) => {
-  const { pushToken } = req.body;
+module.exports.registerPushToken = async (req, res) => {
+  const { token: pushToken } = req.body;
+  const { id: user_id } = req.params;
   if (pushToken === undefined) {
     res.status(500).json({ error: "Missing credentials", success: false });
     return;
   }
-  const pushTokens = [pushToken];
-  // Create a new Expo SDK client
-  const expo = new Expo();
 
-  // Create the messages that you want to send to clents
-  const messages = [];
-  pushTokens.forEach( pushToken => {
-    // Each push token looks like ExponentPushToken[xxxxxxxxxxxxxxxxxxxxxx]
-
-    // Check that all your push tokens appear to be valid Expo push tokens
-    if (!Expo.isExpoPushToken(pushToken)) {
-      console.error(`Push token ${pushToken} is not a valid Expo push token`);
-    } else {
-      // Construct a message (see https://docs.expo.io/versions/latest/guides/push-notifications.html)
-      messages.push({
-        to: pushToken,
-        sound: 'default',
-        body: 'This is a test notification',
-        data: { withSome: 'data' },
-      })
-    }
-
-  });
-
-  // The Expo push notification service accepts batches of notifications so
-  // that you don't need to send 1000 requests to send 1000 notifications. We
-  // recommend you batch your notifications to reduce the number of requests
-  // and to compress them (notifications with similar content will get
-  // compressed).
-  const chunks = expo.chunkPushNotifications(messages);
-  const tickets = [];
-  (async () => {
-    // Send the chunks to the Expo push notification service. There are
-    // different strategies you could use. A simple one is to send one chunk at a
-    // time, which nicely spreads the load out over time:
-    for (let chunk of chunks) {
-      try {
-        let ticketChunk = await expo.sendPushNotificationsAsync(chunk);
-        console.log(ticketChunk);
-        tickets.push(...ticketChunk);
-        // NOTE: If a ticket contains an error code in ticket.details.error, you
-        // must handle it appropriately. The error codes are listed in the Expo
-        // documentation:
-        // https://docs.expo.io/versions/latest/guides/push-notifications#response-format
-      } catch (error) {
-        console.error(error);
-      }
-    }
-  })();
-
-
-
-
-    // Later, after the Expo push notification service has delivered the
-    // notifications to Apple or Google (usually quickly, but allow the the service
-    // up to 30 minutes when under load), a "receipt" for each notification is
-    // created. The receipts will be available for at least a day; stale receipts
-    // are deleted.
-    //
-    // The ID of each receipt is sent back in the response "ticket" for each
-    // notification. In summary, sending a notification produces a ticket, which
-    // contains a receipt ID you later use to get the receipt.
-    //
-    // The receipts may contain error codes to which you must respond. In
-    // particular, Apple or Google may block apps that continue to send
-    // notifications to devices that have blocked notifications or have uninstalled
-    // your app. Expo does not control this policy and sends back the feedback from
-    // Apple and Google so you can handle it appropriately.
-    let receiptIds = [];
-    for (let ticket of tickets) {
-      // NOTE: Not all tickets have IDs; for example, tickets for notifications
-      // that could not be enqueued will have error information and no receipt ID.
-      if (ticket.id) {
-        receiptIds.push(ticket.id);
-      }
-    }
-
-    let receiptIdChunks = expo.chunkPushNotificationReceiptIds(receiptIds);
-    (async () => {
-      // Like sending notifications, there are different strategies you could use
-      // to retrieve batches of receipts from the Expo service.
-      for (let chunk of receiptIdChunks) {
-        try {
-          let receipts = await expo.getPushNotificationReceiptsAsync(chunk);
-          console.log(receipts);
-
-          // The receipts specify whether Apple or Google successfully received the
-          // notification and information about an error, if one occurred.
-          for (let receipt of receipts) {
-            if (receipt.status === 'ok') {
-              continue;
-            } else if (receipt.status === 'error') {
-              console.error(`There was an error sending a notification: ${receipt.message}`);
-              if (receipt.details && receipt.details.error) {
-                // The error codes are listed in the Expo documentation:
-                // https://docs.expo.io/versions/latest/guides/push-notifications#response-format
-                // You must handle the errors appropriately.
-                console.error(`The error code is ${receipt.details.error}`);
-              }
-            }
-          }
-        } catch (error) {
-          console.error(error);
-        }
-      }
-    })();
-
+  try {
+    const db = await dbPromise;
+    const insertPushToken = sql`INSERT INTO Push_Tokens VALUES (
+      ${user_id},
+      ${pushToken}
+    )`;
+    await db.run(insertPushToken);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ success: false, error: error.message });
+  }
 }
 
 const sockets = {};
@@ -505,6 +430,7 @@ module.exports.conversation = (ws, req) => {
     };
 
     module.exports.postMessage(req, res);
+    sendPushNotification(to_id, message);
   });
 
   ws.on('close', () => {
@@ -513,12 +439,11 @@ module.exports.conversation = (ws, req) => {
   })
 }
 
-
 //create new password (SQL INJ.)
 module.exports.postPassword = async (req, res) => {
   const fields = ["email_address", "password"];
   const user = {};
-  fields.some(field => {
+  const missingFields = fields.some(field => {
     if (req.body[field] === undefined) {
       res
         .status(500)
@@ -526,15 +451,19 @@ module.exports.postPassword = async (req, res) => {
       return true;
     }
     user[field] = req.body[field];
+    return false;
   });
 
+  if (missingFields) {
+    return;
+  }
 
   try {
     const db = await dbPromise;
     const getUsersByEmailSql = sql`Select * from Users where email_address = ${user.email_address}`;
     const mentorsWithEmailObject = await db.get(getUsersByEmailSql);
     if (mentorsWithEmailObject !== undefined) {
-      res.json({ success: false, rows: "Email already exists" });
+      res.status(500).json({ success: false, error: "Email already exists" });
       return;
     }
 
@@ -543,8 +472,8 @@ module.exports.postPassword = async (req, res) => {
 
     const insertPasswordSql = sql`INSERT INTO Passwords VALUES (
       ${user.email_address},
-      '${passwordData.passwordHash}',
-      '${passwordData.salt}'
+      ${passwordData.passwordHash},
+      ${passwordData.salt}
     ) `;
 
     await db.run(insertPasswordSql);
@@ -873,18 +802,18 @@ module.exports.removeSkill = async (req, res) => {
       return
     }
     skills = removeFromString(skills, skill);
-    const removeSkillSql = `UPDATE Users SET skills = ${skill} WHERE user_id = ${userID}`;
+    const removeSkillSql = sql`UPDATE Users SET skills = ${skill} WHERE user_id = ${userID}`;
     await db.run(removeSkillSql);
 
     //remove user to skill table
-    const getUsersSql = `SELECT users FROM Skills WHERE skills = ${skill}`
+    const getUsersSql = sql`SELECT users FROM Skills WHERE skills = ${skill}`
     let users = await db.get(getUsersSql);
     if (users.length == 0) {
       res.status(400).json({ error: "Skill not found!", success: false });
       return
     }
     users = removeFromString(users, userID);
-    const removeUserSql = `UPDATE Skills SET users = ${userID} WHERE skills = ${skill}`;
+    const removeUserSql = sql`UPDATE Skills SET users = ${userID} WHERE skills = ${skill}`;
     await db.run(removeUserSql);
     res.json({ success: true });
   } catch (error) {
@@ -1051,7 +980,7 @@ module.exports.updateZipcode = async (req, res) => {
   try {
     const db = await dbPromise;
     const zipcode = req.body.zipcode;
-    const updateZipcodeSql = `UPDATE Users SET zipcode = ${zipcode} WHERE user_id = ${userID}`; //starts with 1
+    const updateZipcodeSql = sql`UPDATE Users SET zipcode = ${zipcode} WHERE user_id = ${userID}`; //starts with 1
     const zipcodeRows = await db.all(updateZipcodeSql);
     res.json({ success: true, rows: zipcodeRows });
   } catch (error) {
@@ -1063,27 +992,32 @@ module.exports.updateZipcode = async (req, res) => {
 module.exports.register = async (req, res) => {
   const fields = ['email_address', 'password'];
   const user = {};
-  fields.some(field => {
+  const missingFields = fields.some(field => {
     if (req.body[field] === undefined) {
       res
         .status(500)
         .json({ error: `Missing credential ${field}`, success: false });
-      return;
+      return true;
     }
     user[field] = req.body[field];
+    return false;
   });
+
+  if (missingFields) {
+    return;
+  }
   try {
     const db = await dbPromise;
     const getEmailSql = sql`Select * from Passwords where email_address = ${user.email_address};`;
     const emailRows = await db.all(getEmailSql);
     if (emailRows.length != 0) {
-      res.json({ success: false, rows: "Email is not unique" });
+      res.status(500).json({ success: false, error: "Email is not unique" });
       return;
     }
     // console.log(emailRows)
     const salt = hp.genRandomString(16)
     const passwordData = hp.saltPassword(user.password, salt)
-    const postPasswordSql = `INSERT INTO Passwords VALUES ("${user.email_address}","${passwordData.passwordHash}", "${passwordData.salt}")`;
+    const postPasswordSql = sql`INSERT INTO Passwords VALUES (${user.email_address},${passwordData.passwordHash}, ${passwordData.salt})`;
     db.run(postPasswordSql);
     res.json({ success: true, passwordHash: passwordData.passwordHash })
   } catch (error) {
@@ -1095,13 +1029,18 @@ module.exports.register = async (req, res) => {
 module.exports.login = async (req, res) => {
   const fields = ["email_address", "password"];
   const user = {};
-  fields.some(field => {
+  const missingFields = fields.some(field => {
     if (req.body[field] === undefined) {
       res.status(500).json({ error: "Missing credentials", success: false });
       return true;
     }
     user[field] = req.body[field];
+    return false;
   });
+
+  if (missingFields) {
+    return;
+  }
 
   try {
     const db = await dbPromise;
@@ -1171,6 +1110,119 @@ module.exports.getMessageChain = async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 };
+
+async function sendPushNotification(user_id, message) {
+
+  let pushTokens;
+  try {
+    const db = await dbPromise;
+    const getPushTokensByUserIdSql = sql`SELECT push_token FROM Push_Tokens WHERE user_id = ${user_id}`;
+    pushTokens = (await db.all(getPushTokensByUserIdSql)).map(obj => obj.push_token);
+  } catch(error) {
+    console.error(error.message);
+  }
+
+  // Create a new Expo SDK client
+  const expo = new Expo();
+
+  // Create the messages that you want to send to clents
+  const messages = [];
+  pushTokens.forEach( pushToken => {
+    // Each push token looks like ExponentPushToken[xxxxxxxxxxxxxxxxxxxxxx]
+
+    // Check that all your push tokens appear to be valid Expo push tokens
+    if (!Expo.isExpoPushToken(pushToken)) {
+      console.error(`Push token ${pushToken} is not a valid Expo push token`);
+    } else {
+      // Construct a message (see https://docs.expo.io/versions/latest/guides/push-notifications.html)
+      messages.push({
+        to: pushToken,
+        sound: 'default',
+        body: message.message_body,
+      })
+    }
+  });
+
+  // The Expo push notification service accepts batches of notifications so
+  // that you don't need to send 1000 requests to send 1000 notifications. We
+  // recommend you batch your notifications to reduce the number of requests
+  // and to compress them (notifications with similar content will get
+  // compressed).
+  const chunks = expo.chunkPushNotifications(messages);
+  const tickets = [];
+  // Send the chunks to the Expo push notification service. There are
+  // different strategies you could use. A simple one is to send one chunk at a
+  // time, which nicely spreads the load out over time:
+  for (let chunk of chunks) {
+    try {
+      let ticketChunk = await expo.sendPushNotificationsAsync(chunk);
+      console.log(ticketChunk);
+      tickets.push(...ticketChunk);
+      // NOTE: If a ticket contains an error code in ticket.details.error, you
+      // must handle it appropriately. The error codes are listed in the Expo
+      // documentation:
+      // https://docs.expo.io/versions/latest/guides/push-notifications#response-format
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+
+
+
+    // Later, after the Expo push notification service has delivered the
+    // notifications to Apple or Google (usually quickly, but allow the the service
+    // up to 30 minutes when under load), a "receipt" for each notification is
+    // created. The receipts will be available for at least a day; stale receipts
+    // are deleted.
+    //
+    // The ID of each receipt is sent back in the response "ticket" for each
+    // notification. In summary, sending a notification produces a ticket, which
+    // contains a receipt ID you later use to get the receipt.
+    //
+    // The receipts may contain error codes to which you must respond. In
+    // particular, Apple or Google may block apps that continue to send
+    // notifications to devices that have blocked notifications or have uninstalled
+    // your app. Expo does not control this policy and sends back the feedback from
+    // Apple and Google so you can handle it appropriately.
+    let receiptIds = [];
+    for (let ticket of tickets) {
+      // NOTE: Not all tickets have IDs; for example, tickets for notifications
+      // that could not be enqueued will have error information and no receipt ID.
+      if (ticket.id) {
+        receiptIds.push(ticket.id);
+      }
+    }
+
+    let receiptIdChunks = expo.chunkPushNotificationReceiptIds(receiptIds);
+    // Like sending notifications, there are different strategies you could use
+    // to retrieve batches of receipts from the Expo service.
+    for (let chunk of receiptIdChunks) {
+      try {
+        let receipt = await expo.getPushNotificationReceiptsAsync(chunk);
+        console.log(receipt);
+
+        // The receipts specify whether Apple or Google successfully received the
+        // notification and information about an error, if one occurred.
+        // for (let receipt of receipts) {
+          if (receipt.status === 'ok') {
+            continue;
+          } else if (receipt.status === 'error') {
+            console.error(`There was an error sending a notification: ${receipt.message}`);
+            if (receipt.details && receipt.details.error) {
+              // The error codes are listed in the Expo documentation:
+              // https://docs.expo.io/versions/latest/guides/push-notifications#response-format
+              // You must handle the errors appropriately.
+              console.error(`The error code is ${receipt.details.error}`);
+            }
+          }
+        // }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+}
 
 
 function addToString(string, add) {

@@ -12,14 +12,34 @@ import {
   failedRegisterMentor,
   LOGIN,
   failedLogin,
-  UPDATE_USER
+  UPDATE_USER,
 } from "../actions/user.actions";
 import { takeLatest, put, all, call, select } from "redux-saga/effects";
 import { DOMAIN } from "../config/url";
 import { NavigationActions, StackActions } from "react-navigation";
 import { LINKEDIN_CLIENT_ID } from "react-native-dotenv";
 import uuidv1 from "uuid/v1";
-import { AuthSession } from "expo";
+import { AuthSession, Permissions, Notifications } from "expo";
+
+export function* registerForPushNotifications({ user_id }) {
+  // only ask if permissions have not already been determined, because
+  // iOS won't necessarily prompt the user a second time.
+  // Android remote notification permissions are granted during the app
+  // install, so this will only ask on iOS
+  const { status: finalStatus } = yield Permissions.askAsync(Permissions.NOTIFICATIONS);
+
+  // Stop here if the user did not grant permissions
+  if (finalStatus !== "granted") {
+    return;
+  }
+
+  // Get the token that uniquely identifies this device
+  const token = yield Notifications.getExpoPushTokenAsync();
+
+  const pushTokenApiUrl = `http://${DOMAIN}/user/${user_id}/push-token`;
+  // POST the token to your backend server from where you can retrieve it to send push notifications.
+  yield axios.post(pushTokenApiUrl, { token });
+}
 
 export function* uploadProfilePic({ user_id, uri }) {
   const uriParts = uri.split(".");
@@ -28,16 +48,16 @@ export function* uploadProfilePic({ user_id, uri }) {
   formData.append("photo", {
     uri,
     name: `${user_id}.${fileType}`,
-    type: `image/${fileType}`
+    type: `image/${fileType}`,
   });
   const options = {
     method: "POST",
     data: formData,
     headers: {
       Accept: "application/json",
-      "Content-Type": "multipart/form-data"
+      "Content-Type": "multipart/form-data",
     },
-    url: `http://${DOMAIN}/user/${user_id}/profilepic`
+    url: `http://${DOMAIN}/user/${user_id}/profilepic`,
   };
   const { data } = yield axios(options);
   return data.profile_pic_URL;
@@ -47,11 +67,11 @@ export function* registerMentee({ mentee }) {
   try {
     yield axios.post(`http://${DOMAIN}/user/password`, {
       email_address: mentee.email_address,
-      password: mentee.password
+      password: mentee.password,
     });
     const response = yield axios.post(`http://${DOMAIN}/user/mentee`, {
       ...mentee,
-      passwordHash: mentee.passwordHash
+      passwordHash: mentee.passwordHash,
     });
     if (response === undefined) {
       throw Error(
@@ -59,15 +79,14 @@ export function* registerMentee({ mentee }) {
       );
     }
     const { data } = response;
-    if (!data.success) {
-      throw Error(data.error);
-    }
+    const { user_id } = data.mentee;
     yield call(uploadProfilePic, {
-      user_id: data.mentee.user_id,
-      uri: mentee.uri
+      user_id,
+      uri: mentee.uri,
     });
     yield put(setUser(data.mentee));
     yield put(NavigationActions.navigate({ routeName: "Main" }));
+    yield registerForPushNotifications({ user_id });
   } catch (e) {
     if (e.response !== undefined && e.response.data !== undefined) {
       const error =
@@ -91,11 +110,13 @@ export function* registerMentor({ mentor }) {
     const response = yield axios.post(`http://${DOMAIN}/user/mentor`, {
       ...mentor,
       passwordHash,
-      profile_pic_URL: mentor.image
+      profile_pic_URL: mentor.image,
     });
     const { data } = response;
     yield put(setUser(data.mentor));
     yield put(NavigationActions.navigate({ routeName: "Main" }));
+    const { user_id } = data.mentor;
+    yield registerForPushNotifications({ user_id });
   } catch (e) {
     if (e.response !== undefined && e.response.data !== undefined) {
       const error =
@@ -131,7 +152,7 @@ export function* registerWithLinkedin() {
   }
 
   const {
-    params: { state: responseState, code }
+    params: { state: responseState, code },
   } = result;
   if (responseState !== state) {
     return;
@@ -143,10 +164,10 @@ export function* registerWithLinkedin() {
   try {
     const response = yield axios.post(`http://${DOMAIN}/user/linkedin`, {
       code,
-      redirect_uri: redirectUrl
+      redirect_uri: redirectUrl,
     });
     const {
-      data: { fields }
+      data: { fields },
     } = response;
     console.log(fields);
     yield put(setUserFields(fields));
@@ -173,7 +194,7 @@ export function* login({ email_address, password }) {
   try {
     const response = yield axios.post(`http://${DOMAIN}/user/login`, {
       email_address,
-      password
+      password,
     });
     const { user_id } = response.data.rows[0];
     const getUserResponse = yield axios.get(`http://${DOMAIN}/user/${user_id}`);
@@ -225,7 +246,7 @@ export function* updateUser({ user }) {
     profession: "profession",
     biography: "bio",
     zipcode: "zipcode",
-    skills: "addskill"
+    skills: "addskill",
   };
 
   const userId = yield select(state => state.user.user_id);
@@ -262,6 +283,6 @@ export default function* userSaga() {
     takeLatest(UPLOAD_PROFILE_PIC, uploadProfilePic),
     takeLatest(LOGOUT_USER, logoutUser),
     takeLatest(LOGIN, login),
-    takeLatest(UPDATE_USER, updateUser)
+    takeLatest(UPDATE_USER, updateUser),
   ]);
 }

@@ -1,7 +1,7 @@
 import { eventChannel } from "redux-saga";
 import { take, call, all, race, select, put } from 'redux-saga/effects';
 
-import { SEND_MESSAGE, SET_MATCH_ID, receiveMessage, closeWebSocket, CLOSE_WEB_SOCKET, RECONNECT_TO_WEB_SOCKET, connectedToWebSocket, disconnectedFromWebSocket } from "../actions/conversation.actions";
+import { SEND_MESSAGE, SET_MATCH_ID, receiveMessage, closeWebSocket, CLOSE_WEB_SOCKET, RECONNECT_TO_WEB_SOCKET, connectedToWebSocket, disconnectedFromWebSocket, clearMessages } from "../actions/conversation.actions";
 import { DOMAIN } from "../config/url";
 
 export function createSocketChannel(socket) {
@@ -40,7 +40,7 @@ export function* receiveMessagesWatcher(socketChannel) {
   }
 }
 
-export function* sendMessagesWatcher(socket, match_id, to_id) {
+export function* sendMessagesWatcher(socket) {
   while(true) {
     const { message } = yield take(SEND_MESSAGE);
     socket.send(JSON.stringify(message));
@@ -49,7 +49,7 @@ export function* sendMessagesWatcher(socket, match_id, to_id) {
 
 export default function* messagesWatcher() {
 
-  let match_id, to_id, otherUser;
+  let match_id;
   while (true) {
   try {
       const from_id = yield select(state => state.user.user_id);
@@ -58,7 +58,8 @@ export default function* messagesWatcher() {
         reconnectToWebSocketAction: take(RECONNECT_TO_WEB_SOCKET),
       });
       if (setMatchIdAction) {
-        ({ match_id, to_id, otherUser } = setMatchIdAction);
+        ({ match_id } = setMatchIdAction);
+        yield put(clearMessages());
       }
       const socket = new WebSocket(`ws://${DOMAIN}/user/conversation?from_id=${from_id}`);
       // const socket = io(`http://${DOMAIN}`);
@@ -67,7 +68,7 @@ export default function* messagesWatcher() {
       yield race({
       listeners: all([
         call(receiveMessagesWatcher, socketChannel),
-        call(sendMessagesWatcher, socket, match_id, to_id),
+        call(sendMessagesWatcher, socket),
       ]),
       close: take(CLOSE_WEB_SOCKET),
       });

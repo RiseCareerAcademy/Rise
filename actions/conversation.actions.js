@@ -42,10 +42,9 @@ export const setReceiverId = receiverId => ({
   receiverId,
 });
 
-export const setMatchId = (match_id, to_id) => ({
+export const setMatchId = match_id => ({
   type: SET_MATCH_ID,
   match_id,
-  to_id,
 });
 
 export const addMessage = message => ({

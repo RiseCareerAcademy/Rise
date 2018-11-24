@@ -11,6 +11,7 @@ export const SET_USER_FIELDS = 'user/SET_USER_FIELDS';
 export const REGISTER_MENTOR = 'user/REGISTER_MENTOR';
 export const LOGIN = 'user/LOGIN';
 export const UPDATE_USER = 'user/UPDATE_USER';
+export const REGISTER_FOR_PUSH_NOTIFICATIONS = 'user/REGISTER_FOR_PUSH_NOTIFICATIONS';
 
 export const setUser = user => ({
 	type: SET_USER,
@@ -76,3 +77,8 @@ export const updateUser = user => ({
 	type: UPDATE_USER,
 	user,
 })
+
+export const registerForPushNotifications = user_id => ({
+  type: REGISTER_FOR_PUSH_NOTIFICATIONS,
+  user_id,
+});
