@@ -344,7 +344,7 @@ module.exports.postMentee = async (req, res) => {
 module.exports.postMessage = async (req, res) => {
   const fields = ["match_id", "to_id", "from_id", "message_body"];
   const user = {};
-  const missingFields = fields.some(field => {
+  fields.some(field => {
     if (req.body[field] === undefined) {
       res.status(500).json({ error: "Missing credentials", success: false });
       return true;
@@ -353,20 +353,19 @@ module.exports.postMessage = async (req, res) => {
     return false;
   });
 
-  if (missingFields) {
-    return;
-  }
 
-  const date = new Date();
+  
   try {
     const db = await dbPromise;
+    const date = new Date();
+    const time = date.getTime();
     const insertMessageSql = sql`INSERT INTO Messages VALUES (
-      ${iid(date)},
+      ${iid(time)},
       ${user.match_id},
       ${user.to_id},
       ${user.from_id},
       ${user.message_body},
-      ${getFormattedDate()}
+      ${time}
     )`;
     await db.run(insertMessageSql);
     res.json({ success: true });
@@ -1079,8 +1078,9 @@ module.exports.getMessages = async (req, res) => {
 
 //get latest message by match id
 module.exports.getLatestMessagesById = async (req, res) => {
+  const date = new Date();
   req.body.limit = req.body.limit || 1
-  req.body.timestamp = req.body.timestamp || getFormattedDate();
+  req.body.timestamp = req.body.timestamp || date.getTime();
   console.log(req.body.timestamp)
   try {
     const db = await dbPromise;
@@ -1250,23 +1250,23 @@ function removeFromString(string, rem) {
   return string;
 }
 
-function getFormattedDate() {
-  const date = new Date();
-  var str =
-    date.getFullYear() +
-    "-" +
-    (date.getMonth() + 1) +
-    "-" +
-    date.getDate() +
-    " " +
-    date.getHours() +
-    ":" +
-    date.getMinutes() +
-    ":" +
-    date.getSeconds();
+// function getFormattedDate() {
+//   const date = new Date();
+//   var str =
+//     date.getFullYear() +
+//     "-" +
+//     (date.getMonth() + 1) +
+//     "-" +
+//     date.getDate() +
+//     " " +
+//     date.getHours() +
+//     ":" +
+//     date.getMinutes() +
+//     ":" +
+//     date.getSeconds();
 
-  return str;
-}
+//   return str;
+// }
 function iid(num) {
   let res = ""
   const chars = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n',
