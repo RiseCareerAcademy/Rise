@@ -1,7 +1,7 @@
 import { SET_MATCHES } from "../actions/matches.actions";
 
 const initialState = {
-	mentors: [],
+	users: [],
 };
 
 export default (state = initialState, action) => {
@@ -9,7 +9,7 @@ export default (state = initialState, action) => {
 		case SET_MATCHES:
 			return {
 				...state,
-				mentors: action.mentors,
+				users: action.users,
 			};
 		default:
 			return state;

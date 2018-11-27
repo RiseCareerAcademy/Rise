@@ -133,25 +133,33 @@ class Profile extends Component {
   };
 
   renderHeader = () => {
-    const { first_name, last_name, user_id, zipcode, mentor, preview, profile_pic_URL } = this.props;
+    const {
+      first_name,
+      last_name,
+      user_id,
+      zipcode,
+      mentor,
+      preview,
+      profile_pic_URL,
+    } = this.props;
     const name = `${first_name} ${last_name}`;
 
-
-    let image = '';
+    let image = "";
     if (preview) {
       image += profile_pic_URL;
     } else {
+      const fromLinkedin = this.state.image.includes("licdn");
+      if (!fromLinkedin) {
+        image += `?${encodeURI(uuidv1())}`;
+      }
       image +=
-      process.env.NODE_ENV === "development" && !fromLinkedin
-        ? `http://${DOMAIN}/user/${user_id}/profilepic`
-        : this.state.image;
-        const fromLinkedin = this.state.image.includes("licdn");
-        if (!fromLinkedin) {
-          image += `?${encodeURI(uuidv1())}`;
-        }
+        process.env.NODE_ENV === "development" && !fromLinkedin
+          ? `http://${DOMAIN}/user/${user_id}/profilepic`
+          : this.state.image;
     }
 
-
+    const isMeMentor = this.props.my_user_id[0] === '1';
+    const isZeMentor = this.props.user_id[0] === '1';
     return (
       <View style={styles.headerContainer}>
         <ImageBackground
@@ -184,14 +192,22 @@ class Profile extends Component {
                 <Text style={styles.userCityText}>{zipcode}</Text>
               </View>
             </View>
-            {mentor && (
+            {this.props.matches.some(
+              user => user.user_id === this.props.user_id
+            ) ? (
               <View style={styles.uploadBtnContainer}>
-                <Button
-                  onPress={this.handleMatch}
-                  style={styles.uploadBtn}
-                  title="Match"
-                />
+                <Button style={styles.uploadBtn} title="MATCHED" disabled />
               </View>
+            ) : (
+              isZeMentor !== isMeMentor && (
+                <View style={styles.uploadBtnContainer}>
+                  <Button
+                    onPress={this.handleMatch}
+                    style={styles.uploadBtn}
+                    title="Match"
+                  />
+                </View>
+              )
             )}
           </View>
         </ImageBackground>
@@ -236,7 +252,10 @@ class Profile extends Component {
   }
 }
 
-const mapStateToProps = () => ({});
+const mapStateToProps = state => ({
+  matches: state.search.matches,
+  my_user_id: state.user.user_id,
+});
 
 export default connect(
   mapStateToProps,

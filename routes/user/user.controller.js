@@ -773,7 +773,7 @@ module.exports.addSkill = async (req, res) => {
     } else {
       let users = usersSkillsObject.users;
       users = addToString(users, userID);
-      const updateSkillsSql = `UPDATE Skills SET users = ${users} WHERE skills = ${skill}`;
+      const updateSkillsSql = sql`UPDATE Skills SET users = ${users} WHERE skills = ${skill}`;
       await db.run(updateSkillsSql);
       res.json({ success: true });
     }
@@ -1103,7 +1103,7 @@ module.exports.getMessageChain = async (req, res) => {
     const matchID = req.params.matchid;
     const getAllMessagesSql =
       sql`SELECT * FROM Messages WHERE match_id = ${matchID};`;
-    const messagesRows = await db.get(getAllMessagesSql);
+    const messagesRows = await db.all(getAllMessagesSql);
     res.json({ success: true, rows: messagesRows });
   } catch (error) {
     console.error(error.message);

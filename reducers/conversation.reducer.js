@@ -6,6 +6,7 @@ import {
   CLEAR_MESSAGES,
   CONNECTED_TO_WEB_SOCKET,
   DISCONNECTED_FROM_WEB_SOCKET,
+  SET_MESSAGES,
 } from "../actions/conversation.actions";
 
 const initialState = {
@@ -59,6 +60,12 @@ export default (state = initialState, action) => {
       return {
         ...state,
         connectedToWebSocket: false,
+      }
+    }
+    case SET_MESSAGES: {
+      return {
+        ...state,
+        messages: action.messages,
       }
     }
     default:

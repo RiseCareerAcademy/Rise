@@ -8,6 +8,7 @@ export const CLOSE_WEB_SOCKET = 'conversation/CLOSE_WEB_SOCKET';
 export const RECONNECT_TO_WEB_SOCKET = 'conversation/RECONNECT_TO_WEB_SOCKET';
 export const CONNECTED_TO_WEB_SOCKET = 'conversation/CONNECTED_TO_WEB_SOCKET';
 export const DISCONNECTED_FROM_WEB_SOCKET = 'conversation/DISCONNECTED_FROM_WEB_SOCKET';
+export const SET_MESSAGES = 'conversation/SET_MESSAGES';
 
 const uuidv1 = require('uuid/v1');
 
@@ -71,3 +72,8 @@ export const connectedToWebSocket = () => ({
 export const disconnectedFromWebSocket = () => ({
   type: DISCONNECTED_FROM_WEB_SOCKET,
 });
+
+export const setMessages = messages => ({
+  type: SET_MESSAGES,
+  messages,
+})

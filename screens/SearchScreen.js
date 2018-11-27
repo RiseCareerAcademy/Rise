@@ -12,6 +12,7 @@ import { connect } from "react-redux";
 import {
   getAllMentees,
   getAllMentors,
+  getAllMatches,
   getMentee,
   getMentor,
 } from "../actions/search.actions";
@@ -30,12 +31,15 @@ export class SearchScreen extends Component {
     checkedProfessions: true,
     checkedMentors: true,
     checkedMentees: true,
+    checkedMatches: true,
     checkedNames: true,
     data: [],
     mentors: [],
     mentees: [],
+    matches: [],
     mentorsLoaded: false,
     menteesLoaded: false,
+    matchesLoaded: false,
     refreshing: false,
   };
   //search function
@@ -44,30 +48,12 @@ export class SearchScreen extends Component {
   constructor(props) {
     super(props);
 
-    //TODO: API call function
-    //WILL THROW TYPEERROR ON THIS SYSTEM
-
-    //   const { manifest } = Expo.Constants;
-    //   const api = (typeof manifest.packagerOpts === `object`) && manifest.packagerOpts.dev
-    // ? manifest.debuggerHost.split(`:`).shift().concat(`:8000`)
-    // : `api.example.com`;
-
-    //   fetch('http://'+api+'/user/mentors',{
-    //     method: 'GET'
-    //   })
-    //   .then((response) => response.json())
-    //   .then((responseJson) => {
-    //     console.log("IT WORKED");
-
-    //   })
-    //   .catch((error) => {
-    //     console.log("error isss: " + error);
-    //   });
-
     this.props.getAllMentors();
     this.props.getAllMentees();
+    this.props.getAllMatches();
     this.menteesLoaded = false;
     this.mentorsLoaded = false;
+    this.matchesLoaded = false;
   }
 
   componentDidUpdate = prevProps => {
@@ -85,6 +71,13 @@ export class SearchScreen extends Component {
         this.setState({ refreshing: false });
       }
     }
+    if (prevProps.matches !== this.props.matches) {
+      this.setState({ matches: this.props.matches, matchesLoaded: true });
+      this.matchesLoaded = true;
+      if (this.mentorsLoaded && this.matchesLoaded) {
+        this.setState({ refreshing: false });
+      }
+    }
   };
 
   /**
@@ -93,6 +86,22 @@ export class SearchScreen extends Component {
   handleSearch = searchText => {
     console.log(this.props);
     this.setState({
+      matches: this.props.matches.filter(user => {
+        return Object.entries(user)
+          .filter(([key]) =>
+            ["first_name", "last_name", "skills", "profession"].includes(key)
+          )
+          .some(([, entry]) => {
+            if (typeof entry === "string") {
+              return entry.split(" ").some(word => {
+                return searchText.split(" ").some(searchTextWord => {
+                  return word.indexOf(searchTextWord) === 0;
+                });
+              });
+            }
+            return false;
+          });
+      }),
       mentees: this.props.mentees.filter(mentee => {
         return Object.entries(mentee)
           .filter(([key]) =>
@@ -136,6 +145,15 @@ export class SearchScreen extends Component {
     this.props.getMentee(user_id);
   };
 
+  handleMatchPress = user_id => {
+    const isMentor = user_id[0] === '1';
+    if (isMentor) {
+      this.props.getMentor(user_id);
+    } else {
+      this.props.getMentee(user_id);
+    }
+  };
+
   onRefresh = () => {
     this.setState({ refreshing: true });
     this.menteesLoaded = false;
@@ -147,6 +165,14 @@ export class SearchScreen extends Component {
   render() {
     return (
       <View style={styles.container}>
+        <Content
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.refreshing}
+              onRefresh={this.onRefresh}
+            />
+          }
+        >
         <SearchBar
           showLoading
           platform="ios"
@@ -154,10 +180,15 @@ export class SearchScreen extends Component {
           placeholder="Search"
           onChangeText={this.handleSearch}
         />
-        <ScrollView
-          style={styles.container}
-          contentContainerStyle={styles.contentContainer}
-        >
+          <CheckBox
+            title="Matches"
+            checked={this.state.checkedMatches}
+            onPress={() =>
+              this.setState(prevState => ({
+                checkedMentors: !prevState.checkedMentors,
+              }))
+            }
+          />
           <CheckBox
             title="Mentors"
             checked={this.state.checkedMentors}
@@ -185,30 +216,41 @@ export class SearchScreen extends Component {
               />
             }
           >
-            {this.state.mentees.length > 0 && (
+          {this.state.checkedMatches && this.state.matches.length > 0 && (
+            <View>
               <View>
-                <Text>Mentors:</Text>
+                <Text>Matches:</Text>
+              </View>
+              <UsersList
+                users={this.state.matches}
+                onUserPress={this.handleMatchPress}
+              />
+            </View>
+          )}
+            {this.state.checkedMentors && this.state.mentees.length > 0 && (
+              <View>
+                <View>
+                  <Text>Mentors:</Text>
+                </View>
+                <UsersList
+                  users={this.state.mentors}
+                  onUserPress={this.handleMentorPress}
+                />
               </View>
             )}
-            {this.state.checkedMentors && (
-              <UsersList
-                users={this.state.mentors}
-                onUserPress={this.handleMentorPress}
-              />
-            )}
-            {this.state.mentees.length > 0 && (
+            {this.state.checkedMentees && this.state.mentees.length > 0 && (
               <View>
-                <Text>Mentees:</Text>
+                <View>
+                  <Text>Mentees:</Text>
+                </View>
+                <UsersList
+                  users={this.state.mentees}
+                  onUserPress={this.handleMenteePress}
+                />
               </View>
-            )}
-            {this.state.checkedMentees && (
-              <UsersList
-                users={this.state.mentees}
-                onUserPress={this.handleMenteePress}
-              />
             )}
           </Content>
-        </ScrollView>
+        </Content>
       </View>
     );
   }
@@ -251,6 +293,7 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => ({
+  matches: state.search.matches,
   mentors: state.search.mentors,
   mentees: state.search.mentees,
 });
@@ -260,6 +303,7 @@ export default connect(
   {
     getAllMentors,
     getAllMentees,
+    getAllMatches,
     getMentor,
     getMentee,
   }

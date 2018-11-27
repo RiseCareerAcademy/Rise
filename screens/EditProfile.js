@@ -7,6 +7,12 @@ import {
   Item,
   Label,
   Input,
+  Header,
+  Left,
+  Button,
+  Icon,
+  Body,
+  Title,
 } from "native-base";
 import { StyleSheet, TouchableOpacity, Image } from "react-native";
 import { connect } from "react-redux";
@@ -14,6 +20,10 @@ import { connect } from "react-redux";
 import { registerMentor, updateUser } from "../actions/user.actions";
 
 export class EditProfileScreen extends React.Component {
+  static navigationOptions = {
+    header: null,
+  }
+
   state = {
     email: "",
     password: "",
@@ -116,6 +126,16 @@ export class EditProfileScreen extends React.Component {
   render() {
     return (
       <Container style={styles.container}>
+        <Header>
+          <Left>
+            <Button transparent onPress={this.handleBackPress}>
+              <Icon name="md-arrow-round-back" />
+            </Button>
+          </Left>
+          <Body>
+            <Title>Edit Profile</Title>
+          </Body>
+        </Header>
         <Content>
           <Text style={styles.error}>
             {!this.props.registering && this.props.error}
@@ -207,12 +227,6 @@ const styles = StyleSheet.create({
   },
   greyText: {
     color: "grey",
-  },
-  contentContainer: {
-    paddingTop: 30,
-  },
-  container: {
-    margin: 5,
   },
   uploadBtnContainer: {
     margin: "auto",

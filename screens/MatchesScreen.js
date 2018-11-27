@@ -15,7 +15,9 @@ import {
   CardItem,
 } from "native-base";
 
-import { getMatches } from "../actions/matches.actions";
+import { getSuggestedMentorMatches, getSuggestedMenteeMatches } from "../actions/matches.actions";
+
+const uuidv1 = require("uuid/v1");
 
 export class MatchesScreen extends Component {
   static navigationOptions = {
@@ -35,11 +37,17 @@ export class MatchesScreen extends Component {
   constructor(props) {
     super(props);
 
-    this.props.getMatches();
+    const isMentor = this.props.user_id[0] === '1';
+    if (isMentor) {
+      this.props.getSuggestedMenteeMatches();
+    } else {
+      this.props.getSuggestedMentorMatches();
+    }
+    this.hash = uuidv1();
   }
 
   componentDidUpdate = prevProps => {
-    if (prevProps.mentors !== this.props.mentors) {
+    if (prevProps.users !== this.props.users) {
       this.setState({ refreshing: false });
     }
   };
@@ -57,11 +65,11 @@ export class MatchesScreen extends Component {
           }
         >
           <List>
-            {this.props.mentors.map(l => (
+            {this.props.users.map(l => (
               <Card style={{ flex: 0 }} key={l.user_id}>
                 <CardItem>
                   <Left>
-                    <Thumbnail source={{ uri: l.profile_pic_URL }} />
+                    <Thumbnail source={{ uri: `${l.profile_pic_URL}?${this.hash}`}} />
                     <Body>
                       <Text>{`${l.first_name} ${l.last_name}`}</Text>
                       <Text note>{l.profession}</Text>
@@ -91,12 +99,14 @@ export class MatchesScreen extends Component {
 }
 
 const mapStateToProps = state => ({
-  mentors: state.matches.mentors,
+  users: state.matches.users,
+  user_id: state.user.user_id,
 });
 
 export default connect(
   mapStateToProps,
   {
-    getMatches,
+    getSuggestedMentorMatches,
+    getSuggestedMenteeMatches,
   }
 )(MatchesScreen);
