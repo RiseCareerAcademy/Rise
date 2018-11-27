@@ -993,20 +993,16 @@ module.exports.updateZipcode = async (req, res) => {
 module.exports.register = async (req, res) => {
   const fields = ['email_address', 'password'];
   const user = {};
-  const missingFields = fields.some(field => {
+  fields.some(field => {
     if (req.body[field] === undefined) {
       res
         .status(500)
         .json({ error: `Missing credential ${field}`, success: false });
-      return true;
+      return;
     }
     user[field] = req.body[field];
-    return false;
   });
 
-  if (missingFields) {
-    return;
-  }
   try {
     const db = await dbPromise;
     const getEmailSql = sql`Select * from Passwords where email_address = ${user.email_address};`;
@@ -1056,6 +1052,55 @@ module.exports.login = async (req, res) => {
     ;`;
     const id = await db.all(loginSql);
     res.json({ success: true, rows: id });
+
+  } catch (error) {
+
+    console.error(error.message);
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+module.exports.changePassword = async (req, res) => {
+  const fields = ["email_address", "password","new_password"];
+  const user = {};
+  const missingFields = fields.some(field => {
+    if (req.body[field] === undefined) {
+      res.status(500).json({ error: "Missing credentials", success: false });
+      return true;
+    }
+    user[field] = req.body[field];
+    return false;
+  });
+
+  if (missingFields) {
+    return;
+  }
+
+  try {
+    const db = await dbPromise;
+    const getSaltSql = sql`SELECT salt FROM Passwords WHERE email_address= ${user.email_address};`;
+    const saltObject = await db.get(getSaltSql);
+    const salt = saltObject["salt"]
+    const loginSql = sql`SELECT u.user_id FROM Users u INNER JOIN
+    (SELECT email_address FROM Passwords
+    WHERE email_address = ${user.email_address}
+    AND password = ${hp.saltPassword(user.password, salt)["passwordHash"]}) p
+    ON (u.email_address = p.email_address)
+    ;`;
+    const loginObject = await db.all(loginSql);
+    console.log(loginObject)
+    if (loginObject.length==1){
+      const new_salt = hp.genRandomString(16)
+      const passwordData = hp.saltPassword(user.new_password, new_salt)
+      const postPasswordSql = sql`UPDATE Passwords 
+      SET Password = ${passwordData.passwordHash}, salt = ${new_salt} 
+      WHERE email_address = ${user.email_address}`;
+      db.run(postPasswordSql);
+      res.json({ success: true, rows: "Change password successfully!" });
+    } else {
+      res.status(500).json({ success: false, error: "wrong password" });
+    }
+    
 
   } catch (error) {
 

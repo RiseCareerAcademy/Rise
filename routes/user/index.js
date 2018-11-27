@@ -70,6 +70,7 @@ router.put("/:id/profession", controller.updateProfession);
 //Register and Login
 router.post("/password",controller.register);
 router.post("/login",controller.login);
+router.put("/password",controller.changePassword);
 
 
 // //MESSAGE API
