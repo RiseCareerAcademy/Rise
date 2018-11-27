@@ -1158,6 +1158,22 @@ module.exports.getMessageChain = async (req, res) => {
   }
 };
 
+//delete message chain  by match id
+module.exports.deleteMessageChain = async (req, res) => {
+  try {
+    const db = await dbPromise;
+    const matchID = req.params.matchid;
+    const deleteAllMessagesSql =
+      sql`DELETE FROM Messages WHERE match_id = ${matchID};`;
+    await db.run(deleteAllMessagesSql);
+    res.json({ success: true, rows: "deleted all messages!" });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+
 async function sendPushNotification(user_id, message) {
 
   let pushTokens;
