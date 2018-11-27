@@ -20,6 +20,12 @@ require('dotenv').config()
 
 
 //-------------------------Express JS configs-----------------------------//
+app.use(function (req, res, next) {
+  res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+  res.header('Expires', '-1');
+  res.header('Pragma', 'no-cache');
+  next()
+});
 
 app.use(logger('dev')); //debugs logs in terminal
 // IMPORTANT: If you don't use bodyParser then you will NOT be able to call req.body.value

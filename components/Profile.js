@@ -15,6 +15,7 @@ import { connect } from "react-redux";
 import Separator from "../components/Separator";
 import { DOMAIN } from "../config/url";
 import { createMatch } from "../actions/matches.actions";
+import { Chip } from "react-native-paper";
 
 const uuidv1 = require("uuid/v1");
 
@@ -120,6 +121,10 @@ const styles = StyleSheet.create({
     borderWidth: 0,
     borderRadius: 5,
   },
+  chipsContainer: {
+    flex: 1,
+    flexDirection: 'row',
+  },
 });
 
 class Profile extends Component {
@@ -138,7 +143,6 @@ class Profile extends Component {
       last_name,
       user_id,
       zipcode,
-      mentor,
       preview,
       profile_pic_URL,
     } = this.props;
@@ -148,18 +152,18 @@ class Profile extends Component {
     if (preview) {
       image += profile_pic_URL;
     } else {
-      const fromLinkedin = this.state.image.includes("licdn");
+      const fromLinkedin = profile_pic_URL.includes("licdn");
+      image =
+        process.env.NODE_ENV === "development" && !fromLinkedin
+          ? `http://${DOMAIN}/user/${user_id}/profilepic`
+          : profile_pic_URL;
       if (!fromLinkedin) {
         image += `?${encodeURI(uuidv1())}`;
       }
-      image +=
-        process.env.NODE_ENV === "development" && !fromLinkedin
-          ? `http://${DOMAIN}/user/${user_id}/profilepic`
-          : this.state.image;
     }
 
-    const isMeMentor = this.props.my_user_id[0] === '1';
-    const isZeMentor = this.props.user_id[0] === '1';
+    const isMeMentor = this.props.my_user_id[0] === "1";
+    const isZeMentor = this.props.user_id[0] === "1";
     return (
       <View style={styles.headerContainer}>
         <ImageBackground
@@ -232,7 +236,11 @@ class Profile extends Component {
         <View style={{ flexDirection: "row" }}>
           <Text style={styles.userTitleText}>Desired Skills</Text>
         </View>
-        <Text style={styles.userBioText}>{skills}</Text>
+        <View style={styles.chipsContainer}>
+          {skills.split(",").map(skill => (
+             <Chip style={styles.chip} key={skill} icon="info" onPress={() => console.log('Pressed')}>{skill}</Chip>
+          ))}
+        </View>
       </View>
     );
   };

@@ -15,6 +15,9 @@ import { connect } from "react-redux";
 import { RefreshControl } from "react-native";
 
 import { getMessages } from "../actions/messages.actions";
+import { DOMAIN } from "../config/url";
+
+const uuidv1 = require('uuid/v1');
 
 export class Messages extends Component {
   static navigationOptions = {
@@ -71,8 +74,17 @@ export class Messages extends Component {
           }
         >
           <List>
-            {messages.map(message => (
-              <ListItem
+            {messages.map(message => {
+              const { otherUser } = message;
+              const fromLinkedin = otherUser.profile_pic_URL.includes("licdn");
+              let image =
+                process.env.NODE_ENV === "development" && !fromLinkedin
+                  ? `http://${DOMAIN}/user/${otherUser.user_id}/profilepic`
+                  : otherUser.profile_pic_URL;
+              if (!fromLinkedin) {
+                image += `?${encodeURI(uuidv1())}`;
+              }
+              return (<ListItem
                 avatar
                 key={message.otherUserId}
                 onPress={this.handleMessagePress(
@@ -84,7 +96,7 @@ export class Messages extends Component {
                 <Left>
                   <Thumbnail
                     source={{
-                      uri: message.otherUser.profile_pic_URL,
+                      uri: image,
                     }}
                   />
                 </Left>
@@ -99,8 +111,8 @@ export class Messages extends Component {
                 <Right>
                   {!message.empty && <Text note>{message.timestamp}</Text>}
                 </Right>
-              </ListItem>
-            ))}
+              </ListItem>)
+            })}
           </List>
         </Content>
       </Container>

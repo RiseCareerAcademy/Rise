@@ -103,7 +103,7 @@ export class MentorRegistration extends React.Component {
       this.state.password,
       this.state.confirmedPassword,
       this.state.skills,
-      this.state.zipcode
+      this.state.zipcode,
     );
     if (!valid && process.env.NODE_ENV !== "development") {
       return;
@@ -164,7 +164,7 @@ export class MentorRegistration extends React.Component {
               />
             </Item>
             <Item stackedLabel>
-              <Label>Skills</Label>
+              <Label>Skills (separated by commas)</Label>
               <Input
                 onChangeText={this.handleSkills}
               />

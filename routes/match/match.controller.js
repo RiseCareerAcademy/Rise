@@ -136,16 +136,30 @@ module.exports.getMatchingMentors = async (req, res) => {
     const { skills, profession } = mentee;
 
     const selectUsersByProfessionSql = sql`SELECT users FROM Profession WHERE profession = ${profession}`;
-    const mentorsWithProfession = (await db.get(
+    const mentorsWithProfessionObject = (await db.get(
       selectUsersByProfessionSql
-    )).users
-      .split(",")
-      .filter(user => user[0] === "1");
+    ));
 
-    const selectUsersBySkillsSql = sql`SELECT users FROM Skills WHERE skills = ${skills}`;
-    const mentorsWithSkills = (await db.get(selectUsersBySkillsSql)).users
-      .split(",")
-      .filter(user => user[0] === "1");
+    let mentorsWithProfession = [];
+    if (mentorsWithProfessionObject !== undefined) {
+      mentorsWithProfession = mentorsWithProfessionObject.users
+        .split(",")
+        .filter(user => user[0] === "1");
+    }
+
+    const mentorsWithSkillsObjects = await Promise.all(skills.split(',').map(skill => {
+      const selectUsersBySkillsSql = sql`SELECT users FROM Skills WHERE skills = ${skill} COLLATE NOCASE`;
+      return db.get(selectUsersBySkillsSql);
+    }))
+
+    let mentorsWithSkills = [];
+    mentorsWithSkillsObjects.forEach(mentorsWithSkillsObject => {
+      if (mentorsWithSkillsObject !== undefined) {
+        mentorsWithSkills = mentorsWithSkills.concat(mentorsWithSkillsObject.users
+        .split(",")
+        .filter(user => user[0] === "1"));
+      }
+    })
 
     const mentorIdsWithScores = matchAlgorithm(
       mentee,
@@ -155,7 +169,7 @@ module.exports.getMatchingMentors = async (req, res) => {
 
     let mentors = await Promise.all(
       mentorIdsWithScores.map( ({ user_id })=> {
-        return db.get(sql`SELECT * FROM Users WHERE user_id = ${user_id}`);
+        return db.get(sql`SELECT * FROM Users WHERE user_id = ${user_id} COLLATE NOCASE`);
       })
     );
 
@@ -177,17 +191,30 @@ module.exports.getMatchingMentees = async (req, res) => {
     const mentor = await db.get(getMentorSql);
     const { skills, profession } = mentor;
 
-    const selectUsersByProfessionSql = sql`SELECT users FROM Profession WHERE profession = ${profession}`;
-    const menteesWithProfession = (await db.get(
+    const selectUsersByProfessionSql = sql`SELECT users FROM Profession WHERE profession = ${profession} COLLATE NOCASE`;
+    const menteesWithProfessionObject = (await db.get(
       selectUsersByProfessionSql
-    )).users
-      .split(",")
-      .filter(user => user[0] !== "1");
+    ));
+    let menteesWithProfession = [];
+    if (menteesWithProfessionObject !== undefined) {
+      menteesWithProfession = menteesWithProfessionObject.users
+        .split(",")
+        .filter(user => user[0] !== "1");
+    }
 
-    const selectUsersBySkillsSql = sql`SELECT users FROM Skills WHERE skills = ${skills}`;
-    const menteesWithSkills = (await db.get(selectUsersBySkillsSql)).users
-      .split(",")
-      .filter(user => user[0] !== "1");
+    const menteesWithSkillsObjects = await Promise.all(skills.split(',').map(skill => {
+      const selectUsersBySkillsSql = sql`SELECT users FROM Skills WHERE skills = ${skill} COLLATE NOCASE`;
+      return db.get(selectUsersBySkillsSql);
+    }))
+
+    let menteesWithSkills = [];
+    menteesWithSkillsObjects.forEach(menteesWithSkillsObject => {
+      if (menteesWithSkillsObject !== undefined) {
+        menteesWithSkills = menteesWithSkills.concat(menteesWithSkillsObject.users
+        .split(",")
+        .filter(user => user[0] !== "1"));
+      }
+    })
 
     const menteeIdsWithScores = matchAlgorithm(
       mentor,

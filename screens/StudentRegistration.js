@@ -108,6 +108,7 @@ export class StudentRegistration extends React.Component {
     lastName,
     zipcode,
     biography,
+    image,
   ) => {
     // we are going to store errors for all fields
     // in a signle array
@@ -121,7 +122,8 @@ export class StudentRegistration extends React.Component {
       confirmedPassword.length == 0 ||
       lastName.length == 0 ||
       zipcode.length == 0 ||
-      biography.length == 0
+      biography.length == 0 ||
+      image.length == 0
     ) {
       errors.push("All fields must be filled");
     } else if (email.length < 5) {
@@ -139,10 +141,10 @@ export class StudentRegistration extends React.Component {
     } else if (zipcode.length != 5 && /^\d+$/.test(zipcode)) {
       errors.push("zipcode must contain only numbers and be 5 characters long");
     }
-    if (errors.length == 0) {
-      // alert(errors);
+    if (errors.length == 0 || process.env.NODE_ENV === "development") {
       return true;
     } else {
+      alert(errors);
       return false;
     }
   };
@@ -158,6 +160,7 @@ export class StudentRegistration extends React.Component {
       this.state.lastName,
       this.state.zipcode,
       this.state.biography,
+      this.state.image,
     );
     if (!valid && process.env.NODE_ENV !== "development") {
       return;
@@ -281,7 +284,7 @@ export class StudentRegistration extends React.Component {
               />
             </Item>
             <Item stackedLabel>
-              <Label>Skills</Label>
+              <Label>Skills (separated by commas)</Label>
               <Input
                 placeholder="Enter skills you want to learn"
                 onChangeText={this.handleSkills}

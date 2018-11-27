@@ -354,7 +354,7 @@ module.exports.postMessage = async (req, res) => {
   });
 
 
-  
+
   try {
     const db = await dbPromise;
     const date = new Date();
@@ -766,7 +766,7 @@ module.exports.addSkill = async (req, res) => {
     const getUsersBySkillSql = sql`SELECT users FROM Skills WHERE skills = ${skill}`;
     const usersSkillsObject = await db.get(getUsersBySkillSql);
     if (usersSkillsObject == undefined) {
-      const insertSkillsSql = sql`INSERT INTO Skills VALUES (${skill},CAST(${parseInt(userID)} AS int))`;
+      const insertSkillsSql = sql`INSERT INTO Skills VALUES (${skill},${userID})`;
       await db.run(insertSkillsSql);
       res.json({ success: true, rows: "insert users into new skill" });
     } else {
