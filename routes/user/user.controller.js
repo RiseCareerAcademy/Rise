@@ -886,6 +886,7 @@ module.exports.updateProfession = async (req, res) => {
     const updateProfessionInUsersSql = sql`UPDATE Users SET profession = ${profession} WHERE user_id = ${userID}`;
     await db.run(updateProfessionInUsersSql);
 
+    //remove from old profession
     if (oldProfession.length == 0) {
       res.status(400).json({ error: "User not found!", success: false });
       return
@@ -898,15 +899,16 @@ module.exports.updateProfession = async (req, res) => {
     }
     let users = usersToRemove[0]["users"];
     users = removeFromString(users, userID);
-    const removeUserFromProfessionSql = sql`UPDATE Profession SET users = ${users} WHERE profession = ${oldProfession}`;
-    await db.run(removeUserFromProfessionSql);
+    console.log(""+users,oldProfession)
+    const removeUserFromOldProfessionSql = sql`UPDATE Profession SET users = ${users} WHERE profession = ${oldProfession["profession"]}`;
+    await db.run(removeUserFromOldProfessionSql);
 
-
+    //add to new profession
     const findUsersFromNewProfessionSql = sql`SELECT users FROM Profession WHERE profession = ${profession}`;
     const usersToAdd = await db.all(findUsersFromNewProfessionSql);
 
     if (usersToAdd.length == 0) {
-      const addUserToProfessionSql = sql`INSERT INTO Profession VALUES (${profession},${users});`;
+      const addUserToProfessionSql = sql`INSERT INTO Profession VALUES (${profession},${userID});`;
       await db.run(addUserToProfessionSql);
       res.json({ success: true });
       return
