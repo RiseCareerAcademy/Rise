@@ -124,6 +124,7 @@ const styles = StyleSheet.create({
   chipsContainer: {
     flex: 1,
     flexDirection: 'row',
+    flexWrap: 'wrap',
   },
 });
 
@@ -246,7 +247,7 @@ class Profile extends Component {
   };
 
   render() {
-    return (
+    return this.props.loggedIn && (
       <ScrollView style={styles.scroll}>
         <View style={styles.container}>
           <Card containerStyle={styles.cardContainer}>
@@ -263,6 +264,7 @@ class Profile extends Component {
 const mapStateToProps = state => ({
   matches: state.search.matches,
   my_user_id: state.user.user_id,
+  loggedIn: state.user.loggedIn,
 });
 
 export default connect(
