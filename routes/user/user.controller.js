@@ -423,8 +423,8 @@ module.exports.conversation = (ws, req) => {
     };
 
     const res = {
-      status: function() { return this; },
-      json: function() { return this; },
+      status: function () { return this; },
+      json: function () { return this; },
     };
 
     module.exports.postMessage(req, res);
@@ -794,26 +794,34 @@ module.exports.removeSkill = async (req, res) => {
     const db = await dbPromise;
     //remove skill from user table
     const getSkillSql = sql`SELECT skills FROM Users WHERE user_id = ${userID}`
-    let skills = await db.get(getSkillSql)
-    if (skills.length == 0) {
+    const skillsObject = await db.get(getSkillSql)
+    if (skillsObject.length == 0) {
       res.status(400).json({ error: "User not found!", success: false });
       return
     }
+    let skills = skillsObject["skills"]
     skills = removeFromString(skills, skill);
-    const removeSkillSql = sql`UPDATE Users SET skills = ${skill} WHERE user_id = ${userID}`;
-    await db.run(removeSkillSql);
 
+    const removeSkillSql = sql`UPDATE Users SET skills = ${skills} WHERE user_id = ${userID}`;
+    await db.run(removeSkillSql);
     //remove user to skill table
     const getUsersSql = sql`SELECT users FROM Skills WHERE skills = ${skill}`
-    let users = await db.get(getUsersSql);
-    if (users.length == 0) {
+    const usersObject = await db.all(getUsersSql);
+    console.log(usersObject)
+    if (usersObject.length == 0) {
       res.status(400).json({ error: "Skill not found!", success: false });
       return
     }
+    let users = usersObject[0]["users"]
     users = removeFromString(users, userID);
-    const removeUserSql = sql`UPDATE Skills SET users = ${userID} WHERE skills = ${skill}`;
-    await db.run(removeUserSql);
-    res.json({ success: true });
+    if (users == "") {
+      const deleteEmptySkillSql = sql`DELETE FROM Skills WHERE skills = ${skill}`;
+      await db.run(deleteEmptySkillSql);
+    } else {
+      const removeUserSql = sql`UPDATE Skills SET users = ${users} WHERE skills = ${skill}`;
+      await db.run(removeUserSql);
+    }
+    res.json({ success: true , rows: "successfully removed skill"});
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
@@ -898,7 +906,7 @@ module.exports.updateProfession = async (req, res) => {
     }
     let users = usersToRemove[0]["users"];
     users = removeFromString(users, userID);
-    console.log(""+users,oldProfession)
+    //console.log("" + users, oldProfession)
     const removeUserFromOldProfessionSql = sql`UPDATE Profession SET users = ${users} WHERE profession = ${oldProfession["profession"]}`;
     await db.run(removeUserFromOldProfessionSql);
 
@@ -1060,7 +1068,7 @@ module.exports.login = async (req, res) => {
 };
 
 module.exports.changePassword = async (req, res) => {
-  const fields = ["email_address", "password","new_password"];
+  const fields = ["email_address", "password", "new_password"];
   const user = {};
   const missingFields = fields.some(field => {
     if (req.body[field] === undefined) {
@@ -1087,8 +1095,8 @@ module.exports.changePassword = async (req, res) => {
     ON (u.email_address = p.email_address)
     ;`;
     const loginObject = await db.all(loginSql);
-    console.log(loginObject)
-    if (loginObject.length==1){
+    //console.log(loginObject)
+    if (loginObject.length == 1) {
       const new_salt = hp.genRandomString(16)
       const passwordData = hp.saltPassword(user.new_password, new_salt)
       const postPasswordSql = sql`UPDATE Passwords
@@ -1127,7 +1135,7 @@ module.exports.getLatestMessagesById = async (req, res) => {
   const date = new Date();
   req.body.limit = req.body.limit || 1
   req.body.timestamp = req.body.timestamp || date.getTime();
-  console.log(req.body.timestamp)
+  //console.log(req.body.timestamp)
   try {
     const db = await dbPromise;
     const matchID = req.params.matchid;
@@ -1180,7 +1188,7 @@ async function sendPushNotification(user_id, message) {
     const db = await dbPromise;
     const getPushTokensByUserIdSql = sql`SELECT push_token FROM Push_Tokens WHERE user_id = ${user_id}`;
     pushTokens = (await db.all(getPushTokensByUserIdSql)).map(obj => obj.push_token);
-  } catch(error) {
+  } catch (error) {
     console.error(error.message);
   }
 
@@ -1189,7 +1197,7 @@ async function sendPushNotification(user_id, message) {
 
   // Create the messages that you want to send to clents
   const messages = [];
-  pushTokens.forEach( pushToken => {
+  pushTokens.forEach(pushToken => {
     // Each push token looks like ExponentPushToken[xxxxxxxxxxxxxxxxxxxxxx]
 
     // Check that all your push tokens appear to be valid Expo push tokens
@@ -1218,7 +1226,7 @@ async function sendPushNotification(user_id, message) {
   for (let chunk of chunks) {
     try {
       let ticketChunk = await expo.sendPushNotificationsAsync(chunk);
-      console.log(ticketChunk);
+      //console.log(ticketChunk);
       tickets.push(...ticketChunk);
       // NOTE: If a ticket contains an error code in ticket.details.error, you
       // must handle it appropriately. The error codes are listed in the Expo
@@ -1232,57 +1240,57 @@ async function sendPushNotification(user_id, message) {
 
 
 
-    // Later, after the Expo push notification service has delivered the
-    // notifications to Apple or Google (usually quickly, but allow the the service
-    // up to 30 minutes when under load), a "receipt" for each notification is
-    // created. The receipts will be available for at least a day; stale receipts
-    // are deleted.
-    //
-    // The ID of each receipt is sent back in the response "ticket" for each
-    // notification. In summary, sending a notification produces a ticket, which
-    // contains a receipt ID you later use to get the receipt.
-    //
-    // The receipts may contain error codes to which you must respond. In
-    // particular, Apple or Google may block apps that continue to send
-    // notifications to devices that have blocked notifications or have uninstalled
-    // your app. Expo does not control this policy and sends back the feedback from
-    // Apple and Google so you can handle it appropriately.
-    let receiptIds = [];
-    for (let ticket of tickets) {
-      // NOTE: Not all tickets have IDs; for example, tickets for notifications
-      // that could not be enqueued will have error information and no receipt ID.
-      if (ticket.id) {
-        receiptIds.push(ticket.id);
-      }
+  // Later, after the Expo push notification service has delivered the
+  // notifications to Apple or Google (usually quickly, but allow the the service
+  // up to 30 minutes when under load), a "receipt" for each notification is
+  // created. The receipts will be available for at least a day; stale receipts
+  // are deleted.
+  //
+  // The ID of each receipt is sent back in the response "ticket" for each
+  // notification. In summary, sending a notification produces a ticket, which
+  // contains a receipt ID you later use to get the receipt.
+  //
+  // The receipts may contain error codes to which you must respond. In
+  // particular, Apple or Google may block apps that continue to send
+  // notifications to devices that have blocked notifications or have uninstalled
+  // your app. Expo does not control this policy and sends back the feedback from
+  // Apple and Google so you can handle it appropriately.
+  let receiptIds = [];
+  for (let ticket of tickets) {
+    // NOTE: Not all tickets have IDs; for example, tickets for notifications
+    // that could not be enqueued will have error information and no receipt ID.
+    if (ticket.id) {
+      receiptIds.push(ticket.id);
     }
+  }
 
-    let receiptIdChunks = expo.chunkPushNotificationReceiptIds(receiptIds);
-    // Like sending notifications, there are different strategies you could use
-    // to retrieve batches of receipts from the Expo service.
-    for (let chunk of receiptIdChunks) {
-      try {
-        let receipt = await expo.getPushNotificationReceiptsAsync(chunk);
-        console.log(receipt);
+  let receiptIdChunks = expo.chunkPushNotificationReceiptIds(receiptIds);
+  // Like sending notifications, there are different strategies you could use
+  // to retrieve batches of receipts from the Expo service.
+  for (let chunk of receiptIdChunks) {
+    try {
+      let receipt = await expo.getPushNotificationReceiptsAsync(chunk);
+      //console.log(receipt);
 
-        // The receipts specify whether Apple or Google successfully received the
-        // notification and information about an error, if one occurred.
-        // for (let receipt of receipts) {
-          if (receipt.status === 'ok') {
-            continue;
-          } else if (receipt.status === 'error') {
-            console.error(`There was an error sending a notification: ${receipt.message}`);
-            if (receipt.details && receipt.details.error) {
-              // The error codes are listed in the Expo documentation:
-              // https://docs.expo.io/versions/latest/guides/push-notifications#response-format
-              // You must handle the errors appropriately.
-              console.error(`The error code is ${receipt.details.error}`);
-            }
-          }
-        // }
-      } catch (error) {
-        console.error(error);
+      // The receipts specify whether Apple or Google successfully received the
+      // notification and information about an error, if one occurred.
+      // for (let receipt of receipts) {
+      if (receipt.status === 'ok') {
+        continue;
+      } else if (receipt.status === 'error') {
+        console.error(`There was an error sending a notification: ${receipt.message}`);
+        if (receipt.details && receipt.details.error) {
+          // The error codes are listed in the Expo documentation:
+          // https://docs.expo.io/versions/latest/guides/push-notifications#response-format
+          // You must handle the errors appropriately.
+          console.error(`The error code is ${receipt.details.error}`);
+        }
       }
+      // }
+    } catch (error) {
+      console.error(error);
     }
+  }
 
 }
 
@@ -1296,7 +1304,6 @@ function addToString(string, add) {
 }
 
 function removeFromString(string, rem) {
-  console.log(1, string)
   const array = string.split(",");
   string = "";
   for (let i = 0; i < array.length; i++) {
@@ -1308,7 +1315,7 @@ function removeFromString(string, rem) {
   if (string.charAt(string.length - 1) == ",") {
     string = string.substring(0, string.length - 1);
   }
-  console.log(string)
+  //console.log(string)
   return string;
 }
 

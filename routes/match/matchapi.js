@@ -16,7 +16,7 @@ router.get('/matchid/:id',controller.getMatchById);
 //get match by user id
 router.get('/userid/:id',controller.getMatchByUserId);
 
-//get match by user id
+//get match by user ids
 router.get('/userid',controller.getMatchByUserIds);
 
 //get a rating by match id

@@ -72,7 +72,7 @@ module.exports.getMatchByUserId = async (req, res) => {
   }
 };
 
-//get match by user id
+//get match by user ids
 module.exports.getMatchByUserIds = async (req, res) => {
   try {
     const db = await dbPromise;
@@ -85,6 +85,7 @@ module.exports.getMatchByUserIds = async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 };
+
 
 // module.exports.getRatingByMatchId = (req, res) => {
 //   matchid = req.params.matchid;
