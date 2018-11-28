@@ -16,15 +16,15 @@ router.get('/matchid/:id',controller.getMatchById);
 //get match by user id
 router.get('/userid/:id',controller.getMatchByUserId);
 
-//get match by user id
+//get match by user ids
 router.get('/userid',controller.getMatchByUserIds);
 
 //get a rating by match id
-// router.get('/rating/:matchid',controller.getRatingByMatchId);
+router.get('/rating/:matchid',controller.getRatingByMatchId);
 //get a rating by mentor id
-// router.get('/rating/userid/:userid',controller.getRatingByMentorId);
+router.get('/rating/userid/:id',controller.getMentorAverageRating);
 //add a rating in a new match
-// router.put("/rating/:matchid/:rating",controller.addRating);
+router.put("/rating/:matchid/:rating",controller.updateRating);
 
 router.get('/mentors', controller.getMatchingMentors);
 router.get('/mentees', controller.getMatchingMentees);
