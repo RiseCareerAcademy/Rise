@@ -16,6 +16,7 @@ import {
 } from "native-base";
 
 import { getSuggestedMentorMatches, getSuggestedMenteeMatches } from "../actions/matches.actions";
+import { getMentor, getMentee } from '../actions/search.actions';
 import { DOMAIN } from "../config/url";
 
 const uuidv1 = require("uuid/v1");
@@ -62,11 +63,11 @@ export class MatchesScreen extends Component {
     }
   }
 
-  handleMentorPress = user_id => {
+  handleMentorPress = user_id => () => {
     this.props.getMentor(user_id);
   };
 
-  handleMenteePress = user_id => {
+  handleMenteePress = user_id => () => {
     this.props.getMentee(user_id);
   };
 
@@ -98,7 +99,7 @@ export class MatchesScreen extends Component {
               image += `?${encodeURI(uuidv1())}`;
             }
 
-            let handlePress;
+            let handlePress = () => {};
             if (l.user_id !== undefined) {
               const isMentor = l.user_id[0] === '1';
               if (isMentor) {
@@ -108,7 +109,7 @@ export class MatchesScreen extends Component {
               }
             }
               return (<Card style={{ flex: 0 }} key={l.user_id}>
-                <CardItem onPress={handlePress}>
+                <CardItem onPress={handlePress(l.user_id)}>
                   <Left>
                     <Thumbnail source={{ uri: image}} />
                     <Body>
@@ -125,7 +126,7 @@ export class MatchesScreen extends Component {
                 </CardItem>
                 <CardItem>
                   <Left>
-                    <Button transparent textStyle={{ color: "#87838B" }}>
+                    <Button transparent textStyle={{ color: "#87838B" }} onPress={handlePress(l.user_id)}>
                       <Text>{`Score: ${l.score}`}</Text>
                     </Button>
                   </Left>
@@ -149,5 +150,7 @@ export default connect(
   {
     getSuggestedMentorMatches,
     getSuggestedMenteeMatches,
+    getMentee,
+    getMentor,
   }
 )(MatchesScreen);
