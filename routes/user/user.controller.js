@@ -906,10 +906,14 @@ module.exports.updateProfession = async (req, res) => {
     }
     let users = usersToRemove[0]["users"];
     users = removeFromString(users, userID);
-    //console.log("" + users, oldProfession)
-    const removeUserFromOldProfessionSql = sql`UPDATE Profession SET users = ${users} WHERE profession = ${oldProfession["profession"]}`;
-    await db.run(removeUserFromOldProfessionSql);
-
+    if (users == ""){
+      const deleteEmptyProfessionSql = sql`DELETE FROM Profession WHERE profession = ${oldProfession["profession"]}`;
+      await db.run(deleteEmptyProfessionSql);
+    } else{
+      const removeUserFromOldProfessionSql = sql`UPDATE Profession SET users = ${users} WHERE profession = ${oldProfession["profession"]}`;
+      await db.run(removeUserFromOldProfessionSql);
+    }
+    
     //add to new profession
     const findUsersFromNewProfessionSql = sql`SELECT users FROM Profession WHERE profession = ${profession}`;
     const usersToAdd = await db.all(findUsersFromNewProfessionSql);
