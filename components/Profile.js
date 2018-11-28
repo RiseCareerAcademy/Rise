@@ -146,6 +146,7 @@ class Profile extends Component {
       zipcode,
       preview,
       profile_pic_URL,
+      my_user_id,
     } = this.props;
     const name = `${first_name} ${last_name}`;
 
@@ -204,7 +205,7 @@ class Profile extends Component {
                 <Button style={styles.uploadBtn} title="MATCHED" disabled />
               </View>
             ) : (
-              isZeMentor !== isMeMentor && (
+              my_user_id !== user_id && isZeMentor !== isMeMentor && (
                 <View style={styles.uploadBtnContainer}>
                   <Button
                     onPress={this.handleMatch}
