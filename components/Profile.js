@@ -138,6 +138,10 @@ class Profile extends Component {
     this.props.createMatch(this.props.user_id);
   };
 
+  handleRate = () => {
+    this.props.navigation.navigate('Ratings');
+  }
+
   renderHeader = () => {
     const {
       first_name,
@@ -214,6 +218,15 @@ class Profile extends Component {
                   />
                 </View>
               )
+            )}
+            {isZeMentor && my_user_id !== user_id && (
+                <View style={styles.uploadBtnContainer}>
+                  <Button
+                    onPress={this.handleRate}
+                    style={styles.uploadBtn}
+                    title="Rate"
+                  />
+                </View>
             )}
           </View>
         </ImageBackground>
