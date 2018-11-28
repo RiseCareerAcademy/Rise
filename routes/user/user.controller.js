@@ -186,7 +186,6 @@ module.exports.postMentor = async (req, res) => {
     }
     const date = new Date();
     user.user_id = "1" + iid(date.getTime());
-    user.profile_pic_URL = `http://${ip_address}:8000/user/${user.user_id}/profilepic`;
     const insertMentorsSql = sql`INSERT INTO Users VALUES (
         ${user.user_id},
          ${user.first_name} ,
@@ -1092,15 +1091,15 @@ module.exports.changePassword = async (req, res) => {
     if (loginObject.length==1){
       const new_salt = hp.genRandomString(16)
       const passwordData = hp.saltPassword(user.new_password, new_salt)
-      const postPasswordSql = sql`UPDATE Passwords 
-      SET Password = ${passwordData.passwordHash}, salt = ${new_salt} 
+      const postPasswordSql = sql`UPDATE Passwords
+      SET Password = ${passwordData.passwordHash}, salt = ${new_salt}
       WHERE email_address = ${user.email_address}`;
       db.run(postPasswordSql);
       res.json({ success: true, rows: "Change password successfully!" });
     } else {
       res.status(500).json({ success: false, error: "wrong password" });
     }
-    
+
 
   } catch (error) {
 

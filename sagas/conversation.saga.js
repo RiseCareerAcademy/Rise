@@ -54,7 +54,6 @@ export default function* messagesWatcher() {
   let match_id;
   while (true) {
   try {
-      const from_id = yield select(state => state.user.user_id);
       const { setMatchIdAction } = yield race({
         setMatchIdAction: take(SET_MATCH_ID),
         reconnectToWebSocketAction: take(RECONNECT_TO_WEB_SOCKET),
@@ -69,6 +68,7 @@ export default function* messagesWatcher() {
           handleResponseError(error);
         }
       }
+      const from_id = yield select(state => state.user.user_id);
       const socket = new WebSocket(`ws://${DOMAIN}/user/conversation?from_id=${from_id}`);
       // const socket = io(`http://${DOMAIN}`);
       const socketChannel = yield call(createSocketChannel, socket, match_id);

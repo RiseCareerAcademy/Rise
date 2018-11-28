@@ -121,6 +121,7 @@ export class MentorRegistration extends React.Component {
       profession: this.state.profession || this.props.profession,
       password: this.state.password,
       image: this.props.profile_pic_URL,
+      profile_pic_URL: this.props.profile_pic_URL,
     };
 
     this.props.registerMentor(mentor);
