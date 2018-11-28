@@ -26,6 +26,7 @@ app.use(function (req, res, next) {
   res.header('Pragma', 'no-cache');
   next()
 });
+app.disable('etag');
 
 app.use(logger('dev')); //debugs logs in terminal
 // IMPORTANT: If you don't use bodyParser then you will NOT be able to call req.body.value
