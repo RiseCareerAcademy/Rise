@@ -98,7 +98,7 @@ export class Settings extends Component {
               <Icon active name="arrow-forward" />
             </Right>
           </ListItem>
-          {/* <ListItem icon onPress={this.handleChangePassword}>
+          <ListItem icon onPress={this.handleChangePassword}>
             <Left>
               <Button style={{ backgroundColor: "#007AFF" }} >
                 <Icon active name="lock" />
@@ -110,7 +110,7 @@ export class Settings extends Component {
             <Right>
               <Icon active name="arrow-forward" />
             </Right>
-          </ListItem> */}
+          </ListItem>
           <Separator bordered>
             <Text></Text>
           </Separator>
