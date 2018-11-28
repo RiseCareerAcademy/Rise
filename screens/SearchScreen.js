@@ -227,7 +227,7 @@ export class SearchScreen extends Component {
               />
             </View>
           )}
-            {this.state.checkedMentors && this.state.mentees.length > 0 && (
+            {this.state.checkedMentors && this.state.mentors.length > 0 && (
               <View>
                 <View>
                   <Text>Mentors:</Text>
