@@ -886,6 +886,7 @@ module.exports.updateProfession = async (req, res) => {
     const updateProfessionInUsersSql = sql`UPDATE Users SET profession = ${profession} WHERE user_id = ${userID}`;
     await db.run(updateProfessionInUsersSql);
 
+    //remove from old profession
     if (oldProfession.length == 0) {
       res.status(400).json({ error: "User not found!", success: false });
       return
@@ -898,15 +899,16 @@ module.exports.updateProfession = async (req, res) => {
     }
     let users = usersToRemove[0]["users"];
     users = removeFromString(users, userID);
-    const removeUserFromProfessionSql = sql`UPDATE Profession SET users = ${users} WHERE profession = ${oldProfession}`;
-    await db.run(removeUserFromProfessionSql);
+    console.log(""+users,oldProfession)
+    const removeUserFromOldProfessionSql = sql`UPDATE Profession SET users = ${users} WHERE profession = ${oldProfession["profession"]}`;
+    await db.run(removeUserFromOldProfessionSql);
 
-
+    //add to new profession
     const findUsersFromNewProfessionSql = sql`SELECT users FROM Profession WHERE profession = ${profession}`;
     const usersToAdd = await db.all(findUsersFromNewProfessionSql);
 
     if (usersToAdd.length == 0) {
-      const addUserToProfessionSql = sql`INSERT INTO Profession VALUES (${profession},${users});`;
+      const addUserToProfessionSql = sql`INSERT INTO Profession VALUES (${profession},${userID});`;
       await db.run(addUserToProfessionSql);
       res.json({ success: true });
       return
@@ -991,20 +993,16 @@ module.exports.updateZipcode = async (req, res) => {
 module.exports.register = async (req, res) => {
   const fields = ['email_address', 'password'];
   const user = {};
-  const missingFields = fields.some(field => {
+  fields.some(field => {
     if (req.body[field] === undefined) {
       res
         .status(500)
         .json({ error: `Missing credential ${field}`, success: false });
-      return true;
+      return;
     }
     user[field] = req.body[field];
-    return false;
   });
 
-  if (missingFields) {
-    return;
-  }
   try {
     const db = await dbPromise;
     const getEmailSql = sql`Select * from Passwords where email_address = ${user.email_address};`;
@@ -1062,6 +1060,55 @@ module.exports.login = async (req, res) => {
   }
 };
 
+module.exports.changePassword = async (req, res) => {
+  const fields = ["email_address", "password","new_password"];
+  const user = {};
+  const missingFields = fields.some(field => {
+    if (req.body[field] === undefined) {
+      res.status(500).json({ error: "Missing credentials", success: false });
+      return true;
+    }
+    user[field] = req.body[field];
+    return false;
+  });
+
+  if (missingFields) {
+    return;
+  }
+
+  try {
+    const db = await dbPromise;
+    const getSaltSql = sql`SELECT salt FROM Passwords WHERE email_address= ${user.email_address};`;
+    const saltObject = await db.get(getSaltSql);
+    const salt = saltObject["salt"]
+    const loginSql = sql`SELECT u.user_id FROM Users u INNER JOIN
+    (SELECT email_address FROM Passwords
+    WHERE email_address = ${user.email_address}
+    AND password = ${hp.saltPassword(user.password, salt)["passwordHash"]}) p
+    ON (u.email_address = p.email_address)
+    ;`;
+    const loginObject = await db.all(loginSql);
+    console.log(loginObject)
+    if (loginObject.length==1){
+      const new_salt = hp.genRandomString(16)
+      const passwordData = hp.saltPassword(user.new_password, new_salt)
+      const postPasswordSql = sql`UPDATE Passwords 
+      SET Password = ${passwordData.passwordHash}, salt = ${new_salt} 
+      WHERE email_address = ${user.email_address}`;
+      db.run(postPasswordSql);
+      res.json({ success: true, rows: "Change password successfully!" });
+    } else {
+      res.status(500).json({ success: false, error: "wrong password" });
+    }
+    
+
+  } catch (error) {
+
+    console.error(error.message);
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
 //MESSAGE API
 
 module.exports.getMessages = async (req, res) => {
@@ -1110,6 +1157,22 @@ module.exports.getMessageChain = async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 };
+
+//delete message chain  by match id
+module.exports.deleteMessageChain = async (req, res) => {
+  try {
+    const db = await dbPromise;
+    const matchID = req.params.matchid;
+    const deleteAllMessagesSql =
+      sql`DELETE FROM Messages WHERE match_id = ${matchID};`;
+    await db.run(deleteAllMessagesSql);
+    res.json({ success: true, rows: "deleted all messages!" });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
 
 async function sendPushNotification(user_id, message) {
 

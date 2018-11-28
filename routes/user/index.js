@@ -70,6 +70,7 @@ router.put("/:id/profession", controller.updateProfession);
 //Register and Login
 router.post("/password",controller.register);
 router.post("/login",controller.login);
+router.put("/password",controller.changePassword);
 
 
 // //MESSAGE API
@@ -82,6 +83,8 @@ router.get('/message/all', controller.getMessages);
 router.get('/message/:matchid', controller.getLatestMessagesById);
 //get all message by message id
 router.get('/message/all/:matchid', controller.getMessageChain);
+//delete all message by message id
+router.delete('/message/all/:matchid', controller.deleteMessageChain);
 // create a conversation ws connection
 router.ws('/conversation', controller.conversation);
 // setup push notification
