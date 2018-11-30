@@ -105,7 +105,7 @@ export class MentorRegistration extends React.Component {
       this.state.skills,
       this.state.zipcode,
     );
-    if (!valid && process.env.NODE_ENV !== "development") {
+    if (!valid && !__DEV__) {
       return;
     }
 

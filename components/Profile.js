@@ -13,7 +13,7 @@ import {
 import { connect } from "react-redux";
 
 import Separator from "../components/Separator";
-import { DOMAIN } from "../config/url";
+import { HOST } from "../config/url";
 import { createMatch } from "../actions/matches.actions";
 import { Chip } from "react-native-paper";
 
@@ -160,8 +160,8 @@ class Profile extends Component {
     } else {
       const fromLinkedin = profile_pic_URL.includes("licdn");
       image =
-        process.env.NODE_ENV === "development" && !fromLinkedin
-          ? `http://${DOMAIN}/user/${user_id}/profilepic`
+        __DEV__ && !fromLinkedin
+          ? `http://${HOST}/user/${user_id}/profilepic`
           : profile_pic_URL;
       if (!fromLinkedin) {
         image += `?${encodeURI(uuidv1())}`;
