@@ -10,6 +10,7 @@ import Profile from '../screens/Profile'
 import LoadingScreen from '../screens/LoadingScreen';
 import Conversation from '../screens/Conversation';
 import PreviewScreen from '../screens/PreviewScreen';
+import Ratings from '../screens/RatingsScreen';
 
 const App = createStackNavigator({
   Home: { screen: HomeScreen },
@@ -21,6 +22,7 @@ const App = createStackNavigator({
   Loading: { screen: LoadingScreen },
   Conversation: { screen: Conversation },
   Preview: { screen: PreviewScreen },
+  Ratings: { screen: Ratings },
 });
 
 App.navigationOptions = {

@@ -27,7 +27,7 @@ class MenteeProfileScreen extends Component {
           </Body>
         </Header>
         <Content>
-          <Profile {...this.props.navigation.state.params} />
+          <Profile {...this.props.navigation.state.params} navigation={this.props.navigation} />
         </Content>
       </Container>
     );

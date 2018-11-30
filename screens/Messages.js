@@ -15,7 +15,7 @@ import { connect } from "react-redux";
 import { RefreshControl } from "react-native";
 
 import { getMessages } from "../actions/messages.actions";
-import { DOMAIN } from "../config/url";
+import { HOST } from "../config/url";
 
 const uuidv1 = require('uuid/v1');
 
@@ -78,8 +78,8 @@ export class Messages extends Component {
               const { otherUser } = message;
               const fromLinkedin = otherUser.profile_pic_URL.includes("licdn");
               let image =
-                process.env.NODE_ENV === "development" && !fromLinkedin
-                  ? `http://${DOMAIN}/user/${otherUser.user_id}/profilepic`
+                __DEV__ && !fromLinkedin
+                  ? `http://${HOST}/user/${otherUser.user_id}/profilepic`
                   : otherUser.profile_pic_URL;
               if (!fromLinkedin) {
                 image += `?${encodeURI(uuidv1())}`;

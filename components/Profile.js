@@ -13,7 +13,7 @@ import {
 import { connect } from "react-redux";
 
 import Separator from "../components/Separator";
-import { DOMAIN } from "../config/url";
+import { HOST } from "../config/url";
 import { createMatch } from "../actions/matches.actions";
 import { Chip } from "react-native-paper";
 
@@ -138,6 +138,10 @@ class Profile extends Component {
     this.props.createMatch(this.props.user_id);
   };
 
+  handleRate = () => {
+    this.props.navigation.navigate('Ratings');
+  }
+
   renderHeader = () => {
     const {
       first_name,
@@ -156,8 +160,8 @@ class Profile extends Component {
     } else {
       const fromLinkedin = profile_pic_URL.includes("licdn");
       image =
-        process.env.NODE_ENV === "development" && !fromLinkedin
-          ? `http://${DOMAIN}/user/${user_id}/profilepic`
+        __DEV__ && !fromLinkedin
+          ? `http://${HOST}/user/${user_id}/profilepic`
           : profile_pic_URL;
       if (!fromLinkedin) {
         image += `?${encodeURI(uuidv1())}`;
@@ -214,6 +218,15 @@ class Profile extends Component {
                   />
                 </View>
               )
+            )}
+            {isZeMentor && my_user_id !== user_id && (
+                <View style={styles.uploadBtnContainer}>
+                  <Button
+                    onPress={this.handleRate}
+                    style={styles.uploadBtn}
+                    title="Rate"
+                  />
+                </View>
             )}
           </View>
         </ImageBackground>

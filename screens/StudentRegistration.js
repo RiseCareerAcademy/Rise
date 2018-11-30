@@ -141,7 +141,7 @@ export class StudentRegistration extends React.Component {
     } else if (zipcode.length != 5 && /^\d+$/.test(zipcode)) {
       errors.push("zipcode must contain only numbers and be 5 characters long");
     }
-    if (errors.length == 0 || process.env.NODE_ENV === "development") {
+    if (errors.length == 0 || __DEV__) {
       return true;
     } else {
       alert(errors);
@@ -162,7 +162,7 @@ export class StudentRegistration extends React.Component {
       this.state.biography,
       this.state.image,
     );
-    if (!valid && process.env.NODE_ENV !== "development") {
+    if (!valid && !__DEV__) {
       return;
     }
 
