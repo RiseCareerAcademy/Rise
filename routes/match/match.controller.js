@@ -9,7 +9,7 @@ module.exports.postMatches = async (req, res) => {
   fields.some(field => {
     if (req.body[field] === undefined) {
       res
-        .status(500)
+        .status(422)
         .json({ error: `Missing credential ${field}`, success: false });
       return true;
     }
