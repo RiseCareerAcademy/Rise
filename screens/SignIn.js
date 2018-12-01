@@ -1,9 +1,6 @@
-import React, { Component } from "react";
-import { Button, Text, Container, Header, Content, Form, Item, Label, Input } from "native-base";
-import { Platform, TouchableOpacity, ScrollView, StyleSheet, Image, View, ActivityIndicator } from "react-native";
-import { AuthSession } from "expo";
-import { Ionicons } from '@expo/vector-icons';
-import { MonoText } from "../components/StyledText";
+import React from "react";
+import { Text, Container, Content, Form, Item, Label, Input } from "native-base";
+import { TouchableOpacity, StyleSheet, ActivityIndicator } from "react-native";
 import { connect } from 'react-redux';
 
 import { login } from '../actions/user.actions';

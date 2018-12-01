@@ -1,21 +1,16 @@
 import 'react-native';
 import React from 'react';
-import Match from '../MatchesScreen';
-import renderer from 'react-test-renderer';
+import { MatchesScreen } from '../MatchesScreen';
+import { shallow } from 'enzyme';
 
-//render test
 it('renders correctly', () => {
     const props = {
+      user_id: '1',
+      getSuggestedMenteeMatches: jest.fn(),
+      getSuggestedMentorMatches: jest.fn(),
+      users: [],
     };
-  const tree = renderer.create(<Match {...props}>Snapshot test!</Match>).toJSON();
+  const wrapper = shallow(<MatchesScreen {...props}>Snapshot test!</MatchesScreen>);
 
-  expect(tree).toMatchSnapshot();
+  expect(wrapper).toMatchSnapshot();
 });
-
-
-//create unit test for no match
-//create unit test for match
-    //2 exact match
-    //1. match profession but no skill
-    //2. no profession match but skills match
-    //3. two people with same profession but one with more skills

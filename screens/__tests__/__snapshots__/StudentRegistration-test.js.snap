@@ -1,222 +1,194 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`renders correctly 1`] = `
-<View
-  style={
-    Object {
-      "backgroundColor": "#fff",
-      "flex": 1,
-      "height": 1334,
-    }
-  }
->
-  <View
-    onLayout={[Function]}
-  >
-    <View
+<Styled(Container)>
+  <Styled(Header)>
+    <Styled(Left)>
+      <Styled(Button)
+        onPress={[Function]}
+        transparent={true}
+      >
+        <Styled(Icon)
+          name="md-arrow-round-back"
+        />
+      </Styled(Button)>
+    </Styled(Left)>
+    <Styled(Body)>
+      <Styled(Title)>
+        Student Registration
+      </Styled(Title)>
+    </Styled(Body)>
+    <Styled(Right)>
+      <Styled(Button)
+        onPress={[Function]}
+        transparent={true}
+      >
+        <Styled(Icon)
+          name="eye"
+        />
+      </Styled(Button)>
+    </Styled(Right)>
+  </Styled(Header)>
+  <Styled(Content)>
+    <Styled(Text)
       style={
         Object {
-          "backgroundColor": "#F8F8F8",
-          "borderBottomColor": "#a7a6ab",
-          "borderBottomWidth": 0.5,
-          "elevation": 3,
-          "flexDirection": "row",
-          "height": 64,
-          "justifyContent": "center",
-          "left": 0,
-          "paddingLeft": 6,
-          "paddingRight": 10,
-          "paddingTop": 18,
-          "right": 0,
-          "shadowColor": undefined,
-          "shadowOffset": undefined,
-          "shadowOpacity": undefined,
-          "shadowRadius": undefined,
-          "top": 0,
+          "color": "red",
         }
       }
-    >
-      <View
+    />
+    <Styled(Form)>
+      <Component
         style={
           Object {
-            "alignItems": "flex-start",
-            "alignSelf": "center",
-            "flex": 1,
+            "margin": "auto",
           }
         }
       >
-        <View
-          accessible={true}
-          isTVSelectable={true}
-          onResponderGrant={[Function]}
-          onResponderMove={[Function]}
-          onResponderRelease={[Function]}
-          onResponderTerminate={[Function]}
-          onResponderTerminationRequest={[Function]}
-          onStartShouldSetResponder={[Function]}
+        <Styled(Button)
+          onPress={[Function]}
           style={
             Object {
-              "alignItems": "center",
-              "alignSelf": null,
-              "backgroundColor": "transparent",
-              "borderBottomWidth": null,
-              "borderColor": null,
-              "borderLeftWidth": null,
-              "borderRadius": 5,
-              "borderRightWidth": null,
-              "borderTopWidth": null,
-              "borderWidth": undefined,
-              "elevation": 0,
-              "flexDirection": "row",
-              "height": 45,
-              "justifyContent": "space-between",
-              "marginLeft": -3,
-              "opacity": 1,
-              "paddingBottom": 6,
-              "paddingLeft": 4,
-              "paddingRight": 6,
-              "paddingTop": 6,
-              "shadowColor": null,
-              "shadowOffset": null,
-              "shadowOpacity": null,
-              "shadowRadius": null,
+              "margin": "auto",
             }
           }
         >
-          <Text
-            accessible={true}
-            allowFontScaling={true}
-            ellipsizeMode="tail"
-          />
-        </View>
-      </View>
-      <View
-        style={
-          Object {
-            "alignItems": "center",
-            "alignSelf": "center",
-            "flex": 1,
-          }
-        }
+          <Styled(Text)>
+            Select image from Camera Roll
+          </Styled(Text)>
+        </Styled(Button)>
+      </Component>
+      <Styled(Item)
+        stackedLabel={true}
       >
-        <Text
-          accessible={true}
-          allowFontScaling={true}
-          ellipsizeMode="tail"
-          numberOfLines={1}
-          style={
-            Object {
-              "color": "#000",
-              "fontFamily": "System",
-              "fontSize": 17,
-              "fontWeight": "700",
-              "marginLeft": undefined,
-              "paddingLeft": 4,
-              "paddingTop": 1,
-              "textAlign": "center",
-            }
-          }
-        >
-          Student Registration
-        </Text>
-      </View>
-      <View
-        style={
-          Object {
-            "alignItems": "flex-end",
-            "alignSelf": "center",
-            "flex": 1,
-            "flexDirection": "row",
-            "justifyContent": "flex-end",
-          }
-        }
+        <Styled(Label)>
+          Email
+        </Styled(Label)>
+        <Styled(Input)
+          autoCapitalize="none"
+          onChangeText={[Function]}
+          placeholder="Enter your email"
+        />
+      </Styled(Item)>
+      <Styled(Item)
+        stackedLabel={true}
       >
-        <View
-          accessible={true}
-          isTVSelectable={true}
-          onResponderGrant={[Function]}
-          onResponderMove={[Function]}
-          onResponderRelease={[Function]}
-          onResponderTerminate={[Function]}
-          onResponderTerminationRequest={[Function]}
-          onStartShouldSetResponder={[Function]}
-          style={
-            Object {
-              "alignItems": "center",
-              "alignSelf": null,
-              "backgroundColor": "transparent",
-              "borderBottomWidth": null,
-              "borderColor": null,
-              "borderLeftWidth": null,
-              "borderRadius": 50,
-              "borderRightWidth": null,
-              "borderTopWidth": null,
-              "borderWidth": undefined,
-              "elevation": 0,
-              "flexDirection": "row",
-              "height": 45,
-              "justifyContent": "space-between",
-              "marginRight": -9,
-              "opacity": 1,
-              "paddingBottom": 6,
-              "paddingLeft": 15,
-              "paddingRight": 15,
-              "paddingTop": 6,
-              "shadowColor": null,
-              "shadowOffset": null,
-              "shadowOpacity": null,
-              "shadowRadius": null,
-            }
-          }
-        >
-          <Text
-            accessible={true}
-            allowFontScaling={true}
-            ellipsizeMode="tail"
-          />
-        </View>
-      </View>
-    </View>
-  </View>
-  <View
-    accessible={true}
-    isTVSelectable={true}
-    onResponderGrant={[Function]}
-    onResponderMove={[Function]}
-    onResponderRelease={[Function]}
-    onResponderTerminate={[Function]}
-    onResponderTerminationRequest={[Function]}
-    onStartShouldSetResponder={[Function]}
+        <Styled(Label)>
+          Password
+        </Styled(Label)>
+        <Styled(Input)
+          autoCapitalize="none"
+          onChangeText={[Function]}
+          placeholder="Enter your password"
+          secureTextEntry={true}
+        />
+      </Styled(Item)>
+      <Styled(Item)
+        stackedLabel={true}
+      >
+        <Styled(Label)>
+          Confirm Password
+        </Styled(Label)>
+        <Styled(Input)
+          autoCapitalize="none"
+          onChangeText={[Function]}
+          placeholder="Confirm Password Change"
+          secureTextEntry={true}
+        />
+      </Styled(Item)>
+      <Styled(Item)
+        last={true}
+        stackedLabel={true}
+      >
+        <Styled(Label)>
+          Name
+        </Styled(Label)>
+        <Styled(Input)
+          onChangeText={[Function]}
+          placeholder="Enter your name"
+        />
+      </Styled(Item)>
+      <Styled(Item)
+        last={true}
+        stackedLabel={true}
+      >
+        <Styled(Label)>
+          lastName
+        </Styled(Label)>
+        <Styled(Input)
+          onChangeText={[Function]}
+          placeholder="Enter your last name"
+        />
+      </Styled(Item)>
+      <Styled(Item)
+        stackedLabel={true}
+      >
+        <Styled(Label)>
+          Skills (separated by commas)
+        </Styled(Label)>
+        <Styled(Input)
+          onChangeText={[Function]}
+          placeholder="Enter skills you want to learn"
+        />
+      </Styled(Item)>
+      <Styled(Item)
+        last={true}
+        stackedLabel={true}
+      >
+        <Styled(Label)>
+          Profession
+        </Styled(Label)>
+        <Styled(Input)
+          onChangeText={[Function]}
+          placeholder="Enter profession you want to learn"
+        />
+      </Styled(Item)>
+      <Styled(Item)
+        last={true}
+        stackedLabel={true}
+      >
+        <Styled(Label)>
+          zipcode
+        </Styled(Label)>
+        <Styled(Input)
+          onChangeText={[Function]}
+          placeholder="Enter your zipcode"
+        />
+      </Styled(Item)>
+      <Styled(Item)
+        stackedLabel={true}
+      >
+        <Styled(Label)>
+          Biography
+        </Styled(Label)>
+        <Styled(Input)
+          onChangeText={[Function]}
+          placeholder="Enter your bio"
+        />
+      </Styled(Item)>
+    </Styled(Form)>
+  </Styled(Content)>
+  <TouchableOpacity
+    activeOpacity={0.2}
+    onPress={[Function]}
     style={
       Object {
         "backgroundColor": "#000000",
         "height": 40,
         "margin": 15,
-        "opacity": 1,
         "padding": 10,
       }
     }
   >
-    <Text
-      accessible={true}
-      allowFontScaling={true}
-      ellipsizeMode="tail"
+    <Styled(Text)
       style={
-        Array [
-          Object {
-            "color": "#000",
-            "fontFamily": "System",
-            "fontSize": 16,
-          },
-          Object {
-            "color": "white",
-          },
-        ]
+        Object {
+          "color": "white",
+        }
       }
-      uppercase={false}
     >
        Next 
-    </Text>
-  </View>
-</View>
+    </Styled(Text)>
+  </TouchableOpacity>
+</Styled(Container)>
 `;

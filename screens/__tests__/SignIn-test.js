@@ -6,12 +6,12 @@ global.alert = jest.fn();
 
 const setUpWrapper = props => shallow(<SignIn {...props} />);
 
-
 it("returns error if all fields are not filled", () => {
   const props = {
     navigation: {
       navigate: () => {},
     },
+    login: () => {},
   };
   const wrapper = setUpWrapper(props);
   expect(wrapper.instance().validate("", "")).toEqual(false);
@@ -22,6 +22,7 @@ it("returns error if email is less than 5 characters long", () => {
     navigation: {
       navigate: () => {},
     },
+    login: () => {},
   };
   const wrapper = setUpWrapper(props);
   expect(wrapper.instance().validate("1234", "")).toEqual(false);
@@ -32,6 +33,7 @@ it("returns error if email contains @", () => {
     navigation: {
       navigate: () => {},
     },
+    login: () => {},
   };
   const wrapper = setUpWrapper(props);
   expect(wrapper.instance().validate("12345", "")).toEqual(false);
@@ -42,6 +44,7 @@ it("returns error if email contains .", () => {
     navigation: {
       navigate: () => {},
     },
+    login: () => {},
   };
   const wrapper = setUpWrapper(props);
   expect(wrapper.instance().validate("12345@", "")).toEqual(false);
@@ -52,6 +55,7 @@ it("returns error if password length is less than 6 characters long", () => {
     navigation: {
       navigate: () => {},
     },
+    login: () => {},
   };
   const wrapper = setUpWrapper(props);
   expect(wrapper.instance().validate("user@email.com", "a")).toEqual(false);
@@ -73,6 +77,7 @@ it("returns true if email state is changed", () => {
     navigation: {
       navigate: () => {},
     },
+    login: () => {},
   };
   const wrapper = setUpWrapper(props);
   const instance = wrapper.instance();
@@ -85,6 +90,7 @@ it("returns true if password state is changed", () => {
     navigation: {
       navigate: () => {},
     },
+    login: () => {},
   };
   const wrapper = setUpWrapper(props);
   const instance = wrapper.instance();
@@ -97,6 +103,7 @@ it("renders correctly", () => {
     navigation: {
       navigate: () => {},
     },
+    login: () => {},
   };
   const wrapper = shallow(<SignIn {...props}>Snapshot test!</SignIn>);
 

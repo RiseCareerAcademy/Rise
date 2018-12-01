@@ -1,12 +1,83 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`renders correctly 1`] = `
-<View
+<Component
   style={
     Object {
       "backgroundColor": "#fff",
       "flex": 1,
     }
   }
-/>
+>
+  <Styled(Content)
+    refreshControl={
+      <RefreshControlMock
+        onRefresh={[Function]}
+        refreshing={false}
+      />
+    }
+  >
+    <Search
+      cancelButtonTitle="Cancel"
+      icon={Object {}}
+      lightTheme={false}
+      loadingIcon={Object {}}
+      noIcon={false}
+      onChangeText={[Function]}
+      placeholder="Search"
+      placeholderTextColor="#86939e"
+      platform="ios"
+      round={false}
+      showLoading={true}
+      showLoadingIcon={false}
+    />
+    <CheckBox
+      center={false}
+      checked={true}
+      checkedColor="green"
+      checkedIcon="check-square-o"
+      iconRight={false}
+      onPress={[Function]}
+      right={false}
+      size={24}
+      title="Matches"
+      uncheckedColor="#bfbfbf"
+      uncheckedIcon="square-o"
+    />
+    <CheckBox
+      center={false}
+      checked={true}
+      checkedColor="green"
+      checkedIcon="check-square-o"
+      iconRight={false}
+      onPress={[Function]}
+      right={false}
+      size={24}
+      title="Mentors"
+      uncheckedColor="#bfbfbf"
+      uncheckedIcon="square-o"
+    />
+    <CheckBox
+      center={false}
+      checked={true}
+      checkedColor="green"
+      checkedIcon="check-square-o"
+      iconRight={false}
+      onPress={[Function]}
+      right={false}
+      size={24}
+      title="Mentees"
+      uncheckedColor="#bfbfbf"
+      uncheckedIcon="square-o"
+    />
+    <Styled(Content)
+      refreshControl={
+        <RefreshControlMock
+          onRefresh={[Function]}
+          refreshing={false}
+        />
+      }
+    />
+  </Styled(Content)>
+</Component>
 `;
