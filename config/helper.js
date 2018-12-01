@@ -12,6 +12,6 @@ module.exports.saltPassword = function (password, salt) {
     var value = hash.digest('hex');
     return {
         salt: salt,
-        passwordHash: value
+        passwordHash: value,
     }
 }

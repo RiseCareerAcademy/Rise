@@ -3,12 +3,13 @@ const fs = require("fs");
 const { Expo } = require('expo-server-sdk');
 const dbPromise = require("../../db");
 const sql = require("sql-template-strings");
-
 const axios = require("axios");
 const qs = require("qs");
 
 const SQL = require("../../config/user_sql_constants.js");
 const hp = require("../../config/helper.js");
+const momo = require("../../config/momo.js");
+
 
 //create all tables
 module.exports.createTables = async (req, res) => {
@@ -23,7 +24,7 @@ module.exports.createTables = async (req, res) => {
       db.run(SQL.CREATE_PROFESSIONS_TABLE),
       db.run(SQL.CREATE_PUSH_TOKENS_TABLE),
     ]);
-    res.json({ success: true, rows: "all tables created" });
+    res.status(201).json({ success: true, rows: "all tables created" });
   } catch (e) {
     console.error(e.message);
     res.status(500).json({ success: false, error: e.message });
@@ -62,7 +63,7 @@ module.exports.resetTable = async (req, res) => {
       db.run(SQL.CREATE_PUSH_TOKENS_TABLE),
     ]);
 
-    res.json({ success: true, rows: "reset all tables" });
+    res.status(205).json({ success: true, rows: "reset all tables" });
   } catch (e) {
     console.error(e.message);
     res.status(500).json({ success: false, error: e.message });
@@ -135,7 +136,7 @@ module.exports.linkedin = async (req, res) => {
       biography,
       profile_pic_URL,
     };
-    res.json({ success: true, fields: result });
+    res.status(200).json({ success: true, fields: result });
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ success: false, error: error.message });
@@ -154,24 +155,17 @@ module.exports.postMentor = async (req, res) => {
     "profession",
     "skills",
     "hobbies",
-    "profile_pic_URL",
   ];
   const user = {};
 
-  const missingFields = fields.forEach(field => {
+  fields.forEach(field => {
     if (req.body[field] === undefined) {
-      res
-        .status(500)
-        .json({ error: `Missing credential ${field}`, success: false });
-      return true;
+      res.status(422).json({ error: `Missing credential ${field}`, success: false });
+      return
     }
     user[field] = req.body[field];
-    return false;
   });
 
-  if (missingFields) {
-    return;
-  }
 
   try {
     const db = await dbPromise;
@@ -179,9 +173,10 @@ module.exports.postMentor = async (req, res) => {
     const emailRows = await db.all(getMentorsByEmailSql);
     //post mentor
     if (emailRows.length != 0) {
-      res.status(500).json({ success: false, error: "Email is not unique" });
+      res.status(409).json({ success: false, error: "Email is not unique" });
       return false;
     }
+
     const date = new Date();
     user.user_id = "1" + iid(date.getTime());
     const insertMentorsSql = sql`INSERT INTO Users VALUES (
@@ -232,7 +227,7 @@ module.exports.postMentor = async (req, res) => {
       await db.run(updateProfessionSql);
     }
 
-    res.json({ success: true, mentor: user });
+    res.status(200).json({ success: true, mentor: user });
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ success: false, error: error.message });
@@ -253,18 +248,13 @@ module.exports.postMentee = async (req, res) => {
     "hobbies",
   ];
   const user = {};
-  const missingFields = fields.some(field => {
+  fields.some(field => {
     if (req.body[field] === undefined) {
-      res.status(500).json({ error: `Missing credential ${field}`, success: false });
-      return true;
+      res.status(422).json({ error: `Missing credential ${field}`, success: false });
+      return
     }
     user[field] = req.body[field];
-    return false;
   });
-
-  if (missingFields) {
-    return;
-  }
 
   try {
     const db = await dbPromise;
@@ -272,7 +262,7 @@ module.exports.postMentee = async (req, res) => {
     const usersWithEmailObject = await db.get(sql_email);
 
     if (usersWithEmailObject !== undefined) {
-      res.status(500).json({ success: false, error: "Email is not unique" });
+      res.status(409).json({ success: false, error: "Email is not unique" });
       return;
     }
     user.skills = user.skills || '';
@@ -329,7 +319,7 @@ module.exports.postMentee = async (req, res) => {
       await db.run(updateProfessionSql);
     }
 
-    res.json({ success: true, mentee: user });
+    res.status(200).json({ success: true, mentee: user });
 
   } catch (error) {
     console.error(error.message);
@@ -343,7 +333,7 @@ module.exports.postMessage = async (req, res) => {
   const user = {};
   fields.some(field => {
     if (req.body[field] === undefined) {
-      res.status(500).json({ error: "Missing credentials", success: false });
+      res.status(422).json({ error: "Missing credentials", success: false });
       return true;
     }
     user[field] = req.body[field];
@@ -365,7 +355,7 @@ module.exports.postMessage = async (req, res) => {
       ${time}
     )`;
     await db.run(insertMessageSql);
-    res.json({ success: true });
+    res.status(200).json({ success: true });
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ success: false, error: error.message });
@@ -376,7 +366,7 @@ module.exports.registerPushToken = async (req, res) => {
   const { token: pushToken } = req.body;
   const { id: user_id } = req.params;
   if (pushToken === undefined) {
-    res.status(500).json({ error: "Missing credentials", success: false });
+    res.status(422).json({ error: "Missing credentials", success: false });
     return;
   }
 
@@ -439,27 +429,22 @@ module.exports.conversation = (ws, req) => {
 module.exports.postPassword = async (req, res) => {
   const fields = ["email_address", "password"];
   const user = {};
-  const missingFields = fields.some(field => {
+  fields.some(field => {
     if (req.body[field] === undefined) {
       res
-        .status(500)
+        .status(422)
         .json({ error: `Missing credential ${field}`, success: false });
-      return true;
+      return;
     }
     user[field] = req.body[field];
-    return false;
   });
-
-  if (missingFields) {
-    return;
-  }
 
   try {
     const db = await dbPromise;
     const getUsersByEmailSql = sql`Select * from Users where email_address = ${user.email_address}`;
     const mentorsWithEmailObject = await db.get(getUsersByEmailSql);
     if (mentorsWithEmailObject !== undefined) {
-      res.status(500).json({ success: false, error: "Email already exists" });
+      res.status(409).json({ success: false, error: "Email already exists" });
       return;
     }
 
@@ -473,7 +458,7 @@ module.exports.postPassword = async (req, res) => {
     ) `;
 
     await db.run(insertPasswordSql);
-    res.json({ success: true, passwordHash: passwordData.passwordHash });
+    res.status(200).json({ success: true, passwordHash: passwordData.passwordHash });
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ success: false, error: error.message });
@@ -489,11 +474,11 @@ module.exports.getAllMentors = async (req, res) => {
       const user_ids = JSON.parse(req.query.user_ids);
       const getMentorsByUserIdSql = sql`SELECT * FROM Users WHERE is_mentor=1 AND user_id IN (${user_ids.join(',')})`;
       const mentorRows = await db.all(getMentorsByUserIdSql);
-      res.json({ success: true, rows: mentorRows });
+      res.status(200).json({ success: true, rows: mentorRows });
     } else {
       const getAllMentorsSql = `SELECT * FROM Users WHERE is_mentor=1;`;
       const mentorRows = await db.all(getAllMentorsSql);
-      res.json({ success: true, rows: mentorRows });
+      res.status(200).json({ success: true, rows: mentorRows });
     }
   } catch (error) {
     console.error(error.message);
@@ -510,11 +495,11 @@ module.exports.getAllMentees = async (req, res) => {
       const user_ids = JSON.parse(req.query.user_ids);
       const getMenteesByUserIdSql = sql`SELECT * FROM Users WHERE is_mentor=0 AND user_id IN (${user_ids.join(',')})`;
       const mentorRows = await db.all(getMenteesByUserIdSql);
-      res.json({ success: true, rows: mentorRows });
+      res.status(200).json({ success: true, rows: mentorRows });
     } else {
       const getAllMenteesSql = `SELECT * FROM Users WHERE is_mentor=0;`;
       const mentorRows = await db.all(getAllMenteesSql);
-      res.json({ success: true, rows: mentorRows });
+      res.status(200).json({ success: true, rows: mentorRows });
     }
   } catch (error) {
     console.error(error.message);
@@ -528,7 +513,7 @@ module.exports.getAllPasswords = async (req, res) => {
     const db = await dbPromise;
     const getAllPasswordsSql = sql`SELECT * FROM Passwords;`;
     const passwordRows = await db.all(getAllPasswordsSql);
-    res.json({ success: true, rows: passwordRows });
+    res.status(200).json({ success: true, rows: passwordRows });
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ success: false, error: error.message });
@@ -541,7 +526,7 @@ module.exports.getAllSkills = async (req, res) => {
     const db = await dbPromise;
     const getAllSkillsSql = sql`SELECT * FROM Skills`;
     const skillRows = await db.all(getAllSkillsSql)
-    res.json({ success: true, rows: skillRows });
+    res.status(200).json({ success: true, rows: skillRows });
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ success: false, error: error.message });
@@ -554,7 +539,7 @@ module.exports.getAllProfessions = async (req, res) => {
     const db = await dbPromise;
     const getAllProfessionsSql = sql`SELECT * FROM Profession`;
     const professionRows = await db.all(getAllProfessionsSql);
-    res.json({ success: true, rows: professionRows });
+    res.status(200).json({ success: true, rows: professionRows });
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ success: false, error: error.message });
@@ -568,7 +553,7 @@ module.exports.getUserById = async (req, res) => {
     const userID = req.params.id;
     const getAllUsersSql = sql`SELECT * FROM Users WHERE user_id = ${userID};`;
     const userRows = await db.all(getAllUsersSql);
-    res.json({ success: true, rows: userRows });
+    res.status(200).json({ success: true, rows: userRows });
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ success: false, error: error.message });
@@ -581,7 +566,7 @@ module.exports.getEmailById = async (req, res) => {
     const userID = req.params.id;
     const getAllUsersEmailSql = sql`SELECT email_address FROM Users WHERE user_id = ${userID};`;
     const emailRows = await db.all(getAllUsersEmailSql)
-    res.json({ success: true, rows: emailRows });
+    res.status(200).json({ success: true, rows: emailRows });
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ success: false, error: error.message });
@@ -592,14 +577,14 @@ module.exports.updateEmailById = async (req, res) => {
   const userID = req.params.id;
   const newEmail = req.body.email_address;
   if (newEmail === undefined) {
-    res.status(500).json({ error: "Missing credentials", success: false });
+    res.status(422).json({ error: "Missing credentials", success: false });
     return;
   }
   try {
     const db = await dbPromise;
     const updateEmailSql = sql`UPDATE Users SET email_address = ${newEmail} WHERE user_id = ${userID}`;
     await db.run(updateEmailSql)
-    res.json({ success: true });
+    res.status(200).json({ success: true });
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ success: false, error: error.message });
@@ -612,7 +597,7 @@ module.exports.getHobbiesById = async (req, res) => {
     const userID = req.params.id;
     const getHobbiesSql = sql`SELECT hobbies FROM Users WHERE user_id = ${userID};`; //starts with 1
     const hobbyRows = await db.all(getHobbiesSql)
-    res.json({ success: true, rows: hobbyRows });
+    res.status(200).json({ success: true, rows: hobbyRows });
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ success: false, error: error.message });
@@ -624,7 +609,7 @@ module.exports.updateFirstNameById = async (req, res) => {
   const newFirstName = req.body.first_name;
 
   if (newFirstName === undefined) {
-    res.status(500).json({ error: "Missing credentials", success: false });
+    res.status(422).json({ error: "Missing credentials", success: false });
     return;
   }
 
@@ -632,7 +617,7 @@ module.exports.updateFirstNameById = async (req, res) => {
     const db = await dbPromise;
     const updatenewFirstNameSql = sql`UPDATE Users SET first_name = ${newFirstName} WHERE user_id = ${userID}`;
     const firstNameRows = await db.all(updatenewFirstNameSql);
-    res.json({ success: true, rows: firstNameRows });
+    res.status(200).json({ success: true, rows: firstNameRows });
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ success: false, error: error.message });
@@ -644,7 +629,7 @@ module.exports.updateLastNameById = async (req, res) => {
   const newLastName = req.body.last_name;
 
   if (newLastName === undefined) {
-    res.status(500).json({ error: "Missing credentials", success: false });
+    res.status(422).json({ error: "Missing credentials", success: false });
     return;
   }
 
@@ -652,7 +637,7 @@ module.exports.updateLastNameById = async (req, res) => {
     const db = await dbPromise;
     const updatenewLastNameSql = sql`UPDATE Users SET last_name = ${newLastName} WHERE user_id = ${userID}`;
     const lastNameRows = await db.all(updatenewLastNameSql);
-    res.json({ success: true, rows: lastNameRows });
+    res.status(200).json({ success: true, rows: lastNameRows });
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ success: false, error: error.message });
@@ -664,7 +649,7 @@ module.exports.updateHobbiesById = async (req, res) => {
   const newHobbies = req.body.hobbies;
 
   if (newHobbies === undefined) {
-    res.status(500).json({ error: "Missing credentials", success: false });
+    res.status(422).json({ error: "Missing credentials", success: false });
     return;
   }
 
@@ -672,7 +657,7 @@ module.exports.updateHobbiesById = async (req, res) => {
     const db = await dbPromise;
     const updateHobbiesSql = sql`UPDATE Users SET hobbies = ${newHobbies} WHERE user_id = ${userID}`;
     const hobbieRows = await db.all(updateHobbiesSql);
-    res.json({ success: true, rows: hobbieRows });
+    res.status(200).json({ success: true, rows: hobbieRows });
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ success: false, error: error.message });
@@ -685,7 +670,7 @@ module.exports.getSkillbyId = async (req, res) => {
     const db = await dbPromise;
     const getSkillsSql = sql`SELECT skills FROM Users where user_id = ${userID};`;
     const skillRows = await db.all(getSkillsSql);
-    res.json({ success: true, rows: skillRows });
+    res.status(200).json({ success: true, rows: skillRows });
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ success: false, error: error.message });
@@ -699,7 +684,7 @@ module.exports.getUsersbySkill = async (req, res) => {
     const db = await dbPromise;
     const getUsersBySkillSql = sql`SELECT users FROM Skills WHERE skills = ${skill}`;
     const userRows = await db.all(getUsersBySkillSql);
-    res.json({ success: true, rows: userRows });
+    res.status(200).json({ success: true, rows: userRows });
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ success: false, error: error.message });
@@ -714,7 +699,7 @@ module.exports.getUsersbyProfession = async (req, res) => {
     const getUserByProfessionSql = sql`SELECT users FROM Profession WHERE profession = ${profession}`;
 
     const professionRows = await db.all(getUserByProfessionSql);
-    res.json({ success: true, rows: professionRows });
+    res.status(200).json({ success: true, rows: professionRows });
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ success: false, error: error.message });
@@ -727,7 +712,7 @@ module.exports.getFirstLastById = async (req, res) => {
     const db = await dbPromise;
     const getFirstLastSql = sql`SELECT first_name,last_name FROM Users WHERE user_id = ${userId}`;
     const firstLastRows = await db.all(getFirstLastSql)
-    res.json({ success: true, rows: firstLastRows });
+    res.status(200).json({ success: true, rows: firstLastRows });
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ success: false, error: error.message });
@@ -739,7 +724,7 @@ module.exports.addSkill = async (req, res) => {
   //get input
   const userID = req.params.id;
   if (req.body.skill === undefined && req.body.skills === undefined) {
-    res.status(500).json({ error: "Missing credentials", success: false });
+    res.status(422).json({ error: "Missing credentials", success: false });
     return;
   }
   const skill = req.body.skill || req.body.skills;
@@ -765,13 +750,13 @@ module.exports.addSkill = async (req, res) => {
     if (usersSkillsObject == undefined) {
       const insertSkillsSql = sql`INSERT INTO Skills VALUES (${skill},${userID})`;
       await db.run(insertSkillsSql);
-      res.json({ success: true, rows: "insert users into new skill" });
+      res.status(200).json({ success: true, rows: "insert users into new skill" });
     } else {
       let users = usersSkillsObject.users;
       users = addToString(users, userID);
       const updateSkillsSql = sql`UPDATE Skills SET users = ${users} WHERE skills = ${skill}`;
       await db.run(updateSkillsSql);
-      res.json({ success: true });
+      res.status(200).json({ success: true, rows:"insert users into an existed skill" });
     }
   } catch (error) {
     console.error(error.message);
@@ -783,7 +768,7 @@ module.exports.removeSkill = async (req, res) => {
   //get input
   const userID = req.params.id;
   if (req.body.skill === undefined && req.body.skills === undefined) {
-    res.status(500).json({ error: "Missing credentials", success: false });
+    res.status(422).json({ error: "Missing credentials", success: false });
     return;
   }
   const skill = req.body.skill || req.body.skill;
@@ -819,7 +804,7 @@ module.exports.removeSkill = async (req, res) => {
       const removeUserSql = sql`UPDATE Skills SET users = ${users} WHERE skills = ${skill}`;
       await db.run(removeUserSql);
     }
-    res.json({ success: true , rows: "successfully removed skill"});
+    res.status(200).json({ success: true, rows: "successfully removed skill" });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
@@ -840,7 +825,7 @@ module.exports.getProfilePic = (req, res) => {
 module.exports.updateProfilePic = async (req, res) => {
   const userID = req.params.id;
   if (req.body["profile_pic_URL"] === undefined) {
-    res.status(500).json({ error: "Missing credentials", success: false });
+    res.status(422).json({ error: "Missing credentials", success: false });
     return;
   }
   try {
@@ -848,7 +833,7 @@ module.exports.updateProfilePic = async (req, res) => {
     const profile_pic = req.body.profile_pic_URL;
     const updateProfilePicSql = `UPDATE Users SET profile_pic_URL = ${profile_pic} WHERE user_id = ${userID}`; //starts with 1
     const profilePicRows = await db.all(updateProfilePicSql);
-    res.json({ success: true, rows: profilePicRows });
+    res.status(200).json({ success: true, rows: profilePicRows });
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ success: false, error: error.message });
@@ -856,7 +841,7 @@ module.exports.updateProfilePic = async (req, res) => {
 };
 
 module.exports.postProfilePic = (req, res) => {
-  res.json(req.file);
+  res.status(200).json(req.file);
 };
 
 module.exports.getProfessionById = async (req, res) => {
@@ -865,7 +850,7 @@ module.exports.getProfessionById = async (req, res) => {
     const db = await dbPromise;
     const getProfessionSql = sql`SELECT profession FROM Users WHERE user_id = ${userId}`;
     const professionRows = await db.all(getProfessionSql)
-    res.json({ success: true, rows: professionRows });
+    res.status(200).json({ success: true, rows: professionRows });
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ success: false, error: error.message });
@@ -876,7 +861,7 @@ module.exports.updateProfession = async (req, res) => {
   //get input
   const userID = req.params.id;
   if (req.body.profession === undefined && req.body.professions === undefined) {
-    res.status(500).json({ error: "Missing credentials", success: false });
+    res.status(422).json({ error: "Missing credentials", success: false });
     return;
   }
   //THIS IS THE NEW PROFESSION VALUE USED
@@ -899,15 +884,15 @@ module.exports.updateProfession = async (req, res) => {
     const findUsersFromProfessionSql = sql`SELECT users FROM Profession WHERE profession = ${oldProfession["profession"]}`;
     const usersToRemove = await db.all(findUsersFromProfessionSql);
     if (usersToRemove.length == 0) {
-      res.json({ success: true, rows: "Profession not found !" });
+      res.status(204).json({ success: false, error: "Profession not found !" });
       return
     }
     let users = usersToRemove[0]["users"];
     users = removeFromString(users, userID);
-    if (users == ""){
+    if (users == "") {
       const deleteEmptyProfessionSql = sql`DELETE FROM Profession WHERE profession = ${oldProfession["profession"]}`;
       await db.run(deleteEmptyProfessionSql);
-    } else{
+    } else {
       const removeUserFromOldProfessionSql = sql`UPDATE Profession SET users = ${users} WHERE profession = ${oldProfession["profession"]}`;
       await db.run(removeUserFromOldProfessionSql);
     }
@@ -919,14 +904,14 @@ module.exports.updateProfession = async (req, res) => {
     if (usersToAdd.length == 0) {
       const addUserToProfessionSql = sql`INSERT INTO Profession VALUES (${profession},${userID});`;
       await db.run(addUserToProfessionSql);
-      res.json({ success: true });
+      res.status(200).json({ success: true , rows: "insert user into a new skill"});
       return
     } else {
       users = usersToAdd[0]["users"];
       users = addToString(users, userID);
       const addUserToProfessionSql = sql`UPDATE Profession SET users = ${users} WHERE profession = ${profession}`;
       await db.run(addUserToProfessionSql);
-      res.json({ success: true });
+      res.status(200).json({ success: true , rows: "insert user into an existed skill"});
       return
     }
 
@@ -943,7 +928,7 @@ module.exports.getBio = async (req, res) => {
     const db = await dbPromise;
     const getBioSql = sql`SELECT biography FROM Users WHERE user_id = ${userId}`;
     const biographyRows = await db.all(getBioSql)
-    res.json({ success: true, rows: biographyRows });
+    res.status(200).json({ success: true, rows: biographyRows });
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ success: false, error: error.message });
@@ -953,7 +938,7 @@ module.exports.getBio = async (req, res) => {
 module.exports.updateBio = async (req, res) => {
   const userID = req.params.id;
   if (req.body["biography"] === undefined) {
-    res.status(500).json({ error: "Missing credentials", success: false });
+    res.status(422).json({ error: "Missing credentials", success: false });
     return;
   }
   try {
@@ -961,7 +946,7 @@ module.exports.updateBio = async (req, res) => {
     const biography = req.body.biography;
     const updateBiographySql = sql`UPDATE Users SET biography = ${biography} WHERE user_id = ${userID}`; //starts with 1
     const biographyRows = await db.all(updateBiographySql);
-    res.json({ success: true, rows: biographyRows });
+    res.status(200).json({ success: true, rows: biographyRows });
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ success: false, error: error.message });
@@ -974,7 +959,7 @@ module.exports.deleteBio = async (req, res) => {
     const db = await dbPromise;
     const updateBiographySql = sql`UPDATE Users SET biography = '' WHERE user_id = ${userID}`; //starts with 1
     const biographyRows = await db.all(updateBiographySql);
-    res.json({ success: true, rows: biographyRows });
+    res.status(200).json({ success: true, rows: biographyRows });
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ success: false, error: error.message });
@@ -984,7 +969,7 @@ module.exports.deleteBio = async (req, res) => {
 module.exports.updateZipcode = async (req, res) => {
   const userID = req.params.id;
   if (req.body["zipcode"] === undefined) {
-    res.status(500).json({ error: "Missing credentials", success: false });
+    res.status(422).json({ error: "Missing credentials", success: false });
     return;
   }
   try {
@@ -992,7 +977,7 @@ module.exports.updateZipcode = async (req, res) => {
     const zipcode = req.body.zipcode;
     const updateZipcodeSql = sql`UPDATE Users SET zipcode = ${zipcode} WHERE user_id = ${userID}`; //starts with 1
     const zipcodeRows = await db.all(updateZipcodeSql);
-    res.json({ success: true, rows: zipcodeRows });
+    res.status(200).json({ success: true, rows: zipcodeRows });
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ success: false, error: error.message });
@@ -1005,7 +990,7 @@ module.exports.register = async (req, res) => {
   fields.some(field => {
     if (req.body[field] === undefined) {
       res
-        .status(500)
+        .status(422)
         .json({ error: `Missing credential ${field}`, success: false });
       return;
     }
@@ -1017,7 +1002,7 @@ module.exports.register = async (req, res) => {
     const getEmailSql = sql`Select * from Passwords where email_address = ${user.email_address};`;
     const emailRows = await db.all(getEmailSql);
     if (emailRows.length != 0) {
-      res.status(500).json({ success: false, error: "Email is not unique" });
+      res.status(409).json({ success: false, error: "Email is not unique" });
       return;
     }
     // console.log(emailRows)
@@ -1025,7 +1010,7 @@ module.exports.register = async (req, res) => {
     const passwordData = hp.saltPassword(user.password, salt)
     const postPasswordSql = sql`INSERT INTO Passwords VALUES (${user.email_address},${passwordData.passwordHash}, ${passwordData.salt})`;
     db.run(postPasswordSql);
-    res.json({ success: true, passwordHash: passwordData.passwordHash })
+    res.status(200).json({ success: true, passwordHash: passwordData.passwordHash })
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ success: false, error: error.message });
@@ -1035,18 +1020,14 @@ module.exports.register = async (req, res) => {
 module.exports.login = async (req, res) => {
   const fields = ["email_address", "password"];
   const user = {};
-  const missingFields = fields.some(field => {
+  fields.some(field => {
     if (req.body[field] === undefined) {
-      res.status(500).json({ error: "Missing credentials", success: false });
-      return true;
+      res.status(422).json({ error: "Missing credentials", success: false });
+      return;
     }
     user[field] = req.body[field];
-    return false;
   });
 
-  if (missingFields) {
-    return;
-  }
 
   try {
     const db = await dbPromise;
@@ -1060,8 +1041,13 @@ module.exports.login = async (req, res) => {
     ON (u.email_address = p.email_address)
     ;`;
     const id = await db.all(loginSql);
-    res.json({ success: true, rows: id });
+    if (id.length == 1) {
 
+      res.status(200).json({ success: true, rows: id });
+
+    } else {
+      res.status(401).json({ error: "Wrong email/password!", success: false });
+    }
   } catch (error) {
 
     console.error(error.message);
@@ -1072,18 +1058,13 @@ module.exports.login = async (req, res) => {
 module.exports.changePassword = async (req, res) => {
   const fields = ["email_address", "password", "new_password"];
   const user = {};
-  const missingFields = fields.some(field => {
+  fields.some(field => {
     if (req.body[field] === undefined) {
-      res.status(500).json({ error: "Missing credentials", success: false });
-      return true;
+      res.status(422).json({ error: "Missing credentials", success: false });
+      return;
     }
     user[field] = req.body[field];
-    return false;
   });
-
-  if (missingFields) {
-    return;
-  }
 
   try {
     const db = await dbPromise;
@@ -1105,10 +1086,100 @@ module.exports.changePassword = async (req, res) => {
       SET Password = ${passwordData.passwordHash}, salt = ${new_salt}
       WHERE email_address = ${user.email_address}`;
       db.run(postPasswordSql);
-      res.json({ success: true, rows: "Change password successfully!" });
+      res.status(200).json({ success: true, rows: "Change password successfully!" });
     } else {
-      res.status(500).json({ success: false, error: "wrong password" });
+      res.status(401).json({ success: false, error: "wrong password" });
     }
+
+
+  } catch (error) {
+
+    console.error(error.message);
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+module.exports.forgetPassword = async (req, res) => {
+  const fields = ["email_address"];
+  const user = {};
+  fields.some(field => {
+    if (req.body[field] === undefined) {
+      res.status(422).json({ error: "Missing credentials", success: false });
+      return;
+    }
+    user[field] = req.body[field];
+  });
+  try {
+    const db = await dbPromise;
+    const getEmailSql = sql`SELECT email_address FROM Passwords WHERE email_address= ${user.email_address};`;
+    const emailObject = await db.all(getEmailSql);
+    if (emailObject.length == 0) {
+      res.status(204).json({ error: "Email doesn't exist!", success: false });
+      return;
+    } else {
+      const new_password = hp.genRandomString(16);
+      const new_salt = hp.genRandomString(16);
+      const passwordData = hp.saltPassword(new_password, new_salt)
+      const postPasswordSql = sql`UPDATE Passwords
+      SET Password = ${passwordData.passwordHash}, salt = ${new_salt}
+      WHERE email_address = ${user.email_address}`;
+      db.run(postPasswordSql);
+      var transporter =  momo.email();
+
+      var mailOptions = {
+        from: 'Rise Carreer Academy',
+        to: user.email_address,
+        subject: 'Reset your Rise password!',
+        html: '<p>Your new password is</p><p><b>' + new_password + '</b><br><br>If you didn\'t request this change, please contact support.</p>',
+      };
+
+      transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+          console.log(error);
+        } else {
+          console.log('Email sent: ' + info.response);
+        }
+      });
+      res.status(200).json({ success: true, rows: "Change password successfully!" });
+
+    }
+
+
+  } catch (error) {
+
+    console.error(error.message);
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+module.exports.sendEmail = async (req, res) => {
+  const fields = ["email_address", "title", "message"];
+  fields.some(field => {
+    if (req.body[field] === undefined) {
+      res.status(422).json({ error: "Missing credentials", success: false });
+      return;
+    }
+  });
+  try {
+    const transporter = momo.email();
+
+    var mailOptions = {
+      from: 'Rise Carreer Academy',
+      to: req.body.email_address,
+      subject: req.body.title,
+      html: req.body.message,
+    };
+
+    transporter.sendMail(mailOptions, function (error, info) {
+      if (error) {
+        console.log(error);
+      } else {
+        console.log('Email sent: ' + info.response);
+      }
+    });
+    res.status(200).json({ success: true, rows: "Sent email successfully!" });
+
+
 
 
   } catch (error) {
@@ -1125,7 +1196,7 @@ module.exports.getMessages = async (req, res) => {
     const db = await dbPromise;
     const getAllMessagessSql = `SELECT * FROM Messages;`;
     const messageRows = await db.all(getAllMessagessSql);
-    res.json({ success: true, rows: messageRows });
+    res.status(200).json({ success: true, rows: messageRows });
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ success: false, error: error.message });
@@ -1145,7 +1216,7 @@ module.exports.getLatestMessagesById = async (req, res) => {
       sql`SELECT * FROM Messages WHERE match_id = ${matchID}
     AND timestamp <=  ${req.body.timestamp} ORDER BY timestamp LIMIT ${req.body.limit};`;
     const messagesRows = await db.all(getAllMessagesSql);
-    res.json({ success: true, rows: messagesRows });
+    res.status(200).json({ success: true, rows: messagesRows });
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ success: false, error: error.message });
@@ -1160,7 +1231,7 @@ module.exports.getMessageChain = async (req, res) => {
     const getAllMessagesSql =
       sql`SELECT * FROM Messages WHERE match_id = ${matchID};`;
     const messagesRows = await db.all(getAllMessagesSql);
-    res.json({ success: true, rows: messagesRows });
+    res.status(200).json({ success: true, rows: messagesRows });
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ success: false, error: error.message });
@@ -1350,3 +1421,5 @@ function iid(num) {
   }
   return res
 }
+
+
