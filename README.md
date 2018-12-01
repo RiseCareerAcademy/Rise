@@ -18,6 +18,11 @@
 
 1. Install Expo app on [Android](https://play.google.com/store/apps/details?id=host.exp.exponent&hl=en_US) or [iOS](https://itunes.apple.com/us/app/expo-client/id982107779?mt=8)
 
+2. Login on the Expo app using the following account:
+    ```
+    Username: kmui2
+    Password: Rise@2018
+    ```
 2. Scan QR code [here](https://expo.io/@kmui2/Rise) on the camera app for iOS or on the Expo app for Android
 
 3. **Server Debugging:** Open [http://104.248.57.156:8080/#/streams/Rise](http://104.248.57.156:8080/#/streams/Rise).
