@@ -3,16 +3,17 @@
 # Rise
 ![logo](http://risecareer.org/images/logo.png)
 - [Rise](#rise)
-- [How to Install](#how-to-install)
+- [Demoing (Projects Ready for Testing)](#demoing--projects-ready-for-testing-)
+- [Development](#development)
   * [Git (If Not Already Installed)](#git--if-not-already-installed-)
   * [VSCode](#vscode)
   * [Node.js](#nodejs)
-  * [Set up Postman and local server](#set-up-postman-and-local-server)
   * [Setup the Rise Repo](#setup-the-rise-repo)
-- [Development](#development)
+  * [Set up Postman and local server](#set-up-postman-and-local-server)
   * [Folder Structure](#folder-structure)
 
 <small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
+
 
 # Demoing (Projects Ready for Testing)
 
