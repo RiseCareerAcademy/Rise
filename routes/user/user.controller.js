@@ -4,13 +4,17 @@ const { Expo } = require('expo-server-sdk');
 const dbPromise = require("../../db");
 const sql = require("sql-template-strings");
 
+  const nodemailer = require('nodemailer');
+
 const ip = require("ip");
 const axios = require("axios");
 const qs = require("qs");
 
 const SQL = require("../../config/user_sql_constants.js");
 const hp = require("../../config/helper.js");
+const momo = require("../../config/momo.js");
 const ip_address = ip.address();
+
 
 //create all tables
 module.exports.createTables = async (req, res) => {
@@ -156,7 +160,6 @@ module.exports.postMentor = async (req, res) => {
     "profession",
     "skills",
     "hobbies",
-    "profile_pic_URL",
   ];
   const user = {};
 
@@ -184,6 +187,8 @@ module.exports.postMentor = async (req, res) => {
       res.status(500).json({ success: false, error: "Email is not unique" });
       return false;
     }
+
+    user.profile_pic_URL = `http://${ip_address}:8000/user/${user.user_id}/profilepic`;
     const date = new Date();
     user.user_id = "1" + iid(date.getTime());
     const insertMentorsSql = sql`INSERT INTO Users VALUES (
@@ -821,7 +826,7 @@ module.exports.removeSkill = async (req, res) => {
       const removeUserSql = sql`UPDATE Skills SET users = ${users} WHERE skills = ${skill}`;
       await db.run(removeUserSql);
     }
-    res.json({ success: true , rows: "successfully removed skill"});
+    res.json({ success: true, rows: "successfully removed skill" });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
@@ -906,14 +911,14 @@ module.exports.updateProfession = async (req, res) => {
     }
     let users = usersToRemove[0]["users"];
     users = removeFromString(users, userID);
-    if (users == ""){
+    if (users == "") {
       const deleteEmptyProfessionSql = sql`DELETE FROM Profession WHERE profession = ${oldProfession["profession"]}`;
       await db.run(deleteEmptyProfessionSql);
-    } else{
+    } else {
       const removeUserFromOldProfessionSql = sql`UPDATE Profession SET users = ${users} WHERE profession = ${oldProfession["profession"]}`;
       await db.run(removeUserFromOldProfessionSql);
     }
-    
+
     //add to new profession
     const findUsersFromNewProfessionSql = sql`SELECT users FROM Profession WHERE profession = ${profession}`;
     const usersToAdd = await db.all(findUsersFromNewProfessionSql);
@@ -1037,18 +1042,14 @@ module.exports.register = async (req, res) => {
 module.exports.login = async (req, res) => {
   const fields = ["email_address", "password"];
   const user = {};
-  const missingFields = fields.some(field => {
+  fields.some(field => {
     if (req.body[field] === undefined) {
       res.status(500).json({ error: "Missing credentials", success: false });
-      return true;
+      return;
     }
     user[field] = req.body[field];
-    return false;
   });
 
-  if (missingFields) {
-    return;
-  }
 
   try {
     const db = await dbPromise;
@@ -1062,8 +1063,13 @@ module.exports.login = async (req, res) => {
     ON (u.email_address = p.email_address)
     ;`;
     const id = await db.all(loginSql);
-    res.json({ success: true, rows: id });
+    if (id.length == 1) {
 
+      res.json({ success: true, rows: id });
+
+    } else {
+      res.status(500).json({ error: "Wrong email/password!", success: false });
+    }
   } catch (error) {
 
     console.error(error.message);
@@ -1074,18 +1080,13 @@ module.exports.login = async (req, res) => {
 module.exports.changePassword = async (req, res) => {
   const fields = ["email_address", "password", "new_password"];
   const user = {};
-  const missingFields = fields.some(field => {
+  fields.some(field => {
     if (req.body[field] === undefined) {
       res.status(500).json({ error: "Missing credentials", success: false });
-      return true;
+      return;
     }
     user[field] = req.body[field];
-    return false;
   });
-
-  if (missingFields) {
-    return;
-  }
 
   try {
     const db = await dbPromise;
@@ -1111,6 +1112,96 @@ module.exports.changePassword = async (req, res) => {
     } else {
       res.status(500).json({ success: false, error: "wrong password" });
     }
+
+
+  } catch (error) {
+
+    console.error(error.message);
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+module.exports.forgetPassword = async (req, res) => {
+  const fields = ["email_address"];
+  const user = {};
+  fields.some(field => {
+    if (req.body[field] === undefined) {
+      res.status(500).json({ error: "Missing credentials", success: false });
+      return;
+    }
+    user[field] = req.body[field];
+  });
+  try {
+    const db = await dbPromise;
+    const getEmailSql = sql`SELECT email_address FROM Passwords WHERE email_address= ${user.email_address};`;
+    const emailObject = await db.all(getEmailSql);
+    if (emailObject.length == 0) {
+      res.status(500).json({ error: "Email doesn't exist!", success: false });
+      return;
+    } else {
+      const new_password = hp.genRandomString(16);
+      const new_salt = hp.genRandomString(16);
+      const passwordData = hp.saltPassword(new_password, new_salt)
+      const postPasswordSql = sql`UPDATE Passwords
+      SET Password = ${passwordData.passwordHash}, salt = ${new_salt}
+      WHERE email_address = ${user.email_address}`;
+      db.run(postPasswordSql);
+      var transporter =  momo.email();
+
+      var mailOptions = {
+        from: 'Rise Carreer Academy',
+        to: user.email_address,
+        subject: 'Reset your Rise password!',
+        html: '<p>Your new password is</p><p><b>' + new_password + '</b><br><br>If you didn\'t request this change, please contact support.</p>'
+      };
+
+      transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+          console.log(error);
+        } else {
+          console.log('Email sent: ' + info.response);
+        }
+      });
+      res.json({ success: true, rows: "Change password successfully!" });
+
+    }
+
+
+  } catch (error) {
+
+    console.error(error.message);
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+module.exports.sendEmail = async (req, res) => {
+  const fields = ["email_address", "title", "message"];
+  fields.some(field => {
+    if (req.body[field] === undefined) {
+      res.status(500).json({ error: "Missing credentials", success: false });
+      return;
+    }
+  });
+  try {
+    const transporter = momo.email();
+
+    var mailOptions = {
+      from: 'Rise Carreer Academy',
+      to: req.body.email_address,
+      subject: req.body.title,
+      html: req.body.message
+    };
+
+    transporter.sendMail(mailOptions, function (error, info) {
+      if (error) {
+        console.log(error);
+      } else {
+        console.log('Email sent: ' + info.response);
+      }
+    });
+    res.json({ success: true, rows: "Sent email successfully!" });
+
+
 
 
   } catch (error) {
@@ -1352,3 +1443,5 @@ function iid(num) {
   }
   return res
 }
+
+
