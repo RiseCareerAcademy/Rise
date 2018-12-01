@@ -17,7 +17,7 @@ import {
 
 import { getSuggestedMentorMatches, getSuggestedMenteeMatches } from "../actions/matches.actions";
 import { getMentor, getMentee } from '../actions/search.actions';
-import { DOMAIN } from "../config/url";
+import { HOST } from "../config/url";
 
 const uuidv1 = require("uuid/v1");
 
@@ -92,8 +92,8 @@ export class MatchesScreen extends Component {
             }
 
             let image =
-              process.env.NODE_ENV === "development" && !fromLinkedin
-                ? `http://${DOMAIN}/user/${l.user_id}/profilepic`
+              __DEV__ && !fromLinkedin
+                ? `http://${HOST}/user/${l.user_id}/profilepic`
                 : l.profile_pic_URL;
             if (!fromLinkedin) {
               image += `?${encodeURI(uuidv1())}`;

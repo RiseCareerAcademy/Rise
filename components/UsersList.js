@@ -1,6 +1,6 @@
 import React from "react";
 import { List, ListItem, Left, Thumbnail, Body, Text } from "native-base";
-import { DOMAIN } from "../config/url";
+import { HOST } from "../config/url";
 
 const uuidv1 = require("uuid/v1");
 
@@ -42,8 +42,8 @@ class UsersList extends React.Component {
             const fromLinkedin = user.profile_pic_URL.includes("licdn");
 
             let image =
-              process.env.NODE_ENV === "development" && !fromLinkedin
-                ? `http://${DOMAIN}/user/${user.user_id}/profilepic`
+              __DEV__ && !fromLinkedin
+                ? `http://${HOST}/user/${user.user_id}/profilepic`
                 : user.profile_pic_URL;
             if (!fromLinkedin) {
               image += `?${encodeURI(uuidv1())}`;
