@@ -3,6 +3,8 @@ FROM node:10.14.0-alpine
 # Create app directory
 WORKDIR /user/app
 
+RUN apk add sqlite
+
 RUN npm i -g pm2
 RUN npm i -g rtail
 
