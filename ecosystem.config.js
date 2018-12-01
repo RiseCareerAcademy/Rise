@@ -28,6 +28,10 @@ module.exports = {
       path: "/root",
       // post-deploy action
       "post-deploy": "npm install --production && npm run serve:prod",
+      env: {
+        "NODE_ENV": "production",
+        "PORT": 80,
+      },
     },
   },
 };
