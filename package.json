@@ -13,6 +13,7 @@
     "coverage": "jest --coverage --coverageReporters=html",
     "serve": "nodemon server.js",
     "serve:prod": "pm2 kill && pm2 start rtail-server -- --web-port 8080 --web-host 0.0.0.0 && pm2 flush && pm2-runtime start ecosystem.config.js",
+    "deploy:serve": "pm2 kill && pm2 start rtail-server -- --web-port 8080 --web-host 0.0.0.0 && pm2 flush && pm2 start ecosystem.config.js",
     "deploy:setup": "pm2 deploy ecosystem.config.js development setup",
     "deploy": "pm2 deploy ecosystem.config.js development"
   },
