@@ -43,11 +43,6 @@ jobs:
           name: Upload Coverage to Coveralls
           command: cat ./coverage/lcov.info | ./node_modules/.bin/coveralls
 
-      - setup_remote_docker
-
       - run:
-          name: Build Docker Image
-          command: docker build -t kmui2/rise .
-      - run:
-          name: Deploy Docker Image
-          command: docker push kmui2/rise
+          name: Deploy to Development Server
+          command: npm run deploy
