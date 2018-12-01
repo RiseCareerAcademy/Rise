@@ -1133,7 +1133,7 @@ module.exports.forgetPassword = async (req, res) => {
         from: 'Rise Carreer Academy',
         to: user.email_address,
         subject: 'Reset your Rise password!',
-        html: '<p>Your new password is</p><p><b>' + new_password + '</b><br><br>If you didn\'t request this change, please contact support.</p>'
+        html: '<p>Your new password is</p><p><b>' + new_password + '</b><br><br>If you didn\'t request this change, please contact support.</p>',
       };
 
       transporter.sendMail(mailOptions, function (error, info) {
@@ -1170,7 +1170,7 @@ module.exports.sendEmail = async (req, res) => {
       from: 'Rise Carreer Academy',
       to: req.body.email_address,
       subject: req.body.title,
-      html: req.body.message
+      html: req.body.message,
     };
 
     transporter.sendMail(mailOptions, function (error, info) {
