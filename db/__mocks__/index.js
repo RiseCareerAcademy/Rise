@@ -1,5 +1,5 @@
 jest.mock('sqlite3', () => ({
-	Database:() => {}
+	Database:() => {},
 }));
 const db = jest.genMockFromModule('../index.js');
 
