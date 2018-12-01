@@ -155,6 +155,7 @@ module.exports.postMentor = async (req, res) => {
     "profession",
     "skills",
     "hobbies",
+    'profile_pic_URL',
   ];
   const user = {};
 
