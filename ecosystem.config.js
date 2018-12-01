@@ -13,4 +13,21 @@ module.exports = {
       max_memory_restart: "1G",
     },
   ],
+  deploy: {
+    // "production" is the environment name
+    development: {
+      // SSH user
+      user: "root",
+      // SSH host
+      host: ["104.248.57.156"],
+      // GIT remote/branch
+      ref: "origin/master",
+      // GIT remote
+      repo: "git@github.com:RiseCareerAcademy/Rise.git",
+      // path in the server
+      path: "/root",
+      // post-deploy action
+      "post-deploy": "npm install --production && npm run serve:prod",
+    },
+  },
 };
