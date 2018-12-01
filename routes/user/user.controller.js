@@ -4,13 +4,11 @@ const { Expo } = require('expo-server-sdk');
 const dbPromise = require("../../db");
 const sql = require("sql-template-strings");
 
-const ip = require("ip");
 const axios = require("axios");
 const qs = require("qs");
 
 const SQL = require("../../config/user_sql_constants.js");
 const hp = require("../../config/helper.js");
-const ip_address = ip.address();
 
 //create all tables
 module.exports.createTables = async (req, res) => {
@@ -282,7 +280,7 @@ module.exports.postMentee = async (req, res) => {
     const date = new Date();
     user.user_id = "2" + iid(date.getTime());
     console.log(user.user_id)
-    user.profile_pic_URL = `http://${ip_address}:8000/user/${user.user_id}/profilepic`;
+    user.profile_pic_URL = `http://${process.env.UPLOADED_IMAGES_HOST}/user/${user.user_id}/profilepic`;
 
     const insertMenteeSql = sql`INSERT INTO Users VALUES (
         ${user.user_id},
@@ -913,7 +911,7 @@ module.exports.updateProfession = async (req, res) => {
       const removeUserFromOldProfessionSql = sql`UPDATE Profession SET users = ${users} WHERE profession = ${oldProfession["profession"]}`;
       await db.run(removeUserFromOldProfessionSql);
     }
-    
+
     //add to new profession
     const findUsersFromNewProfessionSql = sql`SELECT users FROM Profession WHERE profession = ${profession}`;
     const usersToAdd = await db.all(findUsersFromNewProfessionSql);
