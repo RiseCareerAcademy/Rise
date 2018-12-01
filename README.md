@@ -80,6 +80,9 @@
 4. Start server
     ```bash
     npm run serve
+
+    # If you have the Gmail password for automated emails:
+    GMAIL_PASSWORD="<password>" npm run serve
     ```
 
 5. Start app
