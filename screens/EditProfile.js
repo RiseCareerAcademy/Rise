@@ -108,7 +108,7 @@ export class EditProfileScreen extends React.Component {
       this.state.last_name,
       this.state.zipcode
     );
-    if (!valid && process.env.NODE_ENV !== "development") {
+    if (!valid && !__DEV__) {
       return;
     }
 

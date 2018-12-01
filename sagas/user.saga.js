@@ -15,7 +15,7 @@ import {
   UPDATE_USER,
 } from "../actions/user.actions";
 import { takeLatest, put, all, call, select } from "redux-saga/effects";
-import { DOMAIN } from "../config/url";
+import { HOST } from "../config/url";
 import { NavigationActions, StackActions } from "react-navigation";
 import { LINKEDIN_CLIENT_ID } from "react-native-dotenv";
 import uuidv1 from "uuid/v1";
@@ -36,7 +36,7 @@ export function* registerForPushNotifications({ user_id }) {
   // Get the token that uniquely identifies this device
   const token = yield Notifications.getExpoPushTokenAsync();
 
-  const pushTokenApiUrl = `http://${DOMAIN}/user/${user_id}/push-token`;
+  const pushTokenApiUrl = `http://${HOST}/user/${user_id}/push-token`;
   // POST the token to your backend server from where you can retrieve it to send push notifications.
   yield axios.post(pushTokenApiUrl, { token });
 }
@@ -57,7 +57,7 @@ export function* uploadProfilePic({ user_id, uri }) {
       Accept: "application/json",
       "Content-Type": "multipart/form-data",
     },
-    url: `http://${DOMAIN}/user/${user_id}/profilepic`,
+    url: `http://${HOST}/user/${user_id}/profilepic`,
   };
   const { data } = yield axios(options);
   return data.profile_pic_URL;
@@ -65,11 +65,11 @@ export function* uploadProfilePic({ user_id, uri }) {
 
 export function* registerMentee({ mentee }) {
   try {
-    yield axios.post(`http://${DOMAIN}/user/password`, {
+    yield axios.post(`http://${HOST}/user/password`, {
       email_address: mentee.email_address,
       password: mentee.password,
     });
-    const response = yield axios.post(`http://${DOMAIN}/user/mentee`, {
+    const response = yield axios.post(`http://${HOST}/user/mentee`, {
       ...mentee,
       passwordHash: mentee.passwordHash,
     });
@@ -93,9 +93,11 @@ export function* registerMentee({ mentee }) {
         typeof e.response.data === "string"
           ? e.response.data
           : e.response.data.error;
-      yield put(failedRegisterMentee(error));
+      // yield put(failedRegisterMentee(error));
+      alert(error);
     } else {
-      yield put(failedRegisterMentee(e.message));
+      // yield put(failedRegisterMentee(e.message));
+      alert(e.message);
     }
   }
 }
@@ -103,11 +105,11 @@ export function* registerMentee({ mentee }) {
 export function* registerMentor({ mentor }) {
   try {
     const passwordResponse = yield axios.post(
-      `http://${DOMAIN}/user/password`,
+      `http://${HOST}/user/password`,
       { email_address: mentor.email_address, password: mentor.password }
     );
     const { passwordHash } = passwordResponse;
-    const response = yield axios.post(`http://${DOMAIN}/user/mentor`, {
+    const response = yield axios.post(`http://${HOST}/user/mentor`, {
       ...mentor,
       passwordHash,
       profile_pic_URL: mentor.image,
@@ -162,7 +164,8 @@ export function* registerWithLinkedin() {
   // // This only displays the results to the screen
   // this.setState({ result, authUrl, validState, responseState, state });
   try {
-    const response = yield axios.post(`http://${DOMAIN}/user/linkedin`, {
+    const linkedinApiUrl = `http://${HOST}/user/linkedin`;
+    const response = yield axios.post(linkedinApiUrl, {
       code,
       redirect_uri: redirectUrl,
     });
@@ -192,12 +195,12 @@ export function* registerWithLinkedin() {
 
 export function* login({ email_address, password }) {
   try {
-    const response = yield axios.post(`http://${DOMAIN}/user/login`, {
+    const response = yield axios.post(`http://${HOST}/user/login`, {
       email_address,
       password,
     });
     const { user_id } = response.data.rows[0];
-    const getUserResponse = yield axios.get(`http://${DOMAIN}/user/${user_id}`);
+    const getUserResponse = yield axios.get(`http://${HOST}/user/${user_id}`);
     const user = getUserResponse.data.rows[0];
     yield put(setUser(user));
     yield put(NavigationActions.navigate({ routeName: "Main" }));
@@ -217,7 +220,7 @@ export function* login({ email_address, password }) {
 
 export function* getUser({ userId }) {
   try {
-    const response = yield axios.get(`http://${DOMAIN}/user/${userId}`);
+    const response = yield axios.get(`http://${HOST}/user/${userId}`);
     const user = response.data.rows[0];
     yield put(setUser(user));
     return user;
@@ -254,7 +257,7 @@ export function* updateUser({ user }) {
   try {
     yield all(
       Object.entries(user).map(([key, value]) => {
-        const apiUrl = `http://${DOMAIN}/user/${userId}/${userApiMapping[key]}`;
+        const apiUrl = `http://${HOST}/user/${userId}/${userApiMapping[key]}`;
         return axios.put(apiUrl, { [key]: value });
       })
     );

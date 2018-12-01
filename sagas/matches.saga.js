@@ -7,14 +7,14 @@ import {
   setMatches,
   CREATE_MATCH,
 } from "../actions/matches.actions";
-import { DOMAIN } from "../config/url";
+import { HOST } from "../config/url";
 import handleResponseError from "../utils/handleResponseError";
 
 export function* getSuggestedMentorMatches() {
   try {
     const mentee_id = yield select(state => state.user.user_id);
     const mentorsResponse = yield axios.get(
-      `http://${DOMAIN}/match/mentors?mentee_id=${mentee_id}`
+      `http://${HOST}/match/mentors?mentee_id=${mentee_id}`
     );
     const { data: { rows: mentors } } = mentorsResponse;
     yield put(setMatches(mentors));
@@ -27,7 +27,7 @@ export function* getSuggestedMenteeMatches() {
   try {
     const mentor_id = yield select(state => state.user.user_id);
     const menteesResponse = yield axios.get(
-      `http://${DOMAIN}/match/mentees?mentor_id=${mentor_id}`
+      `http://${HOST}/match/mentees?mentor_id=${mentor_id}`
     );
     const { data: { rows: mentees } } = menteesResponse;
     yield put(setMatches(mentees));
@@ -45,7 +45,7 @@ export function* createMatch({ user_id: user_id_to_match }) {
       mentee_id: isMentor ? user_id_to_match : user_id,
       ratings: 0,
     };
-    const matchApiUrl = `http://${DOMAIN}/match`;
+    const matchApiUrl = `http://${HOST}/match`;
     yield axios.post(matchApiUrl, reqBody);
     // const matchResponse = yield axios.get(`${matchApiUrl}/userid/${mentee_id}`);
     // const { data: { rows } } = matchResponse;

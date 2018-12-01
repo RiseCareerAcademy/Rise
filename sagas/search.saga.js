@@ -10,12 +10,12 @@ import {
   setMatches,
   GET_ALL_MATCHES,
 } from "../actions/search.actions";
-import { DOMAIN } from "../config/url";
+import { HOST } from "../config/url";
 import { NavigationActions } from "react-navigation";
 
 export function* getAllMentors() {
   try {
-    const response = yield axios.get(`http://${DOMAIN}/user/mentors`);
+    const response = yield axios.get(`http://${HOST}/user/mentors`);
     const mentors = response.data.rows;
     yield put(setMentors(mentors));
     return mentors;
@@ -34,7 +34,7 @@ export function* getAllMentors() {
 
 export function* getAllMentees() {
   try {
-    const response = yield axios.get(`http://${DOMAIN}/user/mentees`);
+    const response = yield axios.get(`http://${HOST}/user/mentees`);
     const mentees = response.data.rows;
     yield put(setMentees(mentees));
     return mentees;
@@ -54,20 +54,20 @@ export function* getAllMentees() {
 export function* getAllMatches() {
   try {
     const user_id = yield select(state => state.user.user_id);
-    const response = yield axios.get(`http://${DOMAIN}/match/userid/${user_id}`);
+    const response = yield axios.get(`http://${HOST}/match/userid/${user_id}`);
     const matches = response.data.rows;
     const isMentor = user_id[0] === '1';
     let matchedUsers;
     if (isMentor) {
       matchedUsers = yield Promise.all(matches.map(async match => {
         const user_id_to_match = match.mentee_id;
-        const menteeResponse = await axios.get(`http://${DOMAIN}/user/${user_id_to_match}`);
+        const menteeResponse = await axios.get(`http://${HOST}/user/${user_id_to_match}`);
         return menteeResponse.data.rows[0];
       }))
     } else {
       matchedUsers = yield Promise.all(matches.map(async match => {
         const user_id_to_match = match.mentor_id;
-        const mentorResponse = await axios.get(`http://${DOMAIN}/user/${user_id_to_match}`);
+        const mentorResponse = await axios.get(`http://${HOST}/user/${user_id_to_match}`);
         return mentorResponse.data.rows[0];
       }))
     }
@@ -87,7 +87,7 @@ export function* getAllMatches() {
 
 export function* getMentor({ user_id }) {
   try {
-    const response = yield axios.get(`http://${DOMAIN}/user/${user_id}`);
+    const response = yield axios.get(`http://${HOST}/user/${user_id}`);
     const mentor = response.data.rows[0];
     yield put(
       NavigationActions.navigate({ routeName: "MentorProfile", params: mentor })
@@ -107,7 +107,7 @@ export function* getMentor({ user_id }) {
 
 export function* getMentee({ user_id }) {
   try {
-    const response = yield axios.get(`http://${DOMAIN}/user/${user_id}`);
+    const response = yield axios.get(`http://${HOST}/user/${user_id}`);
     const mentee = response.data.rows[0];
     yield put(
       NavigationActions.navigate({ routeName: "MenteeProfile", params: mentee })

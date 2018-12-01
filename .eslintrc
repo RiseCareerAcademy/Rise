@@ -5,6 +5,9 @@
     "es6": true,
     "jest/globals": true
   },
+  "globals": {
+    "__DEV__": true
+  },
   "parser": "babel-eslint",
   "extends": [
     "eslint:recommended",
