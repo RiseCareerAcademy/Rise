@@ -1,7 +1,8 @@
 **Do you want to request a *feature* or report a *bug*?**
 
-**What is the current behavior? (Include how to reproduce it and which device (Android/iOS).)**
+## How to Reproduce
 
-**What is the expected behavior?**
+## What is the current behavior? (Include which device (Android/iOS).)**
 
-**Did this work in previous versions?**
+## What is the expected behavior?
+
