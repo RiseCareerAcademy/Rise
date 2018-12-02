@@ -16,7 +16,6 @@ module.exports = {
   deploy: {
     // "production" is the environment name
     development: {
-      key: "~/.ssh/id_rsa_7162065963930d65ef3ea650106c51b1",
       // SSH user
       user: "root",
       // SSH host
