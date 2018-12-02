@@ -22,6 +22,9 @@ module.exports = {
       host: ["104.248.57.156"],
       // GIT remote/branch
       ref: "origin/master",
+      // SSH options with no command-line flag, see 'man ssh'
+      // can be either a single string or an array of strings
+      ssh_options: "StrictHostKeyChecking=no",
       // GIT remote
       repo: "git@github.com:RiseCareerAcademy/Rise.git",
       // path in the server
