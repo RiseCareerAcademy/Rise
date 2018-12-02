@@ -43,7 +43,9 @@ jobs:
           name: Upload Coverage to Coveralls
           command: cat ./coverage/lcov.info | ./node_modules/.bin/coveralls
 
-      - add_ssh_keys
+      - add_ssh_keys:
+          fingerprints:
+            - "a4:e2:db:09:0f:44:00:cd:0f:53:cc:89:b6:9f:1d:9c"
       - run:
           name: Deploy to Development Server
           command: npm run deploy
