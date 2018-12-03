@@ -1,7 +1,12 @@
 [![CircleCI](https://circleci.com/gh/RiseCareerAcademy/Rise/tree/master.svg?style=svg)](https://circleci.com/gh/RiseMentors/Rise/tree/master)
 [![Coverage Status](https://coveralls.io/repos/github/RiseCareerAcademy/Rise/badge.svg?branch=master&service=github)](https://coveralls.io/github/RiseCareerAcademy/Rise?branch=master)
 # Rise
-![logo](http://risecareer.org/images/logo.png)
+
+<p align="center">
+  <img src="http://risecareer.org/images/logo.png" alt="logo" style="margin:auto;" />
+</p>
+
+
 - [Rise](#rise)
 - [Demoing (Projects Ready for Testing)](#demoing--projects-ready-for-testing-)
 - [Development](#development)
