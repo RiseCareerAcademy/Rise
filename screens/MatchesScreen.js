@@ -35,7 +35,6 @@ export class MatchesScreen extends Component {
     error: "hi",
     refreshing: false,
   };
-  
 
   constructor(props) {
     super(props);
@@ -139,20 +138,6 @@ export class MatchesScreen extends Component {
       </Container>
     );
   }
-  
-  render =()=> {
-    return (
-      <List>
-        <FlatList
-          data={this.state.list}
-          renderItem={this.renderRow}
-          keyExtractor={item => item.name}
-
-        />
-      </List>
-    )
-  }
-
 }
 
 
@@ -170,4 +155,3 @@ export default connect(
     getMentor,
   }
 )(MatchesScreen);
-
