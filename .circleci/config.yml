@@ -45,7 +45,7 @@ jobs:
 
       - add_ssh_keys
       - run:
-          name: Push application Docker image
+          name: Deploy server to droplet
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
               ssh-keyscan ${DEPLOY_HOST} >> ~/.ssh/known_hosts
