@@ -1,0 +1,56 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`App snapshot renders the loading screen 1`] = `
+<AppLoading
+  onError={[Function]}
+  onFinish={[Function]}
+  startAsync={[Function]}
+/>
+`;
+
+exports[`App snapshot renders the root without loading screen 1`] = `
+<Provider
+  store={
+    Object {
+      "dispatch": [Function],
+      "getState": [Function],
+      "replaceReducer": [Function],
+      "subscribe": [Function],
+      Symbol(observable): [Function],
+    }
+  }
+>
+  <PersistGate
+    loading={<LoadingScreen />}
+    persistor={
+      Object {
+        "dispatch": [Function],
+        "flush": [Function],
+        "getState": [Function],
+        "pause": [Function],
+        "persist": [Function],
+        "purge": [Function],
+        "replaceReducer": [Function],
+        "subscribe": [Function],
+        Symbol(observable): [Function],
+      }
+    }
+  >
+    <Component
+      style={
+        Object {
+          "backgroundColor": "#fff",
+          "flex": 1,
+        }
+      }
+    >
+      <StatusBar
+        animated={false}
+        barStyle="default"
+        showHideTransition="fade"
+      />
+      <Connect(NavigatorReduxWrapper) />
+    </Component>
+  </PersistGate>
+</Provider>
+`;

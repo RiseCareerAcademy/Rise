@@ -7,6 +7,7 @@ import conversationReducer from "./conversation.reducer";
 import userReducer from "./user.reducer";
 import { navReducer } from '../navigation';
 import searchReducer from "./search.reducer";
+import matchesReducer from "./matches.reducer";
 
 const authPersistConfig = {
   key: 'user',
@@ -20,4 +21,5 @@ export default combineReducers({
   user: persistReducer(authPersistConfig, userReducer),
   nav: navReducer,
   search: searchReducer,
+  matches: matchesReducer,
 });

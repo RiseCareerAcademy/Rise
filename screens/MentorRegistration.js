@@ -6,15 +6,13 @@ import {
   Form,
   Item,
   Label,
-  Input
+  Input,
 } from "native-base";
 import {
   StyleSheet,
   TouchableOpacity,
-  View,
   Image,
-  Button,
-  ActivityIndicator
+  ActivityIndicator,
 } from "react-native";
 import { connect } from "react-redux";
 
@@ -33,7 +31,7 @@ export class MentorRegistration extends React.Component {
     state: "",
     image: null,
     last_name: "",
-    zipcode: ""
+    zipcode: "",
   };
 
   handlePassword = text => {
@@ -53,10 +51,10 @@ export class MentorRegistration extends React.Component {
   };
 
   handleEmail = text => {
-    this.setState({ email: text });
+    this.setState({ email_address: text });
   };
 
-  handleOccupation = text => {
+  handleProfession = text => {
     this.setState({ profession: text });
   };
 
@@ -72,7 +70,18 @@ export class MentorRegistration extends React.Component {
     this.setState({ biography: text });
   };
 
-  validate = (password, confirmedPassword, skills, profession, email, name, lastName, zipcode) => {
+
+  validate = (
+    email,
+    password,
+    confirmedPassword,
+    skills,
+    profession,
+    name,
+    lastName,
+    zipcode,
+    biography,
+  ) => {
     // we are going to store errors for all fields
     // in a signle array
     const errors = [];
@@ -84,7 +93,8 @@ export class MentorRegistration extends React.Component {
       password.length == 0 ||
       confirmedPassword.length == 0 ||
       lastName.length == 0 ||
-      zipcode.length == 0
+      zipcode.length == 0 ||
+      biography.length == 0
     ) {
       errors.push("All fields must be filled");
     } else if (email.length < 5) {
@@ -100,24 +110,30 @@ export class MentorRegistration extends React.Component {
         "Password doesn't match" + password + " " + confirmedPassword
       );
     } else if (zipcode.length != 5 && /^\d+$/.test(zipcode)) {
-      errors.push("zipcode must contain only numbers and be 5 characters long");
+      errors.push("zipcode must contain only numbers and be exactly 5 digits long");
     }
-    if (errors.length == 0) {
-      // alert(errors);
+    if (errors.length == 0 || __DEV__) {
       return true;
     } else {
+      alert(errors);
       return false;
     }
   };
 
   handleSubmit = () => {
     const valid = this.validate(
+      this.state.email || this.props.email,
       this.state.password,
-      this.state.confirmedPassword,
+      this.state.confirmedPassword ,
       this.state.skills,
-      this.state.zipcode
+      this.state.profession || this.props.profession,
+      this.state.first_namename || this.props.first_name,
+      this.state.last_name || this.props.last_name,
+      this.state.zipcode,
+      this.state.biography || this.props.biography,
     );
-    if (!valid && process.env.NODE_ENV !== "development") {
+
+    if (!valid && !__DEV__) {
       return;
     }
 
@@ -130,16 +146,16 @@ export class MentorRegistration extends React.Component {
       date_of_birth: "12/24/1996",
       skills: this.state.skills,
       hobbies: "fake hobbies",
-      profession: this.state.occupation || this.props.occupation,
+      profession: this.state.profession || this.props.profession,
       password: this.state.password,
       image: this.props.profile_pic_URL,
+      profile_pic_URL: this.props.profile_pic_URL,
     };
 
     this.props.registerMentor(mentor);
   };
 
   render() {
-    const { navigate } = this.props.navigation;
     return (
       <Container style={styles.container}>
         <Content>
@@ -150,15 +166,15 @@ export class MentorRegistration extends React.Component {
             <Image
               style={styles.userImage}
               source={{
-                uri: this.props.profile_pic_URL
+                uri: this.props.profile_pic_URL,
               }}
             />
 
             <Item stackedLabel>
               <Label>Email</Label>
-              <Input 
+              <Input
               autoCapitalize="none"
-              placeholder={this.props.email_address} onChange={this.handleEmail} />
+              placeholder={this.props.email_address} onChangeText={this.handleEmail} />
             </Item>
             <Item stackedLabel>
               <Label>Password</Label>
@@ -177,22 +193,22 @@ export class MentorRegistration extends React.Component {
               />
             </Item>
             <Item stackedLabel>
-              <Label>Skills</Label>
+              <Label>Skills (separated by commas)</Label>
               <Input
                 onChangeText={this.handleSkills}
               />
             </Item>
             <Item stackedLabel last>
               <Label>Profession</Label>
-              <Input placeholder={this.props.occupation} onChange={this.handleOccupation} />
+              <Input placeholder={this.props.profession} onChangeText={this.handleProfession} />
             </Item>
             <Item stackedLabel last>
               <Label>Name</Label>
-              <Input placeholder={this.props.first_name} onChange={this.handleFirstName} />
+              <Input placeholder={this.props.first_name} onChangeText={this.handleFirstName} />
             </Item>
             <Item stackedLabel last>
               <Label>lastName</Label>
-              <Input placeholder={this.props.last_name} onChange={this.handleLastName} />
+              <Input placeholder={this.props.last_name} onChangeText={this.handleLastName} />
             </Item>
             <Item stackedLabel last>
               <Label>zipcode</Label>
@@ -202,7 +218,7 @@ export class MentorRegistration extends React.Component {
             </Item>
             <Item stackedLabel last>
               <Label>Biography</Label>
-              <Input placeholder={this.props.biography} onChange={this.handleBiography} />
+              <Input placeholder={this.props.biography} onChangeText={this.handleBiography} />
             </Item>
           </Form>
         </Content>
@@ -222,63 +238,60 @@ export class MentorRegistration extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    paddingTop: 23
-  },
   userImage: {
     borderRadius: 85,
     borderWidth: 3,
     height: 170,
     marginBottom: 15,
-    width: 170
+    width: 170,
   },
   input: {
     margin: 15,
     height: 40,
     borderColor: "#000000",
-    borderWidth: 1
+    borderWidth: 1,
   },
   submitButton: {
     backgroundColor: "#000000",
     padding: 10,
     margin: 15,
-    height: 40
+    height: 40,
   },
   submitButtonText: {
-    color: "white"
+    color: "white",
   },
   buttonContainer: {
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
   },
   center: {
     flex: 1,
     flexDirection: "row",
-    justifyContent: "center"
+    justifyContent: "center",
   },
   buttonStyle: {
-    margin: 10
+    margin: 10,
   },
   greyText: {
-    color: "grey"
+    color: "grey",
   },
   contentContainer: {
-    paddingTop: 30
+    paddingTop: 30,
   },
   container: {
-    margin: 5
+    margin: 5,
   },
   uploadBtnContainer: {
-    margin: "auto"
+    margin: "auto",
   },
   uploadBtn: {
-    margin: "auto"
+    margin: "auto",
   },
   error: {
-    color: "red"
-  }
+    color: "red",
+  },
 });
 
 const mapStateToProps = state => ({
@@ -287,7 +300,7 @@ const mapStateToProps = state => ({
   error: state.user.error,
   email_address: state.user.email_address,
   first_name: state.user.first_name,
-  occupation: state.user.occupation,
+  profession: state.user.profession,
   last_name: state.user.last_name,
   biography: state.user.biography,
   profile_pic_URL: state.user.profile_pic_URL,

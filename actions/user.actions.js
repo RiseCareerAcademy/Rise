@@ -10,6 +10,8 @@ export const REGISTER_WITH_LINKEDIN = 'user/REGISTER_WITH_LINKEDIN';
 export const SET_USER_FIELDS = 'user/SET_USER_FIELDS';
 export const REGISTER_MENTOR = 'user/REGISTER_MENTOR';
 export const LOGIN = 'user/LOGIN';
+export const UPDATE_USER = 'user/UPDATE_USER';
+export const REGISTER_FOR_PUSH_NOTIFICATIONS = 'user/REGISTER_FOR_PUSH_NOTIFICATIONS';
 
 export const setUser = user => ({
 	type: SET_USER,
@@ -69,4 +71,14 @@ export const login = (email_address, password) => ({
 	type: LOGIN,
 	email_address,
 	password,
+});
+
+export const updateUser = user => ({
+	type: UPDATE_USER,
+	user,
+})
+
+export const registerForPushNotifications = user_id => ({
+  type: REGISTER_FOR_PUSH_NOTIFICATIONS,
+  user_id,
 });

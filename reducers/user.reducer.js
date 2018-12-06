@@ -4,7 +4,8 @@ export const initialState = {
 	loggedIn: false,
 	registering: false,
 	error: null,
-	loggingIn: false,
+  loggingIn: false,
+  user_id: ' ',
 };
 
 export default (state = initialState, action) => {

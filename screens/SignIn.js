@@ -1,9 +1,6 @@
-import React, { Component } from "react";
-import { Button, Text, Container, Header, Content, Form, Item, Label, Input } from "native-base";
-import { Platform, TouchableOpacity, ScrollView, StyleSheet, Image, View, ActivityIndicator } from "react-native";
-import { AuthSession } from "expo";
-import { Ionicons } from '@expo/vector-icons';
-import { MonoText } from "../components/StyledText";
+import React from "react";
+import { Text, Container, Content, Form, Item, Label, Input } from "native-base";
+import { TouchableOpacity, StyleSheet, ActivityIndicator } from "react-native";
 import { connect } from 'react-redux';
 
 import { login } from '../actions/user.actions';
@@ -12,7 +9,7 @@ export class SignIn extends React.Component {
   state = {
     result: null,
     email: "",
-    password: ""
+    password: "",
   };
   handleEmail = text => {
     this.setState({ email: text.trim() });
@@ -44,7 +41,7 @@ export class SignIn extends React.Component {
       errors.push("Password should be at least 6 characters long");
     }
 
-    if (errors.length == 0 || process.env.NODE_ENV === 'development') {
+    if (errors.length == 0 || __DEV__) {
       this.props.login(email, password);
       return true
     } else {
@@ -60,13 +57,13 @@ export class SignIn extends React.Component {
           <Form>
             <Item stackedLabel>
               <Label>Email</Label>
-              <Input 
+              <Input
               autoCapitalize="none"
               onChangeText={this.handleEmail}/>
             </Item>
             <Item stackedLabel last>
               <Label>Password</Label>
-              <Input 
+              <Input
               autoCapitalize="none"
               secureTextEntry
               onChangeText={this.handlePassword}/>
@@ -102,46 +99,46 @@ export class SignIn extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: 23
+    paddingTop: 23,
   },
   buttonContainer: {
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
   },
   center: {
     flex: 1,
     flexDirection: "row",
-    justifyContent: "center"
+    justifyContent: "center",
   },
   buttonStyle: {
-    margin: 10
+    margin: 10,
   },
   greyText: {
-    color: "grey"
+    color: "grey",
   },
   contentContainer: {
-    paddingTop: 30
+    paddingTop: 30,
   },
   input: {
     margin: 15,
     height: 40,
     borderColor: "#000000",
-    borderWidth: 1
+    borderWidth: 1,
   },
   submitButton: {
     backgroundColor: "#000000",
     padding: 10,
     margin: 15,
-    height: 40
+    height: 40,
   },
   submitButtonText: {
-    color: "white"
+    color: "white",
   },
   error: {
-    color: "red"
-  }
+    color: "red",
+  },
 });
 
 const mapStateToProps = state => ({
@@ -149,7 +146,7 @@ const mapStateToProps = state => ({
   error: state.user.error,
   email_address: state.user.email_address,
   first_name: state.user.first_name,
-  occupation: state.user.occupation,
+  profession: state.user.profession,
   last_name: state.user.last_name,
   biography: state.user.biography,
   profile_pic_URL: state.user.profile_pic_URL,

@@ -6,25 +6,32 @@ import {
   Form,
   Item,
   Label,
-  Input
+  Input,
+  Header,
+  Right,
+  Icon,
+  Button,
+  Body,
+  Left,
+  Title,
 } from "native-base";
 import {
   StyleSheet,
   TouchableOpacity,
   View,
   Image,
-  Button,
-  ActivityIndicator
+  ActivityIndicator,
 } from "react-native";
 import { connect } from "react-redux";
 import { ImagePicker, Permissions } from "expo";
 
 import { registerMentee } from "../actions/user.actions";
-import { DOMAIN } from "../config/url";
-
-const uuidv1 = require("uuid/v1");
 
 export class StudentRegistration extends React.Component {
+  static navigationOptions = {
+    header: null,
+  }
+
   state = {
     email: "",
     password: "",
@@ -37,7 +44,8 @@ export class StudentRegistration extends React.Component {
     state: "",
     image: null,
     lastName: "",
-    zipcode: ""
+    zipcode: "",
+    biography: '',
   };
 
   handleImagePickerPress = async () => {
@@ -51,7 +59,7 @@ export class StudentRegistration extends React.Component {
     if (cameraPerm === "granted" && cameraRollPerm === "granted") {
       const result = await ImagePicker.launchImageLibraryAsync({
         allowsEditing: true, //Android editing only
-        aspect: [4, 3] //Aspect ratio to maintain if user allowed to edit image
+        aspect: [4, 3], //Aspect ratio to maintain if user allowed to edit image
         // base64: true,
       });
       // this.base64 = result.base64;
@@ -87,6 +95,10 @@ export class StudentRegistration extends React.Component {
     this.setState({ zipcode: text });
   };
 
+  handleBiography = text => {
+    this.setState({ biography: text });
+  }
+
   validate = (
     email,
     password,
@@ -95,7 +107,9 @@ export class StudentRegistration extends React.Component {
     profession,
     name,
     lastName,
-    zipcode
+    zipcode,
+    biography,
+    image,
   ) => {
     // we are going to store errors for all fields
     // in a signle array
@@ -108,7 +122,9 @@ export class StudentRegistration extends React.Component {
       password.length == 0 ||
       confirmedPassword.length == 0 ||
       lastName.length == 0 ||
-      zipcode.length == 0
+      zipcode.length == 0 ||
+      biography.length == 0 ||
+      image.length == 0
     ) {
       errors.push("All fields must be filled");
     } else if (email.length < 5) {
@@ -124,15 +140,14 @@ export class StudentRegistration extends React.Component {
         "Password doesn't match" + password + " " + confirmedPassword
       );
     } else if (zipcode.length != 5 && /^\d+$/.test(zipcode)) {
-      errors.push("zipcode must contain only numbers and be 5 characters long");
+      errors.push("zipcode must contain only numbers and be exactly 5 digits long");
     }
-    if (errors.length == 0) {
-      // alert(errors);
+    if (errors.length == 0 || __DEV__) {
       return true;
     } else {
+      alert(errors);
       return false;
     }
-    
   };
 
   handleSubmit = () => {
@@ -144,9 +159,11 @@ export class StudentRegistration extends React.Component {
       this.state.profession,
       this.state.name,
       this.state.lastName,
-      this.state.zipcode
+      this.state.zipcode,
+      this.state.biography,
+      this.state.image,
     );
-    if (!valid && process.env.NODE_ENV !== "development") {
+    if (!valid && !__DEV__) {
       return;
     }
 
@@ -154,7 +171,7 @@ export class StudentRegistration extends React.Component {
       first_name: this.state.name,
       last_name: this.state.lastName,
       email_address: this.state.email,
-      biography: "hi",
+      biography: this.state.biography,
       zipcode: this.state.zipcode,
       date_of_birth: "12/24/1996",
       skills: this.state.skills,
@@ -165,23 +182,56 @@ export class StudentRegistration extends React.Component {
       state: this.state.state,
       image: this.state.image,
       uri: this.state.image,
-      password: this.state.password,
     };
 
     this.props.registerMentee(mentee);
   };
 
+  handlePreviewPress = () => {
+    this.props.navigation.navigate("Preview", {
+      profile_pic_URL: this.state.image,
+      first_name: this.state.name,
+      last_name: this.state.lastName,
+      zipcode: this.state.zipcode,
+      biography: this.state.biography,
+      profession: this.state.profession,
+      skills: this.state.skills,
+      preview: true,
+    });
+  };
+
+  handleBackPress = () => {
+    this.props.navigation.goBack();
+  }
+
   render() {
     return (
-      <Container style={styles.container}>
+      <Container >
+        <Header>
+          <Left>
+            <Button transparent onPress={this.handleBackPress}>
+              <Icon name="md-arrow-round-back" />
+            </Button>
+          </Left>
+          <Body>
+            <Title>Student Registration</Title>
+          </Body>
+          <Right>
+            <Button transparent onPress={this.handlePreviewPress}>
+              <Icon name="eye" />
+            </Button>
+          </Right>
+        </Header>
         <Content>
-          <Text style={styles.error}>{!this.props.registering && this.props.error}</Text>
+          <Text style={styles.error}>
+            {!this.props.registering && this.props.error}
+          </Text>
           <Form>
             {this.state.image !== null && (
               <Image
                 style={styles.userImage}
                 source={{
-                  uri: this.state.image
+                  uri: this.state.image,
                 }}
               />
             )}
@@ -190,13 +240,14 @@ export class StudentRegistration extends React.Component {
               <Button
                 onPress={this.handleImagePickerPress}
                 style={styles.uploadBtn}
-                title="Select image from Camera Roll"
-              />
+              >
+                <Text>Select image from Camera Roll</Text>
+              </Button>
             </View>
             <Item stackedLabel>
               <Label>Email</Label>
               <Input
-              autoCapitalize="none"
+                autoCapitalize="none"
                 placeholder="Enter your email"
                 onChangeText={this.handleEmail}
               />
@@ -204,7 +255,7 @@ export class StudentRegistration extends React.Component {
             <Item stackedLabel>
               <Label>Password</Label>
               <Input
-              autoCapitalize="none"
+                autoCapitalize="none"
                 placeholder="Enter your password"
                 onChangeText={this.handlePassword}
                 secureTextEntry={true}
@@ -213,24 +264,10 @@ export class StudentRegistration extends React.Component {
             <Item stackedLabel>
               <Label>Confirm Password</Label>
               <Input
-              autoCapitalize="none"
+                autoCapitalize="none"
                 placeholder="Confirm Password Change"
                 onChangeText={this.handleConfirmedPassword}
                 secureTextEntry={true}
-              />
-            </Item>
-            <Item stackedLabel>
-              <Label>Skills</Label>
-              <Input
-                placeholder="Enter skills you want to learn"
-                onChangeText={this.handleSkills}
-              />
-            </Item>
-            <Item stackedLabel last>
-              <Label>Profession</Label>
-              <Input
-                placeholder="Enter profession you want to learn"
-                onChangeText={this.handleProfession}
               />
             </Item>
             <Item stackedLabel last>
@@ -247,11 +284,32 @@ export class StudentRegistration extends React.Component {
                 onChangeText={this.handleLastName}
               />
             </Item>
+            <Item stackedLabel>
+              <Label>Skills (separated by commas)</Label>
+              <Input
+                placeholder="Enter skills you want to learn"
+                onChangeText={this.handleSkills}
+              />
+            </Item>
+            <Item stackedLabel last>
+              <Label>Profession</Label>
+              <Input
+                placeholder="Enter profession you want to learn"
+                onChangeText={this.handleProfession}
+              />
+            </Item>
             <Item stackedLabel last>
               <Label>zipcode</Label>
               <Input
                 placeholder="Enter your zipcode"
                 onChangeText={this.handleZipCode}
+              />
+            </Item>
+            <Item stackedLabel>
+              <Label>Biography</Label>
+              <Input
+                placeholder="Enter your bio"
+                onChangeText={this.handleBiography}
               />
             </Item>
           </Form>
@@ -272,63 +330,60 @@ export class StudentRegistration extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    paddingTop: 23
-  },
   userImage: {
     borderRadius: 85,
     borderWidth: 3,
     height: 170,
     marginBottom: 15,
-    width: 170
+    width: 170,
   },
   input: {
     margin: 15,
     height: 40,
     borderColor: "#000000",
-    borderWidth: 1
+    borderWidth: 1,
   },
   submitButton: {
     backgroundColor: "#000000",
     padding: 10,
     margin: 15,
-    height: 40
+    height: 40,
   },
   submitButtonText: {
-    color: "white"
+    color: "white",
   },
   buttonContainer: {
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
   },
   center: {
     flex: 1,
     flexDirection: "row",
-    justifyContent: "center"
+    justifyContent: "center",
   },
   buttonStyle: {
-    margin: 10
+    margin: 10,
   },
   greyText: {
-    color: "grey"
+    color: "grey",
   },
   contentContainer: {
-    paddingTop: 30
+    paddingTop: 30,
   },
   container: {
-    margin: 5
+    margin: 5,
   },
   uploadBtnContainer: {
-    margin: "auto"
+    margin: "auto",
   },
   uploadBtn: {
-    margin: "auto"
+    margin: "auto",
   },
   error: {
-    color: "red"
-  }
+    color: "red",
+  },
 });
 
 const mapStateToProps = state => ({
