@@ -155,6 +155,7 @@ export class MatchesScreen extends Component {
 
 }
 
+
 const mapStateToProps = state => ({
   users: state.matches.users,
   user_id: state.user.user_id,
