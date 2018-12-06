@@ -7,7 +7,7 @@ jobs:
   build:
     docker:
       # specify the version you desire here
-      - image: circleci/node:7.10
+      - image: kmui2/rise-ci
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -48,8 +48,15 @@ jobs:
           name: Push application Docker image
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
-              ssh-keyscan 104.248.57.156 >> ~/.ssh/known_hosts
+              ssh-keyscan ${DEPLOY_HOST} >> ~/.ssh/known_hosts
               npm run deploy
+            fi
+      - run:
+          name: Publish application to Expo
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              expo login --username ${EXPO_USERNAME} --password ${EXPO_PASSWORD}
+              expo publish
             fi
 
 workflows:
