@@ -155,9 +155,7 @@ export class MatchesScreen extends Component {
 
 }
 
-<<<<<<< HEAD
 
-=======
 const mapStateToProps = state => ({
   users: state.matches.users,
   user_id: state.user.user_id,
@@ -172,4 +170,4 @@ export default connect(
     getMentor,
   }
 )(MatchesScreen);
->>>>>>> origin
+
