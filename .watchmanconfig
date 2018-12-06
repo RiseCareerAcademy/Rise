@@ -1,1 +1,4 @@
-{}
+{
+	"ignore_dirs": ["uploads", "routes", "db"],
+	"ignore_vcs": [".jpg", "server.js"]
+}

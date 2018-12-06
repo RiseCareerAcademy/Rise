@@ -1,46 +1,138 @@
 import React, { Component } from "react";
-import { View, Text, TouchableOpacity, TextInput, StyleSheet } from "react-native";
-import {Item,Input} from "native-base";
-import { MessageShort } from "../components/view";
+import { connect } from "react-redux";
+import { GiftedChat } from "react-native-gifted-chat";
+import Dialog from "react-native-dialog";
+
+import {
+  sendMessage,
+  setMatchId,
+  reconnectToWebSocket,
+} from "../actions/conversation.actions";
+import { Header, Body, Title, Left, Button, Icon } from "native-base";
 
 class Conversation extends Component {
+  static navigationOptions = {
+    header: null,
+  }
+
   constructor(props) {
     super(props);
+
+    const { match_id } = this.props.navigation.state.params;
+    this.props.setMatchId(match_id);
+
     this.state = {
-      messages: []
-    };
+      showDialog: false,
+    }
+
+    this.delayTimeout;
+  }
+
+  componentDidUpdate = prevProps => {
+    // Throttles the first show dialog so that the reconnect
+    // dialog doesn't suddenly appear and disappear (flash) on loading
+    // this screen.
+    const lastShowDialogRequest = !prevProps.connectedToWebSocket;
+    const showDialogRequest = !this.props.connectedToWebSocket;
+    if (!this.state.showDialog && showDialogRequest) {
+      this.delayTimeout = setTimeout(() => {
+        this.setState({
+          showDialog: true,
+        });
+      }, 3000);
+    } else if (lastShowDialogRequest && !showDialogRequest) {
+      clearTimeout(this.delayTimeout);
+      this.setState({
+        showDialog: false,
+      });
+    }
+  }
+
+  shouldShowDialog = () => {
+  }
+
+  onSend = messages => {
+    const { user_id } = this.props;
+    const { to_id, match_id } = this.props.navigation.state.params;
+    console.log(messages);
+    const message = messages[0];
+    this.props.sendMessage({
+      match_id,
+      from_id: user_id,
+      to_id,
+      message_body: message.text,
+    });
+  };
+
+  handleReconnect = () => {
+    this.props.reconnectToWebSocket();
+  };
+
+  handleBackPress = () => {
+    this.props.navigation.goBack();
   }
 
   render() {
-    const messages = [{"toUser":"Ryan2","fromUser":"Dan","message":"Varun is really nice.","dateTime":"2018-10-29T03:19:50.594Z"},
-        {"toUser":"Ryan3","fromUser":"Me","message":"I think we'll get an A","dateTime":"2018-10-29T03:19:50.594Z"},
-        {"toUser":"Ryan4","fromUser":"Rita","message":"The Milwaukee Bucks are undefeated through seven games, making them the only remaining unbeaten team in the NBA. Malcolm Brogdon, a former rookie of the year and a key part of the team's starting unit, is hitting his stride as one of the team's many dynamic, play- and shot-making options. Everything's going well in Milwaukee for the hometown team, which will look to continue its winning ways against the Boston Celtics at 7 p.m. Thursday at TD Garden.","dateTime":"2018-10-29T03:19:50.594Z"},
-        {"toUser":"Ryan5","fromUser":"Kevin","message":"That's pretty cooool","dateTime":"2018-10-29T03:19:50.594Z"}]
-       
+    const {
+      user_id,
+      first_name,
+      last_name,
+      messages,
+    } = this.props;
+    const { otherUser } = this.props.navigation.state.params;
+    const currUserName = `${first_name} ${last_name}`;
+    const otherUserName = `${otherUser.first_name} ${otherUser.last_name}`;
+
+    const giftedChatMessages = messages.map(message => ({
+      _id: message.message_id,
+      text: message.message_body,
+      createdAt: message.timestamp,
+      user: {
+        _id: message.from_id,
+        name: message.from_id === user_id ? currUserName : otherUserName,
+        avatar: otherUser.profile_pic_URL,
+      },
+    }));
 
     return (
-      <View>
-        {messages.map((message, i) => {
-          return <MessageShort key={i} {...message} />;
-        })}
-        <TextInput style = {styles.input}
-        underlineColorAndroid = "transparent"
-        placeholder = "Type here"
-        placeholderTextColor = "#D3D3D3"
-        autoCapitalize = "none"
-        backgroundColor = '#F5FCFF'
-        onChangeText = {this.handleEmail}/>
-      </View>
-      
+      <React.Fragment>
+        <Header>
+          <Left>
+            <Button transparent onPress={this.handleBackPress}>
+              <Icon name="md-arrow-round-back" />
+            </Button>
+          </Left>
+          <Body>
+            <Title>{currUserName}</Title>
+          </Body>
+        </Header>
+        <Dialog.Container visible={this.state.showDialog}>
+          <Dialog.Title>Disconnected</Dialog.Title>
+          <Dialog.Button label="Reconnect" onPress={this.handleReconnect} />
+        </Dialog.Container>
+        <GiftedChat
+          messages={giftedChatMessages}
+          onSend={this.onSend}
+          user={{
+            _id: user_id,
+          }}
+        />
+      </React.Fragment>
     );
   }
 }
-const styles = StyleSheet.create({
-  input: {
-     margin: 15,
-     height: 40,
-     borderColor: '#000000',
-     borderWidth: 1
+
+const mapStateToProps = state => ({
+  ...state.user,
+  messages: state.conversation.messages,
+  connectedToWebSocket: state.conversation.connectedToWebSocket,
+});
+
+export default connect(
+  mapStateToProps,
+  {
+    sendMessage,
+    setMatchId,
+    reconnectToWebSocket,
   }
-})
-export default Conversation;
+)(Conversation);

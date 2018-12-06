@@ -10,3 +10,5 @@ import Enzyme from 'enzyme';
  * and inspect the DOM in tests.
  */
 Enzyme.configure({ adapter: new Adapter() });
+
+__DEV__ = false;

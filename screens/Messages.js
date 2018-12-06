@@ -1,69 +1,132 @@
 import React, { Component } from "react";
-import { View, FlatList, ActivityIndicator } from 'react-native';
-import { Message } from "../components/view";
+import {
+  Container,
+  Header,
+  Content,
+  List,
+  ListItem,
+  Left,
+  Thumbnail,
+  Body,
+  Text,
+  Right,
+} from "native-base";
+import { connect } from "react-redux";
+import { RefreshControl } from "react-native";
 
-export default class Messages extends Component {
+import { getMessages } from "../actions/messages.actions";
+import { HOST } from "../config/url";
+
+const uuidv1 = require('uuid/v1');
+
+export class Messages extends Component {
+  static navigationOptions = {
+    header: null,
+  };
+
+  state = {
+    showActivityIndicator: true,
+    searchBarFocused: false,
+    messages: [],
+    matches: [],
+    text: "",
+    lastChecked: "",
+    allMessages: [],
+    refreshing: false,
+  };
+
   constructor(props) {
     super(props);
-    this.state = {
-      showActivityIndicator: true,
-      messages: []
-    };
+
+    this.props.getMessages();
   }
 
-  render() {
-    const messages = [
-      {
-        toUser: "Ryan2",
-        fromUser: "Dan",
-        message: "Turbo is Awesome",
-        dateTime: "2018-10-29T03:19:50.594Z"
-      },
-      {
-        toUser: "Ryan3",
-        fromUser: "Dan",
-        message: "Turbo is Awesome",
-        dateTime: "2018-10-29T03:19:50.594Z"
-      },
-      {
-        toUser: "Ryan4",
-        fromUser: "Dan",
-        message: "Turbo is Awesome",
-        dateTime: "2018-10-29T03:19:50.594Z"
-      },
-      {
-        toUser: "Ryan5",
-        fromUser: "Dan",
-        message: "Turbo is Awesome",
-        dateTime: "2018-10-29T03:19:50.594Z"
-      }
-    ];
+  componentDidUpdate = prevProps => {
+    if (prevProps.messages !== this.props.messages) {
+      this.setState({ refreshing: false });
+    }
+  };
 
+  handleMessagePress = (match_id, to_id, otherUser) => () => {
+    this.props.navigation.navigate("Conversation", {
+      match_id,
+      to_id,
+      otherUser,
+    });
+  };
+
+  onRefresh = () => {
+    this.props.getMessages();
+    this.setState({ refreshing: true });
+  };
+
+  render() {
+    const { messages = [] } = this.props;
     return (
-      <View style={styles.container}>
-        {this.state.showActivityIndicator ? (
-          <ActivityIndicator animating size="large" />
-        ) : null}
-        <FlatList
-          data={messages}
-          keyExtractor={item => item.id}
-          renderItem={({ item }, i) => (
-            <Message {...item} key = {i} navigation={this.props.navigation} />
-          )}
-        />
-      </View>
+      <Container>
+        <Header />
+        <Content
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.refreshing}
+              onRefresh={this.onRefresh}
+            />
+          }
+        >
+          <List>
+            {messages.map(message => {
+              const { otherUser } = message;
+              const fromLinkedin = otherUser.profile_pic_URL.includes("licdn");
+              let image =
+                __DEV__ && !fromLinkedin
+                  ? `http://${HOST}/user/${otherUser.user_id}/profilepic`
+                  : otherUser.profile_pic_URL;
+              if (!fromLinkedin) {
+                image += `?${encodeURI(uuidv1())}`;
+              }
+              return (<ListItem
+                avatar
+                key={message.otherUserId}
+                onPress={this.handleMessagePress(
+                  message.match_id,
+                  message.otherUserId,
+                  message.otherUser
+                )}
+              >
+                <Left>
+                  <Thumbnail
+                    source={{
+                      uri: image,
+                    }}
+                  />
+                </Left>
+                <Body>
+                  <Text>{`${message.otherUser.first_name} ${
+                    message.otherUser.last_name
+                  }`}</Text>
+                  <Text note>
+                    {!message.empty ? message.message_body : "No messages..."}
+                  </Text>
+                </Body>
+                <Right>
+                  {!message.empty && <Text note>{message.timestamp}</Text>}
+                </Right>
+              </ListItem>)
+            })}
+          </List>
+        </Content>
+      </Container>
     );
   }
 }
 
-const styles = {
-  container: {
-    width: 100 + "%",
-    height: 100 + "%",
-    display: "flex",
-    backgroundColor: "rgb(243, 243, 243)",
-    flex: 1,
-    justifyContent: "center",
-    alignContent: "center"
+const mapStateToProps = state => ({
+  messages: state.messages,
+});
+
+export default connect(
+  mapStateToProps,
+  {
+    getMessages,
   }
-};
+)(Messages);
