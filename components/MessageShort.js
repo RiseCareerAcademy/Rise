@@ -14,11 +14,11 @@ const Message = props => {
   var pad = {paddingHorizontal : 30}
 
 
-  var dir = !props.sentMessage
+  var dir = props.sentMessage
     ? { flexDirection: "row-reverse" }
     : { flexDirection: "row" };
 
-  if (props.fromUser ==  "Me") {
+  if (!props.sentMessage) {
     dir = {flexDirection: "row"};
     profileImg = "https://tmssl.akamaized.net//images/portrait/header/94529-1454599346.jpg?lm=1454599357"
     croppedImg = profileImg + "=s40-c";
@@ -61,10 +61,10 @@ const styles = StyleSheet.create({
     borderWidth: StyleSheet.hairlineWidth,
     borderColor: "rgb(225,225,225)",
     backgroundColor: "rgb(255, 255, 255)",
-    marginHorizontal: 15,
+    marginHorizontal: 10,
     marginBottom: 15,
-    padding: 15,
-    borderRadius: 10
+    padding: 10,
+    borderRadius: 7
   },
   userCol: {
     flexDirection: "row"

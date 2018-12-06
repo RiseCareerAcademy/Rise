@@ -7,38 +7,19 @@ const logger =  require("morgan"); //used to log in console window all request
 const cookieParser = require("cookie-parser"); //Parse Cookie header and populate req.cookies
 const bodyParser = require("body-parser"); //allows the use of req.body in POST request
 const http = require('http');
-const mongoose = require("mongoose");
-const jwt = require('jsonwebtoken');
+// const jwt = require('jsonwebtoken');
+const app = express(); //creates an instance of express
+const server = http.createServer(app); //creates an HTTP server instance
+require('express-ws')(app);
 
 const { router: api } = require("./routes/api/api.js"); //gets api logic from path
 const { router: user } = require("./routes/user/index.js"); //gets user logic from path
-const { router: match } = require("./routes/match/matchapi.js"); //gets match logic from path 
-const { router: message } = require("./routes/message/messageapi.js"); //gets message logic from path 
+const { router: match } = require("./routes/match/matchapi.js"); //gets match logic from path
 const config = require('./config/database');
-
-const app = express(); //creates an instance of express
-const server = http.createServer(app); //creates an HTTP server instance
-
-// const db = require('./db');
-
-// TODO: Switch to SQLite
-// Tutorial: http://www.sqlitetutorial.net/sqlite-nodejs/connect/ 
-// Preferably use the Promises wrapper (callbacks can get nasty):
-// https://www.npmjs.com/package/sqlite
-// Connect To Database
-// mongoose.Promise = global.Promise;
-// mongoose.connect(config.database);
-// mongoose.connection.on("error", err => {
-//   console.log(err.message);
-// });
-// mongoose.connection.once("open", () => {
-//   console.log("mongodb connection open");
-// });
-
+require('dotenv').config()
 
 
 //-------------------------Express JS configs-----------------------------//
-
 app.use(logger('dev')); //debugs logs in terminal
 // IMPORTANT: If you don't use bodyParser then you will NOT be able to call req.body.value
 // without parsing JSON yourself
@@ -46,25 +27,24 @@ app.use(bodyParser.json()); //parses json and sets to body
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-app.use('/api', (req, res, next) => {
-  // check header or url parameters or post parameters for token
-  // console.log(req.headers)
-  const token = req.body.token || req.query.token || req.headers['x-access-token'];
+// app.use('/api', (req, res, next) => {
+//   // check header or url parameters or post parameters for token
+//   // console.log(req.headers)
+//   const token = req.body.token || req.query.token || req.headers['x-access-token'] || req.body.passwordHash;
 
-  if (!token)
-    return res.status(401).send({ error: 'No token provided.', success: 'false' });
-    // return res.redirect(403, '/login');
-  jwt.verify(token, config.secret, (err, decoded) => {
-    if (err)
-      return res.status(403).send({ success: false, error: 'Failed to authenticate token.' });
-    req.decoded = decoded;
-    req.userId = decoded.id;
-    next();
-  });
-}, api);
+//   if (!token)
+//     return res.status(401).send({ error: 'No token provided.', success: 'false' });
+//     // return res.redirect(403, '/login');
+//   jwt.verify(token, config.secret, (err, decoded) => {
+//     if (err)
+//       return res.status(403).send({ success: false, error: 'Failed to authenticate token.' });
+//     req.decoded = decoded;
+//     req.userId = decoded.id;
+//     next();
+//   });
+// }, api);
 app.use('/user', user);
 app.use('/match', match);
-app.use('/message', message);
 
 // so when people try to access it via browser
 app.get("/", function(req, res) {
@@ -103,7 +83,7 @@ function normalizePort(val) {
   // port number
   if (port >= 0)
     return port;
-  
+
   return false;
 }
 

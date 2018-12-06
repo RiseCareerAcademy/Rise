@@ -1,18 +1,18 @@
-import React, { Component } from "react";
-import { Button, Text, Container, Header, Content, Form, Item, Label, Input } from "native-base";
-import { Platform, TouchableOpacity, ScrollView, StyleSheet, Image, View } from "react-native";
-import { AuthSession } from "expo";
-import { Ionicons } from '@expo/vector-icons';
-import { MonoText } from "../components/StyledText";
+import React from "react";
+import { Text, Container, Content, Form, Item, Label, Input } from "native-base";
+import { TouchableOpacity, StyleSheet, ActivityIndicator } from "react-native";
+import { connect } from 'react-redux';
 
-export default class SignIn extends React.Component {
+import { login } from '../actions/user.actions';
+
+export class SignIn extends React.Component {
   state = {
     result: null,
     email: "",
-    password: ""
+    password: "",
   };
   handleEmail = text => {
-    this.setState({ email: text });
+    this.setState({ email: text.trim() });
   };
   handlePassword = text => {
     this.setState({ password: text });
@@ -29,7 +29,7 @@ export default class SignIn extends React.Component {
       errors.push("please enter your email and password");
     }
     else if (email.length < 5) {
-      errors.push("Email should be at least 5 characters long");
+      errors.push("Email should be at least 5 charcters long");
     }
     else if (email.split("").filter(x => x === "@").length !== 1) {
       errors.push("Email should contain one @");
@@ -41,9 +41,8 @@ export default class SignIn extends React.Component {
       errors.push("Password should be at least 6 characters long");
     }
 
-    const { navigate } = this.props.navigation;
-    if (errors.length == 0) {
-      navigate('Main')
+    if (errors.length == 0 || __DEV__) {
+      this.props.login(email, password);
       return true
     } else {
       alert(errors);
@@ -54,30 +53,38 @@ export default class SignIn extends React.Component {
     return (
       <Container>
         <Content>
+          <Text style={styles.error}>{!this.props.loggingIn && this.props.error}</Text>
           <Form>
             <Item stackedLabel>
               <Label>Email</Label>
-              <Input 
+              <Input
+              autoCapitalize="none"
               onChangeText={this.handleEmail}/>
             </Item>
             <Item stackedLabel last>
               <Label>Password</Label>
-              <Input 
+              <Input
+              autoCapitalize="none"
+              secureTextEntry
               onChangeText={this.handlePassword}/>
             </Item>
           </Form>
         </Content>
-        <TouchableOpacity
-        style={styles.submitButton}
-        onPress={ () =>
-          this.validate(
-            this.state.email,
-            this.state.password
-          )
-        }
-      >
-        <Text style={styles.submitButtonText}> Next </Text>
-      </TouchableOpacity>
+        {this.props.registering ? (
+          <ActivityIndicator animating size="large" />
+        ) : (
+          <TouchableOpacity
+            style={styles.submitButton}
+            onPress={ () =>
+              this.validate(
+                this.state.email,
+                this.state.password
+              )
+            }
+          >
+            <Text style={styles.submitButtonText}> Next </Text>
+          </TouchableOpacity>
+        )}
         {/*<View>
           <Button full light onPress={() =>
             navigate('Main')
@@ -92,41 +99,60 @@ export default class SignIn extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: 23
+    paddingTop: 23,
   },
   buttonContainer: {
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
   },
   center: {
     flex: 1,
     flexDirection: "row",
-    justifyContent: "center"
+    justifyContent: "center",
   },
   buttonStyle: {
-    margin: 10
+    margin: 10,
   },
   greyText: {
-    color: "grey"
+    color: "grey",
   },
   contentContainer: {
-    paddingTop: 30
+    paddingTop: 30,
   },
   input: {
     margin: 15,
     height: 40,
     borderColor: "#000000",
-    borderWidth: 1
+    borderWidth: 1,
   },
   submitButton: {
     backgroundColor: "#000000",
     padding: 10,
     margin: 15,
-    height: 40
+    height: 40,
   },
   submitButtonText: {
-    color: "white"
-  }
+    color: "white",
+  },
+  error: {
+    color: "red",
+  },
 });
+
+const mapStateToProps = state => ({
+  loggedIn: state.user.loggedIn,
+  error: state.user.error,
+  email_address: state.user.email_address,
+  first_name: state.user.first_name,
+  profession: state.user.profession,
+  last_name: state.user.last_name,
+  biography: state.user.biography,
+  profile_pic_URL: state.user.profile_pic_URL,
+  loggingIn: state.user.loggingIn,
+});
+
+export default connect(mapStateToProps, {
+  login,
+})(SignIn);

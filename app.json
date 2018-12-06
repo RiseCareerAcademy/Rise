@@ -1,11 +1,14 @@
 {
   "expo": {
     "name": "Rise",
-    "description": "A very interesting project.",
+    "description": "🙋:iphone: An App to Help Find Mentors for Inner City Students",
     "slug": "Rise",
     "privacy": "public",
     "sdkVersion": "30.0.0",
-    "platforms": ["ios", "android"],
+    "platforms": [
+      "ios",
+      "android"
+    ],
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -22,6 +25,9 @@
     ],
     "ios": {
       "supportsTablet": true
+    },
+    "androidStatusBar": {
+      "backgroundColor": "#000000"
     }
   }
 }

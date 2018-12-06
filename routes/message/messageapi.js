@@ -12,7 +12,7 @@ router.post('/', controller.postMessage);
 router.get('/', controller.getMessages);
 
 //get message by message id 
-router.get('/:matchid', controller.getLatestMessagebyId);
+router.get('/:matchid', controller.getLatestMessageById);
 
-//get message by message id 
+//get all message by match id 
 router.get('/all/:matchid', controller.getMessageChain);
