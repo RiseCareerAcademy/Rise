@@ -8,8 +8,13 @@ import {
   setMatchId,
   reconnectToWebSocket,
 } from "../actions/conversation.actions";
+import { Header, Body, Title, Left, Button, Icon } from "native-base";
 
 class Conversation extends Component {
+  static navigationOptions = {
+    header: null,
+  }
+
   constructor(props) {
     super(props);
 
@@ -63,6 +68,10 @@ class Conversation extends Component {
     this.props.reconnectToWebSocket();
   };
 
+  handleBackPress = () => {
+    this.props.navigation.goBack();
+  }
+
   render() {
     const {
       user_id,
@@ -87,10 +96,20 @@ class Conversation extends Component {
 
     return (
       <React.Fragment>
-          <Dialog.Container visible={this.state.showDialog}>
-            <Dialog.Title>Disconnected</Dialog.Title>
-            <Dialog.Button label="Reconnect" onPress={this.handleReconnect} />
-          </Dialog.Container>
+        <Header>
+          <Left>
+            <Button transparent onPress={this.handleBackPress}>
+              <Icon name="md-arrow-round-back" />
+            </Button>
+          </Left>
+          <Body>
+            <Title>{currUserName}</Title>
+          </Body>
+        </Header>
+        <Dialog.Container visible={this.state.showDialog}>
+          <Dialog.Title>Disconnected</Dialog.Title>
+          <Dialog.Button label="Reconnect" onPress={this.handleReconnect} />
+        </Dialog.Container>
         <GiftedChat
           messages={giftedChatMessages}
           onSend={this.onSend}

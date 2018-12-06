@@ -27,7 +27,7 @@ class MentorProfileScreen extends Component {
           </Body>
         </Header>
         <Content>
-          <Profile {...this.props.navigation.state.params} mentor />
+          <Profile {...this.props.navigation.state.params} mentor navigation={this.props.navigation} />
         </Content>
       </Container>
     );

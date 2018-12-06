@@ -5,3 +5,4 @@ coverage
 .vscode
 uploads
 .DS_store
+logs

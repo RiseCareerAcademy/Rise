@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly 1`] = `
+<Styled(Container)>
+  <Styled(Header) />
+  <Styled(Content)
+    refreshControl={
+      <RefreshControlMock
+        onRefresh={[Function]}
+        refreshing={false}
+      />
+    }
+  >
+    <Styled(List) />
+  </Styled(Content)>
+</Styled(Container)>
+`;

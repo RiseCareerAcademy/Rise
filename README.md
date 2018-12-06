@@ -1,20 +1,39 @@
 [![CircleCI](https://circleci.com/gh/RiseCareerAcademy/Rise/tree/master.svg?style=svg)](https://circleci.com/gh/RiseMentors/Rise/tree/master)
 [![Coverage Status](https://coveralls.io/repos/github/RiseCareerAcademy/Rise/badge.svg?branch=master&service=github)](https://coveralls.io/github/RiseCareerAcademy/Rise?branch=master)
 # Rise
-![logo](http://risecareer.org/images/logo.png)
+
+<p align="center">
+  <img src="http://risecareer.org/images/logo.png" alt="logo" style="margin:auto;" />
+</p>
+
+
 - [Rise](#rise)
-- [How to Install](#how-to-install)
+- [Demoing (Projects Ready for Testing)](#demoing--projects-ready-for-testing-)
+- [Development](#development)
   * [Git (If Not Already Installed)](#git--if-not-already-installed-)
   * [VSCode](#vscode)
   * [Node.js](#nodejs)
-  * [Set up Postman and local server](#set-up-postman-and-local-server)
   * [Setup the Rise Repo](#setup-the-rise-repo)
-- [Development](#development)
+  * [Set up Postman and local server](#set-up-postman-and-local-server)
   * [Folder Structure](#folder-structure)
 
 <small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
 
-# How to Install
+
+# Demoing (Projects Ready for Testing)
+
+1. Install Expo app on [Android](https://play.google.com/store/apps/details?id=host.exp.exponent&hl=en_US) or [iOS](https://itunes.apple.com/us/app/expo-client/id982107779?mt=8)
+
+2. Login on the Expo app using the following account:
+    ```
+    Username: kmui2
+    Password: Rise@2018
+    ```
+2. Scan QR code [here](https://expo.io/@kmui2/Rise) on the camera app for iOS or on the Expo app for Android
+
+3. **Server Debugging:** Open [http://104.248.57.156:8080/#/streams/Rise](http://104.248.57.156:8080/#/streams/Rise).
+
+# Development
 
 ## Git (If Not Already Installed)
 1. https://git-scm.com/
@@ -29,59 +48,70 @@
 ## Node.js
 1. Install Node Version Manager (nvm) 
 
-**Mac OSX**
+    **Mac OSX**
+    ```bash
+    curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
 
-```bash
-curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
-```
-```bash
-export NVM_DIR="${XDG_CONFIG_HOME/:-$HOME/.}nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
-```
-**Windows**
+    export NVM_DIR="${XDG_CONFIG_HOME/:-$HOME/.}nvm"
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
+    ```
+    **Windows**
 
-Run the .exe file in [nvm-setup.zip](https://github.com/coreybutler/nvm-windows/releases/download/1.1.7/nvm-setup.zip).
+    Run the .exe file in [nvm-setup.zip](https://github.com/coreybutler/nvm-windows/releases/download/1.1.7/nvm-setup.zip).
 
 2. Install latest Node.js version:
-```bash
-nvm install 10.11.0 
-```
+    ```bash
+    nvm install 10.11.0 
+    ```
+
+## Setup the Rise Repo
+1. Clone the repo
+    ```bash
+    git clone https://github.com/RiseMentors/Rise.git
+    ```
+
+2. Go to the repo
+    ```bash
+    cd Rise
+    ```
+
+3. Install dependencies
+    ```bash
+    npm install
+
+     # if there is a cb() never called! error, verify the cache:
+     npm cache verify
+    ```
+
+4. Start server
+    ```bash
+    npm run serve
+
+    # If you have the Gmail password for automated emails:
+    GMAIL_PASSWORD="<password>" npm run serve
+    ```
+
+5. Start app
+
+    ```bash
+    # Mac OSX
+    npm start 
+
+    #Windows
+    npm install -g expo-cli # Only need to install this once.
+    expo start 
+    ```
+6. Install Expo app on [Android](https://play.google.com/store/apps/details?id=host.exp.exponent&hl=en_US) or [iOS](https://itunes.apple.com/us/app/expo-client/id982107779?mt=8)
+
+
+7. Scan QR code on the camera app for iOS or on the Expo app for Android.
+
 ## Set up Postman and local server
 
 In order to fully run Rise on expo, one must also have a local server. Here are instructions to get you started:
 https://docs.google.com/document/d/1qTC6WCncEo7d6_XF3DdekR6pyNq37f7atdX5i14J3xI/edit?usp=sharing
 
 This will allow you to find a matching mentor that is pre-populated in the database.
-
-## Setup the Rise Repo
-1. Clone the repo
-```
-git clone https://github.com/RiseMentors/Rise.git
-```
-2. Go to the repo
-```
-cd Rise
-```
-3. Install dependencies
-```
-npm install
-```
-4. Start app
-
-**Mac OSX**
-```
-npm start
-```
-**Windows**
-```
-npm install -g expo-cli # Only need to install this once.
-expo start
-```
-5. Download Expo App on Phone
-6. Open Expo App
-7. Scan the QR code
-
-# Development
 
 ## Folder Structure
 

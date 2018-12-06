@@ -7,6 +7,12 @@ import {
   Item,
   Label,
   Input,
+  Header,
+  Left,
+  Button,
+  Icon,
+  Body,
+  Title,
 } from "native-base";
 import { StyleSheet, TouchableOpacity, Image } from "react-native";
 import { connect } from "react-redux";
@@ -14,6 +20,10 @@ import { connect } from "react-redux";
 import { registerMentor, updateUser } from "../actions/user.actions";
 
 export class EditProfileScreen extends React.Component {
+  static navigationOptions = {
+    header: null,
+  }
+
   state = {
     email: "",
     password: "",
@@ -98,7 +108,7 @@ export class EditProfileScreen extends React.Component {
       this.state.last_name,
       this.state.zipcode
     );
-    if (!valid && process.env.NODE_ENV !== "development") {
+    if (!valid && !__DEV__) {
       return;
     }
 
@@ -113,9 +123,23 @@ export class EditProfileScreen extends React.Component {
     this.props.updateUser(user);
   };
 
+  handleBackPress = () => {
+    this.props.navigation.goBack();
+  }
+
   render() {
     return (
       <Container style={styles.container}>
+        <Header>
+          <Left>
+            <Button transparent onPress={this.handleBackPress}>
+              <Icon name="md-arrow-round-back" />
+            </Button>
+          </Left>
+          <Body>
+            <Title>Edit Profile</Title>
+          </Body>
+        </Header>
         <Content>
           <Text style={styles.error}>
             {!this.props.registering && this.props.error}
@@ -127,20 +151,20 @@ export class EditProfileScreen extends React.Component {
                 uri: this.props.profile_pic_URL,
               }}
             />
-            <Item stackedLabel>
-              <Label>Skills</Label>
+            {/* <Item stackedLabel>
+              <Label>Add New Skills (separated by commas)</Label>
               <Input
                 placeholder={this.props.skills}
                 onChangeText={this.handleSkills}
               />
-            </Item>
-            <Item stackedLabel last>
+            </Item> */}
+            {/* <Item stackedLabel last>
               <Label>Profession</Label>
               <Input
                 placeholder={this.props.profession}
                 onChangeText={this.handleProfession}
               />
-            </Item>
+            </Item> */}
             <Item stackedLabel last>
               <Label>zipcode</Label>
               <Input
@@ -207,12 +231,6 @@ const styles = StyleSheet.create({
   },
   greyText: {
     color: "grey",
-  },
-  contentContainer: {
-    paddingTop: 30,
-  },
-  container: {
-    margin: 5,
   },
   uploadBtnContainer: {
     margin: "auto",

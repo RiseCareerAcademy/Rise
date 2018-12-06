@@ -1,8 +1,10 @@
 import { eventChannel } from "redux-saga";
 import { take, call, all, race, select, put } from 'redux-saga/effects';
+import axios from 'axios';
 
-import { SEND_MESSAGE, SET_MATCH_ID, receiveMessage, closeWebSocket, CLOSE_WEB_SOCKET, RECONNECT_TO_WEB_SOCKET, connectedToWebSocket, disconnectedFromWebSocket, clearMessages } from "../actions/conversation.actions";
-import { DOMAIN } from "../config/url";
+import { SEND_MESSAGE, SET_MATCH_ID, receiveMessage, closeWebSocket, CLOSE_WEB_SOCKET, RECONNECT_TO_WEB_SOCKET, connectedToWebSocket, disconnectedFromWebSocket, setMessages } from "../actions/conversation.actions";
+import { HOST } from "../config/url";
+import handleResponseError from '../utils/handleResponseError';
 
 export function createSocketChannel(socket) {
   return eventChannel(emit => {
@@ -52,17 +54,22 @@ export default function* messagesWatcher() {
   let match_id;
   while (true) {
   try {
-      const from_id = yield select(state => state.user.user_id);
       const { setMatchIdAction } = yield race({
         setMatchIdAction: take(SET_MATCH_ID),
         reconnectToWebSocketAction: take(RECONNECT_TO_WEB_SOCKET),
       });
       if (setMatchIdAction) {
         ({ match_id } = setMatchIdAction);
-        yield put(clearMessages());
+        try {
+          const messagesResponse = yield axios.get(`http://${HOST}/user/message/all/${match_id}`);
+          const { data: { rows: messages } } = messagesResponse;
+          yield put(setMessages(messages));
+        } catch(error) {
+          handleResponseError(error);
+        }
       }
-      const socket = new WebSocket(`ws://${DOMAIN}/user/conversation?from_id=${from_id}`);
-      // const socket = io(`http://${DOMAIN}`);
+      const from_id = yield select(state => state.user.user_id);
+      const socket = new WebSocket(`ws://${HOST}/user/conversation?from_id=${from_id}`);
       const socketChannel = yield call(createSocketChannel, socket, match_id);
 
       yield race({

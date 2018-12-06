@@ -1,13 +1,13 @@
 import { GET_MESSAGES, setMessages } from "../actions/messages.actions";
 import { takeLatest, put, all, select } from "redux-saga/effects";
 import axios from "axios";
-import { DOMAIN } from "../config/url";
+import { HOST } from "../config/url";
 
 export function* getMessages() {
   try {
     const user_id = yield select(state => state.user.user_id);
     const isMentor = user_id[0] === '1';
-    const response = yield axios.get(`http://${DOMAIN}/match/userid/${user_id}`);
+    const response = yield axios.get(`http://${HOST}/match/userid/${user_id}`);
     const {
       data: { rows: matches },
     } = response;
@@ -20,7 +20,7 @@ export function* getMessages() {
           otherUserId = match.mentor_id;
         }
 
-        const otherUserResponse = await axios.get(`http://${DOMAIN}/user/${otherUserId}`);
+        const otherUserResponse = await axios.get(`http://${HOST}/user/${otherUserId}`);
         const otherUser = otherUserResponse.data.rows[0];
         let message = {
           empty: true,
@@ -28,7 +28,7 @@ export function* getMessages() {
           otherUser,
           otherUserId,
         };
-        const messageResponse = await axios.get(`http://${DOMAIN}/user/message/${match.match_id}`);
+        const messageResponse = await axios.get(`http://${HOST}/user/message/${match.match_id}`);
         if (messageResponse.data.rows.length === 0) {
           return message;
         }

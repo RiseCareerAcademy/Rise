@@ -1,6 +1,6 @@
 import Expo from "expo";
 
 const { manifest } = Expo.Constants;
-export const DOMAIN = process.env.NODE_ENV === 'development' ?
+export const HOST = __DEV__ ?
 	`${manifest.debuggerHost.split(`:`)[0]}:8000` :
-	`api.example.com`;
+	process.env.REACT_NATIVE_HOST;

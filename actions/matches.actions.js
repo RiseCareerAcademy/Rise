@@ -1,15 +1,20 @@
-export const GET_MATCHES = 'matches/GET_MATCHES';
+export const GET_SUGGESTED_MENTOR_MATCHES = 'matches/GET_SUGGESTED_MENTOR_MATCHES';
+export const GET_SUGGESTED_MENTEE_MATCHES = 'matches/GET_SUGGESTED_MENTEE_MATCHES';
 export const SET_MATCHES = 'matches/SET_MATCHES';
 export const CREATE_MATCH = 'matches/CREATE_MATCH';
 export const SET_MATCH_ID = 'matches/SET_MATCH_ID';
 
-export const getMatches = () => ({
-	type: GET_MATCHES,
+export const getSuggestedMentorMatches = () => ({
+	type: GET_SUGGESTED_MENTOR_MATCHES,
 });
 
-export const setMatches = mentors => ({
+export const getSuggestedMenteeMatches = () => ({
+	type: GET_SUGGESTED_MENTEE_MATCHES,
+});
+
+export const setMatches = users => ({
 	type: SET_MATCHES,
-	mentors,
+	users,
 })
 
 export const createMatch = user_id => ({

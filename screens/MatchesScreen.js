@@ -15,7 +15,11 @@ import {
   CardItem,
 } from "native-base";
 
-import { getMatches } from "../actions/matches.actions";
+import { getSuggestedMentorMatches, getSuggestedMenteeMatches } from "../actions/matches.actions";
+import { getMentor, getMentee } from '../actions/search.actions';
+import { HOST } from "../config/url";
+
+const uuidv1 = require("uuid/v1");
 
 export class MatchesScreen extends Component {
   static navigationOptions = {
@@ -36,14 +40,38 @@ export class MatchesScreen extends Component {
   constructor(props) {
     super(props);
 
-    this.props.getMatches();
+    const isMentor = this.props.user_id[0] === '1';
+    if (isMentor) {
+      this.props.getSuggestedMenteeMatches();
+    } else {
+      this.props.getSuggestedMentorMatches();
+    }
+    this.hash = uuidv1();
   }
 
   componentDidUpdate = prevProps => {
-    if (prevProps.mentors !== this.props.mentors) {
+    if (prevProps.users !== this.props.users) {
       this.setState({ refreshing: false });
     }
   };
+
+  onRefresh = () => {
+    const isMentor = this.props.user_id[0] === '1';
+    if (isMentor) {
+      this.props.getSuggestedMenteeMatches();
+    } else {
+      this.props.getSuggestedMentorMatches();
+    }
+  }
+
+  handleMentorPress = user_id => () => {
+    this.props.getMentor(user_id);
+  };
+
+  handleMenteePress = user_id => () => {
+    this.props.getMentee(user_id);
+  };
+
 
   render() {
     return (
@@ -53,16 +81,38 @@ export class MatchesScreen extends Component {
           refreshControl={
             <RefreshControl
               refreshing={this.state.refreshing}
-              onRefresh={this._onRefresh}
+              onRefresh={this.onRefresh}
             />
           }
         >
           <List>
-            {this.props.mentors.map(l => (
-              <Card style={{ flex: 0 }} key={l.user_id}>
-                <CardItem>
+            {this.props.users.map(l => {
+              let fromLinkedin = false;
+            if (l.profile_pic_URL !== undefined) {
+              fromLinkedin = l.profile_pic_URL.includes("licdn");
+            }
+
+            let image =
+              __DEV__ && !fromLinkedin
+                ? `http://${HOST}/user/${l.user_id}/profilepic`
+                : l.profile_pic_URL;
+            if (!fromLinkedin) {
+              image += `?${encodeURI(uuidv1())}`;
+            }
+
+            let handlePress = () => {};
+            if (l.user_id !== undefined) {
+              const isMentor = l.user_id[0] === '1';
+              if (isMentor) {
+                handlePress = this.handleMentorPress;
+              } else {
+                handlePress = this.handleMenteePress;
+              }
+            }
+              return (<Card style={{ flex: 0 }} key={l.user_id}>
+                <CardItem onPress={handlePress(l.user_id)}>
                   <Left>
-                    <Thumbnail source={{ uri: l.profile_pic_URL }} />
+                    <Thumbnail source={{ uri: image}} />
                     <Body>
                       <Text>{`${l.first_name} ${l.last_name}`}</Text>
                       <Text note>{l.profession}</Text>
@@ -77,13 +127,13 @@ export class MatchesScreen extends Component {
                 </CardItem>
                 <CardItem>
                   <Left>
-                    <Button transparent textStyle={{ color: "#87838B" }}>
+                    <Button transparent textStyle={{ color: "#87838B" }} onPress={handlePress(l.user_id)}>
                       <Text>{`Score: ${l.score}`}</Text>
                     </Button>
                   </Left>
                 </CardItem>
-              </Card>
-            ))}
+              </Card>)
+            })}
           </List>
         </Content>
       </Container>
@@ -109,13 +159,17 @@ export class MatchesScreen extends Component {
 
 =======
 const mapStateToProps = state => ({
-  mentors: state.matches.mentors,
+  users: state.matches.users,
+  user_id: state.user.user_id,
 });
 
 export default connect(
   mapStateToProps,
   {
-    getMatches,
+    getSuggestedMentorMatches,
+    getSuggestedMenteeMatches,
+    getMentee,
+    getMentor,
   }
 )(MatchesScreen);
 >>>>>>> origin

@@ -7,7 +7,7 @@ const logger =  require("morgan"); //used to log in console window all request
 const cookieParser = require("cookie-parser"); //Parse Cookie header and populate req.cookies
 const bodyParser = require("body-parser"); //allows the use of req.body in POST request
 const http = require('http');
-const jwt = require('jsonwebtoken');
+// const jwt = require('jsonwebtoken');
 const app = express(); //creates an instance of express
 const server = http.createServer(app); //creates an HTTP server instance
 require('express-ws')(app);
@@ -20,7 +20,6 @@ require('dotenv').config()
 
 
 //-------------------------Express JS configs-----------------------------//
-
 app.use(logger('dev')); //debugs logs in terminal
 // IMPORTANT: If you don't use bodyParser then you will NOT be able to call req.body.value
 // without parsing JSON yourself
@@ -28,22 +27,22 @@ app.use(bodyParser.json()); //parses json and sets to body
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-app.use('/api', (req, res, next) => {
-  // check header or url parameters or post parameters for token
-  // console.log(req.headers)
-  const token = req.body.token || req.query.token || req.headers['x-access-token'] || req.body.passwordHash;
+// app.use('/api', (req, res, next) => {
+//   // check header or url parameters or post parameters for token
+//   // console.log(req.headers)
+//   const token = req.body.token || req.query.token || req.headers['x-access-token'] || req.body.passwordHash;
 
-  if (!token)
-    return res.status(401).send({ error: 'No token provided.', success: 'false' });
-    // return res.redirect(403, '/login');
-  jwt.verify(token, config.secret, (err, decoded) => {
-    if (err)
-      return res.status(403).send({ success: false, error: 'Failed to authenticate token.' });
-    req.decoded = decoded;
-    req.userId = decoded.id;
-    next();
-  });
-}, api);
+//   if (!token)
+//     return res.status(401).send({ error: 'No token provided.', success: 'false' });
+//     // return res.redirect(403, '/login');
+//   jwt.verify(token, config.secret, (err, decoded) => {
+//     if (err)
+//       return res.status(403).send({ success: false, error: 'Failed to authenticate token.' });
+//     req.decoded = decoded;
+//     req.userId = decoded.id;
+//     next();
+//   });
+// }, api);
 app.use('/user', user);
 app.use('/match', match);
 

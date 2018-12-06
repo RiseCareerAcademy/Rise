@@ -6,7 +6,7 @@ import {
   Form,
   Item,
   Label,
-  Input
+  Input,
 } from "native-base";
 import {
   StyleSheet,
@@ -29,7 +29,7 @@ export class Password extends React.Component {
     state: "",
     image: null,
     last_name: "",
-    zipcode: ""
+    zipcode: "",
   };
 
   handlePassword = text => {
@@ -65,7 +65,7 @@ export class Password extends React.Component {
     this.state.password,
     this.state.confirmedPassword,
     );
-    if (!valid && process.env.NODE_ENV !== "development") {
+    if (!valid && !__DEV__) {
       return;
     }
   };
@@ -87,7 +87,7 @@ export class Password extends React.Component {
             </Item>
             <Item stackedLabel last>
               <Label>Confirm Password</Label>
-              <Input 
+              <Input
         secureTextEntry
                 onChange={this.handleConfirmPassowrd} />
             </Item>
@@ -110,55 +110,55 @@ const styles = StyleSheet.create({
     borderWidth: 3,
     height: 170,
     marginBottom: 15,
-    width: 170
+    width: 170,
   },
   input: {
     margin: 15,
     height: 40,
     borderColor: "#000000",
-    borderWidth: 1
+    borderWidth: 1,
   },
   submitButton: {
     backgroundColor: "#000000",
     padding: 10,
     margin: 15,
-    height: 40
+    height: 40,
   },
   submitButtonText: {
-    color: "white"
+    color: "white",
   },
   buttonContainer: {
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
   },
   center: {
     flex: 1,
     flexDirection: "row",
-    justifyContent: "center"
+    justifyContent: "center",
   },
   buttonStyle: {
-    margin: 10
+    margin: 10,
   },
   greyText: {
-    color: "grey"
+    color: "grey",
   },
   contentContainer: {
-    paddingTop: 30
+    paddingTop: 30,
   },
   container: {
-    margin: 5
+    margin: 5,
   },
   uploadBtnContainer: {
-    margin: "auto"
+    margin: "auto",
   },
   uploadBtn: {
-    margin: "auto"
+    margin: "auto",
   },
   error: {
-    color: "red"
-  }
+    color: "red",
+  },
 });
 
 const mapStateToProps = state => ({

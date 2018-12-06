@@ -13,8 +13,9 @@ import {
 import { connect } from "react-redux";
 
 import Separator from "../components/Separator";
-import { DOMAIN } from "../config/url";
+import { HOST } from "../config/url";
 import { createMatch } from "../actions/matches.actions";
+import { Chip } from "react-native-paper";
 
 const uuidv1 = require("uuid/v1");
 
@@ -120,6 +121,11 @@ const styles = StyleSheet.create({
     borderWidth: 0,
     borderRadius: 5,
   },
+  chipsContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
 });
 
 class Profile extends Component {
@@ -132,26 +138,38 @@ class Profile extends Component {
     this.props.createMatch(this.props.user_id);
   };
 
+  handleRate = () => {
+    this.props.navigation.navigate('Ratings');
+  }
+
   renderHeader = () => {
-    const { first_name, last_name, user_id, zipcode, mentor, preview, profile_pic_URL } = this.props;
+    const {
+      first_name,
+      last_name,
+      user_id,
+      zipcode,
+      preview,
+      profile_pic_URL,
+      my_user_id,
+    } = this.props;
     const name = `${first_name} ${last_name}`;
 
-
-    let image = '';
+    let image = "";
     if (preview) {
       image += profile_pic_URL;
     } else {
-      image +=
-      process.env.NODE_ENV === "development" && !fromLinkedin
-        ? `http://${DOMAIN}/user/${user_id}/profilepic`
-        : this.state.image;
-        const fromLinkedin = this.state.image.includes("licdn");
-        if (!fromLinkedin) {
-          image += `?${encodeURI(uuidv1())}`;
-        }
+      const fromLinkedin = profile_pic_URL.includes("licdn");
+      image =
+        __DEV__ && !fromLinkedin
+          ? `http://${HOST}/user/${user_id}/profilepic`
+          : profile_pic_URL;
+      if (!fromLinkedin) {
+        image += `?${encodeURI(uuidv1())}`;
+      }
     }
 
-
+    const isMeMentor = this.props.my_user_id[0] === "1";
+    const isZeMentor = this.props.user_id[0] === "1";
     return (
       <View style={styles.headerContainer}>
         <ImageBackground
@@ -184,14 +202,31 @@ class Profile extends Component {
                 <Text style={styles.userCityText}>{zipcode}</Text>
               </View>
             </View>
-            {mentor && (
+            {this.props.matches.some(
+              user => user.user_id === this.props.user_id
+            ) ? (
               <View style={styles.uploadBtnContainer}>
-                <Button
-                  onPress={this.handleMatch}
-                  style={styles.uploadBtn}
-                  title="Match"
-                />
+                <Button style={styles.uploadBtn} title="MATCHED" disabled />
               </View>
+            ) : (
+              my_user_id !== user_id && isZeMentor !== isMeMentor && (
+                <View style={styles.uploadBtnContainer}>
+                  <Button
+                    onPress={this.handleMatch}
+                    style={styles.uploadBtn}
+                    title="Match"
+                  />
+                </View>
+              )
+            )}
+            {isZeMentor && my_user_id !== user_id && (
+                <View style={styles.uploadBtnContainer}>
+                  <Button
+                    onPress={this.handleRate}
+                    style={styles.uploadBtn}
+                    title="Rate"
+                  />
+                </View>
             )}
           </View>
         </ImageBackground>
@@ -216,13 +251,17 @@ class Profile extends Component {
         <View style={{ flexDirection: "row" }}>
           <Text style={styles.userTitleText}>Desired Skills</Text>
         </View>
-        <Text style={styles.userBioText}>{skills}</Text>
+        <View style={styles.chipsContainer}>
+          {skills.split(",").map(skill => (
+             <Chip style={styles.chip} key={skill} icon="info" onPress={() => console.log('Pressed')}>{skill}</Chip>
+          ))}
+        </View>
       </View>
     );
   };
 
   render() {
-    return (
+    return this.props.loggedIn && (
       <ScrollView style={styles.scroll}>
         <View style={styles.container}>
           <Card containerStyle={styles.cardContainer}>
@@ -236,7 +275,11 @@ class Profile extends Component {
   }
 }
 
-const mapStateToProps = () => ({});
+const mapStateToProps = state => ({
+  matches: state.search.matches,
+  my_user_id: state.user.user_id,
+  loggedIn: state.user.loggedIn,
+});
 
 export default connect(
   mapStateToProps,

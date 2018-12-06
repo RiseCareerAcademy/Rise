@@ -8,12 +8,12 @@ export class Settings extends Component {
   static navigationOptions = {
     header: null,
   }
-  
+
   state = {
     email: "",
     password: "",
     confirmedPassword: "",
-    errors: []
+    errors: [],
   };
   handleEmail = text => {
     this.setState({ email: text });
