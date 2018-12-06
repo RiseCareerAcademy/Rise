@@ -103,7 +103,7 @@ class Conversation extends Component {
             </Button>
           </Left>
           <Body>
-            <Title>{currUserName}</Title>
+            <Title>{otherUserName}</Title>
           </Body>
         </Header>
         <Dialog.Container visible={this.state.showDialog}>
