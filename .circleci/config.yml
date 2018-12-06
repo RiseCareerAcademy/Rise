@@ -49,9 +49,13 @@ jobs:
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
               ssh-keyscan 104.248.57.156 >> ~/.ssh/known_hosts
-              npm run deploy &
-              npm run publish &
-              wait
+              npm run deploy
+            fi
+      - run:
+          name: Publish app to Expo
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              npm run publish
             fi
 
 workflows:
