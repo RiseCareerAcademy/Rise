@@ -55,7 +55,8 @@ jobs:
           name: Publish app to Expo
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
-              npm run publish
+              npm i -g expo-cli
+              expo publish
             fi
 
 workflows:
