@@ -122,7 +122,7 @@ export class MentorRegistration extends React.Component {
 
   handleSubmit = () => {
     const valid = this.validate(
-      this.state.email || this.props.email,
+      this.state.email_address || this.props.email_address,
       this.state.password,
       this.state.confirmedPassword ,
       this.state.skills,
