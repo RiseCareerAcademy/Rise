@@ -278,6 +278,7 @@ export class StudentRegistration extends React.Component {
               />
             </Item>
             <Item stackedLabel last>
+            
               <Label>Last Name</Label>
               <Input
                 placeholder="Enter your last name"
