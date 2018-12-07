@@ -271,7 +271,7 @@ module.exports.postMentee = async (req, res) => {
     const date = new Date();
     user.user_id = "2" + iid(date.getTime());
     console.log(user.user_id)
-    user.profile_pic_URL = `http://${process.env.REACT_NATIVE_UPLOADED_IMAGES_HOST}/user/${user.user_id}/profilepic`;
+    user.profile_pic_URL = `http://${process.env.UPLOADED_IMAGES_HOST}/user/${user.user_id}/profilepic`;
 
     const insertMenteeSql = sql`INSERT INTO Users VALUES (
         ${user.user_id},
