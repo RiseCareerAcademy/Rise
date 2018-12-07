@@ -2,17 +2,15 @@
   To Local Pickup Sports Manager team: you guys aren't given permission to label it as "Project Ready to Demo". However, please mention Project Ready to Demo somewhere in the issue.
 -->
 
-## Do you want to request a *feature* or report a *bug*?
+#### Summary
 
-## Summary
+#### How to Reproduce
 
-## How to Reproduce
+#### Current Behavior
 
-## What is the current behavior? (Include which device (Android/iOS).)
+#### Expected Behavior
 
-## What is the expected behavior?
+#### Severity
 
-## What is the severity?
-
-## Are there any suggestions to consider?
+#### Suggestions
 
