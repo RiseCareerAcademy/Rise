@@ -1,8 +1,10 @@
 import 'react-native';
 import React from 'react';
 import App from '../App';
-import renderer from 'react-test-renderer';
+import { shallow } from "enzyme";
 import NavigationTestUtils from 'react-navigation/NavigationTestUtils';
+
+jest.mock('../config/url', () => 'api.example.com');
 
 describe('App snapshot', () => {
   jest.useFakeTimers();
@@ -11,12 +13,12 @@ describe('App snapshot', () => {
   });
 
   it('renders the loading screen', async () => {
-    const tree = renderer.create(<App />).toJSON();
-    expect(tree).toMatchSnapshot();
+    const wrapper = shallow(<App />)
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('renders the root without loading screen', async () => {
-    const tree = renderer.create(<App skipLoadingScreen />).toJSON();
-    expect(tree).toMatchSnapshot();
+    const wrapper = shallow(<App skipLoadingScreen />);
+    expect(wrapper).toMatchSnapshot();
   });
 });

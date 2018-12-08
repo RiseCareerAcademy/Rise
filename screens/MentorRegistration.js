@@ -70,17 +70,39 @@ export class MentorRegistration extends React.Component {
     this.setState({ biography: text });
   };
 
-  validate = (password, confirmedPassword, skills, zipcode) => {
+
+  validate = (
+    email,
+    password,
+    confirmedPassword,
+    skills,
+    profession,
+    name,
+    lastName,
+    zipcode,
+    biography,
+  ) => {
     // we are going to store errors for all fields
     // in a signle array
     const errors = [];
     if (
       skills.length == 0 ||
+      profession.length == 0 ||
+      name.length == 0 ||
+      email.length == 0 ||
       password.length == 0 ||
       confirmedPassword.length == 0 ||
-      zipcode.length == 0
+      lastName.length == 0 ||
+      zipcode.length == 0 ||
+      biography.length == 0
     ) {
       errors.push("All fields must be filled");
+    } else if (email.length < 5) {
+      errors.push("Email should be at least 5 charcters long");
+    } else if (email.split("").filter(x => x === "@").length !== 1) {
+      errors.push("Email should contain one @");
+    } else if (email.indexOf(".") === -1) {
+      errors.push("Email should contain at least one dot");
     } else if (password.length < 6) {
       errors.push("Password should be at least 6 characters long");
     } else if (password != confirmedPassword) {
@@ -88,23 +110,29 @@ export class MentorRegistration extends React.Component {
         "Password doesn't match" + password + " " + confirmedPassword
       );
     } else if (zipcode.length != 5 && /^\d+$/.test(zipcode)) {
-      errors.push("zipcode must contain only numbers and be 5 characters long");
+      errors.push("zipcode must contain only numbers and be exactly 5 digits long");
     }
-    if (errors.length == 0) {
-      // alert(errors);
+    if (errors.length == 0 || __DEV__) {
       return true;
     } else {
+      alert(errors);
       return false;
     }
   };
 
   handleSubmit = () => {
     const valid = this.validate(
+      this.state.email_address || this.props.email_address,
       this.state.password,
-      this.state.confirmedPassword,
+      this.state.confirmedPassword ,
       this.state.skills,
+      this.state.profession || this.props.profession,
+      this.state.first_namename || this.props.first_name,
+      this.state.last_name || this.props.last_name,
       this.state.zipcode,
+      this.state.biography || this.props.biography,
     );
+
     if (!valid && !__DEV__) {
       return;
     }

@@ -45,6 +45,7 @@ export class StudentRegistration extends React.Component {
     image: null,
     lastName: "",
     zipcode: "",
+    biography: '',
   };
 
   handleImagePickerPress = async () => {
@@ -139,7 +140,7 @@ export class StudentRegistration extends React.Component {
         "Password doesn't match" + password + " " + confirmedPassword
       );
     } else if (zipcode.length != 5 && /^\d+$/.test(zipcode)) {
-      errors.push("zipcode must contain only numbers and be 5 characters long");
+      errors.push("zipcode must contain only numbers and be exactly 5 digits long");
     }
     if (errors.length == 0 || __DEV__) {
       return true;

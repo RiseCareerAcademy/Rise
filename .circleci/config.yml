@@ -7,7 +7,7 @@ jobs:
   build:
     docker:
       # specify the version you desire here
-      - image: circleci/node:7.10
+      - image: kmui2/rise-ci
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -43,11 +43,24 @@ jobs:
           name: Upload Coverage to Coveralls
           command: cat ./coverage/lcov.info | ./node_modules/.bin/coveralls
 
-      - setup_remote_docker
+      - add_ssh_keys
+      - run:
+          name: Deploy server to droplet
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              ssh-keyscan ${DEPLOY_HOST} >> ~/.ssh/known_hosts
+              npm run deploy
+            fi
+      - run:
+          name: Publish application to Expo
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              expo login --username ${EXPO_USERNAME} --password ${EXPO_PASSWORD}
+              expo publish
+            fi
 
-      - run:
-          name: Build Docker Image
-          command: docker build -t kmui2/rise .
-      - run:
-          name: Deploy Docker Image
-          command: docker push kmui2/rise
+workflows:
+  version: 2
+  build-deploy:
+    jobs:
+      - build

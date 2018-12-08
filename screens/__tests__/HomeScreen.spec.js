@@ -1,7 +1,6 @@
 import 'react-native';
 import React from 'react';
 import { HomeScreen } from '../HomeScreen';
-import renderer from 'react-test-renderer';
 import { shallow } from 'enzyme';
 
 // jest.mock('expo');
@@ -9,10 +8,10 @@ import { shallow } from 'enzyme';
 jest.mock('expo', () => ({
     AuthSession: {
         getRedirectUrl: () => {},
-        startAsync: () => ({ 
+        startAsync: () => ({
             params: {
                 state: 'MyLinkedinState',
-                code: 'MyLinkedinCode'
+                code: 'MyLinkedinCode',
             },
         }),
     },
@@ -21,7 +20,7 @@ jest.mock('expo', () => ({
 it('renders correctly', () => {
     const props = {
         navigation: {
-            navigate: () => {}
+            navigate: () => {},
         },
     };
   const wrapper = shallow(<HomeScreen {...props} />);
@@ -31,7 +30,7 @@ it('renders correctly', () => {
 it('renders with validi set', () => {
     const props = {
         navigation: {
-            navigate: () => {}
+            navigate: () => {},
         },
     };
   const wrapper = shallow(<HomeScreen {...props} />);
@@ -42,7 +41,7 @@ it('renders with validi set', () => {
 it('renders with authUrl set', () => {
     const props = {
         navigation: {
-            navigate: () => {}
+            navigate: () => {},
         },
     };
   const wrapper = shallow(<HomeScreen {...props} />);
@@ -53,7 +52,7 @@ it('renders with authUrl set', () => {
 it('renders with result set', () => {
     const props = {
         navigation: {
-            navigate: () => {}
+            navigate: () => {},
         },
     };
   const wrapper = shallow(<HomeScreen {...props} />);
@@ -64,7 +63,7 @@ it('renders with result set', () => {
 it('opens linkedin', async () => {
     const props = {
         navigation: {
-            navigate: () => {}
+            navigate: () => {},
         },
         registerWithLinkedin: jest.fn(),
     };

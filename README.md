@@ -1,23 +1,34 @@
 [![CircleCI](https://circleci.com/gh/RiseCareerAcademy/Rise/tree/master.svg?style=svg)](https://circleci.com/gh/RiseMentors/Rise/tree/master)
 [![Coverage Status](https://coveralls.io/repos/github/RiseCareerAcademy/Rise/badge.svg?branch=master&service=github)](https://coveralls.io/github/RiseCareerAcademy/Rise?branch=master)
 # Rise
-![logo](http://risecareer.org/images/logo.png)
+
+<p align="center">
+  <img src="http://risecareer.org/images/logo.png" alt="logo" style="margin:auto;" />
+</p>
+
+
 - [Rise](#rise)
-- [How to Install](#how-to-install)
+- [Demoing (Projects Ready for Testing)](#demoing--projects-ready-for-testing-)
+- [Development](#development)
   * [Git (If Not Already Installed)](#git--if-not-already-installed-)
   * [VSCode](#vscode)
   * [Node.js](#nodejs)
-  * [Set up Postman and local server](#set-up-postman-and-local-server)
   * [Setup the Rise Repo](#setup-the-rise-repo)
-- [Development](#development)
+  * [Set up Postman and local server](#set-up-postman-and-local-server)
   * [Folder Structure](#folder-structure)
 
 <small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
+
 
 # Demoing (Projects Ready for Testing)
 
 1. Install Expo app on [Android](https://play.google.com/store/apps/details?id=host.exp.exponent&hl=en_US) or [iOS](https://itunes.apple.com/us/app/expo-client/id982107779?mt=8)
 
+2. Login on the Expo app using the following account:
+    ```
+    Username: kmui2
+    Password: Rise@2018
+    ```
 2. Scan QR code [here](https://expo.io/@kmui2/Rise) on the camera app for iOS or on the Expo app for Android
 
 3. **Server Debugging:** Open [http://104.248.57.156:8080/#/streams/Rise](http://104.248.57.156:8080/#/streams/Rise).
@@ -75,6 +86,9 @@
 4. Start server
     ```bash
     npm run serve
+
+    # If you have the Gmail password for automated emails:
+    GMAIL_PASSWORD="<password>" npm run serve
     ```
 
 5. Start app

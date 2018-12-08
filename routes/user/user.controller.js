@@ -3,14 +3,12 @@ const fs = require("fs");
 const { Expo } = require('expo-server-sdk');
 const dbPromise = require("../../db");
 const sql = require("sql-template-strings");
-const ip = require("ip");
 const axios = require("axios");
 const qs = require("qs");
 
 const SQL = require("../../config/user_sql_constants.js");
 const hp = require("../../config/helper.js");
 const momo = require("../../config/momo.js");
-const ip_address = ip.address();
 
 
 //create all tables
@@ -157,6 +155,7 @@ module.exports.postMentor = async (req, res) => {
     "profession",
     "skills",
     "hobbies",
+    'profile_pic_URL',
   ];
   const user = {};
 
@@ -179,7 +178,6 @@ module.exports.postMentor = async (req, res) => {
       return false;
     }
 
-    user.profile_pic_URL = `http://${ip_address}:8000/user/${user.user_id}/profilepic`;
     const date = new Date();
     user.user_id = "1" + iid(date.getTime());
     const insertMentorsSql = sql`INSERT INTO Users VALUES (
@@ -273,7 +271,7 @@ module.exports.postMentee = async (req, res) => {
     const date = new Date();
     user.user_id = "2" + iid(date.getTime());
     console.log(user.user_id)
-    user.profile_pic_URL = `http://${ip_address}:8000/user/${user.user_id}/profilepic`;
+    user.profile_pic_URL = `http://${process.env.UPLOADED_IMAGES_HOST}/user/${user.user_id}/profilepic`;
 
     const insertMenteeSql = sql`INSERT INTO Users VALUES (
         ${user.user_id},
