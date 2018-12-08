@@ -23,6 +23,7 @@ module.exports.createTables = async (req, res) => {
       db.run(SQL.CREATE_SKILLS_TABLE),
       db.run(SQL.CREATE_PROFESSIONS_TABLE),
       db.run(SQL.CREATE_PUSH_TOKENS_TABLE),
+      db.run(SQL.CREATE_FINGERPRINTS_TABLE),
     ]);
     res.status(201).json({ success: true, rows: "all tables created" });
   } catch (e) {
@@ -40,6 +41,7 @@ module.exports.resetTable = async (req, res) => {
   const dropSkillsTableSql = sql`DROP TABLE IF EXISTS Skills;`;
   const dropProfessionTableSql = sql`DROP TABLE IF EXISTS Profession;`;
   const dropPushTokensTableSql = sql`DROP TABLE IF EXISTS Push_Tokens;`;
+  const dropFingerprintsTableSql = sql`DROP TABLE IF EXISTS Fingerprints;`;
 
   try {
     const db = await dbPromise;
@@ -51,6 +53,7 @@ module.exports.resetTable = async (req, res) => {
       db.run(dropSkillsTableSql),
       db.run(dropProfessionTableSql),
       db.run(dropPushTokensTableSql),
+      db.run(dropFingerprintsTableSql),
     ]);
 
     await Promise.all([
@@ -61,6 +64,7 @@ module.exports.resetTable = async (req, res) => {
       db.run(SQL.CREATE_SKILLS_TABLE),
       db.run(SQL.CREATE_PROFESSIONS_TABLE),
       db.run(SQL.CREATE_PUSH_TOKENS_TABLE),
+      db.run(SQL.CREATE_FINGERPRINTS_TABLE),
     ]);
 
     res.status(205).json({ success: true, rows: "reset all tables" });
@@ -757,7 +761,7 @@ module.exports.addSkill = async (req, res) => {
       users = addToString(users, userID);
       const updateSkillsSql = sql`UPDATE Skills SET users = ${users} WHERE skills = ${skill}`;
       await db.run(updateSkillsSql);
-      res.status(200).json({ success: true, rows:"insert users into an existed skill" });
+      res.status(200).json({ success: true, rows: "insert users into an existed skill" });
     }
   } catch (error) {
     console.error(error.message);
@@ -905,14 +909,14 @@ module.exports.updateProfession = async (req, res) => {
     if (usersToAdd.length == 0) {
       const addUserToProfessionSql = sql`INSERT INTO Profession VALUES (${profession},${userID});`;
       await db.run(addUserToProfessionSql);
-      res.status(200).json({ success: true , rows: "insert user into a new skill"});
+      res.status(200).json({ success: true, rows: "insert user into a new skill" });
       return
     } else {
       users = usersToAdd[0]["users"];
       users = addToString(users, userID);
       const addUserToProfessionSql = sql`UPDATE Profession SET users = ${users} WHERE profession = ${profession}`;
       await db.run(addUserToProfessionSql);
-      res.status(200).json({ success: true , rows: "insert user into an existed skill"});
+      res.status(200).json({ success: true, rows: "insert user into an existed skill" });
       return
     }
 
@@ -1029,7 +1033,6 @@ module.exports.login = async (req, res) => {
     user[field] = req.body[field];
   });
 
-
   try {
     const db = await dbPromise;
     const getSaltSql = sql`SELECT salt FROM Passwords WHERE email_address= ${user.email_address};`;
@@ -1056,8 +1059,10 @@ module.exports.login = async (req, res) => {
   }
 };
 
-module.exports.changePassword = async (req, res) => {
-  const fields = ["email_address", "password", "new_password"];
+
+
+module.exports.changePasswordRequest = async (req, res) => {
+  const fields = ["password", "new_password"];
   const user = {};
   fields.some(field => {
     if (req.body[field] === undefined) {
@@ -1066,9 +1071,22 @@ module.exports.changePassword = async (req, res) => {
     }
     user[field] = req.body[field];
   });
+  user.user_id = req.params.id;
 
   try {
     const db = await dbPromise;
+    console.log(user.user_id)
+    const getUserSql = sql`SELECT * FROM Users WHERE user_id = ${user.user_id};`;
+    const userObject = await db.get(getUserSql);
+    if (!userObject) {
+      res.status(401).json({ success: false, rows: "user doesn't exist" })
+      return
+    }
+    Object.keys(userObject).map(key => {
+      console.log(key)
+      user[key] = userObject[key];
+    }
+    );
     const getSaltSql = sql`SELECT salt FROM Passwords WHERE email_address= ${user.email_address};`;
     const saltObject = await db.get(getSaltSql);
     const salt = saltObject["salt"]
@@ -1081,15 +1099,19 @@ module.exports.changePassword = async (req, res) => {
     const loginObject = await db.all(loginSql);
     //console.log(loginObject)
     if (loginObject.length == 1) {
-      const new_salt = hp.genRandomString(16)
-      const passwordData = hp.saltPassword(user.new_password, new_salt)
-      const postPasswordSql = sql`UPDATE Passwords
-      SET Password = ${passwordData.passwordHash}, salt = ${new_salt}
-      WHERE email_address = ${user.email_address}`;
-      db.run(postPasswordSql);
-      res.status(200).json({ success: true, rows: "Change password successfully!" });
+      const fingerprint = hp.genRandomString(16)
+      const createPasswordFingerprintSQL = sql`REPLACE INTO Fingerprints (email_address,password,fingerprint) VALUES (${user.email_address},${user.new_password},${fingerprint});`;
+      db.run(createPasswordFingerprintSQL)
+      sendEmail(user, 1, fingerprint)
+      // const new_salt = hp.genRandomString(16)
+      // const passwordData = hp.saltPassword(user.new_password, new_salt)
+      // const postPasswordSql = sql`UPDATE Passwords
+      // SET Password = ${passwordData.passwordHash}, salt = ${new_salt}
+      // WHERE email_address = ${user.email_address}`;
+      // db.run(postPasswordSql);
+      res.status(200).json({ success: true, rows: "Email sent" });
     } else {
-      res.status(401).json({ success: false, error: "wrong password" });
+      res.status(401).json({ success: false, error: "Wrong password!" });
     }
 
 
@@ -1100,8 +1122,8 @@ module.exports.changePassword = async (req, res) => {
   }
 };
 
-module.exports.forgetPassword = async (req, res) => {
-  const fields = ["email_address"];
+module.exports.changePassword = async (req, res) => {
+  const fields = ["fingerprint"];
   const user = {};
   fields.some(field => {
     if (req.body[field] === undefined) {
@@ -1110,39 +1132,31 @@ module.exports.forgetPassword = async (req, res) => {
     }
     user[field] = req.body[field];
   });
+
   try {
     const db = await dbPromise;
-    const getEmailSql = sql`SELECT email_address FROM Passwords WHERE email_address= ${user.email_address};`;
-    const emailObject = await db.all(getEmailSql);
-    if (emailObject.length == 0) {
-      res.status(204).json({ error: "Email doesn't exist!", success: false });
-      return;
-    } else {
-      const new_password = hp.genRandomString(16);
-      const new_salt = hp.genRandomString(16);
-      const passwordData = hp.saltPassword(new_password, new_salt)
+    console.log(user.user_id)
+    const getEmailSql = sql`SELECT * FROM Fingerprints WHERE fingerprint = ${user.fingerprint};`;
+    const fingerprintObject = await db.get(getEmailSql);
+    if (!fingerprintObject) {
+      res.status(404).json({ success: false, rows: "Link broken!" })
+      return
+    }
+    Object.keys(fingerprintObject).map(key => {
+      console.log(key)
+      user[key] = fingerprintObject[key];
+    }
+    );
+    if (fingerprintObject.length == 1) {
+      const new_salt = hp.genRandomString(16)
+      const passwordData = hp.saltPassword(user.new_password, new_salt)
       const postPasswordSql = sql`UPDATE Passwords
       SET Password = ${passwordData.passwordHash}, salt = ${new_salt}
       WHERE email_address = ${user.email_address}`;
       db.run(postPasswordSql);
-      var transporter =  momo.email();
-
-      var mailOptions = {
-        from: 'Rise Carreer Academy',
-        to: user.email_address,
-        subject: 'Reset your Rise password!',
-        html: '<p>Your new password is</p><p><b>' + new_password + '</b><br><br>If you didn\'t request this change, please contact support.</p>',
-      };
-
-      transporter.sendMail(mailOptions, function (error, info) {
-        if (error) {
-          console.log(error);
-        } else {
-          console.log('Email sent: ' + info.response);
-        }
-      });
-      res.status(200).json({ success: true, rows: "Change password successfully!" });
-
+      res.status(200).json({ success: true, rows: "Password changed" });
+    } else {
+      res.status(404).json({ success: false, error: "What you doing here!" });
     }
 
 
@@ -1153,42 +1167,95 @@ module.exports.forgetPassword = async (req, res) => {
   }
 };
 
-module.exports.sendEmail = async (req, res) => {
-  const fields = ["email_address", "title", "message"];
-  fields.some(field => {
-    if (req.body[field] === undefined) {
-      res.status(422).json({ error: "Missing credentials", success: false });
-      return;
-    }
-  });
-  try {
-    const transporter = momo.email();
+// module.exports.forgetPassword = async (req, res) => {
+//   const fields = ["email_address"];
+//   const user = {};
+//   fields.some(field => {
+//     if (req.body[field] === undefined) {
+//       res.status(422).json({ error: "Missing credentials", success: false });
+//       return;
+//     }
+//     user[field] = req.body[field];
+//   });
+//   try {
+//     const db = await dbPromise;
+//     const getEmailSql = sql`SELECT email_address FROM Passwords WHERE email_address= ${user.email_address};`;
+//     const emailObject = await db.all(getEmailSql);
+//     if (emailObject.length == 0) {
+//       res.status(204).json({ error: "Email doesn't exist!", success: false });
+//       return;
+//     } else {
+//       const new_password = hp.genRandomString(16);
+//       const new_salt = hp.genRandomString(16);
+//       const passwordData = hp.saltPassword(new_password, new_salt)
+//       const postPasswordSql = sql`UPDATE Passwords
+//       SET Password = ${passwordData.passwordHash}, salt = ${new_salt}
+//       WHERE email_address = ${user.email_address}`;
+//       db.run(postPasswordSql);
+//       var transporter =  momo.email();
 
-    var mailOptions = {
-      from: 'Rise Carreer Academy',
-      to: req.body.email_address,
-      subject: req.body.title,
-      html: req.body.message,
-    };
+//       var mailOptions = {
+//         from: 'Rise Carreer Academy',
+//         to: user.email_address,
+//         subject: 'Reset your Rise password!',
+//         html: '<p>Your new password is</p><p><b>' + new_password + '</b><br><br>If you didn\'t request this change, please contact support.</p>',
+//       };
 
-    transporter.sendMail(mailOptions, function (error, info) {
-      if (error) {
-        console.log(error);
-      } else {
-        console.log('Email sent: ' + info.response);
-      }
-    });
-    res.status(200).json({ success: true, rows: "Sent email successfully!" });
+//       transporter.sendMail(mailOptions, function (error, info) {
+//         if (error) {
+//           console.log(error);
+//         } else {
+//           console.log('Email sent: ' + info.response);
+//         }
+//       });
+//       res.status(200).json({ success: true, rows: "Change password successfully!" });
+
+//     }
+
+
+//   } catch (error) {
+
+//     console.error(error.message);
+//     res.status(500).json({ success: false, error: error.message });
+//   }
+// };
+
+// module.exports.sendEmail = async (req, res) => {
+//   const fields = ["email_address", "title", "message"];
+//   fields.some(field => {
+//     if (req.body[field] === undefined) {
+//       res.status(422).json({ error: "Missing credentials", success: false });
+//       return;
+//     }
+//   });
+//   try {
+//     const transporter = momo.email();
+
+//     var mailOptions = {
+//       from: 'Rise Carreer Academy',
+//       to: req.body.email_address,
+//       subject: req.body.title,
+//       html: req.body.message,
+//     };
+
+//     transporter.sendMail(mailOptions, function (error, info) {
+//       if (error) {
+//         console.log(error);
+//       } else {
+//         console.log('Email sent: ' + info.response);
+//       }
+//     });
+//     res.status(200).json({ success: true, rows: "Sent email successfully!" });
 
 
 
 
-  } catch (error) {
+//   } catch (error) {
 
-    console.error(error.message);
-    res.status(500).json({ success: false, error: error.message });
-  }
-};
+//     console.error(error.message);
+//     res.status(500).json({ success: false, error: error.message });
+//   }
+// };
 
 //MESSAGE API
 
@@ -1424,3 +1491,36 @@ function iid(num) {
 }
 
 
+function sendEmail(user, type, fingerprint) {
+  const { title, message } = emailTemplate(type, fingerprint);
+  const transporter = momo.email();
+
+  var mailOptions = {
+    from: 'Rise Carreer Academy',
+    to: user.email_address,
+    subject: title,
+    html: message,
+  };
+
+  transporter.sendMail(mailOptions, function (error, info) {
+    if (error) {
+      console.log(error);
+    } else {
+      console.log('Email sent: ' + info.response);
+    }
+  });
+}
+function emailTemplate(user, type, fingerprint) {
+  let title = ""
+  let message = ""
+  switch (type) {
+    case 1:
+      title = "Rise: Confirm password changes";
+      message = `Hi ${user.firstName} ${user.lastName}, <br> ${fingerprint}`
+      break;
+    default:
+      break;
+  }
+  console.log
+  return { title, message };
+}

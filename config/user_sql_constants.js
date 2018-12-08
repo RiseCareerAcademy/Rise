@@ -75,3 +75,14 @@ module.exports.CREATE_PUSH_TOKENS_TABLE = sql`
         push_token varchar(255) NOT NULL
     );
 `
+
+module.exports.CREATE_FINGERPRINTS_TABLE = sql`
+    CREATE TABLE IF NOT EXISTS Fingerprints (
+        email_address varchar(255) NOT NULL,
+        password varchar(255),
+        email varchar(255),
+        fingerprint varchar(255) NOT NULL
+    );
+`
+
+
