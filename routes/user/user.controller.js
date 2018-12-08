@@ -757,7 +757,7 @@ module.exports.addSkill = async (req, res) => {
       users = addToString(users, userID);
       const updateSkillsSql = sql`UPDATE Skills SET users = ${users} WHERE skills = ${skill}`;
       await db.run(updateSkillsSql);
-      res.status(200).json({ success: true, rows: "insert users into an existed skill" });
+      res.status(200).json({ success: true, rows:"insert users into an existed skill" });
     }
   } catch (error) {
     console.error(error.message);
@@ -905,14 +905,14 @@ module.exports.updateProfession = async (req, res) => {
     if (usersToAdd.length == 0) {
       const addUserToProfessionSql = sql`INSERT INTO Profession VALUES (${profession},${userID});`;
       await db.run(addUserToProfessionSql);
-      res.status(200).json({ success: true, rows: "insert user into a new skill" });
+      res.status(200).json({ success: true , rows: "insert user into a new skill"});
       return
     } else {
       users = usersToAdd[0]["users"];
       users = addToString(users, userID);
       const addUserToProfessionSql = sql`UPDATE Profession SET users = ${users} WHERE profession = ${profession}`;
       await db.run(addUserToProfessionSql);
-      res.status(200).json({ success: true, rows: "insert user into an existed skill" });
+      res.status(200).json({ success: true , rows: "insert user into an existed skill"});
       return
     }
 
@@ -1087,22 +1087,6 @@ module.exports.changePassword = async (req, res) => {
       SET Password = ${passwordData.passwordHash}, salt = ${new_salt}
       WHERE email_address = ${user.email_address}`;
       db.run(postPasswordSql);
-      var transporter = momo.email();
-
-      var mailOptions = {
-        from: 'Rise Carreer Academy',
-        to: user.email_address,
-        subject: 'Reset your Rise password!',
-        html: '<p>Your new password is</p><p><b>' + user.new_password + '</b><br><br>If you didn\'t request this change, please contact support.</p>',
-      };
-
-      transporter.sendMail(mailOptions, function (error, info) {
-        if (error) {
-          console.log(error);
-        } else {
-          console.log('Email sent: ' + info.response);
-        }
-      });
       res.status(200).json({ success: true, rows: "Change password successfully!" });
     } else {
       res.status(401).json({ success: false, error: "wrong password" });
@@ -1141,7 +1125,7 @@ module.exports.forgetPassword = async (req, res) => {
       SET Password = ${passwordData.passwordHash}, salt = ${new_salt}
       WHERE email_address = ${user.email_address}`;
       db.run(postPasswordSql);
-      var transporter = momo.email();
+      var transporter =  momo.email();
 
       var mailOptions = {
         from: 'Rise Carreer Academy',
