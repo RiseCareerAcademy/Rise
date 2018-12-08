@@ -5,4 +5,5 @@ coverage
 .vscode
 uploads
 .DS_store
+config/momo.js
 logs
