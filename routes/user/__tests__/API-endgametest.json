@@ -5054,7 +5054,8 @@
 							"});",
 							"pm.test(\"Body is correct\", function () {",
 							"    pm.response.to.have.body({",
-							"    \"success\": true",
+							"    \"success\": true,",
+							"    \"rows\": \"insert user into a new skill\"",
 							"});",
 							"});",
 							""
@@ -10882,7 +10883,8 @@
 							"});",
 							"pm.test(\"Body is correct\", function () {",
 							"    pm.response.to.have.body({",
-							"    \"success\": true",
+							"    \"success\": true,",
+							"    \"rows\": \"insert user into a new skill\"",
 							"});",
 							"});",
 							""
@@ -16710,7 +16712,8 @@
 							"});",
 							"pm.test(\"Body is correct\", function () {",
 							"    pm.response.to.have.body({",
-							"    \"success\": true",
+							"    \"success\": true,",
+							"    \"rows\": \"insert user into a new skill\"",
 							"});",
 							"});",
 							""
@@ -22538,7 +22541,8 @@
 							"});",
 							"pm.test(\"Body is correct\", function () {",
 							"    pm.response.to.have.body({",
-							"    \"success\": true",
+							"    \"success\": true,",
+							"    \"rows\": \"insert user into a new skill\"",
 							"});",
 							"});",
 							""
@@ -28366,7 +28370,8 @@
 							"});",
 							"pm.test(\"Body is correct\", function () {",
 							"    pm.response.to.have.body({",
-							"    \"success\": true",
+							"    \"success\": true,",
+							"    \"rows\": \"insert user into a new skill\"",
 							"});",
 							"});",
 							""
@@ -34194,7 +34199,8 @@
 							"});",
 							"pm.test(\"Body is correct\", function () {",
 							"    pm.response.to.have.body({",
-							"    \"success\": true",
+							"    \"success\": true,",
+							"    \"rows\": \"insert user into a new skill\"",
 							"});",
 							"});",
 							""
@@ -40022,7 +40028,8 @@
 							"});",
 							"pm.test(\"Body is correct\", function () {",
 							"    pm.response.to.have.body({",
-							"    \"success\": true",
+							"    \"success\": true,",
+							"    \"rows\": \"insert user into a new skill\"",
 							"});",
 							"});",
 							""
@@ -45850,7 +45857,8 @@
 							"});",
 							"pm.test(\"Body is correct\", function () {",
 							"    pm.response.to.have.body({",
-							"    \"success\": true",
+							"    \"success\": true,",
+							"    \"rows\": \"insert user into a new skill\"",
 							"});",
 							"});",
 							""
