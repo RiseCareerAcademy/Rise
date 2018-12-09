@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import {
-  ScrollView,
   StyleSheet,
   View,
   Text,
@@ -185,7 +184,7 @@ export class SearchScreen extends Component {
             checked={this.state.checkedMatches}
             onPress={() =>
               this.setState(prevState => ({
-                checkedMentors: !prevState.checkedMentors,
+                checkedMatches: !prevState.checkedMatches,
               }))
             }
           />

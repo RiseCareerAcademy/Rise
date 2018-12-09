@@ -7,7 +7,7 @@ jobs:
   build:
     docker:
       # specify the version you desire here
-      - image: circleci/node:7.10
+      - image: kmui2/rise-ci
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -22,29 +22,53 @@ jobs:
       # Download and cache dependencies
       - restore_cache:
           keys:
-          - v1-dependencies-{{ checksum "package.json" }}
+          - v2-dependencies-{{ checksum "package.json" }}
           # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-
+          - v2-dependencies-
 
       - run: npm install
 
       - save_cache:
           paths:
             - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
+          key: v2-dependencies-{{ checksum "package.json" }}
 
       # run tests!
       - run:
           name: Run Jest Tests
           command: npm run test:coverage
-
+      - run:
+          name: Run Background Server
+          command: npm run serve
+          background: true
+      - run:
+          command: wget --retry-connrefused --no-check-certificate -T 30 http://localhost:8000
+      - run:
+          name: Run Newmantest
+          command: newman run ./routes/user/__tests__/API-endgametest.json
       # send converage to coveralls
       - run:
           name: Upload Coverage to Coveralls
           command: cat ./coverage/lcov.info | ./node_modules/.bin/coveralls
 
       - add_ssh_keys
-      - run: ssh-keyscan 104.248.57.156 >> ~/.ssh/known_hosts
       - run:
-          name: Deploy to Development Server
-          command: npm run deploy
+          name: Deploy server to droplet
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              ssh-keyscan ${DEPLOY_HOST} >> ~/.ssh/known_hosts
+              npm run deploy
+            fi
+      - run:
+          name: Publish application to Expo
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              expo login --username ${EXPO_USERNAME} --password ${EXPO_PASSWORD}
+              expo publish
+            fi
+
+workflows:
+  version: 2
+  build-deploy:
+    jobs:
+      - build

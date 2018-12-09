@@ -19,7 +19,7 @@ module.exports = {
       // SSH user
       user: "root",
       // SSH host
-      host: ["104.248.57.156"],
+      host: [process.env.DEPLOY_HOST],
       // GIT remote/branch
       ref: "origin/master",
       // SSH options with no command-line flag, see 'man ssh'
