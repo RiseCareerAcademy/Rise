@@ -38,11 +38,11 @@ jobs:
           name: Run Jest Tests
           command: npm run test:coverage
       - run:
-          command: wget --retry-connrefused --no-check-certificate -T 30 https://localhost:8000
-      - run:
           name: Run Background Server
           command: npm run serve
           background: true
+      - run:
+          command: wget --retry-connrefused --no-check-certificate -T 30 https://localhost:8000
       - run:
           name: Run Newmantest
           command: newman run .\routes\user\__tests__\API-endgametest.json
