@@ -207,7 +207,7 @@ export class MentorRegistration extends React.Component {
               <Input placeholder={this.props.first_name} onChangeText={this.handleFirstName} />
             </Item>
             <Item stackedLabel last>
-              <Label>lastName</Label>
+              <Label>Last Name</Label>
               <Input placeholder={this.props.last_name} onChangeText={this.handleLastName} />
             </Item>
             <Item stackedLabel last>

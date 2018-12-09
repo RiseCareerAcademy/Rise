@@ -105,7 +105,7 @@ exports[`renders correctly 1`] = `
         stackedLabel={true}
       >
         <Styled(Label)>
-          lastName
+          Last Name
         </Styled(Label)>
         <Styled(Input)
           onChangeText={[Function]}
