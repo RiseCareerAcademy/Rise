@@ -1,9 +1,17 @@
 import React from "react";
-import { Text, Container, Content, Form, Item, Label, Input } from "native-base";
+import {
+  Text,
+  Container,
+  Content,
+  Form,
+  Item,
+  Label,
+  Input,
+} from "native-base";
 import { TouchableOpacity, StyleSheet, ActivityIndicator } from "react-native";
-import { connect } from 'react-redux';
+import { connect } from "react-redux";
 
-import { login } from '../actions/user.actions';
+import { login } from "../actions/user.actions";
 
 export class SignIn extends React.Component {
   state = {
@@ -27,46 +35,47 @@ export class SignIn extends React.Component {
 
     if (email.length == 0 && password.length == 0) {
       errors.push("please enter your email and password");
-    }
-    else if (email.length < 5) {
+    } else if (email.length < 5) {
       errors.push("Email should be at least 5 charcters long");
-    }
-    else if (email.split("").filter(x => x === "@").length !== 1) {
+    } else if (email.split("").filter(x => x === "@").length !== 1) {
       errors.push("Email should contain one @");
-    }
-    else if (email.indexOf(".") === -1) {
+    } else if (email.indexOf(".") === -1) {
       errors.push("Email should contain at least one dot");
-    }
-    else if (password.length < 6) {
+    } else if (password.length < 6) {
       errors.push("Password should be at least 6 characters long");
     }
 
     if (errors.length == 0 || __DEV__) {
       this.props.login(email, password);
-      return true
+      return true;
     } else {
       alert(errors);
       return false;
     }
-  }
+  };
   render() {
     return (
       <Container>
         <Content>
-          <Text style={styles.error}>{!this.props.loggingIn && this.props.error}</Text>
+          <Text style={styles.error}>
+            {!this.props.loggingIn && this.props.error}
+          </Text>
           <Form>
             <Item stackedLabel>
               <Label>Email</Label>
               <Input
-              autoCapitalize="none"
-              onChangeText={this.handleEmail}/>
+                keyboardType="email-address"
+                autoCapitalize="none"
+                onChangeText={this.handleEmail}
+              />
             </Item>
             <Item stackedLabel last>
               <Label>Password</Label>
               <Input
-              autoCapitalize="none"
-              secureTextEntry
-              onChangeText={this.handlePassword}/>
+                autoCapitalize="none"
+                secureTextEntry
+                onChangeText={this.handlePassword}
+              />
             </Item>
           </Form>
         </Content>
@@ -75,12 +84,7 @@ export class SignIn extends React.Component {
         ) : (
           <TouchableOpacity
             style={styles.submitButton}
-            onPress={ () =>
-              this.validate(
-                this.state.email,
-                this.state.password
-              )
-            }
+            onPress={() => this.validate(this.state.email, this.state.password)}
           >
             <Text style={styles.submitButtonText}> Next </Text>
           </TouchableOpacity>
@@ -153,6 +157,9 @@ const mapStateToProps = state => ({
   loggingIn: state.user.loggingIn,
 });
 
-export default connect(mapStateToProps, {
-  login,
-})(SignIn);
+export default connect(
+  mapStateToProps,
+  {
+    login,
+  }
+)(SignIn);

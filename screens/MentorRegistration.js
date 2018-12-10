@@ -173,6 +173,7 @@ export class MentorRegistration extends React.Component {
             <Item stackedLabel>
               <Label>Email</Label>
               <Input
+              keyboardType="email-address"
               autoCapitalize="none"
               placeholder={this.props.email_address} onChangeText={this.handleEmail} />
             </Item>

@@ -247,6 +247,7 @@ export class StudentRegistration extends React.Component {
             <Item stackedLabel>
               <Label>Email</Label>
               <Input
+                keyboardType="email-address"
                 autoCapitalize="none"
                 placeholder="Enter your email"
                 onChangeText={this.handleEmail}
