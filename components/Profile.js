@@ -16,6 +16,7 @@ import Separator from "../components/Separator";
 import { HOST } from "../config/url";
 import { createMatch } from "../actions/matches.actions";
 import { Chip } from "react-native-paper";
+import { Content } from "native-base";
 
 const uuidv1 = require("uuid/v1");
 
@@ -123,8 +124,8 @@ const styles = StyleSheet.create({
   },
   chipsContainer: {
     flex: 1,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
   },
 });
 
@@ -139,8 +140,8 @@ class Profile extends Component {
   };
 
   handleRate = () => {
-    this.props.navigation.navigate('Ratings');
-  }
+    this.props.navigation.navigate("Ratings");
+  };
 
   renderHeader = () => {
     const {
@@ -171,7 +172,9 @@ class Profile extends Component {
     const isMeMentor = this.props.my_user_id[0] === "1";
     const isZeMentor = this.props.user_id[0] === "1";
     return (
-      <View style={styles.headerContainer}>
+      <Content
+        style={styles.headerContainer}
+      >
         <ImageBackground
           style={styles.headerBackgroundImage}
           blurRadius={10}
@@ -209,7 +212,8 @@ class Profile extends Component {
                 <Button style={styles.uploadBtn} title="MATCHED" disabled />
               </View>
             ) : (
-              my_user_id !== user_id && isZeMentor !== isMeMentor && (
+              my_user_id !== user_id &&
+              isZeMentor !== isMeMentor && (
                 <View style={styles.uploadBtnContainer}>
                   <Button
                     onPress={this.handleMatch}
@@ -220,17 +224,17 @@ class Profile extends Component {
               )
             )}
             {isZeMentor && my_user_id !== user_id && (
-                <View style={styles.uploadBtnContainer}>
-                  <Button
-                    onPress={this.handleRate}
-                    style={styles.uploadBtn}
-                    title="Rate"
-                  />
-                </View>
+              <View style={styles.uploadBtnContainer}>
+                <Button
+                  onPress={this.handleRate}
+                  style={styles.uploadBtn}
+                  title="Rate"
+                />
+              </View>
             )}
           </View>
         </ImageBackground>
-      </View>
+      </Content>
     );
   };
 
@@ -253,7 +257,14 @@ class Profile extends Component {
         </View>
         <View style={styles.chipsContainer}>
           {skills.split(",").map(skill => (
-             <Chip style={styles.chip} key={skill} icon="info" onPress={() => console.log('Pressed')}>{skill}</Chip>
+            <Chip
+              style={styles.chip}
+              key={skill}
+              icon="info"
+              onPress={() => console.log("Pressed")}
+            >
+              {skill}
+            </Chip>
           ))}
         </View>
       </View>
@@ -261,16 +272,18 @@ class Profile extends Component {
   };
 
   render() {
-    return this.props.loggedIn && (
-      <ScrollView style={styles.scroll}>
-        <View style={styles.container}>
-          <Card containerStyle={styles.cardContainer}>
-            {this.renderHeader()}
-            {this.renderBio()}
-            {Separator()}
-          </Card>
-        </View>
-      </ScrollView>
+    return (
+      this.props.loggedIn && (
+        <ScrollView style={styles.scroll}>
+          <View style={styles.container}>
+            <Card containerStyle={styles.cardContainer}>
+              {this.renderHeader()}
+              {this.renderBio()}
+              {Separator()}
+            </Card>
+          </View>
+        </ScrollView>
+      )
     );
   }
 }
