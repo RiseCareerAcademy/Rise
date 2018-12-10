@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { RefreshControl } from "react-native";
+import { RefreshControl, StyleSheet } from "react-native";
 import { connect } from "react-redux";
 import {
   Header,
@@ -13,11 +13,16 @@ import {
   Container,
   Card,
   CardItem,
+  View,
 } from "native-base";
 
-import { getSuggestedMentorMatches, getSuggestedMenteeMatches } from "../actions/matches.actions";
-import { getMentor, getMentee } from '../actions/search.actions';
+import {
+  getSuggestedMentorMatches,
+  getSuggestedMenteeMatches,
+} from "../actions/matches.actions";
+import { getMentor, getMentee } from "../actions/search.actions";
 import { HOST } from "../config/url";
+import { Chip } from "react-native-paper";
 
 const uuidv1 = require("uuid/v1");
 
@@ -34,12 +39,13 @@ export class MatchesScreen extends Component {
     list: [],
     error: "hi",
     refreshing: false,
+    hasMatches: undefined,
   };
 
   constructor(props) {
     super(props);
 
-    const isMentor = this.props.user_id[0] === '1';
+    const isMentor = this.props.user_id[0] === "1";
     if (isMentor) {
       this.props.getSuggestedMenteeMatches();
     } else {
@@ -50,18 +56,21 @@ export class MatchesScreen extends Component {
 
   componentDidUpdate = prevProps => {
     if (prevProps.users !== this.props.users) {
-      this.setState({ refreshing: false });
+      this.setState({
+        refreshing: false,
+        hasMatches: this.props.users.length > 0,
+      });
     }
   };
 
   onRefresh = () => {
-    const isMentor = this.props.user_id[0] === '1';
+    const isMentor = this.props.user_id[0] === "1";
     if (isMentor) {
       this.props.getSuggestedMenteeMatches();
     } else {
       this.props.getSuggestedMentorMatches();
     }
-  }
+  };
 
   handleMentorPress = user_id => () => {
     this.props.getMentor(user_id);
@@ -70,7 +79,6 @@ export class MatchesScreen extends Component {
   handleMenteePress = user_id => () => {
     this.props.getMentee(user_id);
   };
-
 
   render() {
     return (
@@ -85,53 +93,78 @@ export class MatchesScreen extends Component {
           }
         >
           <List>
+            {this.state.hasMatches === false && (
+              <View style={styles.noMatchesContainer}>
+                <Text style={styles.noMatchesText}>No Matches. Check back later in case there is a match!</Text>
+              </View>
+            )}
             {this.props.users.map(l => {
               let fromLinkedin = false;
-            if (l.profile_pic_URL !== undefined) {
-              fromLinkedin = l.profile_pic_URL.includes("licdn");
-            }
-
-            let image =
-              __DEV__ && !fromLinkedin
-                ? `http://${HOST}/user/${l.user_id}/profilepic`
-                : l.profile_pic_URL;
-            if (!fromLinkedin) {
-              image += `?${encodeURI(uuidv1())}`;
-            }
-
-            let handlePress = () => {};
-            if (l.user_id !== undefined) {
-              const isMentor = l.user_id[0] === '1';
-              if (isMentor) {
-                handlePress = this.handleMentorPress;
-              } else {
-                handlePress = this.handleMenteePress;
+              if (l.profile_pic_URL !== undefined) {
+                fromLinkedin = l.profile_pic_URL.includes("licdn");
               }
-            }
-              return (<Card style={{ flex: 0 }} key={l.user_id}>
-                <CardItem onPress={handlePress(l.user_id)}>
-                  <Left>
-                    <Thumbnail source={{ uri: image}} />
+
+              let image =
+                __DEV__ && !fromLinkedin
+                  ? `http://${HOST}/user/${l.user_id}/profilepic`
+                  : l.profile_pic_URL;
+              if (!fromLinkedin) {
+                image += `?${encodeURI(uuidv1())}`;
+              }
+
+              let handlePress = () => {};
+              if (l.user_id !== undefined) {
+                const isMentor = l.user_id[0] === "1";
+                if (isMentor) {
+                  handlePress = this.handleMentorPress;
+                } else {
+                  handlePress = this.handleMenteePress;
+                }
+              }
+              return (
+                <Card style={{ flex: 0 }} key={l.user_id}>
+                  <CardItem onPress={handlePress(l.user_id)}>
+                    <Left>
+                      <Thumbnail source={{ uri: image }} />
+                      <Body>
+                        <Text>{`${l.first_name} ${l.last_name}`}</Text>
+                        <Text note>{l.profession}</Text>
+                      </Body>
+                    </Left>
+                  </CardItem>
+                  <CardItem>
                     <Body>
-                      <Text>{`${l.first_name} ${l.last_name}`}</Text>
-                      <Text note>{l.profession}</Text>
+                      <Text>{l.biography}</Text>
+                      <View style={styles.chipsContainer}>
+                        {l.skills.split(",").map(skill => (
+                          <Chip
+                            style={styles.chip}
+                            key={skill}
+                            icon="info"
+                            onPress={() => console.log("Pressed")}
+                          >
+                            {skill}
+                          </Chip>
+                        ))}
+                      </View>
                     </Body>
-                  </Left>
-                </CardItem>
-                <CardItem>
-                  <Body>
-                    <Text>{l.biography}</Text>
-                    <Text>{l.skills}</Text>
-                  </Body>
-                </CardItem>
-                <CardItem>
-                  <Left>
-                    <Button transparent textStyle={{ color: "#87838B" }} onPress={handlePress(l.user_id)}>
+                  </CardItem>
+                  <CardItem>
+                    <Left>
+                      <Button
+                        transparent
+                        textStyle={{ color: "#87838B" }}
+                        onPress={handlePress(l.user_id)}
+                      >
+                        <Text>{`Click for details.`}</Text>
+                      </Button>
+                    </Left>
+                    <Left>
                       <Text>{`Score: ${l.score}`}</Text>
-                    </Button>
-                  </Left>
-                </CardItem>
-              </Card>)
+                    </Left>
+                  </CardItem>
+                </Card>
+              );
             })}
           </List>
         </Content>
@@ -140,6 +173,25 @@ export class MatchesScreen extends Component {
   }
 }
 
+const styles = StyleSheet.create({
+  noMatchesContainer: {
+    margin: "auto",
+    width: '100%',
+    height: '100%',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  noMatchesText: {
+    color: "grey",
+    margin: "auto",
+  },
+  chipsContainer: {
+    flex: 1,
+    flexDirection: "row",
+    flexWrap: "wrap",
+  },
+});
 
 const mapStateToProps = state => ({
   users: state.matches.users,
