@@ -70,7 +70,8 @@ router.put("/:id/profession", controller.updateProfession);
 //Register and Login
 router.post("/password",controller.register);
 router.post("/login",controller.login);
-router.post("/:id/password/change",controller.changePasswordRequest);
+router.post("/:id/password/change",controller.changePassword);
+// router.post("/:id/password/change",controller.changePasswordRequest);
 // router.put("/password",controller.changePassword);
 // router.post("/forgetpassword",controller.forgetPassword);
 // router.post("/sendemail",controller.sendEmail);

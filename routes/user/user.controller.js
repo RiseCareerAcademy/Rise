@@ -1032,11 +1032,12 @@ module.exports.login = async (req, res) => {
     }
     user[field] = req.body[field];
   });
-
+  console.log(user)
   try {
     const db = await dbPromise;
     const getSaltSql = sql`SELECT salt FROM Passwords WHERE email_address= ${user.email_address};`;
     const saltObject = await db.get(getSaltSql);
+    console.log(saltObject)
     const salt = saltObject["salt"]
     const loginSql = sql`SELECT u.user_id FROM Users u INNER JOIN
     (SELECT email_address FROM Passwords
@@ -1044,7 +1045,10 @@ module.exports.login = async (req, res) => {
     AND password = ${hp.saltPassword(user.password, salt)["passwordHash"]}) p
     ON (u.email_address = p.email_address)
     ;`;
+    
     const id = await db.all(loginSql);
+    console.log(id)
+
     if (id.length == 1) {
 
       res.status(200).json({ success: true, rows: id });
@@ -1061,6 +1065,57 @@ module.exports.login = async (req, res) => {
 
 
 
+module.exports.changePassword = async (req, res) => {
+  const fields = ["password", "new_password"];
+  const user = {};
+  fields.some(field => {
+    if (req.body[field] === undefined) {
+      res.status(422).json({ error: "Missing credentials", success: false });
+      return;
+    }
+    user[field] = req.body[field];
+  });
+  user.user_id = req.params.id;
+
+  try {
+    const db = await dbPromise;
+    console.log(user.user_id)
+    const getEmailSql = sql`SELECT email_address FROM Users WHERE user_id = ${user.user_id};`;
+    const emailObject = await db.get(getEmailSql);
+    if (!emailObject) {
+      res.status(401).json({ success: false, rows: "user doesn't exist" })
+      return
+    }
+    console.log(emailObject)
+    user.email_address=emailObject["email_address"]
+    const getSaltSql = sql`SELECT salt FROM Passwords WHERE email_address= ${user.email_address};`;
+    const saltObject = await db.get(getSaltSql);
+    const salt = saltObject["salt"]
+    const loginSql = sql`SELECT u.user_id FROM Users u INNER JOIN
+    (SELECT email_address FROM Passwords
+    WHERE email_address = ${user.email_address}
+    AND password = ${hp.saltPassword(user.password, salt)["passwordHash"]}) p
+    ON (u.email_address = p.email_address)
+    ;`;
+    const loginObject = await db.all(loginSql);
+    console.log(loginObject)
+    if (loginObject.length == 1) {
+      const new_salt = hp.genRandomString(16)
+      const passwordData = hp.saltPassword(user.new_password, new_salt)
+      const postPasswordSql = sql`UPDATE Passwords 
+      SET Password = ${passwordData.passwordHash}, salt = ${new_salt} 
+      WHERE email_address = ${user.email_address}`;
+      db.run(postPasswordSql);
+      res.json({ success: true, rows: "Change password successfully!" });
+    } else {
+      res.status(500).json({ success: false, error: "wrong password" });
+    }
+
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
 module.exports.changePasswordRequest = async (req, res) => {
   const fields = ["password", "new_password"];
   const user = {};
@@ -1122,50 +1177,50 @@ module.exports.changePasswordRequest = async (req, res) => {
   }
 };
 
-module.exports.changePassword = async (req, res) => {
-  const fields = ["fingerprint"];
-  const user = {};
-  fields.some(field => {
-    if (req.body[field] === undefined) {
-      res.status(422).json({ error: "Missing credentials", success: false });
-      return;
-    }
-    user[field] = req.body[field];
-  });
+// module.exports.changePassword = async (req, res) => {
+//   const fields = ["fingerprint"];
+//   const user = {};
+//   fields.some(field => {
+//     if (req.body[field] === undefined) {
+//       res.status(422).json({ error: "Missing credentials", success: false });
+//       return;
+//     }
+//     user[field] = req.body[field];
+//   });
 
-  try {
-    const db = await dbPromise;
-    console.log(user.user_id)
-    const getEmailSql = sql`SELECT * FROM Fingerprints WHERE fingerprint = ${user.fingerprint};`;
-    const fingerprintObject = await db.get(getEmailSql);
-    if (!fingerprintObject) {
-      res.status(404).json({ success: false, rows: "Link broken!" })
-      return
-    }
-    Object.keys(fingerprintObject).map(key => {
-      console.log(key)
-      user[key] = fingerprintObject[key];
-    }
-    );
-    if (fingerprintObject.length == 1) {
-      const new_salt = hp.genRandomString(16)
-      const passwordData = hp.saltPassword(user.new_password, new_salt)
-      const postPasswordSql = sql`UPDATE Passwords
-      SET Password = ${passwordData.passwordHash}, salt = ${new_salt}
-      WHERE email_address = ${user.email_address}`;
-      db.run(postPasswordSql);
-      res.status(200).json({ success: true, rows: "Password changed" });
-    } else {
-      res.status(404).json({ success: false, error: "What you doing here!" });
-    }
+//   try {
+//     const db = await dbPromise;
+//     console.log(user.user_id)
+//     const getEmailSql = sql`SELECT * FROM Fingerprints WHERE fingerprint = ${user.fingerprint};`;
+//     const fingerprintObject = await db.get(getEmailSql);
+//     if (!fingerprintObject) {
+//       res.status(404).json({ success: false, rows: "Link broken!" })
+//       return
+//     }
+//     Object.keys(fingerprintObject).map(key => {
+//       console.log(key)
+//       user[key] = fingerprintObject[key];
+//     }
+//     );
+//     if (fingerprintObject.length == 1) {
+//       const new_salt = hp.genRandomString(16)
+//       const passwordData = hp.saltPassword(user.new_password, new_salt)
+//       const postPasswordSql = sql`UPDATE Passwords
+//       SET Password = ${passwordData.passwordHash}, salt = ${new_salt}
+//       WHERE email_address = ${user.email_address}`;
+//       db.run(postPasswordSql);
+//       res.status(200).json({ success: true, rows: "Password changed" });
+//     } else {
+//       res.status(404).json({ success: false, error: "What you doing here!" });
+//     }
 
 
-  } catch (error) {
+//   } catch (error) {
 
-    console.error(error.message);
-    res.status(500).json({ success: false, error: error.message });
-  }
-};
+//     console.error(error.message);
+//     res.status(500).json({ success: false, error: error.message });
+//   }
+// };
 
 // module.exports.forgetPassword = async (req, res) => {
 //   const fields = ["email_address"];
