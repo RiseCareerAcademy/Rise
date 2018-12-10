@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { GiftedChat } from "react-native-gifted-chat";
 import Dialog from "react-native-dialog";
+import StyleSheet from "react-native";
 
 import {
   sendMessage,
@@ -72,6 +73,11 @@ class Conversation extends Component {
     this.props.navigation.goBack();
   }
 
+  deleteRow() {
+    console.log("deleted")
+    this.handleBackPress();
+  }
+
   render() {
     const {
       user_id,
@@ -105,6 +111,9 @@ class Conversation extends Component {
           <Body>
             <Title>{otherUserName}</Title>
           </Body>
+          <Button transparent onPress={_ => this.deleteRow()}>
+                <Icon name="trash" />
+          </Button>}
         </Header>
         <Dialog.Container visible={this.state.showDialog}>
           <Dialog.Title>Disconnected</Dialog.Title>
