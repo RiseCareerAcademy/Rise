@@ -5,6 +5,7 @@ import Dialog from "react-native-dialog";
 import StyleSheet from "react-native";
 
 import {
+  clearMessages,
   sendMessage,
   setMatchId,
   reconnectToWebSocket,
@@ -75,7 +76,8 @@ class Conversation extends Component {
   }
 
   deleteRow() {
-    this.handle()
+   this.handle()
+   this.props.clearMessages()
     this.handleBackPress();
   }
 
@@ -166,6 +168,7 @@ const mapStateToProps = state => ({
 export default connect(
   mapStateToProps,
   {
+    clearMessages,
     sendMessage,
     setMatchId,
     reconnectToWebSocket,
