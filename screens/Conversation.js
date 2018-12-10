@@ -2,8 +2,10 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { GiftedChat } from "react-native-gifted-chat";
 import Dialog from "react-native-dialog";
+import StyleSheet from "react-native";
 
 import {
+  clearMessages,
   sendMessage,
   setMatchId,
   reconnectToWebSocket,
@@ -23,6 +25,7 @@ class Conversation extends Component {
 
     this.state = {
       showDialog: false,
+      matcher: match_id
     }
 
     this.delayTimeout;
@@ -72,6 +75,37 @@ class Conversation extends Component {
     this.props.navigation.goBack();
   }
 
+  deleteRow() {
+   this.handle()
+   this.props.clearMessages()
+    this.handleBackPress();
+  }
+
+  handle() {
+    console.log("handling")
+
+    var list = [];
+
+    const { manifest } = Expo.Constants;
+    const api = (typeof manifest.packagerOpts === `object`) && manifest.packagerOpts.dev
+      ? manifest.debuggerHost.split(`:`).shift().concat(`:8000`)
+      : `api.example.com`;
+    console.log(api);
+    // TODO: change to actual userid
+    fetch('http://' + api + '/user/message/all/' + this.state.matcher, {
+      method: 'DELETE'
+    })
+      .then((response) => response.json())
+      .then((responseJson) => {
+        //TO DO: add mentors name and skills in array
+        console.log(responseJson)
+        console.log("deleted")
+      })
+      .catch((error) => {
+        console.log("error is: " + error);
+      });
+  }
+
   render() {
     const {
       user_id,
@@ -105,6 +139,9 @@ class Conversation extends Component {
           <Body>
             <Title>{otherUserName}</Title>
           </Body>
+          <Button transparent onPress={_ => this.deleteRow()}>
+                <Icon name="trash" />
+          </Button>}
         </Header>
         <Dialog.Container visible={this.state.showDialog}>
           <Dialog.Title>Disconnected</Dialog.Title>
@@ -131,6 +168,7 @@ const mapStateToProps = state => ({
 export default connect(
   mapStateToProps,
   {
+    clearMessages,
     sendMessage,
     setMatchId,
     reconnectToWebSocket,
