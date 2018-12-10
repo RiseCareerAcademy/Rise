@@ -18,6 +18,7 @@ import { StyleSheet, TouchableOpacity, Image } from "react-native";
 import { connect } from "react-redux";
 
 import { registerMentor, updateUser } from "../actions/user.actions";
+import { HOST } from "../config/url";
 
 export class EditProfileScreen extends React.Component {
   static navigationOptions = {
@@ -128,6 +129,9 @@ export class EditProfileScreen extends React.Component {
   }
 
   render() {
+    const { profile_pic_URL } = this.props;
+    const fromLinkedin = profile_pic_URL.includes("licdn");
+    let image = __DEV__ && !fromLinkedin ? `http://${HOST}/user/${this.props.user_id}/profilepic` : this.props.profile_pic_URL;
     return (
       <Container style={styles.container}>
         <Header>
@@ -148,7 +152,7 @@ export class EditProfileScreen extends React.Component {
             <Image
               style={styles.userImage}
               source={{
-                uri: this.props.profile_pic_URL,
+                uri: image,
               }}
             />
             <Item stackedLabel>
@@ -255,6 +259,7 @@ const mapStateToProps = state => ({
   profile_pic_URL: state.user.profile_pic_URL,
   zipcode: state.user.zipcode,
   skills: state.user.skills,
+  user_id: state.user.user_id,
 });
 
 export default connect(
