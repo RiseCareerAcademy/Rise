@@ -151,20 +151,20 @@ export class EditProfileScreen extends React.Component {
                 uri: this.props.profile_pic_URL,
               }}
             />
-            {/* <Item stackedLabel>
+            <Item stackedLabel>
               <Label>Add New Skills (separated by commas)</Label>
               <Input
                 placeholder={this.props.skills}
                 onChangeText={this.handleSkills}
               />
-            </Item> */}
-            {/* <Item stackedLabel last>
+            </Item>
+            <Item stackedLabel last>
               <Label>Profession</Label>
               <Input
                 placeholder={this.props.profession}
                 onChangeText={this.handleProfession}
               />
-            </Item> */}
+            </Item>
             <Item stackedLabel last>
               <Label>zipcode</Label>
               <Input
