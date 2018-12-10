@@ -19,6 +19,7 @@ exports[`renders correctly 1`] = `
         </Styled(Label)>
         <Styled(Input)
           autoCapitalize="none"
+          keyboardType="email-address"
           onChangeText={[Function]}
         />
       </Styled(Item)>
