@@ -24,6 +24,7 @@ class Conversation extends Component {
 
     this.state = {
       showDialog: false,
+      matcher: match_id
     }
 
     this.delayTimeout;
@@ -74,8 +75,33 @@ class Conversation extends Component {
   }
 
   deleteRow() {
-    console.log("deleted")
+    this.handle()
     this.handleBackPress();
+  }
+
+  handle() {
+    console.log("handling")
+
+    var list = [];
+
+    const { manifest } = Expo.Constants;
+    const api = (typeof manifest.packagerOpts === `object`) && manifest.packagerOpts.dev
+      ? manifest.debuggerHost.split(`:`).shift().concat(`:8000`)
+      : `api.example.com`;
+    console.log(api);
+    // TODO: change to actual userid
+    fetch('http://' + api + '/user/message/all/' + this.state.matcher, {
+      method: 'DELETE'
+    })
+      .then((response) => response.json())
+      .then((responseJson) => {
+        //TO DO: add mentors name and skills in array
+        console.log(responseJson)
+        console.log("deleted")
+      })
+      .catch((error) => {
+        console.log("error is: " + error);
+      });
   }
 
   render() {
