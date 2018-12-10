@@ -4,7 +4,6 @@ import {
   setUser,
   REGISTER_MENTEE,
   UPLOAD_PROFILE_PIC,
-  failedRegisterMentee,
   LOGOUT_USER,
   REGISTER_WITH_LINKEDIN,
   setUserFields,
@@ -13,6 +12,7 @@ import {
   LOGIN,
   failedLogin,
   UPDATE_USER,
+  CHANGE_PASSWORD,
 } from "../actions/user.actions";
 import { takeLatest, put, all, call, select } from "redux-saga/effects";
 import { HOST } from "../config/url";
@@ -26,7 +26,9 @@ export function* registerForPushNotifications({ user_id }) {
   // iOS won't necessarily prompt the user a second time.
   // Android remote notification permissions are granted during the app
   // install, so this will only ask on iOS
-  const { status: finalStatus } = yield Permissions.askAsync(Permissions.NOTIFICATIONS);
+  const { status: finalStatus } = yield Permissions.askAsync(
+    Permissions.NOTIFICATIONS
+  );
 
   // Stop here if the user did not grant permissions
   if (finalStatus !== "granted") {
@@ -104,10 +106,10 @@ export function* registerMentee({ mentee }) {
 
 export function* registerMentor({ mentor }) {
   try {
-    const passwordResponse = yield axios.post(
-      `http://${HOST}/user/password`,
-      { email_address: mentor.email_address, password: mentor.password }
-    );
+    const passwordResponse = yield axios.post(`http://${HOST}/user/password`, {
+      email_address: mentor.email_address,
+      password: mentor.password,
+    });
     const { passwordHash } = passwordResponse;
     const response = yield axios.post(`http://${HOST}/user/mentor`, {
       ...mentor,
@@ -277,6 +279,30 @@ export function* updateUser({ user }) {
   }
 }
 
+export function* changePassword({ currentPassword, newPassword }) {
+  const userId = yield select(state => state.user.user_id);
+  const changePasswordApiUrl = `http://${HOST}/user/${userId}/password/change`;
+  try {
+    const response = yield axios.post(changePasswordApiUrl, {
+      password: currentPassword,
+      new_password: newPassword,
+    });
+
+    const { data: { rows: successMessage } } = response;
+    alert(successMessage);
+  } catch (e) {
+    if (e.response !== undefined && e.response.data !== undefined) {
+      const error =
+        typeof e.response.data === "string"
+          ? e.response.data
+          : e.response.data.error;
+      alert(error);
+    } else {
+      alert(e.message);
+    }
+  }
+}
+
 export default function* userSaga() {
   yield all([
     takeLatest(GET_USER, getUser),
@@ -287,5 +313,6 @@ export default function* userSaga() {
     takeLatest(LOGOUT_USER, logoutUser),
     takeLatest(LOGIN, login),
     takeLatest(UPDATE_USER, updateUser),
+    takeLatest(CHANGE_PASSWORD, changePassword),
   ]);
 }

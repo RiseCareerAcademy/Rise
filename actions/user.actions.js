@@ -12,6 +12,7 @@ export const REGISTER_MENTOR = 'user/REGISTER_MENTOR';
 export const LOGIN = 'user/LOGIN';
 export const UPDATE_USER = 'user/UPDATE_USER';
 export const REGISTER_FOR_PUSH_NOTIFICATIONS = 'user/REGISTER_FOR_PUSH_NOTIFICATIONS';
+export const CHANGE_PASSWORD = 'user/CHANGE_PASSWORD';
 
 export const setUser = user => ({
 	type: SET_USER,
@@ -81,4 +82,10 @@ export const updateUser = user => ({
 export const registerForPushNotifications = user_id => ({
   type: REGISTER_FOR_PUSH_NOTIFICATIONS,
   user_id,
+});
+
+export const changePassword = (currentPassword, newPassword) => ({
+  type: CHANGE_PASSWORD,
+  currentPassword,
+  newPassword,
 });

@@ -8,17 +8,15 @@ import {
   Label,
   Input,
 } from "native-base";
-import {
-  StyleSheet,
-  TouchableOpacity,
-} from "react-native";
+import { StyleSheet, TouchableOpacity } from "react-native";
 import { connect } from "react-redux";
 
-import { registerMentor, updateUser } from "../actions/user.actions";
+import { registerMentor, updateUser, changePassword } from "../actions/user.actions";
 
 export class Password extends React.Component {
   state = {
     email: "",
+    currentPassword: '',
     password: "",
     confirmedPassword: "",
     errors: [],
@@ -32,28 +30,31 @@ export class Password extends React.Component {
     zipcode: "",
   };
 
+  handleCurrentPassword = text => {
+    this.setState({ currentPassword: text });
+  }
+
   handlePassword = text => {
     this.setState({ password: text });
-  }
+  };
 
   handleConfirmPassword = text => {
     this.setState({ confirmedPassword: text });
-  }
+  };
 
-  validate = (password, confirmedPassword) => {
+  validate = (currentPassword, password, confirmedPassword) => {
     // we are going to store errors for all fields
     // in a signle array
     const errors = [];
-    if (
-    password.length === 0 ||
-    confirmedPassword.length === 0
-    ) {
+    if (currentPassword.length === 0 || password.length === 0 || confirmedPassword.length === 0) {
       errors.push("All fields must be filled");
     } else if (password.length < 5) {
-    errors.push("Email should be at least 5 charcters long");
-  }
+      errors.push("Email should be at least 5 charcters long");
+    } else if (password !== confirmedPassword) {
+      errors.push('Confirmed password and new password do not match.');
+    }
     if (errors.length == 0) {
-      // alert(errors);
+      alert(errors);
       return true;
     } else {
       return false;
@@ -62,12 +63,15 @@ export class Password extends React.Component {
 
   handleSubmit = () => {
     const valid = this.validate(
-    this.state.password,
-    this.state.confirmedPassword,
+      this.state.currentPassword,
+      this.state.password,
+      this.state.confirmedPassword
     );
     if (!valid && !__DEV__) {
       return;
     }
+
+    this.props.changePassword(this.state.currentPassword, this.state.password);
   };
 
   render() {
@@ -79,26 +83,25 @@ export class Password extends React.Component {
           </Text>
           <Form>
             <Item stackedLabel>
-              <Label>Password</Label>
-              <Input
-        onChange={this.handlePassword}
-        secureTextEntry
-              />
+              <Label>Current Password</Label>
+              <Input onChange={this.handleCurrentPassword} secureTextEntry />
+            </Item>
+            <Item stackedLabel>
+              <Label>New Password</Label>
+              <Input onChange={this.handlePassword} secureTextEntry />
             </Item>
             <Item stackedLabel last>
-              <Label>Confirm Password</Label>
-              <Input
-        secureTextEntry
-                onChange={this.handleConfirmPassowrd} />
+              <Label>Confirm New Password</Label>
+              <Input secureTextEntry onChange={this.handleConfirmPassowrd} />
             </Item>
           </Form>
         </Content>
-          <TouchableOpacity
-            style={styles.submitButton}
-            onPress={this.handleSubmit}
-          >
-            <Text style={styles.submitButtonText}> Save </Text>
-          </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.submitButton}
+          onPress={this.handleSubmit}
+        >
+          <Text style={styles.submitButtonText}> Save </Text>
+        </TouchableOpacity>
       </Container>
     );
   }
@@ -177,5 +180,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { registerMentor, updateUser }
+  { registerMentor, updateUser, changePassword }
 )(Password);
