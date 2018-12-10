@@ -10,14 +10,15 @@ import {
   Body,
   Text,
   Right,
+  View,
 } from "native-base";
 import { connect } from "react-redux";
-import { RefreshControl } from "react-native";
+import { RefreshControl, StyleSheet } from "react-native";
 
 import { getMessages } from "../actions/messages.actions";
 import { HOST } from "../config/url";
 
-const uuidv1 = require('uuid/v1');
+const uuidv1 = require("uuid/v1");
 
 export class Messages extends Component {
   static navigationOptions = {
@@ -33,6 +34,7 @@ export class Messages extends Component {
     lastChecked: "",
     allMessages: [],
     refreshing: false,
+    hasMessages: undefined,
   };
 
   constructor(props) {
@@ -43,7 +45,10 @@ export class Messages extends Component {
 
   componentDidUpdate = prevProps => {
     if (prevProps.messages !== this.props.messages) {
-      this.setState({ refreshing: false });
+      this.setState({
+        refreshing: false,
+        hasMessages: this.props.messages.length > 0,
+      });
     }
   };
 
@@ -74,6 +79,14 @@ export class Messages extends Component {
           }
         >
           <List>
+            {this.state.hasMessages === false && (
+              <View style={styles.noMessagesContainer}>
+                <Text style={styles.noMessagesText}>
+                  You have not been matched yet. Please go to the Suggest
+                  Matches or Search tab to find a match.
+                </Text>
+              </View>
+            )}
             {messages.map(message => {
               const { otherUser } = message;
               const fromLinkedin = otherUser.profile_pic_URL.includes("licdn");
@@ -84,34 +97,36 @@ export class Messages extends Component {
               if (!fromLinkedin) {
                 image += `?${encodeURI(uuidv1())}`;
               }
-              return (<ListItem
-                avatar
-                key={message.otherUserId}
-                onPress={this.handleMessagePress(
-                  message.match_id,
-                  message.otherUserId,
-                  message.otherUser
-                )}
-              >
-                <Left>
-                  <Thumbnail
-                    source={{
-                      uri: image,
-                    }}
-                  />
-                </Left>
-                <Body>
-                  <Text>{`${message.otherUser.first_name} ${
-                    message.otherUser.last_name
-                  }`}</Text>
-                  <Text note>
-                    {!message.empty ? message.message_body : "No messages..."}
-                  </Text>
-                </Body>
-                <Right>
-                  {!message.empty && <Text note>{message.timestamp}</Text>}
-                </Right>
-              </ListItem>)
+              return (
+                <ListItem
+                  avatar
+                  key={message.otherUserId}
+                  onPress={this.handleMessagePress(
+                    message.match_id,
+                    message.otherUserId,
+                    message.otherUser
+                  )}
+                >
+                  <Left>
+                    <Thumbnail
+                      source={{
+                        uri: image,
+                      }}
+                    />
+                  </Left>
+                  <Body>
+                    <Text>{`${message.otherUser.first_name} ${
+                      message.otherUser.last_name
+                    }`}</Text>
+                    <Text note>
+                      {!message.empty ? message.message_body : "No messages..."}
+                    </Text>
+                  </Body>
+                  <Right>
+                    {!message.empty && <Text note>{message.timestamp}</Text>}
+                  </Right>
+                </ListItem>
+              );
             })}
           </List>
         </Content>
@@ -119,6 +134,21 @@ export class Messages extends Component {
     );
   }
 }
+
+const styles = StyleSheet.create({
+  noMessagesContainer: {
+    margin: "auto",
+    width: "100%",
+    height: "100%",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  noMessagesText: {
+    color: "grey",
+    margin: "auto",
+  },
+});
 
 const mapStateToProps = state => ({
   messages: state.messages,
